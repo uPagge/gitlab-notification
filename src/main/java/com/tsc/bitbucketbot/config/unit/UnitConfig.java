@@ -6,7 +6,6 @@ import org.sadtech.social.bot.domain.unit.AnswerText;
 import org.sadtech.social.bot.domain.unit.MainUnit;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.utils.KeyBoards;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,30 +20,39 @@ public class UnitConfig {
     @Bean
     public AnswerCheck checkMenu(
             UserService userService,
-            @Value("${bitbucketbot.telegram.admin-chatid}") Long adminChatId,
-            AnswerText menu
+            AnswerText menu,
+            AnswerText generalMenu
     ) {
         return AnswerCheck.builder()
-                .check(message -> !userService.existsByTelegramId(message.getPersonId()) || message.getPersonId().equals(adminChatId))
+                .check(message -> !userService.existsByTelegramId(message.getPersonId()))
                 .unitTrue(menu)
-                .unitFalse(AnswerText.of("Вы уже получаете уведомления"))
+                .unitFalse(generalMenu)
                 .build();
     }
 
     @Bean
     public AnswerText menu(
-            MainUnit entranceText,
-            MainUnit textEntranceAdmin
+            MainUnit entranceText
     ) {
         return AnswerText.builder()
                 .boxAnswer(
                         BoxAnswer.builder()
-                                .message("Привет. Я помогаю сотрудникам ТСК отслеживать события в Bitbucket. Если хочешь войти, обращайся к @upagge")
-                                .keyBoard(KeyBoards.verticalMenuString("Войти", "Панель управления"))
+                                .message("Привет. Я помогаю сотрудникам ТСК отслеживать события в Bitbucket.")
+                                .keyBoard(KeyBoards.verticalMenuString("Войти"))
                                 .build()
                 )
                 .nextUnit(entranceText)
-                .nextUnit(textEntranceAdmin)
+                .build();
+    }
+
+    @Bean
+    public AnswerText generalMenu() {
+        return AnswerText.builder()
+                .boxAnswer(
+                        BoxAnswer.builder()
+                                .message("Привет. Ты уже авторизован. Возможно тут появятся новые фичи... Но это не точно\nПо вопросам функциональности бота пиши сюда: @upagge")
+                                .build()
+                )
                 .build();
     }
 

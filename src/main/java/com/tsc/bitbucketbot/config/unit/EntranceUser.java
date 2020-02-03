@@ -42,7 +42,7 @@ public class EntranceUser {
             AnswerSave<String> saveLogin
     ) {
         return AnswerText.builder()
-                .boxAnswer(BoxAnswer.of("Пришлите ваш логин в bitbucket"))
+                .boxAnswer(BoxAnswer.of("Пришлите ваш логин в bitbucket. Пример: vpupkin"))
                 .nextUnit(saveLogin)
                 .phrase("Войти")
                 .build();
@@ -66,7 +66,7 @@ public class EntranceUser {
             AnswerSave<String> savePassword
     ) {
         return AnswerText.builder()
-                .boxAnswer(BoxAnswer.of("Пришлите ваш пароль в bitbucket"))
+                .boxAnswer(BoxAnswer.of("Пришлите ваш пароль в bitbucket. Пример: qwertt123"))
                 .nextUnit(savePassword)
                 .build();
     }
@@ -89,7 +89,7 @@ public class EntranceUser {
             AnswerSave<String> saveToken
     ) {
         return AnswerText.builder()
-                .boxAnswer(BoxAnswer.of("Пришлите ваш токен в bitbucket.\nПолучить можно здесь: http://192.168.236.164:7990/plugins/servlet/access-tokens/manage"))
+                .boxAnswer(BoxAnswer.of("Пришлите ваш токен в bitbucket.\nПолучить здесь: http://192.168.236.164:7990/plugins/servlet/access-tokens/manage"))
                 .nextUnit(saveToken)
                 .build();
     }

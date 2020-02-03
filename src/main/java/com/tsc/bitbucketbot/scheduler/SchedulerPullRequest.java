@@ -120,7 +120,7 @@ public class SchedulerPullRequest {
                         if (!map.containsKey(telegramId)) {
                             map.put(telegramId, new StringBuilder("У вас есть новые ПР:\n\n"));
                         }
-                        map.get(telegramId).append(pullRequest.getName()).append("\nАвтор: ").append(pullRequest.getAuthor().getName()).append("\nСсылка: ").append(pullRequest.getUrl()).append("\n-- -- -- -- --\n\n");
+                        map.get(telegramId).append("*").append(pullRequest.getName()).append("*\n").append("Автор: ").append(pullRequest.getAuthor().getName()).append("\nСсылка: ").append(pullRequest.getUrl()).append("\n-- -- -- -- --\n\n");
                     }
                 }
         );
