@@ -1,0 +1,56 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create-table" author="upagge">
+        <createTable tableName="user">
+            <column name="login" type="varchar(50)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar(200)"/>
+            <column name="telegram_id" type="integer">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="pull_request">
+            <column name="id" type="integer">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="autor_login" type="varchar(100)">
+                <constraints nullable="false"
+                             foreignKeyName="login"
+                             references="user(login)"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)"/>
+        </createTable>
+
+        <createTable tableName="reviewer">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="pull_request_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_pull_request_id" references="pull_request(id)"/>
+            </column>
+            <column name="user_login" type="varchar(100)">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_login"
+                             references="user(login)"/>
+            </column>
+            <column name="status" type="varchar(50)"/>
+        </createTable>
+        <addUniqueConstraint tableName="reviewer" columnNames="pull_request_id, user_login"/>
+
+    </changeSet>
+
+</databaseChangeLog>

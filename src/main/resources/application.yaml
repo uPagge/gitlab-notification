@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bitbucket_bot
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+    password:
+  liquibase:
+    change-log: classpath:liquibase/change-log.xml
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+bitbucketbot:
+  panel:
+    password: mnbyNie832r
+  telegram:
+    bot-username: bitbucket_sadtech_bot
+    bot-token: 1096235968:AAHvIy_mlZJXiNc9aDQWtCuiksz9YGknoXE
+    admin-chatid: 3000811
+    proxy-config:
+      host: 54.39.16.26
+      port: 62509
+      type: SOCKS5
+  bitbucket:
+    token: Nzg5NjUyNDQwMzk2OlA+6naQz02+GxOG0Q9li/jnsn7E
+    url: http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=50
