@@ -140,6 +140,8 @@ public class EntranceUser {
                             HttpResponse response = httpClient.execute(httpPost);
                             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                                 return registerNewUser(userService, optLogin.get(), message.getPersonId(), optToken.get());
+                            } else {
+                                return BoxAnswer.of("Вероятно превышено количество попыток входа. Необходимо в браузере выйти из своего аккаунта и повторно войти");
                             }
                         } catch (IOException e) {
                             BoxAnswer.of("Не удалось авторизоваться");
