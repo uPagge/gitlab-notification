@@ -7,7 +7,7 @@ spring:
   liquibase:
     change-log: classpath:liquibase/change-log.xml
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -17,15 +17,13 @@ spring:
           lob:
             non_contextual_creation: true
 bitbucketbot:
-  panel:
-    password: mnbyNie832r
   telegram:
     bot-username: bitbucket_sadtech_bot
     bot-token: 1096235968:AAHvIy_mlZJXiNc9aDQWtCuiksz9YGknoXE
     admin-chatid: 3000811
     proxy-config:
-      host: 54.39.16.26
-      port: 62509
+      host: 167.172.171.134
+      port: 1080
       type: SOCKS5
   bitbucket:
     token: Nzg5NjUyNDQwMzk2OlA+6naQz02+GxOG0Q9li/jnsn7E

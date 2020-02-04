@@ -15,11 +15,14 @@ import java.util.Set;
  */
 public interface PullRequestsService {
 
-    Set<Long> existsById(@NonNull final Set<Long> idList);
+    Set<Long> existsById(@NonNull final Set<Long> pullRequestId);
 
-    Set<Long> existsAllById(@NonNull Set<Long> pullRequestJsonId);
+    Set<Long> existsAllIdById(@NonNull Set<Long> pullRequestId);
 
-    List<PullRequest> addAll(Set<PullRequest> pullRequests);
+    Set<PullRequest> getAllById(@NonNull Set<Long> pullRequestJsonId);
 
-    Optional<PullRequest> addReviewer(@NonNull Long pullRequestJsonId, @NonNull List<Reviewer> reviewers);
+    List<PullRequest> addAll(@NonNull Set<PullRequest> pullRequests);
+
+    List<PullRequest> updateAll(@NonNull List<PullRequest> pullRequests);
+
 }

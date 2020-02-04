@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulerNewUser {
 
-    public static final String URL = "http://192.168.236.164:7990/rest/api/1.0/admin/users";
+    private static final String URL = "http://192.168.236.164:7990/rest/api/1.0/admin/users";
     private final UserService userService;
     private final ConversionService conversionService;
     private final BitbucketConfig bitbucketConfig;

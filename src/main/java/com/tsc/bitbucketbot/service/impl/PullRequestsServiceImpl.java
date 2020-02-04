@@ -33,25 +33,23 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     }
 
     @Override
-    public Set<Long> existsAllById(@NonNull Set<Long> pullRequestJsonId) {
+    public Set<Long> existsAllIdById(@NonNull Set<Long> pullRequestJsonId) {
         return pullRequestJsonId.stream().filter(pullRequestsRepository::existsById).collect(Collectors.toSet());
     }
 
     @Override
-    public List<PullRequest> addAll(Set<PullRequest> pullRequests) {
+    public Set<PullRequest> getAllById(@NonNull Set<Long> pullRequestJsonId) {
+        return pullRequestsRepository.findAllByIdIn(pullRequestJsonId);
+    }
+
+    @Override
+    public List<PullRequest> addAll(@NonNull Set<PullRequest> pullRequests) {
         return pullRequestsRepository.saveAll(pullRequests);
     }
 
     @Override
-    @Transactional
-    public Optional<PullRequest> addReviewer(@NonNull Long pullRequestId, @NonNull List<Reviewer> reviewers) {
-        final Optional<PullRequest> optPullRequest = pullRequestsRepository.findById(pullRequestId);
-        if (optPullRequest.isPresent()) {
-            final PullRequest pullRequest = optPullRequest.get();
-            pullRequest.setReviewers(reviewers);
-            return Optional.of(pullRequestsRepository.save(pullRequest));
-        }
-        return Optional.empty();
+    public List<PullRequest> updateAll(@NonNull List<PullRequest> pullRequests) {
+        return pullRequestsRepository.saveAll(pullRequests);
     }
 
 }

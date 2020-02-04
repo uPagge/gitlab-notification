@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,7 +46,7 @@ public class PullRequest {
     @JoinColumn(name = "autor_login")
     private User author;
 
-    @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Reviewer> reviewers;
 
     @Column(name = "url")
