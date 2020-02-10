@@ -22,9 +22,11 @@ bitbucketbot:
     bot-token: 1096235968:AAHvIy_mlZJXiNc9aDQWtCuiksz9YGknoXE
     admin-chatid: 3000811
     proxy-config:
-      host: 167.172.171.134
+      host: 212.237.23.75
       port: 1080
       type: SOCKS5
+      user: upagge
+      password: seAbotd9Bidu%ZqZB3g4
   bitbucket:
     token: Nzg5NjUyNDQwMzk2OlA+6naQz02+GxOG0Q9li/jnsn7E
     url: http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=50

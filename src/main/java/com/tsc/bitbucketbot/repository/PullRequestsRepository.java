@@ -2,7 +2,11 @@ package com.tsc.bitbucketbot.repository;
 
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -13,5 +17,12 @@ import java.util.Set;
 public interface PullRequestsRepository extends JpaRepository<PullRequest, Long> {
 
     Set<PullRequest> findAllByIdIn(Set<Long> ids);
+
+    Boolean existsByBitbucketIdAndRepositoryId(Long bitbucketId, Long repositoryId);
+
+    @Query("SELECT p.id FROM PullRequest p WHERE p.bitbucketId=:bitbucketId AND p.repositoryId=:repositoryId")
+    Optional<Long> findIdByBitbucketIdAndRepositoryId(@Param("bitbucketId") Long bitbucketId, @Param("repositoryId") Long repositoryId);
+
+    void deleteAllByIdIn(Collection<Long> id);
 
 }

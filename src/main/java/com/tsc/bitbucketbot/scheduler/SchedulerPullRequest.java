@@ -1,7 +1,6 @@
 package com.tsc.bitbucketbot.scheduler;
 
 import com.tsc.bitbucketbot.bitbucket.PullRequestJson;
-import com.tsc.bitbucketbot.bitbucket.UserDecisionJson;
 import com.tsc.bitbucketbot.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
@@ -9,10 +8,13 @@ import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.domain.util.ReviewerChange;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
 import com.tsc.bitbucketbot.service.converter.PullRequestJsonConverter;
+import com.tsc.bitbucketbot.utils.Message;
+import javafx.util.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.social.core.domain.BoxAnswer;
@@ -21,9 +23,11 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,8 +41,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulerPullRequest {
 
-    private static final String URL_NEW_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN";
-    private static final String URL_OLD_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400";
+    private static final String URL_OPEN_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN";
+    private static final String URL_CLOSE_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400";
     private final BitbucketConfig bitbucketConfig;
     private final PullRequestsService pullRequestsService;
     private final UserService userService;
@@ -46,34 +50,48 @@ public class SchedulerPullRequest {
     private final Sending sending;
 
     @Scheduled(fixedRate = 15000)
-    public void checkOldPullRequest() {
+    public void checkClosePullRequest() {
         final List<User> users = userService.getAllRegistered();
         for (User user : users) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_OLD_PR, user.getToken(), PullRequestSheetJson.class);
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_CLOSE_PR, user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
-                Set<Long> existsId = pullRequestsService.existsById(
-                        pullRequestBitbucketSheet.getValues().stream()
-                                .map(PullRequestJson::getId)
-                                .collect(Collectors.toSet())
-                );
-                final Map<Long, PullRequestJson> existsPullRequestBitbucket = pullRequestBitbucketSheet.getValues().stream()
-                        .filter(pullRequestJson -> existsId.contains(pullRequestJson.getId()))
-                        .collect(Collectors.toMap(PullRequestJson::getId, pullRequestJson -> pullRequestJson));
-                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsId);
-                if (!existsPullRequestBitbucket.isEmpty() && !pullRequests.isEmpty()) {
-                    processingUpdate(existsPullRequestBitbucket, pullRequests);
+                final List<PullRequestJson> bitbucketPullRequests = pullRequestBitbucketSheet.getValues().stream()
+                        .filter(
+                                pullRequestJson -> pullRequestsService.existsByBitbucketIdAndReposId(
+                                        pullRequestJson.getId(),
+                                        pullRequestJson.getFromRef().getRepository().getId()
+                                )
+                        )
+                        .collect(Collectors.toList());
+                final Set<Long> pullRequestId = bitbucketPullRequests.stream()
+                        .map(
+                                pullRequestJson -> pullRequestsService.getIdByBitbucketIdAndReposId(
+                                        pullRequestJson.getId(),
+                                        pullRequestJson.getFromRef().getRepository().getId()
+                                )
+                        )
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toSet());
+
+                for (PullRequestJson bitbucketPullRequest : bitbucketPullRequests) {
+                    final Optional<User> optUser = userService.getByLogin(bitbucketPullRequest.getAuthor().getUser().getName());
+                    if (optUser.isPresent()) {
+                        final User author = optUser.get();
+                        final Long telegramId = author.getTelegramId();
+                        if (telegramId != null) {
+                            final PullRequestStatus pullRequestStatus = PullRequestJsonConverter.convertPullRequestStatus(bitbucketPullRequest.getState());
+                            @NonNull final String message = Message.statusPullRequest(bitbucketPullRequest.getTitle(), bitbucketPullRequest.getLinks().getSelf().get(0).getHref(), PullRequestStatus.OPEN, pullRequestStatus);
+                            sending.send(telegramId, BoxAnswer.of(message));
+                        }
+                    }
                 }
 
-                if (!existsPullRequestBitbucket.isEmpty()) {
-                    pullRequestsService.updateAll(
-                            existsPullRequestBitbucket.values().stream()
-                                    .map(pullRequestBitbucket -> conversionService.convert(pullRequestBitbucket, PullRequest.class))
-                                    .collect(Collectors.toList())
-                    );
-                }
+                pullRequestsService.deleteAll(pullRequestId);
+
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(URL_OLD_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(URL_CLOSE_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -81,76 +99,113 @@ public class SchedulerPullRequest {
         }
     }
 
-    private void processingUpdate(Map<Long, PullRequestJson> existsPullRequestBitbucket, Set<PullRequest> pullRequests) {
+    @Scheduled(fixedRate = 15000)
+    public void checkOldPullRequest() {
+        final List<User> users = userService.getAllRegistered();
+        for (User user : users) {
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_OPEN_PR, user.getToken(), PullRequestSheetJson.class);
+            while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
+                final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
+                final Map<Long, PullRequest> existsPullRequestBitbucket = pullRequestBitbucketSheet.getValues().stream()
+                        .filter(
+                                pullRequestJson -> pullRequestsService.existsByBitbucketIdAndReposId(
+                                        pullRequestJson.getId(),
+                                        pullRequestJson.getFromRef().getRepository().getId()
+                                )
+                        )
+                        .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
+                        .filter(Objects::nonNull)
+                        .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
+                        .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
+                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPullRequestBitbucket.keySet());
+                if (!existsPullRequestBitbucket.isEmpty() && !pullRequests.isEmpty()) {
+                    pullRequestsService.updateAll(processingUpdate(existsPullRequestBitbucket, pullRequests));
+                }
+
+                if (pullRequestBitbucketSheet.getNextPageStart() != null) {
+                    sheetJson = Utils.urlToJson(URL_CLOSE_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    @NonNull
+    private List<PullRequest> processingUpdate(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
+        List<PullRequest> updatePullRequest = new ArrayList<>();
         for (PullRequest pullRequest : pullRequests) {
-            final PullRequestJson pullRequestBitbucket = existsPullRequestBitbucket.get(pullRequest.getId());
+            final PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
             final User author = pullRequest.getAuthor();
+            StringBuilder stringBuilder = new StringBuilder();
             if (author.getTelegramId() != null) {
-                sendStatusPR(pullRequest, pullRequestBitbucket);
-                sendReviewersPR(pullRequest, pullRequestBitbucket);
+                changeStatusPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
+                changeReviewersPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
+                final String message = stringBuilder.toString();
+                if (!Message.EMPTY.equalsIgnoreCase(message)) {
+                    updatePullRequest.add(newPullRequest);
+                    sending.send(author.getTelegramId(), BoxAnswer.of(message));
+                }
             }
         }
+        return updatePullRequest;
     }
 
-    private void sendReviewersPR(PullRequest pullRequest, PullRequestJson pullRequestBitbucket) {
-        final Map<String, Reviewer> oldReviewers = pullRequest.getReviewers().stream().collect(Collectors.toMap(Reviewer::getUser, reviewer -> reviewer));
-        final List<UserDecisionJson> newReviewers = pullRequestBitbucket.getReviewers();
-        for (UserDecisionJson newReviewer : newReviewers) {
-            if (oldReviewers.containsKey(newReviewer.getUser().getName())) {
-                final Reviewer oldReviewer = oldReviewers.get(newReviewer.getUser().getName());
+    @NonNull
+    private Optional<String> changeReviewersPR(PullRequest pullRequest, PullRequest newPullRequest) {
+        final Map<String, Reviewer> oldReviewers = pullRequest.getReviewers().stream()
+                .collect(Collectors.toMap(Reviewer::getUser, reviewer -> reviewer));
+        final Map<String, Reviewer> newReviewers = newPullRequest.getReviewers().stream()
+                .collect(Collectors.toMap(Reviewer::getUser, reviewer -> reviewer));
+        List<ReviewerChange> reviewerChanges = new ArrayList<>();
+        for (Reviewer newReviewer : newReviewers.values()) {
+            if (oldReviewers.containsKey(newReviewer.getUser())) {
+                final Reviewer oldReviewer = oldReviewers.get(newReviewer.getUser());
                 final ReviewerStatus oldStatus = oldReviewer.getStatus();
-                final ReviewerStatus newStatus = PullRequestJsonConverter.convertStatusReviewer(newReviewer.getStatus());
-                boolean flag = false;
-                StringBuilder stringBuilder = new StringBuilder("✏️ *Изменилось решение по вашему ПР*\n")
-                        .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")\n");
+                final ReviewerStatus newStatus = newReviewer.getStatus();
                 if (!oldStatus.equals(newStatus)) {
-                    flag = true;
-                    stringBuilder.append("\uD83D\uDC68\u200D\uD83D\uDCBB️ ").append(oldReviewer.getUser()).append(" ")
-                            .append(oldStatus).append(" -> ").append(newStatus).append("\n");
+                    reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getUser(), oldStatus, newStatus));
                 }
-                if (flag) {
-                    sending.send(pullRequest.getAuthor().getTelegramId(), BoxAnswer.of(stringBuilder.toString()));
-                }
+            } else {
+                reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getUser(), newReviewer.getStatus()));
             }
         }
+        final Set<String> oldLogins = oldReviewers.keySet();
+        oldLogins.removeAll(newReviewers.keySet());
+        oldLogins.forEach(login -> reviewerChanges.add(ReviewerChange.ofDeleted(login)));
+        return Message.statusReviewers(pullRequest, reviewerChanges);
     }
 
-    private void sendStatusPR(PullRequest pullRequest, PullRequestJson pullRequestBitbucket) {
+
+    @NonNull
+    private Optional<String> changeStatusPR(PullRequest pullRequest, PullRequest newPullRequest) {
         final PullRequestStatus oldStatus = pullRequest.getStatus();
-        final PullRequestStatus newStatus = PullRequestJsonConverter.convertPullRequestStatus(pullRequestBitbucket.getState());
+        final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
-            StringBuilder stringBuilder = new StringBuilder("✏️ *Изменился статус вашего ПР*\n")
-                    .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")\n")
-                    .append(oldStatus.name()).append(" -> ").append(newStatus.name())
-                    .append("\n-- -- -- --\n")
-                    .append("\uD83D\uDCCC: #pullRequest #change")
-                    .append("\n\n");
-            sending.send(pullRequest.getAuthor().getTelegramId(), BoxAnswer.of(stringBuilder.toString()));
+            return Optional.of(Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), oldStatus, newStatus));
         }
+        return Optional.empty();
     }
+
 
     @Scheduled(fixedRate = 15000)
     public void checkNewPullRequest() {
         final List<User> users = userService.getAllRegistered();
         for (User user : users) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_NEW_PR, user.getToken(), PullRequestSheetJson.class);
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_OPEN_PR, user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
-                final Set<Long> pullRequestBitbucketId = pullRequestBitbucketSheet.getValues().stream()
-                        .map(PullRequestJson::getId)
-                        .collect(Collectors.toSet());
-                Set<Long> existsId = pullRequestsService.existsAllIdById(pullRequestBitbucketId);
-                final Set<PullRequestJson> newPullRequestBitbucket = pullRequestBitbucketSheet.getValues().stream()
-                        .filter(pullRequestJson -> !existsId.contains(pullRequestJson.getId()))
-                        .collect(Collectors.toSet());
-                final List<PullRequest> newPullRequests = pullRequestsService.addAll(
-                        newPullRequestBitbucket.stream()
-                                .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
-                                .collect(Collectors.toSet())
-                );
+                final List<PullRequest> newPullRequest = pullRequestBitbucketSheet.getValues().stream()
+                        .collect(Collectors.toMap(pullRequestJson -> new Pair<>(pullRequestJson.getId(), pullRequestJson.getFromRef().getRepository().getId()), pullRequestJson -> pullRequestJson))
+                        .entrySet()
+                        .stream()
+                        .filter(test -> !pullRequestsService.existsByBitbucketIdAndReposId(test.getKey().getKey(), test.getKey().getValue()))
+                        .map(test -> conversionService.convert(test.getValue(), PullRequest.class))
+                        .collect(Collectors.toList());
+                final List<PullRequest> newPullRequests = pullRequestsService.addAll(newPullRequest);
                 sendNotification(newPullRequests);
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(URL_NEW_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(URL_OPEN_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }

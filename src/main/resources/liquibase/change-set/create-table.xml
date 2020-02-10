@@ -18,10 +18,12 @@
         </createTable>
 
         <createTable tableName="pull_request">
-            <column name="id" type="integer">
+            <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="autor_login" type="varchar(100)">
+            <column name="bitbucket_pr_id" type="integer"/>
+            <column name="repository_id" type="integer"/>
+            <column name="author_login" type="varchar(100)">
                 <constraints nullable="false"
                              foreignKeyName="login"
                              references="user(login)"/>
@@ -34,13 +36,14 @@
             </column>
             <column name="name" type="varchar(100)"/>
         </createTable>
+        <addUniqueConstraint tableName="pull_request" columnNames="bitbucket_pr_id, repository_id"/>
 
         <createTable tableName="reviewer">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="pull_request_id" type="integer">
-                <constraints nullable="false" foreignKeyName="fk_pull_request_id" references="pull_request(id)"/>
+                <constraints foreignKeyName="fk_pull_request_id" references="pull_request(id)" deleteCascade="true"/>
             </column>
             <column name="user_login" type="varchar(100)">
                 <constraints nullable="false"
@@ -50,7 +53,6 @@
             <column name="status" type="varchar(50)"/>
         </createTable>
         <addUniqueConstraint tableName="reviewer" columnNames="pull_request_id, user_login"/>
-
     </changeSet>
 
 </databaseChangeLog>

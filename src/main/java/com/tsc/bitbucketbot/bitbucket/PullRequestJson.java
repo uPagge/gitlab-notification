@@ -20,5 +20,6 @@ public class PullRequestJson {
     private LinkJson links;
     private UserDecisionJson author;
     private List<UserDecisionJson> reviewers;
+    private FromRefJson fromRef;
 
 }

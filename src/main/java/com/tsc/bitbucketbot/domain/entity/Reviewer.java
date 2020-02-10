@@ -35,19 +35,11 @@ public class Reviewer {
     @Column(name = "id")
     private Long id;
 
-    //    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "pull_request_id")
-    @Column(name = "pull_request_id")
-    private Long pullRequestId;
-
-    //    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_login")
     @Column(name = "user_login")
     private String user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReviewerStatus status;
-
 
 }

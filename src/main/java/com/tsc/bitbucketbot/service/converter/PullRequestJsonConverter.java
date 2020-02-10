@@ -33,12 +33,13 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
     @Override
     public PullRequest convert(PullRequestJson json) {
         return PullRequest.builder()
-                .id(json.getId())
+                .bitbucketId(json.getId())
+                .repositoryId(json.getFromRef().getRepository().getId())
                 .author(this.convertUser(json.getAuthor().getUser()))
                 .name(json.getTitle())
                 .url(json.getLinks().getSelf().get(0).getHref())
                 .status(convertPullRequestStatus(json.getState()))
-                .reviewers(convertReviewers(json.getId(), json.getReviewers()))
+                .reviewers(convertReviewers(json.getReviewers()))
                 .build();
     }
 
@@ -58,12 +59,11 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         return null;
     }
 
-    private List<Reviewer> convertReviewers(Long id, List<UserDecisionJson> jsonReviewers) {
+    private List<Reviewer> convertReviewers(List<UserDecisionJson> jsonReviewers) {
         return jsonReviewers.stream()
                 .map(
                         jsonReviewer -> {
                             final Reviewer reviewer = new Reviewer();
-                            reviewer.setPullRequestId(id);
                             reviewer.setUser(jsonReviewer.getUser().getName());
                             reviewer.setStatus(convertStatusReviewer(jsonReviewer.getStatus()));
                             return reviewer;
@@ -83,7 +83,6 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         }
         return null;
     }
-
 
 
 }

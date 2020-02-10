@@ -32,21 +32,29 @@ import java.util.List;
 @Setter
 @Entity
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString
 public class PullRequest {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "bitbucket_pr_id")
+    private Long bitbucketId;
+
+    @Column(name = "repository_id")
+    private Long repositoryId;
+
     @ManyToOne
-    @JoinColumn(name = "autor_login")
+    @JoinColumn(name = "author_login")
     private User author;
 
-    @OneToMany(mappedBy = "pullRequestId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "pull_request_id")
     private List<Reviewer> reviewers;
 
     @Column(name = "url")
@@ -58,5 +66,21 @@ public class PullRequest {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PullRequestStatus status;
+
+//    public void setReviewers(List<Reviewer> reviewers) {
+//        this.reviewers = reviewers;
+//        this.reviewers.forEach(reviewer -> reviewer.setPullRequest(this));
+//    }
+//
+//    public PullRequest(Long bitbucketId, Long repositoryId, User author, List<Reviewer> reviewers, String url, String name, PullRequestStatus status) {
+//        this.bitbucketId = bitbucketId;
+//        this.repositoryId = repositoryId;
+//        this.author = author;
+//        this.reviewers = reviewers;
+//        this.url = url;
+//        this.name = name;
+//        this.status = status;
+//        this.reviewers.forEach(reviewer -> reviewer.setPullRequest(this));
+//    }
 
 }
