@@ -3,22 +3,22 @@ package com.tsc.bitbucketbot.scheduler;
 import com.tsc.bitbucketbot.bitbucket.PullRequestJson;
 import com.tsc.bitbucketbot.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.config.BitbucketConfig;
+import com.tsc.bitbucketbot.domain.MessageSend;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
+import com.tsc.bitbucketbot.service.MessageSendService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
 import com.tsc.bitbucketbot.service.converter.PullRequestJsonConverter;
 import com.tsc.bitbucketbot.utils.Message;
-import javafx.util.Pair;
+import com.tsc.bitbucketbot.utils.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.social.core.domain.BoxAnswer;
-import org.sadtech.social.core.service.sender.Sending;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -41,19 +41,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulerPullRequest {
 
-    private static final String URL_OPEN_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN";
-    private static final String URL_CLOSE_PR = "http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400";
-    private final BitbucketConfig bitbucketConfig;
     private final PullRequestsService pullRequestsService;
     private final UserService userService;
+    private final MessageSendService messageSendService;
     private final ConversionService conversionService;
-    private final Sending sending;
+    private final BitbucketConfig bitbucketConfig;
 
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedRate = 30000)
     public void checkClosePullRequest() {
-        final List<User> users = userService.getAllRegistered();
+        final List<User> users = userService.getAll();
         for (User user : users) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_CLOSE_PR, user.getToken(), PullRequestSheetJson.class);
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
                 final List<PullRequestJson> bitbucketPullRequests = pullRequestBitbucketSheet.getValues().stream()
@@ -83,7 +81,7 @@ public class SchedulerPullRequest {
                         if (telegramId != null) {
                             final PullRequestStatus pullRequestStatus = PullRequestJsonConverter.convertPullRequestStatus(bitbucketPullRequest.getState());
                             @NonNull final String message = Message.statusPullRequest(bitbucketPullRequest.getTitle(), bitbucketPullRequest.getLinks().getSelf().get(0).getHref(), PullRequestStatus.OPEN, pullRequestStatus);
-                            sending.send(telegramId, BoxAnswer.of(message));
+                            messageSendService.add(MessageSend.builder().telegramId(telegramId).message(message).build());
                         }
                     }
                 }
@@ -91,7 +89,7 @@ public class SchedulerPullRequest {
                 pullRequestsService.deleteAll(pullRequestId);
 
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(URL_CLOSE_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -99,11 +97,11 @@ public class SchedulerPullRequest {
         }
     }
 
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedRate = 30000)
     public void checkOldPullRequest() {
-        final List<User> users = userService.getAllRegistered();
+        final List<User> users = userService.getAll();
         for (User user : users) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_OPEN_PR, user.getToken(), PullRequestSheetJson.class);
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
                 final Map<Long, PullRequest> existsPullRequestBitbucket = pullRequestBitbucketSheet.getValues().stream()
@@ -123,7 +121,7 @@ public class SchedulerPullRequest {
                 }
 
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(URL_CLOSE_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -144,7 +142,7 @@ public class SchedulerPullRequest {
                 final String message = stringBuilder.toString();
                 if (!Message.EMPTY.equalsIgnoreCase(message)) {
                     updatePullRequest.add(newPullRequest);
-                    sending.send(author.getTelegramId(), BoxAnswer.of(message));
+                    messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
                 }
             }
         }
@@ -188,11 +186,11 @@ public class SchedulerPullRequest {
     }
 
 
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedRate = 30000)
     public void checkNewPullRequest() {
-        final List<User> users = userService.getAllRegistered();
+        final List<User> users = userService.getAll();
         for (User user : users) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(URL_OPEN_PR, user.getToken(), PullRequestSheetJson.class);
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
                 final List<PullRequest> newPullRequest = pullRequestBitbucketSheet.getValues().stream()
@@ -205,7 +203,7 @@ public class SchedulerPullRequest {
                 final List<PullRequest> newPullRequests = pullRequestsService.addAll(newPullRequest);
                 sendNotification(newPullRequests);
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(URL_OPEN_PR + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -221,7 +219,7 @@ public class SchedulerPullRequest {
                             reviewer -> test(pullRequest, reviewer, map)
                     )
             );
-            map.forEach((key, value) -> sending.send(key, BoxAnswer.of(value.toString())));
+            map.forEach((key, value) -> messageSendService.add(MessageSend.builder().telegramId(key).message(value.toString()).build()));
         }
     }
 
@@ -235,7 +233,7 @@ public class SchedulerPullRequest {
                         }
                         map.get(telegramId).append("\uD83C\uDF89 *Новый Pull Request*\n")
                                 .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")\n")
-                                .append("\uD83D\uDC68\u200D\uD83D\uDCBB️: ").append(pullRequest.getAuthor().getName())
+                                .append("\uD83D\uDC68\u200D\uD83D\uDCBB️: ").append(pullRequest.getAuthor().getLogin())
                                 .append("\n-- -- -- -- --\n")
                                 .append("\uD83D\uDCCC: ").append("#").append(pullRequest.getAuthor().getLogin()).append(" #pullRequest")
                                 .append("\n\n");

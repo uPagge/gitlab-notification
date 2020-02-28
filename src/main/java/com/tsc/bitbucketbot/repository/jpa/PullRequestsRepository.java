@@ -1,4 +1,4 @@
-package com.tsc.bitbucketbot.repository;
+package com.tsc.bitbucketbot.repository.jpa;
 
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import org.springframework.data.jpa.repository.JpaRepository;

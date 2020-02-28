@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.tsc.bitbucketbot</groupId>
     <artifactId>bitbucketbot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-RELEASE</version>
     <name>bitbucketbot</name>
     <description>Demo project for Spring Boot</description>
 
@@ -21,9 +21,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.sadtech.telegram</groupId>
-            <artifactId>telegram-bot</artifactId>
-            <version>0.0.1-DEVELOPER</version>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
         </dependency>
 
         <dependency>
@@ -90,6 +89,7 @@
     </dependencies>
 
     <build>
+        <finalName>bitbucketbot</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

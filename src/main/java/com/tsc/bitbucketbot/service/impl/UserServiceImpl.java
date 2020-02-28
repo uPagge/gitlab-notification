@@ -1,8 +1,12 @@
 package com.tsc.bitbucketbot.service.impl;
 
+import com.tsc.bitbucketbot.bitbucket.sheet.PullRequestSheetJson;
+import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.entity.User;
-import com.tsc.bitbucketbot.repository.UserRepository;
+import com.tsc.bitbucketbot.exception.RegException;
+import com.tsc.bitbucketbot.repository.jpa.UserRepository;
 import com.tsc.bitbucketbot.service.UserService;
+import com.tsc.bitbucketbot.service.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,16 +26,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    @Override
-    public boolean existsByTelegramId(@NonNull Long chatId) {
-        return userRepository.existsByTelegramId(chatId);
-    }
-
-    @Override
-    public User add(@NonNull User user) {
-        return userRepository.save(user);
-    }
+    private final BitbucketConfig bitbucketConfig;
 
     @Override
     public List<User> getAll() {
@@ -57,13 +52,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> addAll(@NonNull Set<User> users) {
-        return userRepository.saveAll(users);
+    public Optional<User> reg(@NonNull User user) {
+        if (userRepository.existsByLogin(user.getLogin()) && !userRepository.existsByTelegramId(user.getTelegramId())) {
+            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
+            if (sheetJson.isPresent()) {
+                return Optional.of(userRepository.save(user));
+            } else {
+                throw new RegException("Ваш токен не валиден");
+            }
+        } else {
+            throw new RegException("Пользователь с таким логином или телеграмом уже есть в системе");
+        }
     }
 
     @Override
-    public List<User> getAllRegistered() {
-        return userRepository.findAllRegistered();
+    public List<User> addAll(Set<User> newUsers) {
+        return userRepository.saveAll(newUsers);
     }
 
 }

@@ -72,7 +72,7 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .collect(Collectors.toList());
     }
 
-    public static ReviewerStatus convertStatusReviewer(UserPullRequestStatus status) {
+    private static ReviewerStatus convertStatusReviewer(UserPullRequestStatus status) {
         switch (status) {
             case APPROVED:
                 return ReviewerStatus.APPROVED;
@@ -83,6 +83,5 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         }
         return null;
     }
-
 
 }

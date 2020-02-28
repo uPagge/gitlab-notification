@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class BitbucketConfig {
 
     private String token;
-    private String url;
+    private String urlPullRequestOpen;
+    private String urlPullRequestClose;
 
 }

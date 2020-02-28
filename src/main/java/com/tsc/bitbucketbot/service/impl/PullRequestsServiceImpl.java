@@ -1,7 +1,7 @@
 package com.tsc.bitbucketbot.service.impl;
 
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
-import com.tsc.bitbucketbot.repository.PullRequestsRepository;
+import com.tsc.bitbucketbot.repository.jpa.PullRequestsRepository;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

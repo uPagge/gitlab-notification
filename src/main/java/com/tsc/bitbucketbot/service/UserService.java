@@ -14,10 +14,6 @@ import java.util.Set;
  */
 public interface UserService {
 
-    boolean existsByTelegramId(@NonNull final Long chatId);
-
-    User add(@NonNull final User user);
-
     List<User> getAll();
 
     Optional<User> getByLogin(String login);
@@ -26,8 +22,8 @@ public interface UserService {
 
     Set<String> existsByLogin(@NonNull Set<String> logins);
 
-    List<User> addAll(@NonNull Set<User> users);
+    Optional<User> reg(@NonNull User user);
 
-    List<User> getAllRegistered();
+    List<User> addAll(Set<User> newUsers);
 
 }
