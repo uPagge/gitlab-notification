@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.DELETED;
-import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.NEW;
-import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.OLD;
+import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
 
 /**
  * TODO: Добавить описание класса.
@@ -34,7 +32,7 @@ public class Message {
     @NonNull
     public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
         return "✏️ *Изменился статус вашего ПР*" + BREAK +
-                "[" + name + "](" + url + ")" + BREAK +
+                "[" + name + "](" + url.replace("localhost", "192.168.236.164") + ")" + BREAK +
                 oldStatus.name() + " -> " + newStatus.name() +
                 BREAK + "-- -- -- --" + BREAK +
                 "\uD83D\uDCCC: #pullRequest #change" +
@@ -76,7 +74,7 @@ public class Message {
         if (!EMPTY.equalsIgnoreCase(createMessage)) {
             return Optional.of(
                     SMILE_PEN + " *Изменения ревьюверов вашего ПР*" + BREAK +
-                            "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
+                            "[" + pullRequest.getName() + "](" + pullRequest.getUrl().replace("localhost", "192.168.236.164") + ")" + BREAK +
                             createMessage
                             + "\n-- -- -- -- --"
             );

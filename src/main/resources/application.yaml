@@ -18,7 +18,7 @@ spring:
             non_contextual_creation: true
 bitbucketbot:
   server-send:
-    url: http://193.164.149.25:8080/api/send
+    url: http://188.225.35.149:8080/api/send
   bitbucket:
     token: Nzg5NjUyNDQwMzk2OlA+6naQz02+GxOG0Q9li/jnsn7E
     url-pull-request-open: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
