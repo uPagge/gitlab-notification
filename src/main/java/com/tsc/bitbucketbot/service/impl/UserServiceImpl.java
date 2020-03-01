@@ -1,8 +1,8 @@
 package com.tsc.bitbucketbot.service.impl;
 
-import com.tsc.bitbucketbot.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.exception.RegException;
 import com.tsc.bitbucketbot.repository.jpa.UserRepository;
 import com.tsc.bitbucketbot.service.UserService;

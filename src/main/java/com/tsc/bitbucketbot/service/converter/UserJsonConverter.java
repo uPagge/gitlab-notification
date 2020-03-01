@@ -1,7 +1,7 @@
 package com.tsc.bitbucketbot.service.converter;
 
-import com.tsc.bitbucketbot.bitbucket.UserJson;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.dto.bitbucket.UserJson;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package com.tsc.bitbucketbot.bitbucket.sheet;
+package com.tsc.bitbucketbot.dto.bitbucket.sheet;
 
-import com.tsc.bitbucketbot.bitbucket.Sheet;
-import com.tsc.bitbucketbot.bitbucket.UserJson;
+import com.tsc.bitbucketbot.dto.bitbucket.Sheet;
+import com.tsc.bitbucketbot.dto.bitbucket.UserJson;
 
 /**
  * TODO: Добавить описание класса.

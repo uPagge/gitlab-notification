@@ -1,4 +1,4 @@
-package com.tsc.bitbucketbot.bitbucket;
+package com.tsc.bitbucketbot.dto.bitbucket;
 
 import com.tsc.bitbucketbot.domain.BitbucketUserRole;
 import lombok.Data;

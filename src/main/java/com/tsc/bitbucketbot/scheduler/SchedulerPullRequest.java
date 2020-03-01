@@ -1,7 +1,5 @@
 package com.tsc.bitbucketbot.scheduler;
 
-import com.tsc.bitbucketbot.bitbucket.PullRequestJson;
-import com.tsc.bitbucketbot.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.MessageSend;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
@@ -10,6 +8,8 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
+import com.tsc.bitbucketbot.dto.bitbucket.PullRequestJson;
+import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.service.MessageSendService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;

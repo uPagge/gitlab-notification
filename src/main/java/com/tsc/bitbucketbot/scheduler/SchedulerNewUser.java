@@ -1,10 +1,9 @@
 package com.tsc.bitbucketbot.scheduler;
 
-import com.tsc.bitbucketbot.bitbucket.Sheet;
-import com.tsc.bitbucketbot.bitbucket.UserJson;
-import com.tsc.bitbucketbot.bitbucket.sheet.UserSheetJson;
 import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.dto.bitbucket.UserJson;
+import com.tsc.bitbucketbot.dto.bitbucket.sheet.UserSheetJson;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
 import lombok.RequiredArgsConstructor;

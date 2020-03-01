@@ -1,4 +1,4 @@
-package com.tsc.bitbucketbot.bitbucket;
+package com.tsc.bitbucketbot.dto.bitbucket;
 
 import lombok.Data;
 

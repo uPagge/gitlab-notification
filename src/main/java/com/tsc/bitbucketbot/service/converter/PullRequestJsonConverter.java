@@ -1,15 +1,15 @@
 package com.tsc.bitbucketbot.service.converter;
 
-import com.tsc.bitbucketbot.bitbucket.PullRequestJson;
-import com.tsc.bitbucketbot.bitbucket.PullRequestState;
-import com.tsc.bitbucketbot.bitbucket.UserDecisionJson;
-import com.tsc.bitbucketbot.bitbucket.UserJson;
-import com.tsc.bitbucketbot.bitbucket.UserPullRequestStatus;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.dto.bitbucket.PullRequestJson;
+import com.tsc.bitbucketbot.dto.bitbucket.PullRequestState;
+import com.tsc.bitbucketbot.dto.bitbucket.UserDecisionJson;
+import com.tsc.bitbucketbot.dto.bitbucket.UserJson;
+import com.tsc.bitbucketbot.dto.bitbucket.UserPullRequestStatus;
 import com.tsc.bitbucketbot.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;

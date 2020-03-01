@@ -1,4 +1,4 @@
-package com.tsc.bitbucketbot.bitbucket;
+package com.tsc.bitbucketbot.dto.bitbucket;
 
 import lombok.Data;
 
@@ -8,8 +8,8 @@ import lombok.Data;
  * @author upagge [04.02.2020]
  */
 @Data
-public class RepositoryJson {
+public class FromRefJson {
 
-    private Long id;
+    private RepositoryJson repository;
 
 }
