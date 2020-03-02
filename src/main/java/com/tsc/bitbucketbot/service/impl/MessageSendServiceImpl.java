@@ -18,7 +18,7 @@ public class MessageSendServiceImpl implements MessageSendService {
     @Override
     public void add(@NonNull MessageSend messageSend) {
         messageSend.setMessage(
-                messageSend.getMessage().replace("localhost", "192.168.236.164:7990")
+                messageSend.getMessage().replace("localhost", "192.168.236.164")
         );
         messageSendRepository.add(messageSend);
     }
