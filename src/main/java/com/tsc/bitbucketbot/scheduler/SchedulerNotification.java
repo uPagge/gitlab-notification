@@ -22,7 +22,7 @@ public class SchedulerNotification {
     private final PullRequestsService pullRequestsService;
     private final MessageSendService messageSendService;
 
-    @Scheduled(cron = "0 9 * * MON-FRI")
+    @Scheduled(cron = "0 9 * * 1-5")
     public void goodMorning() {
         List<User> allRegister = userService.getAllRegister();
         for (User user : allRegister) {
