@@ -16,6 +16,7 @@ public class UserJsonConverter implements Converter<UserJson, User> {
     @Override
     public User convert(UserJson source) {
         return User.builder()
+                .fullName(source.getDisplayName())
                 .login(source.getName())
                 .build();
     }

@@ -25,4 +25,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="user-fullname" author="upagge">
+        <addColumn tableName="user" schemaName="public" catalogName="pg_catalog">
+            <column name="full_name" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

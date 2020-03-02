@@ -1,28 +1,40 @@
-//package com.tsc.bitbucketbot.scheduler;
-//
-//import com.tsc.bitbucketbot.domain.entity.PullRequest;
-//import com.tsc.bitbucketbot.domain.entity.User;
-//import com.tsc.bitbucketbot.service.PullRequestsService;
-//import com.tsc.bitbucketbot.service.UserService;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.scheduling.annotation.Scheduled;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class SchedulerNotification {
-//
-//    private final UserService userService;
-//    private final PullRequestsService pullRequestsService;
-//
-////    @Scheduled(cron = "0 9 * * MON-FRI")
-//    @Scheduled(fixedRate = 50000)
-//    public void goodMorning() {
-//        List<User> users = userService.getAllRegister();
-//        List<PullRequest> mstruchkov = pullRequestsService.getAllByReviewer("mstruchkov");
-//        System.out.println();
-//    }
-//
-//}
+package com.tsc.bitbucketbot.scheduler;
+
+import com.tsc.bitbucketbot.domain.MessageSend;
+import com.tsc.bitbucketbot.domain.ReviewerStatus;
+import com.tsc.bitbucketbot.domain.entity.PullRequest;
+import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.service.MessageSendService;
+import com.tsc.bitbucketbot.service.PullRequestsService;
+import com.tsc.bitbucketbot.service.UserService;
+import com.tsc.bitbucketbot.utils.Message;
+import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SchedulerNotification {
+
+    private final UserService userService;
+    private final PullRequestsService pullRequestsService;
+    private final MessageSendService messageSendService;
+
+    @Scheduled(cron = "0 9 * * MON-FRI")
+    public void goodMorning() {
+        User user = userService.getByLogin("mstruchkov").get();
+        List<PullRequest> pullRequests = pullRequestsService.getAllByReviewerAndStatuses(
+                user.getLogin(),
+                ReviewerStatus.NEEDS_WORK
+        );
+        messageSendService.add(
+                MessageSend.builder()
+                        .telegramId(3000811L)
+                        .message(Message.goodMorningStatistic(user.getFullName(), pullRequests))
+                        .build()
+        );
+    }
+
+}

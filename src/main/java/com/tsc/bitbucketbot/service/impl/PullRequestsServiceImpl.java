@@ -1,5 +1,6 @@
 package com.tsc.bitbucketbot.service.impl;
 
+import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.repository.jpa.PullRequestsRepository;
 import com.tsc.bitbucketbot.service.PullRequestsService;
@@ -60,9 +61,10 @@ public class PullRequestsServiceImpl implements PullRequestsService {
         pullRequestsRepository.deleteAllByIdIn(id);
     }
 
+    @NonNull
     @Override
-    public List<PullRequest> getAllByReviewer(@NonNull String login) {
-        return pullRequestsRepository.findAllByReviewers(login);
+    public List<PullRequest> getAllByReviewerAndStatuses(String login, ReviewerStatus reviewerStatus) {
+        return pullRequestsRepository.findAllByReviewerAndStatuses(login, reviewerStatus);
     }
 
     @Override
