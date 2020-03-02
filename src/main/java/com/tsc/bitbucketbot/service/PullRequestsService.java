@@ -29,6 +29,4 @@ public interface PullRequestsService {
 
     void deleteAll(@NonNull Set<Long> id);
 
-    Optional<PullRequest> update(PullRequest pullRequest);
-
 }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
 
 /**
- * TODO: Добавить описание класса.
+ * Генерирует сообщения для отправки.
  *
  * @author upagge [07.02.2020]
  */
@@ -30,9 +30,19 @@ public class Message {
     }
 
     @NonNull
+    public static String newPullRequest(PullRequest pullRequest) {
+        return "\uD83C\uDF89 *Новый Pull Request*\n" +
+                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")\n" +
+                "\uD83D\uDC68\u200D\uD83D\uDCBB️: " + pullRequest.getAuthor().getLogin() +
+                "\n-- -- -- -- --\n" +
+                "\uD83D\uDCCC: " + "#" + pullRequest.getAuthor().getLogin() + " #pullRequest" +
+                "\n\n";
+    }
+
+    @NonNull
     public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
         return "✏️ *Изменился статус вашего ПР*" + BREAK +
-                "[" + name + "](" + url.replace("localhost", "192.168.236.164") + ")" + BREAK +
+                "[" + name + "](" + url + ")" + BREAK +
                 oldStatus.name() + " -> " + newStatus.name() +
                 BREAK + "-- -- -- --" + BREAK +
                 "\uD83D\uDCCC: #pullRequest #change" +
@@ -74,7 +84,7 @@ public class Message {
         if (!EMPTY.equalsIgnoreCase(createMessage)) {
             return Optional.of(
                     SMILE_PEN + " *Изменения ревьюверов вашего ПР*" + BREAK +
-                            "[" + pullRequest.getName() + "](" + pullRequest.getUrl().replace("localhost", "192.168.236.164") + ")" + BREAK +
+                            "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
                             createMessage
                             + "\n-- -- -- -- --"
             );

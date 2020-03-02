@@ -24,7 +24,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -201,7 +200,7 @@ public class SchedulerPullRequest {
                         .map(test -> conversionService.convert(test.getValue(), PullRequest.class))
                         .collect(Collectors.toList());
                 final List<PullRequest> newPullRequests = pullRequestsService.addAll(newPullRequest);
-                sendNotification(newPullRequests);
+                sendNotificationNewPullRequest(newPullRequests);
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
                     sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
@@ -211,35 +210,22 @@ public class SchedulerPullRequest {
         }
     }
 
-    private void sendNotification(@NonNull List<PullRequest> newPullRequests) {
+    private void sendNotificationNewPullRequest(@NonNull List<PullRequest> newPullRequests) {
         if (!newPullRequests.isEmpty()) {
-            Map<Long, StringBuilder> map = new HashMap<>();
             newPullRequests.forEach(
-                    pullRequest -> pullRequest.getReviewers().forEach(
-                            reviewer -> test(pullRequest, reviewer, map)
-                    )
+                    pullRequest -> pullRequest.getReviewers().stream()
+                            .map(reviewer -> userService.getByLogin(reviewer.getUser()))
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .filter(user -> user.getTelegramId() != null)
+                            .forEach(user -> messageSendService.add(
+                                    MessageSend.builder()
+                                            .telegramId(user.getTelegramId())
+                                            .message(Message.newPullRequest(pullRequest))
+                                            .build()
+                            ))
             );
-            map.forEach((key, value) -> messageSendService.add(MessageSend.builder().telegramId(key).message(value.toString()).build()));
         }
-    }
-
-    private void test(PullRequest pullRequest, Reviewer reviewer, Map<Long, StringBuilder> map) {
-        userService.getByLogin(reviewer.getUser()).ifPresent(
-                user -> {
-                    final Long telegramId = user.getTelegramId();
-                    if (telegramId != null) {
-                        if (!map.containsKey(telegramId)) {
-                            map.put(telegramId, new StringBuilder());
-                        }
-                        map.get(telegramId).append("\uD83C\uDF89 *Новый Pull Request*\n")
-                                .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")\n")
-                                .append("\uD83D\uDC68\u200D\uD83D\uDCBB️: ").append(pullRequest.getAuthor().getLogin())
-                                .append("\n-- -- -- -- --\n")
-                                .append("\uD83D\uDCCC: ").append("#").append(pullRequest.getAuthor().getLogin()).append(" #pullRequest")
-                                .append("\n\n");
-                    }
-                }
-        );
     }
 
 }

@@ -50,14 +50,6 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     }
 
     @Override
-    public Optional<PullRequest> update(PullRequest pullRequest) {
-        if (pullRequestsRepository.existsById(pullRequest.getId())) {
-            pullRequestsRepository.save(pullRequest);
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<Long> getIdByBitbucketIdAndReposId(@NonNull Long bitbucketId, @NonNull Long repositoryId) {
         return pullRequestsRepository.findIdByBitbucketIdAndRepositoryId(bitbucketId, repositoryId);
     }
