@@ -51,11 +51,10 @@
                         body: JSON.stringify(data),
                         headers: {
                             'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*'                        }
+                        }
                     });
                     const json = await response.json();
                     console.log('Успех:', JSON.stringify(json));
-                    this.responseMessage = json
                 } catch (error) {
                     console.error('Ошибка:', error);
                 }
