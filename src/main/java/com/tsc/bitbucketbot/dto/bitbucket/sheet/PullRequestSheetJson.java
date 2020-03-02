@@ -9,4 +9,5 @@ import com.tsc.bitbucketbot.dto.bitbucket.Sheet;
  * @author upagge [02.02.2020]
  */
 public class PullRequestSheetJson extends Sheet<PullRequestJson> {
+
 }

@@ -24,8 +24,10 @@ public class Message {
     private static final String TWO_BREAK = "\n\n";
     private static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
     private static final String SMILE_PEN = "✏️";
+    private static final String SMILE_NEW_PR = "\uD83C\uDF89";
     private static final String SMILE_UPDATE = "\uD83D\uDD04";
     private static final String HR = "\n -- -- -- -- --\n";
+
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -33,8 +35,8 @@ public class Message {
 
     @NonNull
     public static String newPullRequest(PullRequest pullRequest) {
-        return "\uD83C\uDF89 *Новый Pull Request*\n" +
-                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")\n" +
+        return SMILE_NEW_PR + " *Новый Pull Request*" + BREAK +
+                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" +
                 HR +
                 SMILE_AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
                 TWO_BREAK;
