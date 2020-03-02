@@ -49,6 +49,9 @@ public class PullRequest {
     @Column(name = "repository_id")
     private Long repositoryId;
 
+    @Column(name = "version")
+    private Integer version;
+
     @ManyToOne
     @JoinColumn(name = "author_login")
     private User author;
@@ -66,21 +69,5 @@ public class PullRequest {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PullRequestStatus status;
-
-//    public void setReviewers(List<Reviewer> reviewers) {
-//        this.reviewers = reviewers;
-//        this.reviewers.forEach(reviewer -> reviewer.setPullRequest(this));
-//    }
-//
-//    public PullRequest(Long bitbucketId, Long repositoryId, User author, List<Reviewer> reviewers, String url, String name, PullRequestStatus status) {
-//        this.bitbucketId = bitbucketId;
-//        this.repositoryId = repositoryId;
-//        this.author = author;
-//        this.reviewers = reviewers;
-//        this.url = url;
-//        this.name = name;
-//        this.status = status;
-//        this.reviewers.forEach(reviewer -> reviewer.setPullRequest(this));
-//    }
 
 }
