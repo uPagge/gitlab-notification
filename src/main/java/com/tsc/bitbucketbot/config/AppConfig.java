@@ -13,14 +13,8 @@ public class AppConfig {
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(6);
+        taskScheduler.setPoolSize(5);
         return taskScheduler;
     }
-
-//    @Bean
-//    public ObjectMapper objectMapper(ObjectMapper objectMapper) {
-//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//        return objectMapper;
-//    }
 
 }

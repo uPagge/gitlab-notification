@@ -29,4 +29,8 @@ public interface PullRequestsService {
 
     void deleteAll(@NonNull Set<Long> id);
 
+    List<PullRequest> getAllByReviewer(@NonNull String login);
+
+    Set<Long> getAllId();
+
 }

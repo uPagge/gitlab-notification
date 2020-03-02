@@ -60,4 +60,14 @@ public class PullRequestsServiceImpl implements PullRequestsService {
         pullRequestsRepository.deleteAllByIdIn(id);
     }
 
+    @Override
+    public List<PullRequest> getAllByReviewer(@NonNull String login) {
+        return pullRequestsRepository.findAllByReviewers(login);
+    }
+
+    @Override
+    public Set<Long> getAllId() {
+        return pullRequestsRepository.getAllIds();
+    }
+
 }
