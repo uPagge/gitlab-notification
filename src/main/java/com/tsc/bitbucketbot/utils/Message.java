@@ -82,7 +82,7 @@ public class Message {
         final String createMessage = stringBuilder.toString();
         if (!EMPTY.equalsIgnoreCase(createMessage)) {
             return Optional.of(
-                    SMILE_PEN + " *Изменения ревьюверов вашего ПР*" + BREAK +
+                    SMILE_PEN + " *Изменения ревьюверов вашего ПР*" +
                             HR +
                             "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
                             createMessage
