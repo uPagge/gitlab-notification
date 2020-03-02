@@ -4,6 +4,8 @@ import com.tsc.bitbucketbot.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * TODO: Добавить описание класса.
  *
@@ -15,5 +17,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByTelegramId(Long chatId);
 
     boolean existsByLogin(String login);
+
+    List<User> findAllByTelegramIdNotNullAndTokenNotNull();
 
 }

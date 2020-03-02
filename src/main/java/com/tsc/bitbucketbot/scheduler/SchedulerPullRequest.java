@@ -48,7 +48,7 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkClosePullRequest() {
-        final List<User> users = userService.getAll();
+        final List<User> users = userService.getAllRegister();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
@@ -98,7 +98,7 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkOldPullRequest() {
-        final List<User> users = userService.getAll();
+        final List<User> users = userService.getAllRegister();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
@@ -237,7 +237,7 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkNewPullRequest() {
-        final List<User> users = userService.getAll();
+        final List<User> users = userService.getAllRegister();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {

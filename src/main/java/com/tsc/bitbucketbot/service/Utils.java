@@ -2,7 +2,6 @@ package com.tsc.bitbucketbot.service;
 
 import com.google.gson.Gson;
 import lombok.NonNull;
-import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,12 +16,16 @@ import java.util.zip.GZIPInputStream;
  *
  * @author upagge [30.01.2020]
  */
-@Service
 public class Utils {
 
     private static Gson gson = new Gson();
 
-    public static <T> Optional<T> urlToJson(@NonNull String urlValue, String token, Class<T> classOfT) {
+    private Utils() {
+        throw new IllegalStateException("Утилитарный класс");
+    }
+
+    @NonNull
+    public static <T> Optional<T> urlToJson(String urlValue, String token, Class<T> classOfT) {
         StringBuilder sb = null;
         URL url;
         URLConnection urlCon;

@@ -39,14 +39,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> update(User user) {
-        if (userRepository.existsById(user.getLogin())) {
-            return Optional.of(userRepository.save(user));
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public Set<String> existsByLogin(@NonNull Set<String> logins) {
         return logins.stream().filter(userRepository::existsById).collect(Collectors.toSet());
     }
@@ -68,6 +60,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> addAll(Set<User> newUsers) {
         return userRepository.saveAll(newUsers);
+    }
+
+    @Override
+    public List<User> getAllRegister() {
+        return userRepository.findAllByTelegramIdNotNullAndTokenNotNull();
     }
 
 }
