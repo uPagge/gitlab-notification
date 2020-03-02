@@ -132,20 +132,70 @@ public class SchedulerPullRequest {
     private List<PullRequest> processingUpdate(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
         List<PullRequest> updatePullRequest = new ArrayList<>();
         for (PullRequest pullRequest : pullRequests) {
-            final PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
-            final User author = pullRequest.getAuthor();
-            StringBuilder stringBuilder = new StringBuilder();
-            if (author.getTelegramId() != null) {
-                changeStatusPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
-                changeReviewersPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
-                final String message = stringBuilder.toString();
-                if (!Message.EMPTY.equalsIgnoreCase(message)) {
-                    updatePullRequest.add(newPullRequest);
-                    messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
-                }
+            PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
+            @NonNull boolean author = processingAuthor(pullRequest, newPullRequest);
+            @NonNull boolean reviewer = processingReviewer(pullRequest, newPullRequest);
+            if (author || reviewer) {
+                updatePullRequest.add(newPullRequest);
             }
         }
         return updatePullRequest;
+    }
+
+    private boolean processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
+        StringBuilder stringBuilder = new StringBuilder();
+        changeVersionPr(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
+        String message = stringBuilder.toString();
+        if (!Message.EMPTY.equalsIgnoreCase(message)) {
+            newPullRequest.getReviewers().stream()
+                    .map(reviewer -> userService.getByLogin(reviewer.getUser()))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(user -> user.getTelegramId() != null)
+                    .forEach(user -> messageSendService.add(
+                            MessageSend.builder()
+                                    .telegramId(user.getTelegramId())
+                                    .message(Message.updatePullRequest(
+                                            newPullRequest.getName(),
+                                            newPullRequest.getUrl(),
+                                            newPullRequest.getAuthor().getLogin()))
+                                    .build())
+                    );
+            return true;
+        }
+        return false;
+    }
+
+    @NonNull
+    private boolean processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
+        final User author = pullRequest.getAuthor();
+        StringBuilder stringBuilder = new StringBuilder();
+        if (author.getTelegramId() != null) {
+            changeStatusPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
+            changeReviewersPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
+            final String message = stringBuilder.toString();
+            if (!Message.EMPTY.equalsIgnoreCase(message)) {
+                messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NonNull
+    private Optional<String> changeVersionPr(PullRequest pullRequest, PullRequest newPullRequest) {
+        Integer oldVersion = pullRequest.getVersion();
+        Integer newVersion = newPullRequest.getVersion();
+        if (!oldVersion.equals(newVersion)) {
+            return Optional.of(
+                    Message.updatePullRequest(
+                            newPullRequest.getName(),
+                            newPullRequest.getUrl(),
+                            newPullRequest.getAuthor().getLogin()
+                    )
+            );
+        }
+        return Optional.empty();
     }
 
     @NonNull

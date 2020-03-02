@@ -24,6 +24,8 @@ public class Message {
     private static final String TWO_BREAK = "\n\n";
     private static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
     private static final String SMILE_PEN = "✏️";
+    private static final String SMILE_UPDATE = "\uD83D\uDD04";
+    private static final String HR = "\n -- -- -- -- --\n";
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -33,19 +35,16 @@ public class Message {
     public static String newPullRequest(PullRequest pullRequest) {
         return "\uD83C\uDF89 *Новый Pull Request*\n" +
                 "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")\n" +
-                "\uD83D\uDC68\u200D\uD83D\uDCBB️: " + pullRequest.getAuthor().getLogin() +
-                "\n-- -- -- -- --\n" +
-                "\uD83D\uDCCC: " + "#" + pullRequest.getAuthor().getLogin() + " #pullRequest" +
-                "\n\n";
+                HR +
+                SMILE_AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
+                TWO_BREAK;
     }
 
     @NonNull
     public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
-        return "✏️ *Изменился статус вашего ПР*" + BREAK +
+        return SMILE_PEN + " *Изменился статус вашего ПР*" + HR +
                 "[" + name + "](" + url + ")" + BREAK +
                 oldStatus.name() + " -> " + newStatus.name() +
-                BREAK + "-- -- -- --" + BREAK +
-                "\uD83D\uDCCC: #pullRequest #change" +
                 TWO_BREAK;
     }
 
@@ -84,13 +83,20 @@ public class Message {
         if (!EMPTY.equalsIgnoreCase(createMessage)) {
             return Optional.of(
                     SMILE_PEN + " *Изменения ревьюверов вашего ПР*" + BREAK +
+                            HR +
                             "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
                             createMessage
-                            + "\n-- -- -- -- --"
             );
         }
         return Optional.empty();
     }
 
-
+    @NonNull
+    public static String updatePullRequest(String pullRequestName, String prUrl, String author) {
+        return SMILE_UPDATE + " *Обновление Pull Request*" + BREAK +
+                "[" + pullRequestName + "](" + prUrl + ")" +
+                HR +
+                SMILE_AUTHOR + ": " + author +
+                TWO_BREAK;
+    }
 }
