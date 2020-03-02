@@ -24,17 +24,19 @@ public class SchedulerNotification {
 
     @Scheduled(cron = "0 9 * * MON-FRI")
     public void goodMorning() {
-        User user = userService.getByLogin("mstruchkov").get();
-        List<PullRequest> pullRequests = pullRequestsService.getAllByReviewerAndStatuses(
-                user.getLogin(),
-                ReviewerStatus.NEEDS_WORK
-        );
-        messageSendService.add(
-                MessageSend.builder()
-                        .telegramId(3000811L)
-                        .message(Message.goodMorningStatistic(user.getFullName(), pullRequests))
-                        .build()
-        );
+        List<User> allRegister = userService.getAllRegister();
+        for (User user : allRegister) {
+            List<PullRequest> pullRequests = pullRequestsService.getAllByReviewerAndStatuses(
+                    user.getLogin(),
+                    ReviewerStatus.NEEDS_WORK
+            );
+            messageSendService.add(
+                    MessageSend.builder()
+                            .telegramId(3000811L)
+                            .message(Message.goodMorningStatistic(user.getFullName(), pullRequests))
+                            .build()
+            );
+        }
     }
 
 }
