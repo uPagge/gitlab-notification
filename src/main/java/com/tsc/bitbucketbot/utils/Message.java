@@ -5,9 +5,12 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
 import lombok.NonNull;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
@@ -20,15 +23,27 @@ import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
 public class Message {
 
     public static final String EMPTY = "";
-    public static final String BREAK = "\n";
-    public static final String TWO_BREAK = "\n\n";
-    public static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
-    public static final String SMILE_PEN = "✏️";
-    public static final String SMILE_NEW_PR = "\uD83C\uDF89";
-    public static final String SMILE_UPDATE = "\uD83D\uDD04";
-    public static final String SMILE_SUN = "\uD83D\uDD06";
-    public static final String SMILE_PIN = "\uD83D\uDCCD";
-    public static final String HR = "\n -- -- -- -- --\n";
+    private static final String BREAK = "\n";
+    private static final String TWO_BREAK = "\n\n";
+    private static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
+    private static final String SMILE_PEN = "✏️";
+    private static final String SMILE_FUN = "\uD83C\uDF89";
+    private static final String SMILE_UPDATE = "\uD83D\uDD04";
+    private static final String SMILE_SUN = "\uD83D\uDD06";
+    private static final String SMILE_MIG = "\uD83D\uDE09";
+    private static final String SMILE_BUY = "\uD83D\uDC4B";
+    private static final String SMILE_FLOWER = "\uD83C\uDF40";
+    private static final String SMILE_DAY_0 = "\uD83C\uDF15";
+    private static final String SMILE_DAY_1 = "\uD83C\uDF16";
+    private static final String SMILE_DAY_2 = "\uD83C\uDF17";
+    private static final String SMILE_DAY_3 = "\uD83C\uDF18";
+    private static final String SMILE_DAY_4 = "\uD83C\uDF11";
+    private static final String SMILE_DAY_5 = "\uD83C\uDF1A";
+    private static final String SMILE_MEGA_FUN = "\uD83D\uDE02";
+    private static final String HR = "\n -- -- -- -- --\n";
+
+    private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
+    private static final Integer PR_COUNT = 4;
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -36,8 +51,8 @@ public class Message {
 
     @NonNull
     public static String newPullRequest(PullRequest pullRequest) {
-        return SMILE_NEW_PR + " *Новый Pull Request*" + BREAK +
-                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" +
+        return SMILE_FUN + " *Новый Pull Request*" + BREAK +
+                linkPr(pullRequest.getName(), pullRequest.getUrl()) +
                 HR +
                 SMILE_AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
                 TWO_BREAK;
@@ -46,7 +61,7 @@ public class Message {
     @NonNull
     public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
         return SMILE_PEN + " *Изменился статус вашего ПР*" + HR +
-                "[" + name + "](" + url + ")" + BREAK +
+                linkPr(name, url) + BREAK +
                 oldStatus.name() + " -> " + newStatus.name() +
                 TWO_BREAK;
     }
@@ -87,7 +102,7 @@ public class Message {
             return Optional.of(
                     SMILE_PEN + " *Изменения ревьюверов вашего ПР*" +
                             HR +
-                            "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
+                            linkPr(pullRequest.getName(), pullRequest.getUrl()) + BREAK +
                             createMessage
             );
         }
@@ -97,33 +112,87 @@ public class Message {
     @NonNull
     public static String updatePullRequest(String pullRequestName, String prUrl, String author) {
         return SMILE_UPDATE + " *Обновление Pull Request*" + BREAK +
-                "[" + pullRequestName + "](" + prUrl + ")" +
+                linkPr(pullRequestName, prUrl) +
                 HR +
                 SMILE_AUTHOR + ": " + author +
                 TWO_BREAK;
     }
 
     @NonNull
-    public static String goodMorningStatistic(String userName, List<PullRequest> pullRequests) {
-        StringBuilder message = new StringBuilder(SMILE_SUN).append(" Доброе утро, ").append(userName).append("!")
-                .append(HR);
+    public static String goodMorningStatistic(List<PullRequest> pullRequests) {
+        StringBuilder message = new StringBuilder(SMILE_SUN).append(" Доброе утро ").append(SMILE_SUN).append(HR);
         if (!pullRequests.isEmpty()) {
             message.append("Сегодня тебя ждет проверка целых ").append(pullRequests.size()).append(" ПР!").append(TWO_BREAK)
-                    .append("Позволь представить, горячая десятка:").append(BREAK);
-            pullRequests.stream()
-                    .sorted(new UpdateDataComparator())
-                    .limit(10)
-                    .forEach(pullRequest -> message.append(SMILE_PIN)
-                            .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")").append(BREAK));
+                    .append("Топ старых ПР:").append(BREAK);
+            List<PullRequest> oldPr = pullRequests.stream()
+                    .sorted(COMPARATOR)
+                    .limit(PR_COUNT)
+                    .collect(Collectors.toList());
+            oldPr.forEach(
+                    pullRequest -> message.append(topPr(pullRequest))
+            );
+            Set<Long> oldPrIds = oldPr.stream().map(PullRequest::getId).collect(Collectors.toSet());
+            if (pullRequests.size() > PR_COUNT) {
+                message.append(BREAK).append("Свежие ПР:").append(BREAK);
+                pullRequests
+                        .stream()
+                        .filter(pullRequest -> !oldPrIds.contains(pullRequest.getId()))
+                        .sorted(COMPARATOR.reversed())
+                        .limit(PR_COUNT)
+                        .forEach(
+                                pullRequest -> message.append(topPr(pullRequest))
+                        );
+            }
         } else {
-            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР :D").append(TWO_BREAK)
+            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР ").append(SMILE_MEGA_FUN).append(TWO_BREAK)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(BREAK);
         }
-        return message
+        if (dayX()) {
+            message.append(BREAK).append(SMILE_FUN).append(" Кстати, поздравляю, сегодня день З/П").append(BREAK);
+        }
+        message
                 .append(BREAK)
-                .append("Удачной работы!")
-                .toString();
+                .append("Удачного дня ").append(SMILE_FLOWER).append(TWO_BREAK);
+
+        return message.toString();
     }
 
+    private static String topPr(PullRequest pullRequest) {
+        return selectSmile(pullRequest) + " " +
+                linkPr(pullRequest.getName(), pullRequest.getUrl()) +
+                BREAK;
+    }
 
+    private static String selectSmile(PullRequest pullRequest) {
+        switch (Period.between(LocalDate.now(), pullRequest.getUpdateDate()).getDays()) {
+            case 0:
+                return SMILE_DAY_0;
+            case 1:
+                return SMILE_DAY_1;
+            case 2:
+                return SMILE_DAY_2;
+            case 3:
+                return SMILE_DAY_3;
+            case 4:
+                return SMILE_DAY_4;
+            default:
+                return SMILE_DAY_5;
+        }
+    }
+
+    private static boolean dayX() {
+        int dayOfMonth = LocalDate.now().getDayOfMonth();
+        return dayOfMonth == 20 || dayOfMonth == 5;
+    }
+
+    @NonNull
+    private static String linkPr(String name, String url) {
+        return "[" + name + "](" + url + ")";
+    }
+
+    @NonNull
+    public static String goodWeekEnd() {
+        return "Ну вот и все! Веселых выходных " + SMILE_MIG + BREAK +
+                "До понедельника" + SMILE_BUY + TWO_BREAK;
+    }
 }

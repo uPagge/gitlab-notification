@@ -33,7 +33,20 @@ public class SchedulerNotification {
             messageSendService.add(
                     MessageSend.builder()
                             .telegramId(user.getTelegramId())
-                            .message(Message.goodMorningStatistic(user.getFullName(), pullRequests))
+                            .message(Message.goodMorningStatistic(pullRequests))
+                            .build()
+            );
+        }
+    }
+
+    @Scheduled(cron = "0 0 18 * * FRI")
+    public void goodWeekEnd() {
+        List<User> allRegister = userService.getAllRegister();
+        for (User user : allRegister) {
+            messageSendService.add(
+                    MessageSend.builder()
+                            .telegramId(user.getTelegramId())
+                            .message(Message.goodWeekEnd())
                             .build()
             );
         }
