@@ -1,8 +1,10 @@
 package com.tsc.bitbucketbot.service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
-import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,12 +19,22 @@ import java.util.zip.GZIPInputStream;
  *
  * @author upagge [30.01.2020]
  */
-@Service
+@Slf4j
 public class Utils {
 
-    private static Gson gson = new Gson();
+    private static ObjectMapper objectMapper;
 
-    public static <T> Optional<T> urlToJson(@NonNull String urlValue, String token, Class<T> classOfT) {
+    static {
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    private Utils() {
+        throw new IllegalStateException("Утилитарный класс");
+    }
+
+    @NonNull
+    public static <T> Optional<T> urlToJson(String urlValue, String token, Class<T> classOfT) {
         StringBuilder sb = null;
         URL url;
         URLConnection urlCon;
@@ -51,7 +63,11 @@ public class Utils {
 
         }
         if (sb != null) {
-            return Optional.of(gson.fromJson(sb.toString(), classOfT));
+            try {
+                return Optional.of(objectMapper.readValue(sb.toString(), classOfT));
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
         }
         return Optional.empty();
     }

@@ -1,6 +1,7 @@
 package com.tsc.bitbucketbot.scheduler;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tsc.bitbucketbot.config.PushMessageConfig;
 import com.tsc.bitbucketbot.domain.MessageSend;
 import com.tsc.bitbucketbot.service.MessageSendService;
@@ -30,7 +31,7 @@ public class SchedulerPushMessageSend {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private final MessageSendService messageSendService;
-    private final Gson gson = new Gson();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final PushMessageConfig pushMessageConfig;
     private OkHttpClient client;
 
@@ -61,7 +62,11 @@ public class SchedulerPushMessageSend {
     public void sendNewMessage() {
         List<MessageSend> pushMessage = messageSendService.getPushMessage();
         if (!pushMessage.isEmpty()) {
-            sendMessage(gson.toJson(pushMessage));
+            try {
+                sendMessage(objectMapper.writeValueAsString(pushMessage));
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -69,5 +70,11 @@ public class PullRequest {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PullRequestStatus status;
+
+    @Column(name = "create_date")
+    private LocalDate createDate;
+
+    @Column(name = "update_date")
+    private LocalDate updateDate;
 
 }

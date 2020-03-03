@@ -15,4 +15,20 @@
         </update>
     </changeSet>
 
+    <changeSet id="date-update-pr" author="upagge">
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="create_date" type="date"/>
+        </addColumn>
+
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="update_date" type="date"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="user-fullname" author="upagge">
+        <addColumn tableName="user" schemaName="public" catalogName="pg_catalog">
+            <column name="full_name" type="varchar(50)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -18,12 +18,11 @@ public interface UserService {
 
     Optional<User> getByLogin(String login);
 
-    Optional<User> update(User user);
-
     Set<String> existsByLogin(@NonNull Set<String> logins);
 
     Optional<User> reg(@NonNull User user);
 
     List<User> addAll(Set<User> newUsers);
 
+    List<User> getAllRegister();
 }

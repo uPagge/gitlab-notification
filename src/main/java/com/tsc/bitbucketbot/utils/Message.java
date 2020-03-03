@@ -20,12 +20,15 @@ import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
 public class Message {
 
     public static final String EMPTY = "";
-    private static final String BREAK = "\n";
-    private static final String TWO_BREAK = "\n\n";
-    private static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
-    private static final String SMILE_PEN = "✏️";
-    private static final String SMILE_UPDATE = "\uD83D\uDD04";
-    private static final String HR = "\n -- -- -- -- --\n";
+    public static final String BREAK = "\n";
+    public static final String TWO_BREAK = "\n\n";
+    public static final String SMILE_AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
+    public static final String SMILE_PEN = "✏️";
+    public static final String SMILE_NEW_PR = "\uD83C\uDF89";
+    public static final String SMILE_UPDATE = "\uD83D\uDD04";
+    public static final String SMILE_SUN = "\uD83D\uDD06";
+    public static final String SMILE_PIN = "\uD83D\uDCCD";
+    public static final String HR = "\n -- -- -- -- --\n";
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -33,8 +36,8 @@ public class Message {
 
     @NonNull
     public static String newPullRequest(PullRequest pullRequest) {
-        return "\uD83C\uDF89 *Новый Pull Request*\n" +
-                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")\n" +
+        return SMILE_NEW_PR + " *Новый Pull Request*" + BREAK +
+                "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" +
                 HR +
                 SMILE_AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
                 TWO_BREAK;
@@ -82,7 +85,7 @@ public class Message {
         final String createMessage = stringBuilder.toString();
         if (!EMPTY.equalsIgnoreCase(createMessage)) {
             return Optional.of(
-                    SMILE_PEN + " *Изменения ревьюверов вашего ПР*" + BREAK +
+                    SMILE_PEN + " *Изменения ревьюверов вашего ПР*" +
                             HR +
                             "[" + pullRequest.getName() + "](" + pullRequest.getUrl() + ")" + BREAK +
                             createMessage
@@ -99,4 +102,28 @@ public class Message {
                 SMILE_AUTHOR + ": " + author +
                 TWO_BREAK;
     }
+
+    @NonNull
+    public static String goodMorningStatistic(String userName, List<PullRequest> pullRequests) {
+        StringBuilder message = new StringBuilder(SMILE_SUN).append(" Доброе утро, ").append(userName).append("!")
+                .append(HR);
+        if (!pullRequests.isEmpty()) {
+            message.append("Сегодня тебя ждет проверка целых ").append(pullRequests.size()).append(" ПР!").append(TWO_BREAK)
+                    .append("Позволь представить, горячая десятка:").append(BREAK);
+            pullRequests.stream()
+                    .sorted(new UpdateDataComparator())
+                    .limit(10)
+                    .forEach(pullRequest -> message.append(SMILE_PIN)
+                            .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")").append(BREAK));
+        } else {
+            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР :D").append(TWO_BREAK)
+                    .append("Поздравляю, у тебя ни одного ПР на проверку!").append(BREAK);
+        }
+        return message
+                .append(BREAK)
+                .append("Удачной работы!")
+                .toString();
+    }
+
+
 }

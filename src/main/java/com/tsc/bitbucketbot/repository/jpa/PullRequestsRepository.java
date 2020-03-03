@@ -1,11 +1,13 @@
 package com.tsc.bitbucketbot.repository.jpa;
 
+import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,5 +26,11 @@ public interface PullRequestsRepository extends JpaRepository<PullRequest, Long>
     Optional<Long> findIdByBitbucketIdAndRepositoryId(@Param("bitbucketId") Long bitbucketId, @Param("repositoryId") Long repositoryId);
 
     void deleteAllByIdIn(Collection<Long> id);
+
+    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.user=:reviewer AND r.status =:status")
+    List<PullRequest> findAllByReviewerAndStatuses(@Param("reviewer") String reviewer, @Param("status") ReviewerStatus status);
+
+    @Query("SELECT p.id from PullRequest p")
+    Set<Long> getAllIds();
 
 }

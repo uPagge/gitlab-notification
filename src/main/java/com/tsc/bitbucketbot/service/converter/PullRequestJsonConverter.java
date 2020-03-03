@@ -35,6 +35,8 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         return PullRequest.builder()
                 .bitbucketId(json.getId())
                 .version(json.getVersion())
+                .createDate(json.getCreatedDate())
+                .updateDate(json.getUpdatedDate())
                 .repositoryId(json.getFromRef().getRepository().getId())
                 .author(this.convertUser(json.getAuthor().getUser()))
                 .name(json.getTitle())

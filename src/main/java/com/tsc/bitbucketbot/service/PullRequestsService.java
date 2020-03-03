@@ -1,5 +1,6 @@
 package com.tsc.bitbucketbot.service;
 
+import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import lombok.NonNull;
 
@@ -28,5 +29,10 @@ public interface PullRequestsService {
     Optional<Long> getIdByBitbucketIdAndReposId(Long bitbucketId, Long repositoryId);
 
     void deleteAll(@NonNull Set<Long> id);
+
+    @NonNull
+    List<PullRequest> getAllByReviewerAndStatuses(String login, ReviewerStatus statuses);
+
+    Set<Long> getAllId();
 
 }

@@ -24,6 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,8 +48,18 @@ public class SchedulerPullRequest {
     private final BitbucketConfig bitbucketConfig;
 
     @Scheduled(fixedRate = 30000)
-    public void checkClosePullRequest() {
-        final List<User> users = userService.getAll();
+    public void checkOldPullRequest() {
+        Set<Long> existsId = pullRequestsService.getAllId();
+        Set<Long> openId = checkOpenPullRequest();
+        checkClosePullRequest();
+        existsId.removeAll(openId);
+        if (!existsId.isEmpty()) {
+            pullRequestsService.deleteAll(existsId);
+        }
+    }
+
+    private void checkClosePullRequest() {
+        final List<User> users = userService.getAllRegister();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
@@ -96,9 +107,9 @@ public class SchedulerPullRequest {
         }
     }
 
-    @Scheduled(fixedRate = 30000)
-    public void checkOldPullRequest() {
-        final List<User> users = userService.getAll();
+    private Set<Long> checkOpenPullRequest() {
+        final List<User> users = userService.getAllRegister();
+        final Set<Long> ids = new HashSet<>();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
@@ -116,7 +127,12 @@ public class SchedulerPullRequest {
                         .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
                 final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPullRequestBitbucket.keySet());
                 if (!existsPullRequestBitbucket.isEmpty() && !pullRequests.isEmpty()) {
-                    pullRequestsService.updateAll(processingUpdate(existsPullRequestBitbucket, pullRequests));
+                    processingUpdate(existsPullRequestBitbucket, pullRequests);
+                    ids.addAll(
+                            pullRequestsService.updateAll(existsPullRequestBitbucket.values()).stream()
+                                    .map(PullRequest::getId)
+                                    .collect(Collectors.toSet())
+                    );
                 }
 
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
@@ -126,23 +142,19 @@ public class SchedulerPullRequest {
                 }
             }
         }
+        return ids;
     }
 
     @NonNull
-    private List<PullRequest> processingUpdate(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
-        List<PullRequest> updatePullRequest = new ArrayList<>();
+    private void processingUpdate(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
         for (PullRequest pullRequest : pullRequests) {
             PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
-            @NonNull boolean author = processingAuthor(pullRequest, newPullRequest);
-            @NonNull boolean reviewer = processingReviewer(pullRequest, newPullRequest);
-            if (author || reviewer) {
-                updatePullRequest.add(newPullRequest);
-            }
+            processingAuthor(pullRequest, newPullRequest);
+            processingReviewer(pullRequest, newPullRequest);
         }
-        return updatePullRequest;
     }
 
-    private boolean processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
+    private void processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
         StringBuilder stringBuilder = new StringBuilder();
         changeVersionPr(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
         String message = stringBuilder.toString();
@@ -161,13 +173,11 @@ public class SchedulerPullRequest {
                                             newPullRequest.getAuthor().getLogin()))
                                     .build())
                     );
-            return true;
         }
-        return false;
     }
 
     @NonNull
-    private boolean processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
+    private void processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
         final User author = pullRequest.getAuthor();
         StringBuilder stringBuilder = new StringBuilder();
         if (author.getTelegramId() != null) {
@@ -176,10 +186,8 @@ public class SchedulerPullRequest {
             final String message = stringBuilder.toString();
             if (!Message.EMPTY.equalsIgnoreCase(message)) {
                 messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
-                return true;
             }
         }
-        return false;
     }
 
     @NonNull
@@ -237,7 +245,7 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkNewPullRequest() {
-        final List<User> users = userService.getAll();
+        final List<User> users = userService.getAllRegister();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
