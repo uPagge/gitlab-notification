@@ -116,7 +116,7 @@ public class Message {
                     .forEach(pullRequest -> message.append(SMILE_PIN)
                             .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")").append(BREAK));
         } else {
-            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР :D").append(BREAK)
+            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР :D").append(TWO_BREAK)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(BREAK);
         }
         return message
