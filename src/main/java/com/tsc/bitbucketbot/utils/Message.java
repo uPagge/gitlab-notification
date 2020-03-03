@@ -108,7 +108,7 @@ public class Message {
         StringBuilder message = new StringBuilder(SMILE_SUN).append(" Доброе утро, ").append(userName).append("!")
                 .append(HR);
         if (!pullRequests.isEmpty()) {
-            message.append("Сегодня тебя ждет процерка целых ").append(pullRequests.size()).append(" ПР!").append(TWO_BREAK)
+            message.append("Сегодня тебя ждет проверка целых ").append(pullRequests.size()).append(" ПР!").append(TWO_BREAK)
                     .append("Позволь представить, горячая десятка:").append(BREAK);
             pullRequests.stream()
                     .sorted(new UpdateDataComparator())
@@ -116,12 +116,12 @@ public class Message {
                     .forEach(pullRequest -> message.append(SMILE_PIN)
                             .append("[").append(pullRequest.getName()).append("](").append(pullRequest.getUrl()).append(")").append(BREAK));
         } else {
-            message.append("Ты либо самый лучший рабоник, либо тебе не доверяют проверку ПР :D").append(BREAK)
+            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР :D").append(BREAK)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(BREAK);
         }
         return message
                 .append(BREAK)
-                .append("Удачной работы сегодня!")
+                .append("Удачной работы!")
                 .toString();
     }
 
