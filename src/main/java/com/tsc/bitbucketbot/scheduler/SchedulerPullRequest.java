@@ -17,6 +17,7 @@ import com.tsc.bitbucketbot.service.Utils;
 import com.tsc.bitbucketbot.service.converter.PullRequestJsonConverter;
 import com.tsc.bitbucketbot.utils.Message;
 import com.tsc.bitbucketbot.utils.Pair;
+import com.tsc.bitbucketbot.utils.Smile;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -158,7 +159,7 @@ public class SchedulerPullRequest {
         StringBuilder stringBuilder = new StringBuilder();
         changeVersionPr(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
         String message = stringBuilder.toString();
-        if (!Message.EMPTY.equalsIgnoreCase(message)) {
+        if (!Smile.Constants.EMPTY.equalsIgnoreCase(message)) {
             newPullRequest.getReviewers().stream()
                     .map(reviewer -> userService.getByLogin(reviewer.getUser()))
                     .filter(Optional::isPresent)
@@ -184,7 +185,7 @@ public class SchedulerPullRequest {
             changeStatusPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
             changeReviewersPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
             final String message = stringBuilder.toString();
-            if (!Message.EMPTY.equalsIgnoreCase(message)) {
+            if (!Smile.Constants.EMPTY.equalsIgnoreCase(message)) {
                 messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
             }
         }
