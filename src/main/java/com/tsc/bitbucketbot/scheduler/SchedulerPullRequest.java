@@ -24,6 +24,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -165,10 +166,7 @@ public class SchedulerPullRequest {
                         .forEach(user -> messageSendService.add(
                                 MessageSend.builder()
                                         .telegramId(user.getTelegramId())
-                                        .message(Message.updatePullRequest(
-                                                newPullRequest.getName(),
-                                                newPullRequest.getUrl(),
-                                                newPullRequest.getAuthor().getLogin()))
+                                        .message(message)
                                         .build())
                         )
         );
@@ -190,9 +188,9 @@ public class SchedulerPullRequest {
 
     @NonNull
     private Optional<String> changeVersionPr(PullRequest pullRequest, PullRequest newPullRequest) {
-        Integer oldVersion = pullRequest.getVersion();
-        Integer newVersion = newPullRequest.getVersion();
-        if (!oldVersion.equals(newVersion)) {
+        LocalDate oldDate = pullRequest.getUpdateDate();
+        LocalDate newDate = newPullRequest.getUpdateDate();
+        if (!oldDate.isEqual(newDate)) {
             return Optional.of(
                     Message.updatePullRequest(
                             newPullRequest.getName(),
