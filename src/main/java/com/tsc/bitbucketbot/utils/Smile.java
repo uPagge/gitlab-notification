@@ -33,7 +33,7 @@ public enum Smile {
     private String value;
 
     public static Smile statusPr(LocalDate updateDate) {
-        int periodDay = Period.between(LocalDate.now(), updateDate).getDays();
+        int periodDay = Period.between(updateDate, LocalDate.now()).getDays();
         if (periodDay < 5) {
             return Smile.valueOf("DAY_" + periodDay);
         } else {

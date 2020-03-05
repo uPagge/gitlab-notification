@@ -156,25 +156,22 @@ public class SchedulerPullRequest {
     }
 
     private void processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
-        StringBuilder stringBuilder = new StringBuilder();
-        changeVersionPr(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
-        String message = stringBuilder.toString();
-        if (!Smile.Constants.EMPTY.equalsIgnoreCase(message)) {
-            newPullRequest.getReviewers().stream()
-                    .map(reviewer -> userService.getByLogin(reviewer.getUser()))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .filter(user -> user.getTelegramId() != null)
-                    .forEach(user -> messageSendService.add(
-                            MessageSend.builder()
-                                    .telegramId(user.getTelegramId())
-                                    .message(Message.updatePullRequest(
-                                            newPullRequest.getName(),
-                                            newPullRequest.getUrl(),
-                                            newPullRequest.getAuthor().getLogin()))
-                                    .build())
-                    );
-        }
+        changeVersionPr(pullRequest, newPullRequest).ifPresent(
+                message -> newPullRequest.getReviewers().stream()
+                        .map(reviewer -> userService.getByLogin(reviewer.getUser()))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .filter(user -> user.getTelegramId() != null)
+                        .forEach(user -> messageSendService.add(
+                                MessageSend.builder()
+                                        .telegramId(user.getTelegramId())
+                                        .message(Message.updatePullRequest(
+                                                newPullRequest.getName(),
+                                                newPullRequest.getUrl(),
+                                                newPullRequest.getAuthor().getLogin()))
+                                        .build())
+                        )
+        );
     }
 
     @NonNull

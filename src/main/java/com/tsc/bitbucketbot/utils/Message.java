@@ -23,6 +23,7 @@ public class Message {
 
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
     private static final Integer PR_COUNT = 4;
+    private static final String DONATION_LINK = "https://www.tinkoff.ru/sl/1T9s4esiMf";
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -128,8 +129,8 @@ public class Message {
         }
         if (dayX()) {
             message.append(Smile.BREAK).append(Smile.FUN).append(" Кстати, поздравляю, сегодня день З/П").append(Smile.BREAK)
-                    .append(Smile.DANGEROUS).append("И раз такое дело, то напоминаю, что в виду независящих от разработчика условий бот работает на платном VDS. Поэтому всячески приветствуются ")
-                    .append(linkPr("донаты на оплату сервера", "%donat_link%")).append(Smile.BREAK);
+                    .append(Smile.DANGEROUS).append("И раз такое дело, то напоминаю, что в виду независящих от разработчика условий, бот работает на платном VDS. Поэтому всячески приветствуются ")
+                    .append(linkPr("донаты на оплату сервера", DONATION_LINK)).append(Smile.BREAK);
         }
         message
                 .append(Smile.BREAK)
