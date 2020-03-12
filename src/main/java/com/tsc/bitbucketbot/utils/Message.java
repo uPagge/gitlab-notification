@@ -103,7 +103,7 @@ public class Message {
         StringBuilder message = new StringBuilder().append(Smile.SUN).append(" Доброе утро ").append(Smile.SUN).append(Smile.HR);
         if (!pullRequestsReviews.isEmpty()) {
             message.append("Сегодня тебя ждет проверка ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BR)
-                    .append("Топ старых ПР:").append(Smile.BR);
+                    .append("Самые старые:").append(Smile.BR);
             List<PullRequest> oldPr = pullRequestsReviews.stream()
                     .sorted(COMPARATOR)
                     .limit(PR_COUNT)
@@ -115,7 +115,7 @@ public class Message {
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);
         }
         if (!pullRequestsNeedWork.isEmpty()) {
-            message.append(Smile.BR).append(Smile.DANGEROUS).append(" Так же у тебя на доработке находится ").append(pullRequestsNeedWork.size()).append(" ПР").append(Smile.BR);
+            message.append(Smile.BR).append(Smile.DANGEROUS).append("Требуется доработать ").append(pullRequestsNeedWork.size()).append(" ПР:").append(Smile.BR);
             message.append(needWorkPr(pullRequestsNeedWork)).append(Smile.BR);
         }
         if (dayX()) {
@@ -162,11 +162,10 @@ public class Message {
     }
 
     public static String personalNotify(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
-        return Smile.BELL + " *Новое упоминание*" + Smile.BR +
+        return Smile.BELL + " *Новое упоминание* | " + comment.getAuthor().getName() + Smile.BR +
                 link(namePr, urlPr) +
                 Smile.HR +
-                comment.getText().replaceAll("@[\\w]+", "") +
-                Smile.HR +
-                Smile.AUTHOR + ": " + comment.getAuthor().getName();
+                comment.getText().replaceAll("@[\\w]+", "");
     }
+
 }
