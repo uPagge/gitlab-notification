@@ -25,4 +25,7 @@ public interface UserService {
     List<User> addAll(Set<User> newUsers);
 
     List<User> getAllRegister();
+
+    Optional<Long> getTelegramIdByLogin(@NonNull String login);
+
 }

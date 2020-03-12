@@ -24,5 +24,6 @@ bitbucketbot:
     url-pull-request-open: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
     url-pull-request-close: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
     url-pull-request-comment: http://localhost:7990/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
+    url-pull-request: http://localhost:7990/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
 server:
   port: 8018

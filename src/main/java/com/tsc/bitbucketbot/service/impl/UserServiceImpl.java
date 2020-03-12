@@ -67,4 +67,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllByTelegramIdNotNullAndTokenNotNull();
     }
 
+    @Override
+    public Optional<Long> getTelegramIdByLogin(@NonNull String login) {
+        return Optional.ofNullable(userRepository.findTelegramIdByLogin(login));
+    }
+
 }

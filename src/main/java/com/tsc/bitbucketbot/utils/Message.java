@@ -3,6 +3,7 @@ package com.tsc.bitbucketbot.utils;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
+import com.tsc.bitbucketbot.dto.bitbucket.CommentJson;
 import lombok.NonNull;
 
 import java.time.LocalDate;
@@ -158,5 +159,11 @@ public class Message {
     public static String goodWeekEnd() {
         return "Ну вот и все! Веселых выходных " + Smile.MIG + Smile.BREAK +
                 "До понедельника" + Smile.BUY + Smile.TWO_BREAK;
+    }
+
+    public static String personalNotify(@NonNull CommentJson comment, @NonNull String urlPr) {
+        return Smile.BELL + " Вам " + link("тут", urlPr) + " телеграмма пришла от " + comment.getAuthor().getName() +
+                Smile.HR +
+                comment.getText().replaceAll("@[\\w]+", "");
     }
 }

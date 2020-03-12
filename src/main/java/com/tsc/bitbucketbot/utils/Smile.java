@@ -27,6 +27,7 @@ public enum Smile {
     DAY_5("\uD83C\uDF1A"),
     MEGA_FUN("\uD83D\uDE02"),
     DANGEROUS("⚠️"),
+    BELL("\uD83D\uDECE"),
     HR("\n -- -- -- -- --\n");
 
     @Getter
