@@ -9,8 +9,8 @@ import java.time.Period;
 @AllArgsConstructor
 public enum Smile {
 
-    BREAK("\n"),
-    TWO_BREAK("\n\n"),
+    BR("\n"),
+    TWO_BR("\n\n"),
     AUTHOR("\uD83D\uDC68\u200D\uD83D\uDCBB️"),
     PEN("✏️"),
     FUN("\uD83C\uDF89"),

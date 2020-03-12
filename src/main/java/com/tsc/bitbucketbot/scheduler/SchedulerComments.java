@@ -36,7 +36,7 @@ public class SchedulerComments {
 
     private final BitbucketConfig bitbucketConfig;
 
-    @Scheduled(cron = "5 8-18 * * MON-FRI")
+    @Scheduled(cron = "0 5 8-18 * * MON-FRI")
     public void test() {
         long newLastCommentId = commentService.getLastCommentId();
         long commentId = newLastCommentId + 1;
@@ -57,6 +57,7 @@ public class SchedulerComments {
                         final CommentJson comment = commentJson.get();
                         notification(
                                 comment,
+                                pullRequest.getName(),
                                 bitbucketConfig.getUrlPullRequest()
                                         .replace("{projectKey}", pullRequest.getProjectKey())
                                         .replace("{repositorySlug}", pullRequest.getRepositorySlug())
@@ -87,7 +88,7 @@ public class SchedulerComments {
                 .replace("{commentId}", String.valueOf(lastCommentId));
     }
 
-    private void notification(@NonNull CommentJson comment, @NonNull String urlPr) {
+    private void notification(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
         final String message = comment.getText();
         Matcher matcher = PATTERN.matcher(message);
         while (matcher.find()) {
@@ -96,7 +97,7 @@ public class SchedulerComments {
                     telegramId -> messageSendService.add(
                             MessageSend.builder()
                                     .telegramId(telegramId)
-                                    .message(Message.personalNotify(comment, urlPr))
+                                    .message(Message.personalNotify(comment, namePr, urlPr))
                                     .build()
                     )
             );
