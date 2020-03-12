@@ -68,6 +68,11 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     }
 
     @Override
+    public List<PullRequest> getAllByAuthorAndReviewerStatus(@NonNull String login, @NonNull ReviewerStatus status) {
+        return pullRequestsRepository.findAllByAuthorAndReviewerStatus(login, status);
+    }
+
+    @Override
     public Set<Long> getAllId() {
         return pullRequestsRepository.getAllIds();
     }

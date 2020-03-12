@@ -22,18 +22,20 @@ public class SchedulerNotification {
     private final PullRequestsService pullRequestsService;
     private final MessageSendService messageSendService;
 
+    // Утреннее сообщение
     @Scheduled(cron = "0 15 8 * * MON-FRI")
     public void goodMorning() {
         List<User> allRegister = userService.getAllRegister();
         for (User user : allRegister) {
-            List<PullRequest> pullRequests = pullRequestsService.getAllByReviewerAndStatuses(
+            List<PullRequest> pullRequestsReviews = pullRequestsService.getAllByReviewerAndStatuses(
                     user.getLogin(),
                     ReviewerStatus.NEEDS_WORK
             );
+            List<PullRequest> pullRequestsNeedWork = pullRequestsService.getAllByAuthorAndReviewerStatus(user.getLogin(), ReviewerStatus.UNAPPROVED);
             messageSendService.add(
                     MessageSend.builder()
                             .telegramId(user.getTelegramId())
-                            .message(Message.goodMorningStatistic(pullRequests))
+                            .message(Message.goodMorningStatistic(pullRequestsReviews, pullRequestsNeedWork))
                             .build()
             );
         }

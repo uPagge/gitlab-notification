@@ -33,6 +33,8 @@ public interface PullRequestsService {
     @NonNull
     List<PullRequest> getAllByReviewerAndStatuses(String login, ReviewerStatus statuses);
 
+    List<PullRequest> getAllByAuthorAndReviewerStatus(@NonNull String login, @NonNull ReviewerStatus status);
+
     Set<Long> getAllId();
 
 }

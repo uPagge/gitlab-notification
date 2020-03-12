@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
@@ -32,7 +31,7 @@ public class Message {
     @NonNull
     public static String newPullRequest(PullRequest pullRequest) {
         return Smile.FUN + " *Новый Pull Request*" + Smile.BREAK +
-                linkPr(pullRequest.getName(), pullRequest.getUrl()) +
+                link(pullRequest.getName(), pullRequest.getUrl()) +
                 Smile.HR +
                 Smile.AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
                 Smile.TWO_BREAK;
@@ -41,7 +40,7 @@ public class Message {
     @NonNull
     public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
         return Smile.PEN + " *Изменился статус вашего ПР*" + Smile.HR +
-                linkPr(name, url) + Smile.BREAK +
+                link(name, url) + Smile.BREAK +
                 oldStatus.name() + " -> " + newStatus.name() +
                 Smile.TWO_BREAK;
     }
@@ -82,7 +81,7 @@ public class Message {
             return Optional.of(
                     Smile.PEN + " *Изменения ревьюверов вашего ПР*" +
                             Smile.HR +
-                            linkPr(pullRequest.getName(), pullRequest.getUrl()) + Smile.BREAK +
+                            link(pullRequest.getName(), pullRequest.getUrl()) + Smile.BREAK +
                             createMessage
             );
         }
@@ -92,56 +91,56 @@ public class Message {
     @NonNull
     public static String updatePullRequest(String pullRequestName, String prUrl, String author) {
         return Smile.UPDATE + " *Обновление Pull Request*" + Smile.BREAK +
-                linkPr(pullRequestName, prUrl) +
+                link(pullRequestName, prUrl) +
                 Smile.HR +
                 Smile.AUTHOR + ": " + author +
                 Smile.TWO_BREAK;
     }
 
     @NonNull
-    public static String goodMorningStatistic(List<PullRequest> pullRequests) {
+    public static String goodMorningStatistic(List<PullRequest> pullRequestsReviews, List<PullRequest> pullRequestsNeedWork) {
         StringBuilder message = new StringBuilder().append(Smile.SUN).append(" Доброе утро ").append(Smile.SUN).append(Smile.HR);
-        if (!pullRequests.isEmpty()) {
-            message.append("Сегодня тебя ждет проверка целых ").append(pullRequests.size()).append(" ПР!").append(Smile.TWO_BREAK)
+        if (!pullRequestsReviews.isEmpty()) {
+            message.append("Сегодня тебя ждет проверка ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BREAK)
                     .append("Топ старых ПР:").append(Smile.BREAK);
-            List<PullRequest> oldPr = pullRequests.stream()
+            List<PullRequest> oldPr = pullRequestsReviews.stream()
                     .sorted(COMPARATOR)
                     .limit(PR_COUNT)
                     .collect(Collectors.toList());
-            oldPr.forEach(
-                    pullRequest -> message.append(topPr(pullRequest))
-            );
-            Set<Long> oldPrIds = oldPr.stream().map(PullRequest::getId).collect(Collectors.toSet());
-            if (pullRequests.size() > PR_COUNT) {
-                message.append(Smile.BREAK).append("Свежие ПР:").append(Smile.BREAK);
-                pullRequests
-                        .stream()
-                        .filter(pullRequest -> !oldPrIds.contains(pullRequest.getId()))
-                        .sorted(COMPARATOR.reversed())
-                        .limit(PR_COUNT)
-                        .forEach(
-                                pullRequest -> message.append(topPr(pullRequest))
-                        );
-            }
+            oldPr.forEach(pullRequest -> message.append(topPr(pullRequest)));
+            message.append(Smile.BREAK);
         } else {
             message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР ").append(Smile.MEGA_FUN).append(Smile.TWO_BREAK)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BREAK);
         }
+        if (!pullRequestsNeedWork.isEmpty()) {
+            message.append(Smile.BREAK).append(Smile.DANGEROUS).append(" Так же у тебя на доработке находится ").append(pullRequestsNeedWork.size()).append(" ПР").append(Smile.BREAK);
+            message.append(needWorkPr(pullRequestsNeedWork)).append(Smile.BREAK);
+        }
         if (dayX()) {
             message.append(Smile.BREAK).append(Smile.FUN).append(" Кстати, поздравляю, сегодня день З/П").append(Smile.BREAK)
                     .append(Smile.DANGEROUS).append("И раз такое дело, то напоминаю, что в виду независящих от разработчика условий, бот работает на платном VDS. Поэтому всячески приветствуются ")
-                    .append(linkPr("донаты на оплату сервера", DONATION_LINK)).append(Smile.BREAK);
+                    .append(link("донаты на оплату сервера", DONATION_LINK)).append(Smile.BREAK);
         }
         message
                 .append(Smile.BREAK)
                 .append("Удачного дня ").append(Smile.FLOWER).append(Smile.TWO_BREAK);
+        return message.toString();
+    }
 
+    private static String needWorkPr(@NonNull List<PullRequest> pullRequestsNeedWork) {
+        final StringBuilder message = new StringBuilder();
+        pullRequestsNeedWork.stream()
+                .limit(3)
+                .forEach(
+                        pullRequest -> message.append("-- ").append(link(pullRequest.getName(), pullRequest.getUrl())).append(Smile.BREAK)
+                );
         return message.toString();
     }
 
     private static String topPr(PullRequest pullRequest) {
         return Smile.statusPr(pullRequest.getUpdateDate()) + " " +
-                linkPr(pullRequest.getName(), pullRequest.getUrl()) +
+                link(pullRequest.getName(), pullRequest.getUrl()) +
                 Smile.BREAK;
     }
 
@@ -151,7 +150,7 @@ public class Message {
     }
 
     @NonNull
-    private static String linkPr(String name, String url) {
+    private static String link(String name, String url) {
         return "[" + name + "](" + url + ")";
     }
 

@@ -30,6 +30,9 @@ public interface PullRequestsRepository extends JpaRepository<PullRequest, Long>
     @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.user=:reviewer AND r.status =:status")
     List<PullRequest> findAllByReviewerAndStatuses(@Param("reviewer") String reviewer, @Param("status") ReviewerStatus status);
 
+    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE p.author.login=:author AND r.status=:reviewerStatus")
+    List<PullRequest> findAllByAuthorAndReviewerStatus(@Param("author") String author, @Param("reviewerStatus") ReviewerStatus reviewerStatus);
+
     @Query("SELECT p.id from PullRequest p")
     Set<Long> getAllIds();
 
