@@ -42,6 +42,8 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .name(json.getTitle())
                 .url(json.getLinks().getSelf().get(0).getHref())
                 .status(convertPullRequestStatus(json.getState()))
+                .projectKey(json.getFromRef().getRepository().getProject().getKey())
+                .repositorySlug(json.getFromRef().getRepository().getSlug())
                 .reviewers(convertReviewers(json.getReviewers()))
                 .build();
     }

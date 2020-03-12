@@ -17,5 +17,6 @@ public class BitbucketConfig {
     private String token;
     private String urlPullRequestOpen;
     private String urlPullRequestClose;
+    private String urlPullRequestComment;
 
 }

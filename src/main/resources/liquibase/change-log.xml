@@ -5,5 +5,6 @@
 
     <include file="liquibase/change-set/create-table.xml"/>
     <include file="liquibase/change-set/v1.2.0.xml"/>
+    <include file="liquibase/change-set/v1.3.0.xml"/>
 
 </databaseChangeLog>

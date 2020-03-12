@@ -18,4 +18,8 @@ public abstract class Sheet<T> {
     private List<T> values;
     private Integer nextPageStart;
 
+    public boolean hasContent() {
+        return values != null && !values.isEmpty();
+    }
+
 }

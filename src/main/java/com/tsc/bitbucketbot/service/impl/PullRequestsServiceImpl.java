@@ -1,11 +1,14 @@
 package com.tsc.bitbucketbot.service.impl;
 
+import com.tsc.bitbucketbot.domain.Pagination;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.repository.jpa.PullRequestsRepository;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -75,6 +78,11 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     @Override
     public Set<Long> getAllId() {
         return pullRequestsRepository.getAllIds();
+    }
+
+    @Override
+    public Page<PullRequest> getAll(@NonNull Pagination pagination) {
+        return pullRequestsRepository.findAll(PageRequest.of(pagination.getPage(), pagination.getSize()));
     }
 
 }

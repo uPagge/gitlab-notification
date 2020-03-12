@@ -50,6 +50,12 @@ public class PullRequest {
     @Column(name = "repository_id")
     private Long repositoryId;
 
+    @Column(name = "project_key")
+    private String projectKey;
+
+    @Column(name = "repository_slug")
+    private String repositorySlug;
+
     @Column(name = "version")
     private Integer version;
 

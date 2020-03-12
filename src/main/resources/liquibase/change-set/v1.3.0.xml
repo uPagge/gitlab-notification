@@ -1,0 +1,28 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="v1.3.0-add-column-pr" author="upagge">
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="project_key" type="varchar(50)"/>
+        </addColumn>
+
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="repository_slug" type="varchar(50)"/>
+        </addColumn>
+
+        <createTable tableName="tech_info">
+            <column name="surogat_id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="last_comment_id" type="int"/>
+        </createTable>
+
+        <insert tableName="tech_info" schemaName="public" catalogName="pg_catalog">
+            <column name="surogat_id" value="1"/>
+            <column name="last_comment_id" value="4500"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

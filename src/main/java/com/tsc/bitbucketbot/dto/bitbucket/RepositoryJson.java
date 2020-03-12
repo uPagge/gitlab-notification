@@ -11,5 +11,7 @@ import lombok.Data;
 public class RepositoryJson {
 
     private Long id;
+    private String slug;
+    private ProjectJson project;
 
 }
