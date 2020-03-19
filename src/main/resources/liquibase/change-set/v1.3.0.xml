@@ -25,4 +25,10 @@
         </insert>
     </changeSet>
 
+    <changeSet id="v1.3.0-add-pr-description" author="upagge">
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="description" type="varchar(200)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

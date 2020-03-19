@@ -37,6 +37,7 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .version(json.getVersion())
                 .createDate(json.getCreatedDate())
                 .updateDate(json.getUpdatedDate())
+                .description(convertDescription(json.getDescription()))
                 .repositoryId(json.getFromRef().getRepository().getId())
                 .author(this.convertUser(json.getAuthor().getUser()))
                 .name(json.getTitle())
@@ -46,6 +47,13 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .repositorySlug(json.getFromRef().getRepository().getSlug())
                 .reviewers(convertReviewers(json.getReviewers()))
                 .build();
+    }
+
+    private String convertDescription(String description) {
+        if (description != null) {
+            return description.length() > 180 ? description.substring(0, 180) + "..." : description;
+        }
+        return null;
     }
 
     private User convertUser(UserJson userJson) {

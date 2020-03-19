@@ -31,11 +31,14 @@ public class Message {
 
     @NonNull
     public static String newPullRequest(PullRequest pullRequest) {
-        return Smile.FUN + " *Новый Pull Request*" + Smile.BR +
+        String message = Smile.FUN + " *Новый Pull Request*" + Smile.BR +
                 link(pullRequest.getName(), pullRequest.getUrl()) +
-                Smile.HR +
-                Smile.AUTHOR + ": " + pullRequest.getAuthor().getLogin() +
-                Smile.TWO_BR;
+                Smile.HR;
+        if (pullRequest.getDescription() != null && !"".equals(pullRequest.getDescription())) {
+            message += pullRequest.getDescription() + Smile.HR;
+        }
+        message += Smile.AUTHOR + ": " + pullRequest.getAuthor().getLogin() + Smile.TWO_BR;
+        return message;
     }
 
     @NonNull
@@ -109,7 +112,6 @@ public class Message {
                     .limit(PR_COUNT)
                     .collect(Collectors.toList());
             oldPr.forEach(pullRequest -> message.append(topPr(pullRequest)));
-            message.append(Smile.BR);
         } else {
             message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР ").append(Smile.MEGA_FUN).append(Smile.TWO_BR)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);

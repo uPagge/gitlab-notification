@@ -59,6 +59,9 @@ public class PullRequest {
     @Column(name = "version")
     private Integer version;
 
+    @Column(name = "description")
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "author_login")
     private User author;

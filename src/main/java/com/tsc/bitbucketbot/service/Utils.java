@@ -36,11 +36,9 @@ public class Utils {
     @NonNull
     public static <T> Optional<T> urlToJson(String urlValue, String token, Class<T> classOfT) {
         StringBuilder sb = null;
-        URL url;
         URLConnection urlCon;
         try {
-            url = new URL(urlValue);
-            urlCon = url.openConnection();
+            urlCon = new URL(urlValue).openConnection();
             if (token != null) {
                 urlCon.setRequestProperty("Authorization", "Bearer " + token);
             }
@@ -49,7 +47,6 @@ public class Utils {
                     && urlCon.getHeaderField("Content-Encoding").equals("gzip")) {
                 in = new BufferedReader(new InputStreamReader(new GZIPInputStream(urlCon.getInputStream())));
             } else {
-
                 in = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
             }
             String inputLine;
@@ -60,7 +57,7 @@ public class Utils {
             }
             in.close();
         } catch (IOException e) {
-
+            log.error(e.getMessage());
         }
         if (sb != null) {
             try {
