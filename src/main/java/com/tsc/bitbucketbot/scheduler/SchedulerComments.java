@@ -36,7 +36,7 @@ public class SchedulerComments {
 
     private final BitbucketConfig bitbucketConfig;
 
-    @Scheduled(cron = "0 5 8-18 * * MON-FRI")
+    @Scheduled(cron = "0 */5 8-18 * * MON-FRI")
     public void test() {
         long newLastCommentId = commentService.getLastCommentId();
         long commentId = newLastCommentId + 1;
