@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> reg(@NonNull User user) {
+    public User reg(@NonNull User user) {
         final Optional<User> optUser = userRepository.findByLogin(user.getLogin());
         if (optUser.isPresent()) {
             final User oldUser = optUser.get();
@@ -42,10 +42,12 @@ public class UserServiceImpl implements UserService {
                 Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
                 if (sheetJson.isPresent()) {
                     oldUser.setTelegramId(user.getTelegramId());
-                    return Optional.of(userRepository.save(oldUser));
+                    return userRepository.save(oldUser);
                 } else {
                     throw new RegException("Ваш токен не валиден");
                 }
+            } else {
+                throw new RegException("Вы уже авторизованы в системе");
             }
         }
         throw new RegException("Пользователь не найден, подождите обновление базы пользователей!");

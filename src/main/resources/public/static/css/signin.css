@@ -28,6 +28,7 @@ body {
   font-weight: 400;
 }
 .form-signin .form-control {
+  margin: 10px;
   position: relative;
   box-sizing: border-box;
   height: auto;

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Авторизатор BitBucked MarkBot</title>
+    <title>Авторизатор BitbucketBot</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link href="static/css/signin.css" rel="stylesheet">
 </head>
@@ -20,9 +20,9 @@
         <input type="text" v-model="login" id="login" name="login" class="form-control" placeholder="Username">
         <label for="token" class="sr-only">И еще что то тут...</label>
         <input type="text" v-model="token" id="token" class="form-control" placeholder="Token">
-        <button @click="auth" class="btn btn-lg btn-primary btn-block">Забубенитсья</button>
+        <button @click="auth" class="btn btn-lg btn-primary btn-block" style="margin: 10px">Забубениться</button>
         <span>{{responseMessage}}</span>
-        <p class="mt-5 mb-3 text-muted">© 2020 Made by @DR_Demons for @uppage bitbucked bot</p>
+        <p class="mt-5 mb-3 text-muted">© 2020 Made by @DR_Demons for @uPagge bitbucketbot</p>
     </div>
 </div>
 <script>
@@ -43,7 +43,8 @@
                 const data = {
                     telegramId: this.telegramId,
                     login: this.login,
-                    token: this.token
+                    token: this.token,
+                    responseMessage: this.responseMessage
                 };
                 try {
                     const response = await fetch(url, {
