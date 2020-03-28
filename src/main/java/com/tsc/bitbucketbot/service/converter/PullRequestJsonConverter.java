@@ -18,11 +18,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * TODO: Добавить описание класса.
- *
- * @author upagge [01.02.2020]
- */
 @Component
 @RequiredArgsConstructor
 public class PullRequestJsonConverter implements Converter<PullRequestJson, PullRequest> {

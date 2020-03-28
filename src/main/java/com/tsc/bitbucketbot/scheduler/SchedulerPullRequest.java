@@ -65,43 +65,42 @@ public class SchedulerPullRequest {
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
-                final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
-                final List<PullRequestJson> bitbucketPullRequests = pullRequestBitbucketSheet.getValues().stream()
+                final PullRequestSheetJson bitbucketSheet = sheetJson.get();
+                final List<PullRequestJson> jsonsPr = bitbucketSheet.getValues().stream()
                         .filter(
-                                pullRequestJson -> pullRequestsService.existsByBitbucketIdAndReposId(
-                                        pullRequestJson.getId(),
-                                        pullRequestJson.getFromRef().getRepository().getId()
+                                jsonPr -> pullRequestsService.existsByBitbucketIdAndReposId(
+                                        jsonPr.getId(),
+                                        jsonPr.getFromRef().getRepository().getId()
                                 )
                         )
                         .collect(Collectors.toList());
-                final Set<Long> pullRequestId = bitbucketPullRequests.stream()
+                final Set<Long> idPr = jsonsPr.stream()
                         .map(
-                                pullRequestJson -> pullRequestsService.getIdByBitbucketIdAndReposId(
-                                        pullRequestJson.getId(),
-                                        pullRequestJson.getFromRef().getRepository().getId()
+                                jsonPr -> pullRequestsService.getIdByBitbucketIdAndReposId(
+                                        jsonPr.getId(),
+                                        jsonPr.getFromRef().getRepository().getId()
                                 )
                         )
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toSet());
-
-                for (PullRequestJson bitbucketPullRequest : bitbucketPullRequests) {
-                    final Optional<User> optUser = userService.getByLogin(bitbucketPullRequest.getAuthor().getUser().getName());
+                for (PullRequestJson jsonPr : jsonsPr) {
+                    final Optional<User> optUser = userService.getByLogin(jsonPr.getAuthor().getUser().getName());
                     if (optUser.isPresent()) {
                         final User author = optUser.get();
                         final Long telegramId = author.getTelegramId();
                         if (telegramId != null) {
-                            final PullRequestStatus pullRequestStatus = PullRequestJsonConverter.convertPullRequestStatus(bitbucketPullRequest.getState());
-                            @NonNull final String message = Message.statusPullRequest(bitbucketPullRequest.getTitle(), bitbucketPullRequest.getLinks().getSelf().get(0).getHref(), PullRequestStatus.OPEN, pullRequestStatus);
+                            final PullRequestStatus statusPr = PullRequestJsonConverter.convertPullRequestStatus(jsonPr.getState());
+                            final String message = Message.statusPullRequest(jsonPr.getTitle(), jsonPr.getLinks().getSelf().get(0).getHref(), PullRequestStatus.OPEN, statusPr);
                             messageSendService.add(MessageSend.builder().telegramId(telegramId).message(message).build());
                         }
                     }
                 }
 
-                pullRequestsService.deleteAll(pullRequestId);
+                pullRequestsService.deleteAll(idPr);
 
-                if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                if (bitbucketSheet.getNextPageStart() != null) {
+                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose() + bitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -115,30 +114,25 @@ public class SchedulerPullRequest {
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
-                final PullRequestSheetJson pullRequestBitbucketSheet = sheetJson.get();
-                final Map<Long, PullRequest> existsPullRequestBitbucket = pullRequestBitbucketSheet.getValues().stream()
-                        .filter(
-                                pullRequestJson -> pullRequestsService.existsByBitbucketIdAndReposId(
-                                        pullRequestJson.getId(),
-                                        pullRequestJson.getFromRef().getRepository().getId()
-                                )
-                        )
-                        .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
+                final PullRequestSheetJson jsonSheet = sheetJson.get();
+                final Map<Long, PullRequest> existsJsonPr = jsonSheet.getValues().stream()
                         .filter(Objects::nonNull)
+                        .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
                         .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
+                        .filter(pullRequest -> pullRequest.getId() != null)
                         .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
-                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPullRequestBitbucket.keySet());
-                if (!existsPullRequestBitbucket.isEmpty() && !pullRequests.isEmpty()) {
-                    processingUpdate(existsPullRequestBitbucket, pullRequests);
+                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsJsonPr.keySet());
+                if (!existsJsonPr.isEmpty() && !pullRequests.isEmpty()) {
+                    processingUpdate(existsJsonPr, pullRequests);
                     ids.addAll(
-                            pullRequestsService.updateAll(existsPullRequestBitbucket.values()).stream()
+                            pullRequestsService.updateAll(existsJsonPr.values()).stream()
                                     .map(PullRequest::getId)
                                     .collect(Collectors.toSet())
                     );
                 }
 
-                if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
+                if (jsonSheet.getNextPageStart() != null) {
+                    sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen() + jsonSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
@@ -157,31 +151,40 @@ public class SchedulerPullRequest {
     }
 
     private void processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
-        changeVersionPr(pullRequest, newPullRequest).ifPresent(
-                message -> newPullRequest.getReviewers().stream()
-                        .map(reviewer -> userService.getByLogin(reviewer.getUser()))
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .filter(user -> user.getTelegramId() != null)
-                        .forEach(user -> messageSendService.add(
+        final Set<String> logins = newPullRequest.getReviewers().stream()
+                .map(Reviewer::getUser)
+                .collect(Collectors.toSet());
+        if (!logins.isEmpty()) {
+            Optional<String> optMessage = changeVersionPr(pullRequest, newPullRequest);
+            if (optMessage.isPresent()) {
+                final String message = optMessage.get();
+                userService.getAllTelegramIdByLogin(logins).forEach(
+                        telegramId -> messageSendService.add(
                                 MessageSend.builder()
-                                        .telegramId(user.getTelegramId())
+                                        .telegramId(telegramId)
                                         .message(message)
-                                        .build())
+                                        .build()
                         )
-        );
+                );
+            }
+        }
     }
 
     @NonNull
     private void processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
         final User author = pullRequest.getAuthor();
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder builderMessage = new StringBuilder();
         if (author.getTelegramId() != null) {
-            changeStatusPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
-            changeReviewersPR(pullRequest, newPullRequest).ifPresent(stringBuilder::append);
-            final String message = stringBuilder.toString();
+            changeStatusPR(pullRequest, newPullRequest).ifPresent(builderMessage::append);
+            changeReviewersPR(pullRequest, newPullRequest).ifPresent(builderMessage::append);
+            final String message = builderMessage.toString();
             if (!Smile.Constants.EMPTY.equalsIgnoreCase(message)) {
-                messageSendService.add(MessageSend.builder().message(message).telegramId(author.getTelegramId()).build());
+                messageSendService.add(
+                        MessageSend.builder()
+                                .message(message)
+                                .telegramId(author.getTelegramId())
+                                .build()
+                );
             }
         }
     }

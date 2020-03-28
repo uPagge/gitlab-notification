@@ -7,14 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * TODO: Добавить описание интерфейса.
- *
- * @author upagge [30.01.2020]
- */
 public interface UserService {
-
-    List<User> getAll();
 
     Optional<User> getByLogin(String login);
 
@@ -27,5 +20,7 @@ public interface UserService {
     List<User> getAllRegister();
 
     Optional<Long> getTelegramIdByLogin(@NonNull String login);
+
+    List<Long> getAllTelegramIdByLogin(Set<String> logins);
 
 }

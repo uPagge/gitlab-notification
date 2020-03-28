@@ -5,11 +5,6 @@ import com.tsc.bitbucketbot.dto.bitbucket.UserJson;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
-/**
- * TODO: Добавить описание класса.
- *
- * @author upagge [02.02.2020]
- */
 @Service
 public class UserJsonConverter implements Converter<UserJson, User> {
 

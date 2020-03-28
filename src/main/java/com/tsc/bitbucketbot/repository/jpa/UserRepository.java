@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * TODO: Добавить описание класса.
@@ -23,5 +25,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u.telegramId FROM User u WHERE u.login=:login")
     Long findTelegramIdByLogin(String login);
+
+    @Query("SELECT u.telegramId FROM User u WHERE u.login IN :logins AND u.telegramId IS NOT NULL")
+    List<Long> findAllTelegramIdByLogin(Set<String> logins);
+
+    Optional<User> findByLogin(String login);
 
 }

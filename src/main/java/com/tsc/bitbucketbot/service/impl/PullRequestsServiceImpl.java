@@ -18,11 +18,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * TODO: Добавить описание класса.
- *
- * @author upagge [31.01.2020]
- */
 @Service
 @RequiredArgsConstructor
 public class PullRequestsServiceImpl implements PullRequestsService {

@@ -57,7 +57,7 @@ public class Utils {
             }
             in.close();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.trace(e.getMessage());
         }
         if (sb != null) {
             try {

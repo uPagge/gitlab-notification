@@ -13,6 +13,7 @@ import com.tsc.bitbucketbot.service.Utils;
 import com.tsc.bitbucketbot.utils.Message;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SchedulerComments {
@@ -38,6 +40,7 @@ public class SchedulerComments {
 
     @Scheduled(cron = "0 */5 8-18 * * MON-FRI")
     public void test() {
+        log.info("Начало сканирования комментариев");
         long newLastCommentId = commentService.getLastCommentId();
         long commentId = newLastCommentId + 1;
         long count = 0;
@@ -78,6 +81,7 @@ public class SchedulerComments {
             commentId += 1;
         } while (count < NO_COMMENT);
         commentService.saveLastCommentId(newLastCommentId);
+        log.info("Конец сканирования комментариев");
     }
 
     private String getPrUrl(long lastCommentId, PullRequest pullRequest) {

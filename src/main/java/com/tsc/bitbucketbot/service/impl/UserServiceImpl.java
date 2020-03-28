@@ -16,22 +16,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * TODO: Добавить описание класса.
- *
- * @author upagge [30.01.2020]
- */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BitbucketConfig bitbucketConfig;
-
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
 
     @Override
     public Optional<User> getByLogin(String login) {
@@ -45,16 +35,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> reg(@NonNull User user) {
-        if (userRepository.existsByLogin(user.getLogin()) && !userRepository.existsByTelegramId(user.getTelegramId())) {
-            Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
-            if (sheetJson.isPresent()) {
-                return Optional.of(userRepository.save(user));
-            } else {
-                throw new RegException("Ваш токен не валиден");
+        final Optional<User> optUser = userRepository.findByLogin(user.getLogin());
+        if (optUser.isPresent()) {
+            final User oldUser = optUser.get();
+            if (oldUser.getTelegramId() == null) {
+                Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
+                if (sheetJson.isPresent()) {
+                    oldUser.setTelegramId(user.getTelegramId());
+                    return Optional.of(userRepository.save(oldUser));
+                } else {
+                    throw new RegException("Ваш токен не валиден");
+                }
             }
-        } else {
-            throw new RegException("Пользователь с таким логином или телеграмом уже есть в системе");
         }
+        throw new RegException("Пользователь не найден, подождите обновление базы пользователей!");
     }
 
     @Override
@@ -70,6 +64,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Long> getTelegramIdByLogin(@NonNull String login) {
         return Optional.ofNullable(userRepository.findTelegramIdByLogin(login));
+    }
+
+    @Override
+    public List<Long> getAllTelegramIdByLogin(Set<String> logins) {
+        return userRepository.findAllTelegramIdByLogin(logins);
     }
 
 }
