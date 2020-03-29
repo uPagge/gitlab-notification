@@ -131,6 +131,35 @@ public class Message {
         return message.toString();
     }
 
+    @NonNull
+    public static String goodWeekEnd() {
+        return "Ну вот и все! Веселых выходных " + Smile.MIG + Smile.BR +
+                "До понедельника" + Smile.BUY + Smile.TWO_BR;
+    }
+
+    public static String commentPr(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
+        return Smile.BELL + " *Новый комментарий к ПР*" + Smile.BR +
+                link(namePr, urlPr) +
+                Smile.HR +
+                comment.getAuthor().getName() + ": " + comment.getText().replaceAll("@[\\w]+", "");
+    }
+
+    public static String personalNotify(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
+        return Smile.BELL + " *Новое упоминание* | " + comment.getAuthor().getName() + Smile.BR +
+                link(namePr, urlPr) +
+                Smile.HR +
+                comment.getText().replaceAll("@[\\w]+", "");
+    }
+
+    public static String answerComment(@NonNull String commentMessage, @NonNull List<CommentJson> answerJsons) {
+        final StringBuilder message = new StringBuilder();
+        message.append(Smile.BELL).append("Новые ответы на ваш комментарий").append(Smile.HR)
+                .append(commentMessage, 0, Math.min(commentMessage.length(), 180)).append(Smile.HR);
+        answerJsons.forEach(answerJson -> message.append(answerJson.getAuthor().getName()).append(": ")
+                .append(answerJson.getText(), 0, Math.min(answerJson.getText().length(), 500)).append(Smile.TWO_BR));
+        return message.toString();
+    }
+
     private static String needWorkPr(@NonNull List<PullRequest> pullRequestsNeedWork) {
         final StringBuilder message = new StringBuilder();
         pullRequestsNeedWork.stream()
@@ -155,19 +184,6 @@ public class Message {
     @NonNull
     private static String link(String name, String url) {
         return "[" + name + "](" + url + ")";
-    }
-
-    @NonNull
-    public static String goodWeekEnd() {
-        return "Ну вот и все! Веселых выходных " + Smile.MIG + Smile.BR +
-                "До понедельника" + Smile.BUY + Smile.TWO_BR;
-    }
-
-    public static String personalNotify(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
-        return Smile.BELL + " *Новое упоминание* | " + comment.getAuthor().getName() + Smile.BR +
-                link(namePr, urlPr) +
-                Smile.HR +
-                comment.getText().replaceAll("@[\\w]+", "");
     }
 
 }
