@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 @AllArgsConstructor
@@ -33,8 +34,8 @@ public enum Smile {
     @Getter
     private String value;
 
-    public static Smile statusPr(LocalDate updateDate) {
-        int periodDay = Period.between(updateDate, LocalDate.now()).getDays();
+    public static Smile statusPr(LocalDateTime updateDate) {
+        int periodDay = Period.between(updateDate.toLocalDate(), LocalDate.now()).getDays();
         if (periodDay < 5) {
             return Smile.valueOf("DAY_" + periodDay);
         } else {

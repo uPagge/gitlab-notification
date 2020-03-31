@@ -24,6 +24,7 @@ public class Message {
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
     private static final Integer PR_COUNT = 4;
     private static final String DONATION_LINK = "https://www.tinkoff.ru/sl/1T9s4esiMf";
+    public static final String HELP_LINK = "https://nuzhnapomosh.ru/about/";
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
@@ -122,8 +123,9 @@ public class Message {
         }
         if (dayX()) {
             message.append(Smile.BR).append(Smile.FUN).append(" Кстати, поздравляю, сегодня день З/П").append(Smile.BR)
-                    .append(Smile.DANGEROUS).append("И раз такое дело, то напоминаю, что в виду независящих от разработчика условий, бот работает на платном VDS. Поэтому всячески приветствуются ")
-                    .append(link("донаты на оплату сервера", DONATION_LINK)).append(Smile.BR);
+                    .append(Smile.DANGEROUS).append("Спасибо всем, кто ").append(link("донатил", DONATION_LINK)).append(", мы оплатили хостинг до октября :)")
+                    .append(Smile.BR).append("Теперь стоит ").append(link("помочь", HELP_LINK)).append(" тем, кто действительно в этом нуждается))")
+                    .append(Smile.BR);
         }
         message
                 .append(Smile.BR)

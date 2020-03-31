@@ -1,10 +1,10 @@
 package com.tsc.bitbucketbot.dto.bitbucket;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.tsc.bitbucketbot.utils.LocalDateFromEpochDeserializer;
+import com.tsc.bitbucketbot.utils.LocalDateTimeFromEpochDeserializer;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -19,11 +19,11 @@ public class PullRequestJson {
     private Integer version;
     private PullRequestState state;
 
-    @JsonDeserialize(using = LocalDateFromEpochDeserializer.class)
-    private LocalDate createdDate;
+    @JsonDeserialize(using = LocalDateTimeFromEpochDeserializer.class)
+    private LocalDateTime createdDate;
 
-    @JsonDeserialize(using = LocalDateFromEpochDeserializer.class)
-    private LocalDate updatedDate;
+    @JsonDeserialize(using = LocalDateTimeFromEpochDeserializer.class)
+    private LocalDateTime updatedDate;
 
     private String title;
     private String description;

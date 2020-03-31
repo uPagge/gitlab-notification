@@ -21,7 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -81,9 +81,9 @@ public class PullRequest {
     private PullRequestStatus status;
 
     @Column(name = "create_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @Column(name = "update_date")
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
 
 }

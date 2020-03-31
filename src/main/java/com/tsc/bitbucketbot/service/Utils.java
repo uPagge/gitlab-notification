@@ -42,31 +42,33 @@ public class Utils {
             if (token != null) {
                 urlCon.setRequestProperty("Authorization", "Bearer " + token);
             }
-            BufferedReader in;
-            if (urlCon.getHeaderField("Content-Encoding") != null
-                    && urlCon.getHeaderField("Content-Encoding").equals("gzip")) {
-                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(urlCon.getInputStream())));
-            } else {
-                in = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
+            try (BufferedReader in = (isGzip(urlCon)) ?
+                    new BufferedReader(new InputStreamReader(new GZIPInputStream(urlCon.getInputStream())))
+                    : new BufferedReader(new InputStreamReader(urlCon.getInputStream()));) {
+                String inputLine;
+                sb = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    sb.append(inputLine);
+                }
+            } catch (IOException e) {
+                log.trace(e.getMessage());
             }
-            String inputLine;
-            sb = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                sb.append(inputLine);
+            if (sb != null) {
+                try {
+                    return Optional.of(objectMapper.readValue(sb.toString(), classOfT));
+                } catch (JsonProcessingException e) {
+                    log.error(e.getMessage());
+                }
             }
-            in.close();
         } catch (IOException e) {
-            log.trace(e.getMessage());
-        }
-        if (sb != null) {
-            try {
-                return Optional.of(objectMapper.readValue(sb.toString(), classOfT));
-            } catch (JsonProcessingException e) {
-                log.error(e.getMessage());
-            }
+            log.error(e.getMessage());
         }
         return Optional.empty();
+    }
+
+    private static boolean isGzip(URLConnection urlCon) {
+        return urlCon.getHeaderField("Content-Encoding") != null
+                && urlCon.getHeaderField("Content-Encoding").equals("gzip");
     }
 
 }
