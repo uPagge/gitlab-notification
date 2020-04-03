@@ -50,7 +50,7 @@ public class SchedulerComments {
         long count = 0;
         do {
             int page = 0;
-            Page<PullRequest> pullRequestPage = pullRequestsService.getAll(Pagination.of(page++, COUNT));
+            Page<PullRequest> pullRequestPage = pullRequestsService.getAll(Pagination.of(page, COUNT));
             while (pullRequestPage.hasContent()) {
                 for (PullRequest pullRequest : pullRequestPage.getContent()) {
                     final String commentUrl = getCommentUrl(commentId, pullRequest);
@@ -63,7 +63,7 @@ public class SchedulerComments {
                         break;
                     }
                 }
-                pullRequestPage = pullRequestsService.getAll(Pagination.of(page++, COUNT));
+                pullRequestPage = pullRequestsService.getAll(Pagination.of(++page, COUNT));
             }
             count++;
             commentId += 1;
@@ -98,8 +98,6 @@ public class SchedulerComments {
                     comment.getAnswers().addAll(answerJsons.stream().map(CommentJson::getId).collect(Collectors.toList()));
                     commentService.save(comment);
                 }
-            } else {
-                commentService.delete(comment.getId());
             }
         }
     }
@@ -123,20 +121,7 @@ public class SchedulerComments {
     }
 
     private void notification(@NonNull CommentJson comment, @NonNull PullRequest pullRequest) {
-//        notificationAuthorPr(comment, pullRequest);
         notificationPersonal(comment, pullRequest);
-    }
-
-    private void notificationAuthorPr(@NonNull CommentJson comment, @NonNull PullRequest pullRequest) {
-        final Long authorTelegram = pullRequest.getAuthor().getTelegramId();
-        if (authorTelegram != null) {
-            messageSendService.add(
-                    MessageSend.builder()
-                            .telegramId(authorTelegram)
-                            .message(Message.commentPr(comment, pullRequest.getName(), pullRequest.getUrl()))
-                            .build()
-            );
-        }
     }
 
     private void notificationPersonal(@NonNull CommentJson comment, @NonNull PullRequest pullRequest) {
