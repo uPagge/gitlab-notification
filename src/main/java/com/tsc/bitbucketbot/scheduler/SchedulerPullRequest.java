@@ -8,13 +8,11 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
-import com.tsc.bitbucketbot.dto.bitbucket.PullRequestJson;
 import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.service.MessageSendService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
-import com.tsc.bitbucketbot.service.converter.PullRequestJsonConverter;
 import com.tsc.bitbucketbot.utils.Message;
 import com.tsc.bitbucketbot.utils.Pair;
 import com.tsc.bitbucketbot.utils.Smile;
@@ -35,8 +33,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: Добавить описание класса.
- *
  * @author upagge [30.01.2020]
  */
 @Service
@@ -51,53 +47,60 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkOldPullRequest() {
-        Set<Long> existsId = pullRequestsService.getAllId();
-        Set<Long> openId = checkOpenPullRequest();
-        checkClosePullRequest();
-        existsId.removeAll(openId);
-        if (!existsId.isEmpty()) {
-            pullRequestsService.deleteAll(existsId);
+        final Set<Long> existsId = pullRequestsService.getAllId();
+        final Set<Long> openId = checkOpenPullRequest();
+        final Set<Long> closeId = checkClosePullRequest();
+        final Set<Long> newNotExistsId = existsId.stream()
+                .filter(id -> !openId.contains(id) && !closeId.contains(id))
+                .collect(Collectors.toSet());
+        if (!newNotExistsId.isEmpty()) {
+            updateDeletePr(newNotExistsId);
         }
     }
 
-    private void checkClosePullRequest() {
+    private void updateDeletePr(@NonNull Set<Long> ids) {
+        final Set<PullRequest> deletePr = pullRequestsService.getAllById(ids);
+        deletePr.stream()
+                .filter(pullRequest -> pullRequest.getAuthor().getTelegramId() != null)
+                .forEach(pullRequest -> messageSendService.add(
+                        MessageSend.builder()
+                                .telegramId(pullRequest.getAuthor().getTelegramId())
+                                .message(Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), pullRequest.getStatus(), PullRequestStatus.DELETE))
+                                .build()
+                ));
+        pullRequestsService.updateAll(
+                deletePr.stream()
+                        .peek(pullRequest -> pullRequest.setStatus(PullRequestStatus.DELETE))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private Set<Long> checkClosePullRequest() {
         final List<User> users = userService.getAllRegister();
+        final Set<Long> ids = new HashSet<>();
         for (User user : users) {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson bitbucketSheet = sheetJson.get();
-                final List<PullRequestJson> jsonsPr = bitbucketSheet.getValues().stream()
-                        .filter(
-                                jsonPr -> pullRequestsService.existsByBitbucketIdAndReposId(
-                                        jsonPr.getId(),
-                                        jsonPr.getFromRef().getRepository().getId()
-                                )
-                        )
+                final List<PullRequest> newPrs = bitbucketSheet.getValues().stream()
+                        .map(jsonPr -> conversionService.convert(jsonPr, PullRequest.class))
+                        .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
+                        .filter(pullRequest -> pullRequest.getId() != null)
                         .collect(Collectors.toList());
-                final Set<Long> idPr = jsonsPr.stream()
-                        .map(
-                                jsonPr -> pullRequestsService.getIdByBitbucketIdAndReposId(
-                                        jsonPr.getId(),
-                                        jsonPr.getFromRef().getRepository().getId()
-                                )
-                        )
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toSet());
-                for (PullRequestJson jsonPr : jsonsPr) {
-                    final Optional<User> optUser = userService.getByLogin(jsonPr.getAuthor().getUser().getName());
-                    if (optUser.isPresent()) {
-                        final User author = optUser.get();
-                        final Long telegramId = author.getTelegramId();
-                        if (telegramId != null) {
-                            final PullRequestStatus statusPr = PullRequestJsonConverter.convertPullRequestStatus(jsonPr.getState());
-                            final String message = Message.statusPullRequest(jsonPr.getTitle(), jsonPr.getLinks().getSelf().get(0).getHref(), PullRequestStatus.OPEN, statusPr);
-                            messageSendService.add(MessageSend.builder().telegramId(telegramId).message(message).build());
-                        }
+                for (PullRequest pullRequest : newPrs) {
+                    final User author = pullRequest.getAuthor();
+                    final Long telegramId = author.getTelegramId();
+                    if (telegramId != null) {
+                        final String message = Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), PullRequestStatus.OPEN, pullRequest.getStatus());
+                        messageSendService.add(MessageSend.builder().telegramId(telegramId).message(message).build());
                     }
                 }
 
-                pullRequestsService.deleteAll(idPr);
+                ids.addAll(
+                        pullRequestsService.updateAll(newPrs).stream()
+                                .map(PullRequest::getId)
+                                .collect(Collectors.toSet())
+                );
 
                 if (bitbucketSheet.getNextPageStart() != null) {
                     sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose() + bitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
@@ -106,6 +109,7 @@ public class SchedulerPullRequest {
                 }
             }
         }
+        return ids;
     }
 
     private Set<Long> checkOpenPullRequest() {

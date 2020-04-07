@@ -6,6 +6,7 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -35,5 +36,7 @@ public interface PullRequestsService {
     Set<Long> getAllId();
 
     Page<PullRequest> getAll(@NonNull Pagination pagination);
+
+    List<PullRequest> getAllByAuthor(@NonNull String login, @NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
 
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -72,12 +73,18 @@ public class PullRequestsServiceImpl implements PullRequestsService {
 
     @Override
     public Set<Long> getAllId() {
-        return pullRequestsRepository.getAllIds();
+        return pullRequestsRepository.findAllIds();
     }
 
     @Override
     public Page<PullRequest> getAll(@NonNull Pagination pagination) {
         return pullRequestsRepository.findAll(PageRequest.of(pagination.getPage(), pagination.getSize()));
     }
+
+    @Override
+    public List<PullRequest> getAllByAuthor(@NonNull String login, @NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo) {
+        return pullRequestsRepository.findAllByAuthorAndDateBetween(login, dateFrom, dateTo);
+    }
+
 
 }

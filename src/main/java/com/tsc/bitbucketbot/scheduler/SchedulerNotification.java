@@ -6,6 +6,7 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.service.MessageSendService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
+import com.tsc.bitbucketbot.service.ReportService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.utils.Message;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class SchedulerNotification {
     private final UserService userService;
     private final PullRequestsService pullRequestsService;
     private final MessageSendService messageSendService;
+    private final ReportService reportService;
 
     // Утреннее сообщение
     @Scheduled(cron = "0 15 8 * * MON-FRI")
@@ -41,17 +43,26 @@ public class SchedulerNotification {
         }
     }
 
-    @Scheduled(cron = "0 0 18 * * FRI")
+    //    @Scheduled(cron = "0 0 18 * * FRI")
+//    @Scheduled(fixedRate = 30000)
     public void goodWeekEnd() {
-        List<User> allRegister = userService.getAllRegister();
-        for (User user : allRegister) {
-            messageSendService.add(
-                    MessageSend.builder()
-                            .telegramId(user.getTelegramId())
-                            .message(Message.goodWeekEnd())
-                            .build()
-            );
-        }
+//        List<User> allRegister = userService.getAllRegister();
+//        for (User user : allRegister) {
+//            messageSendService.add(
+//                    MessageSend.builder()
+//                            .telegramId(user.getTelegramId())
+//                            .message(Message.goodWeekEnd())
+//                            .build()
+//            );
+//            reportService.generateReport(user.getLogin());
+//        }
+        final User user = userService.getByLogin("mstruchkov").get();
+        messageSendService.add(
+                MessageSend.builder()
+                        .telegramId(user.getTelegramId())
+                        .message(reportService.generateReport(user.getLogin()))
+                        .build()
+        );
     }
 
 }

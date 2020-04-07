@@ -7,6 +7,6 @@ package com.tsc.bitbucketbot.domain;
  */
 public enum PullRequestStatus {
 
-    OPEN, MERGED, DECLINED
+    OPEN, MERGED, DECLINED, DELETE
 
 }
