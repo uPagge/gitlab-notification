@@ -1,6 +1,5 @@
-package com.tsc.bitbucketbot.dto;
+package com.tsc.bitbucketbot.domain;
 
-import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,9 +1,9 @@
 package com.tsc.bitbucketbot.repository.jpa;
 
+import com.tsc.bitbucketbot.domain.IdAndStatusPr;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
-import com.tsc.bitbucketbot.dto.IdAndStatusPr;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,8 +34,8 @@ public interface PullRequestsRepository extends JpaRepository<PullRequest, Long>
     @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE p.author.login=:author AND r.status=:reviewerStatus")
     List<PullRequest> findAllByAuthorAndReviewerStatus(@Param("author") String author, @Param("reviewerStatus") ReviewerStatus reviewerStatus);
 
-    @Query("SELECT new com.tsc.bitbucketbot.dto.IdAndStatusPr(p.id, p.status) FROM PullRequest p WHERE p.status IN :statuses")
-    Set<IdAndStatusPr> findAllIdByStatusIn(@Param("statuses") Collection<PullRequestStatus> statuses);
+    @Query("SELECT new com.tsc.bitbucketbot.domain.IdAndStatusPr(p.id, p.status) FROM PullRequest p WHERE p.status IN :statuses")
+    Set<IdAndStatusPr> findAllIdByStatusIn(@Param("statuses") Set<PullRequestStatus> statuses);
 
     @Query("SELECT p.id from PullRequest p")
     Set<Long> findAllIds();

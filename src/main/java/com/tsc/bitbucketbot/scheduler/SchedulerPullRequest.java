@@ -1,22 +1,23 @@
 package com.tsc.bitbucketbot.scheduler;
 
 import com.tsc.bitbucketbot.config.BitbucketConfig;
-import com.tsc.bitbucketbot.domain.MessageSend;
+import com.tsc.bitbucketbot.domain.IdAndStatusPr;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
+import com.tsc.bitbucketbot.domain.change.NewPrChange;
+import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
+import com.tsc.bitbucketbot.domain.change.StatusPrChange;
+import com.tsc.bitbucketbot.domain.change.UpdatePrChange;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
-import com.tsc.bitbucketbot.dto.IdAndStatusPr;
 import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
-import com.tsc.bitbucketbot.service.MessageSendService;
+import com.tsc.bitbucketbot.service.ChangeService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
-import com.tsc.bitbucketbot.utils.Message;
 import com.tsc.bitbucketbot.utils.Pair;
-import com.tsc.bitbucketbot.utils.Smile;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.tsc.bitbucketbot.domain.PullRequestStatus.DECLINED;
+import static com.tsc.bitbucketbot.domain.PullRequestStatus.DELETE;
 import static com.tsc.bitbucketbot.domain.PullRequestStatus.MERGED;
 import static com.tsc.bitbucketbot.domain.PullRequestStatus.OPEN;
 
@@ -49,7 +51,7 @@ public class SchedulerPullRequest {
 
     private final PullRequestsService pullRequestsService;
     private final UserService userService;
-    private final MessageSendService messageSendService;
+    private final ChangeService changeService;
     private final ConversionService conversionService;
     private final BitbucketConfig bitbucketConfig;
 
@@ -72,10 +74,13 @@ public class SchedulerPullRequest {
         final Set<PullRequest> deletePr = pullRequestsService.getAllById(ids);
         deletePr.stream()
                 .filter(pullRequest -> pullRequest.getAuthor().getTelegramId() != null)
-                .forEach(pullRequest -> messageSendService.add(
-                        MessageSend.builder()
+                .forEach(pullRequest -> changeService.add(
+                        StatusPrChange.builder()
+                                .name(pullRequest.getName())
+                                .url(pullRequest.getUrl())
+                                .oldStatus(pullRequest.getStatus())
+                                .newStatus(DELETE)
                                 .telegramId(pullRequest.getAuthor().getTelegramId())
-                                .message(Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), pullRequest.getStatus(), PullRequestStatus.DELETE))
                                 .build()
                 ));
         pullRequestsService.updateAll(
@@ -98,12 +103,15 @@ public class SchedulerPullRequest {
                         .filter(pullRequest -> pullRequest.getId() != null)
                         .collect(Collectors.toList());
                 for (PullRequest pullRequest : newPrs) {
-                    final User author = pullRequest.getAuthor();
-                    final Long telegramId = author.getTelegramId();
-                    if (telegramId != null) {
-                        final String message = Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), PullRequestStatus.OPEN, pullRequest.getStatus());
-                        messageSendService.add(MessageSend.builder().telegramId(telegramId).message(message).build());
-                    }
+                    changeService.add(
+                            StatusPrChange.builder()
+                                    .name(pullRequest.getName())
+                                    .url(pullRequest.getUrl())
+                                    .oldStatus(pullRequest.getStatus())
+                                    .newStatus(OPEN)
+                                    .telegramId(pullRequest.getAuthor().getTelegramId())
+                                    .build()
+                    );
                 }
 
                 ids.addAll(
@@ -165,62 +173,37 @@ public class SchedulerPullRequest {
     }
 
     private void processingReviewer(PullRequest pullRequest, PullRequest newPullRequest) {
-        final Set<String> logins = newPullRequest.getReviewers().stream()
-                .map(Reviewer::getUser)
-                .collect(Collectors.toSet());
-        if (!logins.isEmpty()) {
-            Optional<String> optMessage = changeVersionPr(pullRequest, newPullRequest);
-            if (optMessage.isPresent()) {
-                final String message = optMessage.get();
-                userService.getAllTelegramIdByLogin(logins).forEach(
-                        telegramId -> messageSendService.add(
-                                MessageSend.builder()
-                                        .telegramId(telegramId)
-                                        .message(message)
-                                        .build()
-                        )
-                );
-            }
+        if (isUpdatePr(pullRequest, newPullRequest)) {
+            final Set<String> logins = newPullRequest.getReviewers().stream()
+                    .map(Reviewer::getUser)
+                    .collect(Collectors.toSet());
+            final List<Long> telegramIds = userService.getAllTelegramIdByLogin(logins);
+            changeService.add(
+                    UpdatePrChange.builder()
+                            .name(newPullRequest.getName())
+                            .url(newPullRequest.getUrl())
+                            .author(newPullRequest.getAuthor().getLogin())
+                            .telegramId(telegramIds)
+                            .build()
+            );
         }
     }
 
     @NonNull
     private void processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
-        final User author = pullRequest.getAuthor();
-        StringBuilder builderMessage = new StringBuilder();
-        if (author.getTelegramId() != null) {
-            changeStatusPR(pullRequest, newPullRequest).ifPresent(builderMessage::append);
-            changeReviewersPR(pullRequest, newPullRequest).ifPresent(builderMessage::append);
-            final String message = builderMessage.toString();
-            if (!Smile.Constants.EMPTY.equalsIgnoreCase(message)) {
-                messageSendService.add(
-                        MessageSend.builder()
-                                .message(message)
-                                .telegramId(author.getTelegramId())
-                                .build()
-                );
-            }
-        }
+        changeStatusPR(pullRequest, newPullRequest);
+        changeReviewersPR(pullRequest, newPullRequest);
     }
 
     @NonNull
-    private Optional<String> changeVersionPr(PullRequest pullRequest, PullRequest newPullRequest) {
+    private boolean isUpdatePr(PullRequest pullRequest, PullRequest newPullRequest) {
         LocalDateTime oldDate = pullRequest.getUpdateDate();
         LocalDateTime newDate = newPullRequest.getUpdateDate();
-        if (!oldDate.isEqual(newDate)) {
-            return Optional.of(
-                    Message.updatePullRequest(
-                            newPullRequest.getName(),
-                            newPullRequest.getUrl(),
-                            newPullRequest.getAuthor().getLogin()
-                    )
-            );
-        }
-        return Optional.empty();
+        return !oldDate.isEqual(newDate);
     }
 
     @NonNull
-    private Optional<String> changeReviewersPR(PullRequest pullRequest, PullRequest newPullRequest) {
+    private void changeReviewersPR(PullRequest pullRequest, PullRequest newPullRequest) {
         final Map<String, Reviewer> oldReviewers = pullRequest.getReviewers().stream()
                 .collect(Collectors.toMap(Reviewer::getUser, reviewer -> reviewer));
         final Map<String, Reviewer> newReviewers = newPullRequest.getReviewers().stream()
@@ -241,20 +224,35 @@ public class SchedulerPullRequest {
         final Set<String> oldLogins = oldReviewers.keySet();
         oldLogins.removeAll(newReviewers.keySet());
         oldLogins.forEach(login -> reviewerChanges.add(ReviewerChange.ofDeleted(login)));
-        return Message.statusReviewers(pullRequest, reviewerChanges);
+        if (!reviewerChanges.isEmpty()) {
+            changeService.add(
+                    ReviewersPrChange.builder()
+                            .name(pullRequest.getName())
+                            .url(pullRequest.getUrl())
+                            .reviewerChanges(reviewerChanges)
+                            .telegramId(newPullRequest.getAuthor().getTelegramId())
+                            .build()
+            );
+        }
     }
 
 
     @NonNull
-    private Optional<String> changeStatusPR(PullRequest pullRequest, PullRequest newPullRequest) {
+    private void changeStatusPR(PullRequest pullRequest, PullRequest newPullRequest) {
         final PullRequestStatus oldStatus = pullRequest.getStatus();
         final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
-            return Optional.of(Message.statusPullRequest(pullRequest.getName(), pullRequest.getUrl(), oldStatus, newStatus));
+            changeService.add(
+                    StatusPrChange.builder()
+                            .name(newPullRequest.getName())
+                            .url(newPullRequest.getUrl())
+                            .oldStatus(oldStatus)
+                            .newStatus(newStatus)
+                            .telegramId(newPullRequest.getAuthor().getTelegramId())
+                            .build()
+            );
         }
-        return Optional.empty();
     }
-
 
     @Scheduled(fixedRate = 30000)
     public void checkNewPullRequest() {
@@ -283,19 +281,20 @@ public class SchedulerPullRequest {
 
     private void sendNotificationNewPullRequest(@NonNull List<PullRequest> newPullRequests) {
         if (!newPullRequests.isEmpty()) {
-            newPullRequests.forEach(
-                    pullRequest -> pullRequest.getReviewers().stream()
-                            .map(reviewer -> userService.getByLogin(reviewer.getUser()))
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .filter(user -> user.getTelegramId() != null)
-                            .forEach(user -> messageSendService.add(
-                                    MessageSend.builder()
-                                            .telegramId(user.getTelegramId())
-                                            .message(Message.newPullRequest(pullRequest))
-                                            .build()
-                            ))
-            );
+            for (PullRequest newPullRequest : newPullRequests) {
+                final List<Long> reviewerTelegramIds = userService.getAllTelegramIdByLogin(newPullRequest.getReviewers().stream()
+                        .map(Reviewer::getUser)
+                        .collect(Collectors.toSet()));
+                changeService.add(
+                        NewPrChange.builder()
+                                .name(newPullRequest.getName())
+                                .url(newPullRequest.getUrl())
+                                .description(newPullRequest.getDescription())
+                                .author(newPullRequest.getAuthor().getLogin())
+                                .telegramId(reviewerTelegramIds)
+                                .build()
+                );
+            }
         }
     }
 

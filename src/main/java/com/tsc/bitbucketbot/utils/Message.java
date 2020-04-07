@@ -1,6 +1,9 @@
 package com.tsc.bitbucketbot.utils;
 
-import com.tsc.bitbucketbot.domain.PullRequestStatus;
+import com.tsc.bitbucketbot.domain.change.NewPrChange;
+import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
+import com.tsc.bitbucketbot.domain.change.StatusPrChange;
+import com.tsc.bitbucketbot.domain.change.UpdatePrChange;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
 import com.tsc.bitbucketbot.dto.bitbucket.CommentJson;
@@ -9,10 +12,11 @@ import lombok.NonNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.*;
+import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.DELETED;
+import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.NEW;
+import static com.tsc.bitbucketbot.domain.util.ReviewerChange.Type.OLD;
 
 /**
  * Генерирует сообщения для отправки.
@@ -24,36 +28,35 @@ public class Message {
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
     private static final Integer PR_COUNT = 4;
     private static final String DONATION_LINK = "https://www.tinkoff.ru/sl/1T9s4esiMf";
-    public static final String HELP_LINK = "https://nuzhnapomosh.ru/about/";
+    private static final String HELP_LINK = "https://nuzhnapomosh.ru/about/";
 
     private Message() {
         throw new IllegalStateException("Утилитарный класс");
     }
 
     @NonNull
-    public static String newPullRequest(PullRequest pullRequest) {
+    public static String generate(NewPrChange newPrChange) {
         String message = Smile.FUN + " *Новый Pull Request*" + Smile.BR +
-                link(pullRequest.getName(), pullRequest.getUrl()) +
+                link(newPrChange.getName(), newPrChange.getUrl()) +
                 Smile.HR;
-        if (pullRequest.getDescription() != null && !"".equals(pullRequest.getDescription())) {
-            message += pullRequest.getDescription() + Smile.HR;
+        if (newPrChange.getDescription() != null && !"".equals(newPrChange.getDescription())) {
+            message += newPrChange.getDescription() + Smile.HR;
         }
-        message += Smile.AUTHOR + ": " + pullRequest.getAuthor().getLogin() + Smile.TWO_BR;
+        message += Smile.AUTHOR + ": " + newPrChange.getAuthor() + Smile.TWO_BR;
         return message;
     }
 
-    @NonNull
-    public static String statusPullRequest(String name, String url, PullRequestStatus oldStatus, PullRequestStatus newStatus) {
+    public static String generate(@NonNull StatusPrChange change) {
         return Smile.PEN + " *Изменился статус вашего ПР*" + Smile.HR +
-                link(name, url) + Smile.BR +
-                oldStatus.name() + " -> " + newStatus.name() +
+                link(change.getName(), change.getUrl()) + Smile.BR +
+                change.getOldStatus().name() + " -> " + change.getNewStatus().name() +
                 Smile.TWO_BR;
     }
 
     @NonNull
-    public static Optional<String> statusReviewers(PullRequest pullRequest, List<ReviewerChange> reviewerChanges) {
+    public static String generate(@NonNull ReviewersPrChange reviewersChange) {
         StringBuilder stringBuilder = new StringBuilder();
-        final Map<ReviewerChange.Type, List<ReviewerChange>> changes = reviewerChanges.stream()
+        final Map<ReviewerChange.Type, List<ReviewerChange>> changes = reviewersChange.getReviewerChanges().stream()
                 .collect(Collectors.groupingBy(ReviewerChange::getType));
         if (changes.containsKey(OLD)) {
             stringBuilder.append(Smile.BR).append("Изменили свое решение:").append(Smile.BR);
@@ -80,25 +83,18 @@ public class Message {
                                     .map(ReviewerChange::getName).collect(Collectors.joining(","))
                     );
         }
-
         final String createMessage = stringBuilder.toString();
-        if (!Smile.Constants.EMPTY.equalsIgnoreCase(createMessage)) {
-            return Optional.of(
-                    Smile.PEN + " *Изменения ревьюверов вашего ПР*" +
-                            Smile.HR +
-                            link(pullRequest.getName(), pullRequest.getUrl()) + Smile.BR +
-                            createMessage
-            );
-        }
-        return Optional.empty();
+        return Smile.PEN + " *Изменения ревьюверов вашего ПР*" +
+                Smile.HR +
+                link(reviewersChange.getName(), reviewersChange.getUrl()) + Smile.BR +
+                createMessage;
     }
 
-    @NonNull
-    public static String updatePullRequest(String pullRequestName, String prUrl, String author) {
+    public static String generate(@NonNull UpdatePrChange change) {
         return Smile.UPDATE + " *Обновление Pull Request*" + Smile.BR +
-                link(pullRequestName, prUrl) +
+                link(change.getName(), change.getUrl()) +
                 Smile.HR +
-                Smile.AUTHOR + ": " + author +
+                Smile.AUTHOR + ": " + change.getAuthor() +
                 Smile.TWO_BR;
     }
 

@@ -1,10 +1,10 @@
 package com.tsc.bitbucketbot.service;
 
+import com.tsc.bitbucketbot.domain.IdAndStatusPr;
 import com.tsc.bitbucketbot.domain.Pagination;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
-import com.tsc.bitbucketbot.dto.IdAndStatusPr;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
 
@@ -37,7 +37,7 @@ public interface PullRequestsService {
 
     Set<Long> getAllId();
 
-    Set<IdAndStatusPr> getAllId(Collection<PullRequestStatus> statuses);
+    Set<IdAndStatusPr> getAllId(Set<PullRequestStatus> statuses);
 
     Page<PullRequest> getAll(@NonNull Pagination pagination);
 

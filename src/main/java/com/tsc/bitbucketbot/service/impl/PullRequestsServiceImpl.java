@@ -1,10 +1,10 @@
 package com.tsc.bitbucketbot.service.impl;
 
+import com.tsc.bitbucketbot.domain.IdAndStatusPr;
 import com.tsc.bitbucketbot.domain.Pagination;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
-import com.tsc.bitbucketbot.dto.IdAndStatusPr;
 import com.tsc.bitbucketbot.repository.jpa.PullRequestsRepository;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import lombok.NonNull;
@@ -79,7 +79,7 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     }
 
     @Override
-    public Set<IdAndStatusPr> getAllId(Collection<PullRequestStatus> statuses) {
+    public Set<IdAndStatusPr> getAllId(Set<PullRequestStatus> statuses) {
         return pullRequestsRepository.findAllIdByStatusIn(statuses);
     }
 
