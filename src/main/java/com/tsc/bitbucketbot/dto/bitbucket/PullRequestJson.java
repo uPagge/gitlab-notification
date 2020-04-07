@@ -31,5 +31,6 @@ public class PullRequestJson {
     private UserDecisionJson author;
     private List<UserDecisionJson> reviewers;
     private FromRefJson fromRef;
+    private Properties properties;
 
 }

@@ -7,5 +7,6 @@
     <include file="liquibase/change-set/v1.2.0.xml"/>
     <include file="liquibase/change-set/v1.3.0.xml"/>
     <include file="liquibase/change-set/v1.4.0.xml"/>
+    <include file="liquibase/change-set/v2.0.0.xml"/>
 
 </databaseChangeLog>

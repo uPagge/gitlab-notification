@@ -4,6 +4,7 @@ import com.tsc.bitbucketbot.config.BitbucketConfig;
 import com.tsc.bitbucketbot.domain.IdAndStatusPr;
 import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import com.tsc.bitbucketbot.domain.ReviewerStatus;
+import com.tsc.bitbucketbot.domain.change.ConflictPrChange;
 import com.tsc.bitbucketbot.domain.change.NewPrChange;
 import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
 import com.tsc.bitbucketbot.domain.change.StatusPrChange;
@@ -12,6 +13,7 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
+import com.tsc.bitbucketbot.dto.bitbucket.PullRequestJson;
 import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.service.ChangeService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
@@ -56,7 +58,7 @@ public class SchedulerPullRequest {
     private final BitbucketConfig bitbucketConfig;
 
     @Scheduled(fixedRate = 30000)
-    public void checkOldPullRequest() {
+    public void checkPullRequest() {
         final Set<Long> existsId = pullRequestsService.getAllId(STATUSES).stream()
                 .map(IdAndStatusPr::getId)
                 .collect(Collectors.toSet());
@@ -97,28 +99,16 @@ public class SchedulerPullRequest {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson bitbucketSheet = sheetJson.get();
-                final List<PullRequest> newPrs = bitbucketSheet.getValues().stream()
-                        .map(jsonPr -> conversionService.convert(jsonPr, PullRequest.class))
-                        .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
-                        .filter(pullRequest -> pullRequest.getId() != null)
-                        .collect(Collectors.toList());
-                for (PullRequest pullRequest : newPrs) {
-                    changeService.add(
-                            StatusPrChange.builder()
-                                    .name(pullRequest.getName())
-                                    .url(pullRequest.getUrl())
-                                    .oldStatus(pullRequest.getStatus())
-                                    .newStatus(OPEN)
-                                    .telegramId(pullRequest.getAuthor().getTelegramId())
-                                    .build()
+                final Map<Long, PullRequest> existsPr = getExistsPr(bitbucketSheet.getValues());
+                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPr.keySet());
+                if (!existsPr.isEmpty() && !pullRequests.isEmpty()) {
+                    processingUpdateClosePr(existsPr, pullRequests);
+                    ids.addAll(
+                            pullRequestsService.updateAll(existsPr.values()).stream()
+                                    .map(PullRequest::getId)
+                                    .collect(Collectors.toSet())
                     );
                 }
-
-                ids.addAll(
-                        pullRequestsService.updateAll(newPrs).stream()
-                                .map(PullRequest::getId)
-                                .collect(Collectors.toSet())
-                );
 
                 if (bitbucketSheet.getNextPageStart() != null) {
                     sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestClose() + bitbucketSheet.getNextPageStart(), bitbucketConfig.getToken(), PullRequestSheetJson.class);
@@ -137,15 +127,10 @@ public class SchedulerPullRequest {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson jsonSheet = sheetJson.get();
-                final Map<Long, PullRequest> existsPr = jsonSheet.getValues().stream()
-                        .filter(Objects::nonNull)
-                        .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
-                        .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
-                        .filter(pullRequest -> pullRequest.getId() != null)
-                        .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
+                final Map<Long, PullRequest> existsPr = getExistsPr(jsonSheet.getValues());
                 final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPr.keySet());
                 if (!existsPr.isEmpty() && !pullRequests.isEmpty()) {
-                    processingUpdate(existsPr, pullRequests);
+                    processingUpdateOpenPr(existsPr, pullRequests);
                     ids.addAll(
                             pullRequestsService.updateAll(existsPr.values()).stream()
                                     .map(PullRequest::getId)
@@ -163,12 +148,44 @@ public class SchedulerPullRequest {
         return ids;
     }
 
+    private Map<Long, PullRequest> getExistsPr(List<PullRequestJson> pullRequestJsons) {
+        return pullRequestJsons.stream()
+                .filter(Objects::nonNull)
+                .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
+                .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
+                .filter(pullRequest -> pullRequest.getId() != null)
+                .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
+    }
+
     @NonNull
-    private void processingUpdate(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
+    private void processingUpdateOpenPr(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
         for (PullRequest pullRequest : pullRequests) {
             PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
-            processingAuthor(pullRequest, newPullRequest);
+            changeStatusPR(pullRequest, newPullRequest);
+            changeReviewersPR(pullRequest, newPullRequest);
             processingReviewer(pullRequest, newPullRequest);
+            conflictPr(pullRequest, newPullRequest);
+        }
+    }
+
+    @NonNull
+    private void processingUpdateClosePr(Map<Long, PullRequest> newPullRequests, Set<PullRequest> pullRequests) {
+        for (PullRequest pullRequest : pullRequests) {
+            PullRequest newPullRequest = newPullRequests.get(pullRequest.getId());
+            changeStatusPR(pullRequest, newPullRequest);
+        }
+    }
+
+    @NonNull
+    private void conflictPr(PullRequest pullRequest, PullRequest newPullRequest) {
+        if (newPullRequest.isConflict() && !pullRequest.isConflict()) {
+            changeService.add(
+                    ConflictPrChange.builder()
+                            .name(pullRequest.getName())
+                            .url(pullRequest.getUrl())
+                            .telegramId(pullRequest.getAuthor().getTelegramId())
+                            .build()
+            );
         }
     }
 
@@ -187,12 +204,6 @@ public class SchedulerPullRequest {
                             .build()
             );
         }
-    }
-
-    @NonNull
-    private void processingAuthor(PullRequest pullRequest, PullRequest newPullRequest) {
-        changeStatusPR(pullRequest, newPullRequest);
-        changeReviewersPR(pullRequest, newPullRequest);
     }
 
     @NonNull

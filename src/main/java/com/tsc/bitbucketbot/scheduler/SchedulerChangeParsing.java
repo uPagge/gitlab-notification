@@ -1,6 +1,7 @@
 package com.tsc.bitbucketbot.scheduler;
 
 import com.tsc.bitbucketbot.domain.change.Change;
+import com.tsc.bitbucketbot.domain.change.ConflictPrChange;
 import com.tsc.bitbucketbot.domain.change.NewPrChange;
 import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
 import com.tsc.bitbucketbot.domain.change.StatusPrChange;
@@ -58,6 +59,9 @@ public class SchedulerChangeParsing {
                 break;
             case UPDATE_PR:
                 message = Message.generate(((UpdatePrChange) change));
+                break;
+            case CONFLICT_PR:
+                message = Message.generate(((ConflictPrChange) change));
                 break;
             default:
                 throw new NotFoundException("Нет обработчика для типа " + change.getType().name());

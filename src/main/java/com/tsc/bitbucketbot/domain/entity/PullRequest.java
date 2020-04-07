@@ -86,4 +86,7 @@ public class PullRequest {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    @Column(name = "conflict")
+    private boolean conflict;
+
 }

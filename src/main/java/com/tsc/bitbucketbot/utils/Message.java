@@ -1,5 +1,6 @@
 package com.tsc.bitbucketbot.utils;
 
+import com.tsc.bitbucketbot.domain.change.ConflictPrChange;
 import com.tsc.bitbucketbot.domain.change.NewPrChange;
 import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
 import com.tsc.bitbucketbot.domain.change.StatusPrChange;
@@ -96,6 +97,11 @@ public class Message {
                 Smile.HR +
                 Smile.AUTHOR + ": " + change.getAuthor() +
                 Smile.TWO_BR;
+    }
+
+    public static String generate(@NonNull ConflictPrChange change) {
+        return Smile.DANGEROUS + "*Внимание конфлик в ПР*" + Smile.HR +
+                link(change.getName(), change.getUrl()) + Smile.TWO_BR;
     }
 
     @NonNull

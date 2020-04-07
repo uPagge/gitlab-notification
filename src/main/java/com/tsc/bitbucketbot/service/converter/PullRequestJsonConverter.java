@@ -5,6 +5,8 @@ import com.tsc.bitbucketbot.domain.ReviewerStatus;
 import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
+import com.tsc.bitbucketbot.dto.bitbucket.Outcome;
+import com.tsc.bitbucketbot.dto.bitbucket.Properties;
 import com.tsc.bitbucketbot.dto.bitbucket.PullRequestJson;
 import com.tsc.bitbucketbot.dto.bitbucket.PullRequestState;
 import com.tsc.bitbucketbot.dto.bitbucket.UserDecisionJson;
@@ -32,6 +34,7 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .version(json.getVersion())
                 .createDate(json.getCreatedDate())
                 .updateDate(json.getUpdatedDate())
+                .conflict(convertConflict(json.getProperties()))
                 .description(convertDescription(json.getDescription()))
                 .repositoryId(json.getFromRef().getRepository().getId())
                 .author(this.convertUser(json.getAuthor().getUser()))
@@ -42,6 +45,13 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .repositorySlug(json.getFromRef().getRepository().getSlug())
                 .reviewers(convertReviewers(json.getReviewers()))
                 .build();
+    }
+
+    private boolean convertConflict(Properties properties) {
+        return properties != null
+                && properties.getMergeResult() != null
+                && properties.getMergeResult().getOutcome() != null
+                && Outcome.CONFLICTED.equals(properties.getMergeResult().getOutcome());
     }
 
     private String convertDescription(String description) {

@@ -1,0 +1,18 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add-column-pr-conflict" author="upagge">
+        <addColumn tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="conflict" type="boolean"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="default-pr-conflict" author="upagge">
+        <update tableName="pull_request" schemaName="public" catalogName="pg_catalog">
+            <column name="conflict" value="false" type="boolean"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
