@@ -1,5 +1,7 @@
 package com.tsc.bitbucketbot.utils;
 
+import com.tsc.bitbucketbot.domain.change.AnswerCommentChange;
+import com.tsc.bitbucketbot.domain.change.CommentChange;
 import com.tsc.bitbucketbot.domain.change.ConflictPrChange;
 import com.tsc.bitbucketbot.domain.change.NewPrChange;
 import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
@@ -148,19 +150,19 @@ public class Message {
                 comment.getAuthor().getName() + ": " + comment.getText().replaceAll("@[\\w]+", "");
     }
 
-    public static String personalNotify(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
-        return Smile.BELL + " *Новое упоминание* | " + comment.getAuthor().getName() + Smile.BR +
-                link(namePr, urlPr) +
+    public static String generate(@NonNull CommentChange commentChange) {
+        return Smile.BELL + " *Новое упоминание* | " + commentChange.getAuthorName() + Smile.BR +
+                link(commentChange.getName(), commentChange.getUrl()) +
                 Smile.HR +
-                comment.getText().replaceAll("@[\\w]+", "");
+                commentChange.getMessage().replaceAll("@[\\w]+", "");
     }
 
-    public static String answerComment(@NonNull String commentMessage, @NonNull List<CommentJson> answerJsons) {
+    public static String generate(@NonNull AnswerCommentChange answerCommentChange) {
         final StringBuilder message = new StringBuilder();
-        message.append(Smile.BELL).append("Новые ответы на ваш комментарий").append(Smile.HR)
-                .append(commentMessage, 0, Math.min(commentMessage.length(), 180)).append(Smile.HR);
-        answerJsons.forEach(answerJson -> message.append(answerJson.getAuthor().getName()).append(": ")
-                .append(answerJson.getText(), 0, Math.min(answerJson.getText().length(), 500)).append(Smile.TWO_BR));
+        message.append(Smile.BELL).append("Новые ответы на ваш комментарий").append(" | ").append(link("ПР", answerCommentChange.getUrl())).append(Smile.HR)
+                .append(answerCommentChange.getYouMessage(), 0, Math.min(answerCommentChange.getYouMessage().length(), 180)).append(Smile.HR);
+        answerCommentChange.getAnswers().forEach(answer -> message.append(answer.getAuthorName()).append(": ")
+                .append(answer.getMessage(), 0, Math.min(answer.getMessage().length(), 500)).append(Smile.TWO_BR));
         return message.toString();
     }
 

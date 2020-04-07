@@ -43,26 +43,18 @@ public class SchedulerNotification {
         }
     }
 
-    //    @Scheduled(cron = "0 0 18 * * FRI")
-//    @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 0 18 * * FRI")
     public void goodWeekEnd() {
-//        List<User> allRegister = userService.getAllRegister();
-//        for (User user : allRegister) {
-//            messageSendService.add(
-//                    MessageSend.builder()
-//                            .telegramId(user.getTelegramId())
-//                            .message(Message.goodWeekEnd())
-//                            .build()
-//            );
-//            reportService.generateReport(user.getLogin());
-//        }
-        final User user = userService.getByLogin("mstruchkov").get();
-        messageSendService.add(
-                MessageSend.builder()
-                        .telegramId(user.getTelegramId())
-                        .message(reportService.generateReport(user.getLogin()))
-                        .build()
-        );
+        List<User> allRegister = userService.getAllRegister();
+        for (User user : allRegister) {
+            messageSendService.add(
+                    MessageSend.builder()
+                            .telegramId(user.getTelegramId())
+                            .message(Message.goodWeekEnd())
+                            .build()
+            );
+            reportService.generateReport(user.getLogin());
+        }
     }
 
 }

@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -30,17 +30,19 @@ public class Comment {
 
     @Id
     @Column(name = "id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "url")
     private String url;
 
+    @Column(name = "pr_url")
+    private String prUrl;
+
     @Column(name = "telegram")
     private Long telegram;
 
     @Column(name = "date")
-    private LocalDate date;
+    private LocalDateTime date;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "comment_tree", joinColumns = @JoinColumn(name = "parent_id"))

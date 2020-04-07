@@ -1,6 +1,9 @@
 package com.tsc.bitbucketbot.scheduler;
 
+import com.tsc.bitbucketbot.domain.MessageSend;
+import com.tsc.bitbucketbot.domain.change.AnswerCommentChange;
 import com.tsc.bitbucketbot.domain.change.Change;
+import com.tsc.bitbucketbot.domain.change.CommentChange;
 import com.tsc.bitbucketbot.domain.change.ConflictPrChange;
 import com.tsc.bitbucketbot.domain.change.NewPrChange;
 import com.tsc.bitbucketbot.domain.change.ReviewersPrChange;
@@ -25,23 +28,21 @@ public class SchedulerChangeParsing {
     private final MessageSendService messageSendService;
     private final ChangeService changeService;
 
-    //    @Scheduled(cron = "0 * * * * *")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "30 */1 * * * MON-FRI")
     public void parsing() {
         final List<Change> newChange = changeService.getNew().stream()
                 .filter(change -> change.getTelegramId() != null && !change.getTelegramId().isEmpty())
                 .collect(Collectors.toList());
         for (Change change : newChange) {
             final String message = generateMessage(change);
-            System.out.println(message);
-//            change.getTelegramId().forEach(
-//                    telegramId -> messageSendService.add(
-//                            MessageSend.builder()
-//                                    .telegramId(telegramId)
-//                                    .message(message)
-//                                    .build()
-//                    )
-//            );
+            change.getTelegramId().forEach(
+                    telegramId -> messageSendService.add(
+                            MessageSend.builder()
+                                    .telegramId(telegramId)
+                                    .message(message)
+                                    .build()
+                    )
+            );
         }
     }
 
@@ -62,6 +63,12 @@ public class SchedulerChangeParsing {
                 break;
             case CONFLICT_PR:
                 message = Message.generate(((ConflictPrChange) change));
+                break;
+            case NEW_COMMENT:
+                message = Message.generate(((CommentChange) change));
+                break;
+            case NEW_ANSWERS_COMMENT:
+                message = Message.generate(((AnswerCommentChange) change));
                 break;
             default:
                 throw new NotFoundException("Нет обработчика для типа " + change.getType().name());

@@ -15,4 +15,10 @@
         </update>
     </changeSet>
 
+    <changeSet id="add-column-comment-pr_url" author="upagge">
+        <addColumn tableName="comment" schemaName="public" catalogName="pg_catalog">
+            <column name="pr_url" type="varchar(300)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

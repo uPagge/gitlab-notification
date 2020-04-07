@@ -17,6 +17,8 @@ spring:
           lob:
             non_contextual_creation: true
 bitbucketbot:
+  init:
+    start-comment-id:
   server-send:
     url: http://188.225.35.149:8080/api/send
   bitbucket:

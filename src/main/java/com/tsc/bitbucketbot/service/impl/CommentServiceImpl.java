@@ -1,5 +1,6 @@
 package com.tsc.bitbucketbot.service.impl;
 
+import com.tsc.bitbucketbot.config.InitConfig;
 import com.tsc.bitbucketbot.domain.Pagination;
 import com.tsc.bitbucketbot.domain.entity.Comment;
 import com.tsc.bitbucketbot.repository.jpa.CommentRepository;
@@ -10,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,10 +19,15 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final InitConfig initConfig;
 
     @Override
     public Long getLastCommentId() {
-        return commentRepository.findFirstByOrderByIdDesc().map(Comment::getId).orElse(0L);
+        return commentRepository.findFirstByOrderByIdDesc().map(Comment::getId).orElse(getInitCommentId());
+    }
+
+    private Long getInitCommentId() {
+        return initConfig.getStartCommentId() != null ? initConfig.getStartCommentId() : 0L;
     }
 
     @Override
@@ -30,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public @NonNull List<Comment> getAllBetweenDate(LocalDate dateFrom, LocalDate dateTo) {
+    public @NonNull List<Comment> getAllBetweenDate(LocalDateTime dateFrom, LocalDateTime dateTo) {
         return commentRepository.findByDateBetween(dateFrom, dateTo);
     }
 
