@@ -8,6 +8,7 @@ import com.tsc.bitbucketbot.domain.entity.PullRequest;
 import com.tsc.bitbucketbot.domain.entity.Reviewer;
 import com.tsc.bitbucketbot.domain.entity.User;
 import com.tsc.bitbucketbot.domain.util.ReviewerChange;
+import com.tsc.bitbucketbot.dto.IdAndStatusPr;
 import com.tsc.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
 import com.tsc.bitbucketbot.service.MessageSendService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
@@ -31,6 +32,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.tsc.bitbucketbot.domain.PullRequestStatus.DECLINED;
+import static com.tsc.bitbucketbot.domain.PullRequestStatus.MERGED;
+import static com.tsc.bitbucketbot.domain.PullRequestStatus.OPEN;
 
 /**
  * @author upagge [30.01.2020]
@@ -38,6 +44,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SchedulerPullRequest {
+
+    private static final Set<PullRequestStatus> STATUSES = Stream.of(MERGED, OPEN, DECLINED).collect(Collectors.toSet());
 
     private final PullRequestsService pullRequestsService;
     private final UserService userService;
@@ -47,7 +55,9 @@ public class SchedulerPullRequest {
 
     @Scheduled(fixedRate = 30000)
     public void checkOldPullRequest() {
-        final Set<Long> existsId = pullRequestsService.getAllId();
+        final Set<Long> existsId = pullRequestsService.getAllId(STATUSES).stream()
+                .map(IdAndStatusPr::getId)
+                .collect(Collectors.toSet());
         final Set<Long> openId = checkOpenPullRequest();
         final Set<Long> closeId = checkClosePullRequest();
         final Set<Long> newNotExistsId = existsId.stream()
@@ -119,17 +129,17 @@ public class SchedulerPullRequest {
             Optional<PullRequestSheetJson> sheetJson = Utils.urlToJson(bitbucketConfig.getUrlPullRequestOpen(), user.getToken(), PullRequestSheetJson.class);
             while (sheetJson.isPresent() && sheetJson.get().getValues() != null && !sheetJson.get().getValues().isEmpty()) {
                 final PullRequestSheetJson jsonSheet = sheetJson.get();
-                final Map<Long, PullRequest> existsJsonPr = jsonSheet.getValues().stream()
+                final Map<Long, PullRequest> existsPr = jsonSheet.getValues().stream()
                         .filter(Objects::nonNull)
                         .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
                         .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
                         .filter(pullRequest -> pullRequest.getId() != null)
                         .collect(Collectors.toMap(PullRequest::getId, pullRequest -> pullRequest));
-                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsJsonPr.keySet());
-                if (!existsJsonPr.isEmpty() && !pullRequests.isEmpty()) {
-                    processingUpdate(existsJsonPr, pullRequests);
+                final Set<PullRequest> pullRequests = pullRequestsService.getAllById(existsPr.keySet());
+                if (!existsPr.isEmpty() && !pullRequests.isEmpty()) {
+                    processingUpdate(existsPr, pullRequests);
                     ids.addAll(
-                            pullRequestsService.updateAll(existsJsonPr.values()).stream()
+                            pullRequestsService.updateAll(existsPr.values()).stream()
                                     .map(PullRequest::getId)
                                     .collect(Collectors.toSet())
                     );
