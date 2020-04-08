@@ -102,7 +102,7 @@ public class Message {
     }
 
     public static String generate(@NonNull ConflictPrChange change) {
-        return Smile.DANGEROUS + "*Внимание конфлик в ПР*" + Smile.HR +
+        return Smile.DANGEROUS + "*Внимание конфликт в ПР*" + Smile.HR +
                 link(change.getName(), change.getUrl()) + Smile.TWO_BR;
     }
 

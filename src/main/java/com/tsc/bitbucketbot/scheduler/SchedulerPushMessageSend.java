@@ -13,6 +13,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -77,8 +78,10 @@ public class SchedulerPushMessageSend {
                 .post(body)
                 .build();
 
-        try {
-            client.newCall(request).execute();
+        try (final Response response = client.newCall(request).execute()) {
+            if (response.code() != 200) {
+                log.error("Ошибка отправки сообщения: " + response);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
         }
