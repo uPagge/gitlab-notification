@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Long> getAllTelegramIdByLogin(Set<String> logins) {
+    public Set<Long> getAllTelegramIdByLogin(Set<String> logins) {
         return userRepository.findAllTelegramIdByLogin(logins);
     }
 

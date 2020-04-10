@@ -13,13 +13,13 @@ public abstract class Change {
 
     protected final ChangeType type;
     protected final LocalDateTime localDateTime = LocalDateTime.now();
-    protected final Set<Long> telegramId;
+    protected final Set<Long> telegramIds;
     @Setter
     protected Long id;
 
-    protected Change(ChangeType type, Set<Long> telegramId) {
+    protected Change(ChangeType type, Set<Long> telegramIds) {
         this.type = type;
-        this.telegramId = telegramId;
+        this.telegramIds = telegramIds;
     }
 
 }

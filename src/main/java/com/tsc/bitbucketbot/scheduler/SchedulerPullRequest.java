@@ -19,6 +19,7 @@ import com.tsc.bitbucketbot.service.ChangeService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
+import com.tsc.bitbucketbot.utils.NonNullUtils;
 import com.tsc.bitbucketbot.utils.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class SchedulerPullRequest {
                                 .url(pullRequest.getUrl())
                                 .oldStatus(pullRequest.getStatus())
                                 .newStatus(DELETE)
-                                .telegramId(pullRequest.getAuthor().getTelegramId())
+                                .telegramIds(Collections.singleton(pullRequest.getAuthor().getTelegramId()))
                                 .build()
                 ));
         pullRequestsService.updateAll(
@@ -183,7 +185,7 @@ public class SchedulerPullRequest {
                     ConflictPrChange.builder()
                             .name(pullRequest.getName())
                             .url(pullRequest.getUrl())
-                            .telegramId(pullRequest.getAuthor().getTelegramId())
+                            .telegramIds(NonNullUtils.telegramIdByUser(pullRequest.getAuthor()))
                             .build()
             );
         }
@@ -194,13 +196,13 @@ public class SchedulerPullRequest {
             final Set<String> logins = newPullRequest.getReviewers().stream()
                     .map(Reviewer::getUser)
                     .collect(Collectors.toSet());
-            final List<Long> telegramIds = userService.getAllTelegramIdByLogin(logins);
+            final Set<Long> telegramIds = userService.getAllTelegramIdByLogin(logins);
             changeService.add(
                     UpdatePrChange.builder()
                             .name(newPullRequest.getName())
                             .url(newPullRequest.getUrl())
                             .author(newPullRequest.getAuthor().getLogin())
-                            .telegramId(telegramIds)
+                            .telegramIds(telegramIds)
                             .build()
             );
         }
@@ -241,7 +243,7 @@ public class SchedulerPullRequest {
                             .name(pullRequest.getName())
                             .url(pullRequest.getUrl())
                             .reviewerChanges(reviewerChanges)
-                            .telegramId(newPullRequest.getAuthor().getTelegramId())
+                            .telegramIds(NonNullUtils.telegramIdByUser(pullRequest.getAuthor()))
                             .build()
             );
         }
@@ -259,7 +261,7 @@ public class SchedulerPullRequest {
                             .url(newPullRequest.getUrl())
                             .oldStatus(oldStatus)
                             .newStatus(newStatus)
-                            .telegramId(newPullRequest.getAuthor().getTelegramId())
+                            .telegramIds(NonNullUtils.telegramIdByUser(newPullRequest.getAuthor()))
                             .build()
             );
         }
@@ -293,7 +295,7 @@ public class SchedulerPullRequest {
     private void sendNotificationNewPullRequest(@NonNull List<PullRequest> newPullRequests) {
         if (!newPullRequests.isEmpty()) {
             for (PullRequest newPullRequest : newPullRequests) {
-                final List<Long> reviewerTelegramIds = userService.getAllTelegramIdByLogin(newPullRequest.getReviewers().stream()
+                final Set<Long> reviewerTelegramIds = userService.getAllTelegramIdByLogin(newPullRequest.getReviewers().stream()
                         .map(Reviewer::getUser)
                         .collect(Collectors.toSet()));
                 changeService.add(
@@ -302,7 +304,7 @@ public class SchedulerPullRequest {
                                 .url(newPullRequest.getUrl())
                                 .description(newPullRequest.getDescription())
                                 .author(newPullRequest.getAuthor().getLogin())
-                                .telegramId(reviewerTelegramIds)
+                                .telegramIds(reviewerTelegramIds)
                                 .build()
                 );
             }

@@ -13,6 +13,9 @@ import com.tsc.bitbucketbot.service.CommentService;
 import com.tsc.bitbucketbot.service.PullRequestsService;
 import com.tsc.bitbucketbot.service.UserService;
 import com.tsc.bitbucketbot.service.Utils;
+import com.tsc.bitbucketbot.service.executor.DataScan;
+import com.tsc.bitbucketbot.service.executor.ResultScan;
+import com.tsc.bitbucketbot.service.impl.ExecutorScanner;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -35,45 +40,48 @@ import java.util.stream.Collectors;
 public class SchedulerComments {
 
     private static final Integer COUNT = 100;
-    private static final Integer NO_COMMENT = 30;
+    private static final Integer NO_COMMENT = 6;
     private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
     private final CommentService commentService;
     private final PullRequestsService pullRequestsService;
     private final UserService userService;
     private final ChangeService changeService;
+    private final ExecutorScanner executorScanner;
 
     private final BitbucketConfig bitbucketConfig;
 
-    @Scheduled(cron = "0 */4 8-18 * * MON-FRI")
+    @Scheduled(cron = "0 */1 * * * MON-FRI")
     public void newComments() {
-        log.info("Начало сканирования комментариев");
         long commentId = commentService.getLastCommentId() + 1;
-        long count = 0;
+        int count = 0;
         do {
-            int page = 0;
-            Page<PullRequest> pullRequestPage = pullRequestsService.getAll(Pagination.of(page, COUNT));
-            while (pullRequestPage.hasContent()) {
-                for (PullRequest pullRequest : pullRequestPage.getContent()) {
-                    final String commentUrl = getCommentUrl(commentId, pullRequest);
-                    final Optional<CommentJson> optCommentJson = Utils.urlToJson(commentUrl, bitbucketConfig.getToken(), CommentJson.class);
-                    if (optCommentJson.isPresent()) {
-                        final CommentJson commentJson = optCommentJson.get();
-                        notification(commentJson, pullRequest);
-                        saveComments(commentJson, commentUrl, pullRequest.getUrl());
-                        count = 0;
-                        break;
-                    }
+            List<DataScan> commentUrls = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                int page = 0;
+                Page<PullRequest> pullRequestPage = pullRequestsService.getAll(Pagination.of(page, COUNT));
+                while (pullRequestPage.hasContent()) {
+                    long finalCommentId = commentId;
+                    commentUrls.addAll(pullRequestPage.getContent().stream()
+                            .map(pullRequest -> new DataScan(getCommentUrl(finalCommentId, pullRequest), pullRequest.getUrl()))
+                            .collect(Collectors.toList()));
+                    pullRequestPage = pullRequestsService.getAll(Pagination.of(++page, COUNT));
                 }
-                pullRequestPage = pullRequestsService.getAll(Pagination.of(++page, COUNT));
+                commentId++;
             }
-            count++;
-            commentId += 1;
-        } while (count < NO_COMMENT);
-        log.info("Конец сканирования комментариев");
+            executorScanner.registration(commentUrls);
+            final List<ResultScan> result = executorScanner.getResult();
+            if (!result.isEmpty()) {
+                result.forEach(resultScan -> {
+                    notificationPersonal(resultScan.getCommentJson(), resultScan.getUrlPr());
+                    saveComments(resultScan.getCommentJson(), resultScan.getUrlComment(), resultScan.getUrlPr());
+                });
+                count = 0;
+            }
+        } while (count++ < NO_COMMENT);
     }
 
-    @Scheduled(cron = "0 */1 8-18 * * MON-FRI")
+    @Scheduled(cron = "0 */1 * * * MON-FRI")
     public void oldComments() {
         @NonNull final List<Comment> comments = commentService.getAllBetweenDate(LocalDateTime.now().minusDays(10), LocalDateTime.now());
         for (Comment comment : comments) {
@@ -91,7 +99,11 @@ public class SchedulerComments {
                 if (!newAnswers.isEmpty()) {
                     changeService.add(
                             AnswerCommentChange.builder()
-                                    .telegramId(userService.getTelegramIdByLogin(commentJson.getAuthor().getName()).orElse(null))
+                                    .telegramIds(
+                                            userService.getTelegramIdByLogin(commentJson.getAuthor().getName())
+                                                    .map(Collections::singleton)
+                                                    .orElse(Collections.emptySet())
+                                    )
                                     .url(comment.getPrUrl())
                                     .youMessage(commentJson.getText())
                                     .answers(
@@ -127,24 +139,19 @@ public class SchedulerComments {
                 .replace("{commentId}", String.valueOf(commentId));
     }
 
-    private void notification(@NonNull CommentJson comment, @NonNull PullRequest pullRequest) {
-        notificationPersonal(comment, pullRequest);
-    }
-
-    private void notificationPersonal(@NonNull CommentJson comment, @NonNull PullRequest pullRequest) {
+    private void notificationPersonal(@NonNull CommentJson comment, @NonNull String urlPr) {
         Matcher matcher = PATTERN.matcher(comment.getText());
         Set<String> recipientsLogins = new HashSet<>();
         while (matcher.find()) {
             final String login = matcher.group(0).replace("@", "");
             recipientsLogins.add(login);
         }
-        final List<Long> recipientsIds = userService.getAllTelegramIdByLogin(recipientsLogins);
+        final Set<Long> recipientsIds = userService.getAllTelegramIdByLogin(recipientsLogins);
         changeService.add(
                 CommentChange.builder()
                         .authorName(comment.getAuthor().getName())
-                        .name(pullRequest.getName())
-                        .url(pullRequest.getUrl())
-                        .telegramId(recipientsIds)
+                        .url(urlPr)
+                        .telegramIds(recipientsIds)
                         .message(comment.getText())
                         .build()
         );

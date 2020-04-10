@@ -4,7 +4,6 @@ import com.tsc.bitbucketbot.domain.util.ReviewerChange;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Singular;
 
 import java.util.List;
 import java.util.Set;
@@ -17,11 +16,11 @@ public class ReviewersPrChange extends PrChange {
 
     @Builder
     private ReviewersPrChange(
-            @Singular("telegramId") Set<Long> telegramId,
+            Set<Long> telegramIds,
             String name,
             String url,
             List<ReviewerChange> reviewerChanges) {
-        super(ChangeType.REVIEWERS, telegramId, name, url);
+        super(ChangeType.REVIEWERS, telegramIds, name, url);
         this.reviewerChanges = reviewerChanges;
     }
 

@@ -151,10 +151,8 @@ public class Message {
     }
 
     public static String generate(@NonNull CommentChange commentChange) {
-        return Smile.BELL + " *Новое упоминание* | " + commentChange.getAuthorName() + Smile.BR +
-                link(commentChange.getName(), commentChange.getUrl()) +
-                Smile.HR +
-                commentChange.getMessage().replaceAll("@[\\w]+", "");
+        return Smile.BELL + " *Новое упоминание* | " + link("ПР", commentChange.getUrl()) + Smile.HR +
+                commentChange.getAuthorName() + ": " + commentChange.getMessage().replaceAll("@[\\w]+", "");
     }
 
     public static String generate(@NonNull AnswerCommentChange answerCommentChange) {

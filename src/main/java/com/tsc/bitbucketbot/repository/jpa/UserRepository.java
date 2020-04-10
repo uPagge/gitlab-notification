@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Long findTelegramIdByLogin(String login);
 
     @Query("SELECT u.telegramId FROM User u WHERE u.login IN :logins AND u.telegramId IS NOT NULL")
-    List<Long> findAllTelegramIdByLogin(Set<String> logins);
+    Set<Long> findAllTelegramIdByLogin(Set<String> logins);
 
     Optional<User> findByLogin(String login);
 

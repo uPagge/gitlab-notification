@@ -38,8 +38,8 @@ public class SchedulerPushMessageSend {
 
     @PostConstruct
     public void init() {
-        int proxyPort = 8080;
-        String proxyHost = "proxy.tsc.ts";
+        final int proxyPort = 8080;
+        final String proxyHost = "proxy.tsc.ts";
         final String username = "internet";
         final String password = "123454321";
 
@@ -72,12 +72,12 @@ public class SchedulerPushMessageSend {
     }
 
     private void sendMessage(String json) {
+        System.out.println(json);
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(pushMessageConfig.getUrl())
                 .post(body)
                 .build();
-
         try (final Response response = client.newCall(request).execute()) {
             if (response.code() != 200) {
                 log.error("Ошибка отправки сообщения: " + response);

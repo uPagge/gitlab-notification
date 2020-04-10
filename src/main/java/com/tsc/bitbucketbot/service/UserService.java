@@ -21,6 +21,6 @@ public interface UserService {
 
     Optional<Long> getTelegramIdByLogin(@NonNull String login);
 
-    List<Long> getAllTelegramIdByLogin(Set<String> logins);
+    Set<Long> getAllTelegramIdByLogin(Set<String> logins);
 
 }

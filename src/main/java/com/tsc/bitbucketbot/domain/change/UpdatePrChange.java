@@ -3,7 +3,6 @@ package com.tsc.bitbucketbot.domain.change;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Singular;
 
 import java.util.Set;
 
@@ -15,10 +14,10 @@ public class UpdatePrChange extends PrChange {
 
     @Builder
     private UpdatePrChange(
-            @Singular("telegramId") Set<Long> telegramId,
+            Set<Long> telegramIds,
             String name,
             String url, String author) {
-        super(ChangeType.UPDATE_PR, telegramId, name, url);
+        super(ChangeType.UPDATE_PR, telegramIds, name, url);
         this.author = author;
     }
 

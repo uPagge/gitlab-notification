@@ -28,14 +28,14 @@ public class SchedulerChangeParsing {
     private final MessageSendService messageSendService;
     private final ChangeService changeService;
 
-    @Scheduled(cron = "30 */1 * * * MON-FRI")
+    @Scheduled(cron = "*/15 * * * * *")
     public void parsing() {
         final List<Change> newChange = changeService.getNew().stream()
-                .filter(change -> change.getTelegramId() != null && !change.getTelegramId().isEmpty())
+                .filter(change -> change.getTelegramIds() != null && !change.getTelegramIds().isEmpty())
                 .collect(Collectors.toList());
         for (Change change : newChange) {
             final String message = generateMessage(change);
-            change.getTelegramId().forEach(
+            change.getTelegramIds().forEach(
                     telegramId -> messageSendService.add(
                             MessageSend.builder()
                                     .telegramId(telegramId)

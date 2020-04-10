@@ -4,7 +4,6 @@ import com.tsc.bitbucketbot.domain.Answer;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Singular;
 
 import java.util.List;
 import java.util.Set;
@@ -19,12 +18,12 @@ public class AnswerCommentChange extends Change {
 
     @Builder
     protected AnswerCommentChange(
-            @Singular("telegramId") Set<Long> telegramId,
+            Set<Long> telegramIds,
             String youMessage,
             String url,
             List<Answer> answers
     ) {
-        super(ChangeType.NEW_ANSWERS_COMMENT, telegramId);
+        super(ChangeType.NEW_ANSWERS_COMMENT, telegramIds);
         this.youMessage = youMessage;
         this.url = url;
         this.answers = answers;

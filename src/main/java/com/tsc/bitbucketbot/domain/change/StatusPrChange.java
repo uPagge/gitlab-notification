@@ -4,7 +4,6 @@ import com.tsc.bitbucketbot.domain.PullRequestStatus;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Singular;
 
 import java.util.Set;
 
@@ -17,12 +16,12 @@ public class StatusPrChange extends PrChange {
 
     @Builder
     private StatusPrChange(
-            @Singular("telegramId") Set<Long> telegramId,
+            Set<Long> telegramIds,
             String name,
             String url,
             PullRequestStatus oldStatus,
             PullRequestStatus newStatus) {
-        super(ChangeType.STATUS_PR, telegramId, name, url);
+        super(ChangeType.STATUS_PR, telegramIds, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }

@@ -12,8 +12,8 @@ public abstract class PrChange extends Change {
     private final String name;
     private final String url;
 
-    protected PrChange(ChangeType type, Set<Long> telegramId, String name, String url) {
-        super(type, telegramId);
+    protected PrChange(ChangeType type, Set<Long> telegramIds, String name, String url) {
+        super(type, telegramIds);
         this.name = name;
         this.url = url;
     }
