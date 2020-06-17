@@ -145,7 +145,7 @@ public class Message {
 
     public static String commentPr(@NonNull CommentJson comment, @NonNull String namePr, @NonNull String urlPr) {
         return Smile.BELL + " *Новый комментарий к ПР*" + Smile.BR +
-                link(namePr, urlPr) +
+                link(namePr, urlPr + "/overview?commentId=" + comment.getId()) +
                 Smile.HR +
                 comment.getAuthor().getName() + ": " + comment.getText().replaceAll("@[\\w]+", "");
     }
