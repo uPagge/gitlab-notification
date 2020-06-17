@@ -24,14 +24,17 @@ import java.util.stream.Collectors;
 public class ExecutorScanner implements Executor<DataScan, ResultScan> {
 
     private final ExecutorService executorService;
-    private final List<Future<Optional<ResultScan>>> resultList = new ArrayList<>();
+    private List<Future<Optional<ResultScan>>> resultList = new ArrayList<>();
     private final BitbucketConfig bitbucketConfig;
 
     @Override
     public boolean registration(@NonNull List<DataScan> dataScans) {
-        dataScans.stream()
-                .map(dataScan -> new Seeker(dataScan, bitbucketConfig.getToken()))
-                .forEach(seeker -> executorService.submit(seeker));
+        resultList.addAll(
+                dataScans.stream()
+                        .map(dataScan -> new Seeker(dataScan, bitbucketConfig.getToken()))
+                        .map(executorService::submit)
+                        .collect(Collectors.toList())
+        );
         return true;
     }
 

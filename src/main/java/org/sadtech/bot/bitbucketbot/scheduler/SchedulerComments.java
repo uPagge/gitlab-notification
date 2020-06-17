@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class SchedulerComments {
 
     private static final Integer COUNT = 100;
-    private static final Integer NO_COMMENT = 6;
+    private static final Integer NO_COMMENT = 20;
     private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
     private final CommentService commentService;
