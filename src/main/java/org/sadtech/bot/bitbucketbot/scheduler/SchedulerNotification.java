@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.bitbucketbot.domain.MessageSend;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
+import org.sadtech.bot.bitbucketbot.domain.entity.Person;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
-import org.sadtech.bot.bitbucketbot.domain.entity.User;
 import org.sadtech.bot.bitbucketbot.service.MessageSendService;
+import org.sadtech.bot.bitbucketbot.service.PersonService;
 import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.sadtech.bot.bitbucketbot.service.ReportService;
-import org.sadtech.bot.bitbucketbot.service.UserService;
 import org.sadtech.bot.bitbucketbot.utils.Message;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class SchedulerNotification {
 
     private static final Set<PullRequestStatus> statuses = Collections.singleton(PullRequestStatus.OPEN);
 
-    private final UserService userService;
+    private final PersonService personService;
     private final PullRequestsService pullRequestsService;
     private final MessageSendService messageSendService;
     private final ReportService reportService;
@@ -32,8 +32,8 @@ public class SchedulerNotification {
     // Утреннее сообщение
     @Scheduled(cron = "0 15 8 * * MON-FRI")
     public void goodMorning() {
-        List<User> allRegister = userService.getAllRegister();
-        for (User user : allRegister) {
+        List<Person> allRegister = personService.getAllRegister();
+        for (Person user : allRegister) {
             List<PullRequest> pullRequestsReviews = pullRequestsService.getAllByReviewerAndStatuses(
                     user.getLogin(),
                     ReviewerStatus.NEEDS_WORK,
@@ -51,8 +51,8 @@ public class SchedulerNotification {
 
     @Scheduled(cron = "0 0 18 * * FRI")
     public void goodWeekEnd() {
-        List<User> allRegister = userService.getAllRegister();
-        for (User user : allRegister) {
+        List<Person> allRegister = personService.getAllRegister();
+        for (Person user : allRegister) {
             messageSendService.add(
                     MessageSend.builder()
                             .telegramId(user.getTelegramId())

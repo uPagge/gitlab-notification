@@ -1,12 +1,8 @@
 package org.sadtech.bot.bitbucketbot.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 
 import javax.persistence.CascadeType;
@@ -19,74 +15,122 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * TODO: Добавить описание класса.
+ * Сущность ПуллРеквест.
  *
  * @author upagge [31.01.2020]
  */
 @Getter
 @Setter
 @Entity
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-@ToString
+@Table(name = "pull_request")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class PullRequest {
 
+    /**
+     * Идентификатор
+     */
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
+    /**
+     * Идентификатор на стороне битбакета
+     */
     @Column(name = "bitbucket_pr_id")
     private Long bitbucketId;
 
+    /**
+     * Идентификатор репозитория на стороне битбакета
+     */
     @Column(name = "repository_id")
     private Long repositoryId;
 
+    /**
+     * Идентификатор проекта на стороне битбакета
+     */
     @Column(name = "project_key")
     private String projectKey;
 
+    /**
+     * Символьный идентификатор на стороне битбакета
+     */
     @Column(name = "repository_slug")
     private String repositorySlug;
 
+    /**
+     * Версия объекта для блокировок
+     */
     @Column(name = "version")
     private Integer version;
 
+    /**
+     * Описание пулреквеста
+     */
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "author_login")
-    private User author;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "pull_request_id")
-    private List<Reviewer> reviewers;
-
+    /**
+     * Адрес ПР
+     */
     @Column(name = "url")
     private String url;
 
-    @Column(name = "name")
-    private String name;
+    /**
+     * Название ПР
+     */
+    @Column(name = "title")
+    private String title;
 
+    /**
+     * Статус ПР
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PullRequestStatus status;
 
+    /**
+     * Дата создания
+     */
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    /**
+     * Дата обновления
+     */
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
+    /**
+     * Флаг показывающий наличие конфликта в ПР
+     */
     @Column(name = "conflict")
     private boolean conflict;
+
+    /**
+     * Версия объекта в битбакет
+     */
+    @Column(name = "bitbucket_version")
+    private Integer bitbucketVersion;
+
+    /**
+     * Автор ПР
+     */
+    @Column(name = "author_login")
+    private String authorLogin;
+
+    /**
+     * Ревьюверы
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "pull_request_id")
+    private List<Reviewer> reviewers;
 
 }

@@ -8,6 +8,10 @@ public enum ChangeType {
     NEW_PR,
     CONFLICT_PR,
     NEW_COMMENT,
-    NEW_ANSWERS_COMMENT
+    NEW_ANSWERS_COMMENT,
+    NEW_TASK,
+    DELETED_TASK,
+    RESOLVED_TASK,
+    OPEN_TASK;
 
 }

@@ -60,7 +60,9 @@ public class SchedulerPushMessageSend {
         List<MessageSend> pushMessage = messageSendService.getPushMessage();
         if (!pushMessage.isEmpty()) {
             try {
-                sendMessage(objectMapper.writeValueAsString(pushMessage));
+                final String json = objectMapper.writeValueAsString(pushMessage);
+//                sendMessage(json);
+                System.out.println(json);
             } catch (JsonProcessingException e) {
                 log.error(e.getMessage());
             }

@@ -1,0 +1,33 @@
+package org.sadtech.bot.bitbucketbot.service;
+
+import lombok.NonNull;
+import org.sadtech.bot.bitbucketbot.domain.entity.Person;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+public interface PersonService {
+
+    Optional<Person> getByLogin(String login);
+
+    Set<String> existsByLogin(@NonNull Set<String> logins);
+
+    boolean existsByLogin(@NonNull String login);
+
+    Person reg(@NonNull Person user);
+
+    List<Person> getAllRegister();
+
+    Optional<Long> getTelegramIdByLogin(@NonNull String login);
+
+    Set<Long> getAllTelegramIdByLogin(Set<String> logins);
+
+    Optional<Person> getProxyByLogin(@NonNull String login);
+
+    Person create(@NonNull Person person);
+
+    List<Person> createAll(Collection<Person> newUsers);
+
+}

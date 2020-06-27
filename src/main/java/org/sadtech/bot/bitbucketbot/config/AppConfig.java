@@ -9,10 +9,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Общий файл настройки всего приложения.
+ *
+ * @author upagge
+ */
 @Configuration
 @EnableScheduling
 public class AppConfig {
 
+    /**
+     * Отвечает за работу шедулеров в паралельном режиме
+     */
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();

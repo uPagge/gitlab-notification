@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Utils {
 
-    private static ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper;
 
     static {
         objectMapper = new ObjectMapper();
@@ -35,8 +35,7 @@ public class Utils {
         throw new IllegalStateException("Утилитарный класс");
     }
 
-    @NonNull
-    public static <T> Optional<T> urlToJson(String urlValue, String token, Class<T> classOfT) {
+    public static <T> Optional<T> urlToJson(@NonNull String urlValue, @NonNull String token, @NonNull Class<T> classOfT) {
         Request request = new Request.Builder()
                 .url(urlValue)
                 .header("Authorization", "Bearer " + token)

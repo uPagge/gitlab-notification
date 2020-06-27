@@ -3,10 +3,6 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="liquibase/change-set/create-table.xml"/>
-    <include file="liquibase/change-set/v1.2.0.xml"/>
-    <include file="liquibase/change-set/v1.3.0.xml"/>
-    <include file="liquibase/change-set/v1.4.0.xml"/>
-    <include file="liquibase/change-set/v2.0.0.xml"/>
+    <include file="liquibase/v.2.0.0/cumulative.xml"/>
 
 </databaseChangeLog>

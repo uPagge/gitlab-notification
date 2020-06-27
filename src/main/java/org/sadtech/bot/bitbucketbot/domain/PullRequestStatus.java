@@ -5,6 +5,8 @@ package org.sadtech.bot.bitbucketbot.domain;
  */
 public enum PullRequestStatus {
 
-    OPEN, MERGED, DECLINED, DELETE
+    OPEN,
+    MERGED,
+    DECLINED
 
 }

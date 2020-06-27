@@ -1,0 +1,162 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="create-table-person" author="upagge">
+        <createTable tableName="person">
+            <column name="login" type="varchar(64)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="full_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bitbucket_token" type="varchar(200)"/>
+            <column name="telegram_id" type="integer">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-pull-request" author="upagge">
+        <createTable tableName="pull_request">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="bitbucket_id" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repository_id" type="integer"/>
+            <column name="project_key" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="repository_slug" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)"/>
+            <column name="description" type="varchar(300)"/>
+            <column name="author_login" type="varchar(64)">
+                <constraints nullable="false"
+                             foreignKeyName="pull_request_author_login_person_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conflict" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bitbucket_version" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="pull_request" columnNames="bitbucket_pr_id, repository_id"/>
+
+    </changeSet>
+
+    <changeSet id="create-table-pull-request-reviewer" author="upagge">
+        <createTable tableName="pull_request_reviewer">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="pull_request_id" type="integer">
+                <constraints nullable="false" foreignKeyName="pull_request_reviewer_pull_request_id_pull_request_id"
+                             references="pull_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="user_login" type="varchar(64)">
+                <constraints nullable="false"
+                             foreignKeyName="pull_request_reviewer_user_id_user_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="reviewer" columnNames="pull_request_id, user_login"/>
+    </changeSet>
+
+    <changeSet id="create-table-comments" author="upagge">
+        <createTable tableName="pull_request_comment">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="url" type="varchar(300)"/>
+            <column name="author_login" type="integer">
+                <constraints nullable="false" foreignKeyName="pull_request_task_author_login_person_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
+            <column name="pull_request_id" type="integer">
+                <constraints nullable="false" foreignKeyName="pull_request_comment_pull_request_id_pull_request_id"
+                             references="pull_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="message" type="varchar(500)"/>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bitbucket_version" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-comment-tree" author="upagge">
+        <createTable tableName="comment_tree">
+            <column name="parent_id" type="int">
+                <constraints foreignKeyName="fk_parent_id_from_comment_id" references="comment(id)" nullable="false"
+                             deleteCascade="true"/>
+            </column>
+            <column name="child_id" type="int">
+                <constraints foreignKeyName="fk_child_id_from_comment_id" references="comment(id)" nullable="false"
+                             deleteCascade="true"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="comment_tree" columnNames="parent_id, child_id"/>
+    </changeSet>
+
+    <changeSet id="create-table-task" author="upagge">
+        <createTable tableName="pull_request_task">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url_api" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_login" type="varchar(64)">
+                <constraints nullable="false" foreignKeyName="pull_request_task_author_login_person_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
+            <column name="pull_request_id" type="int">
+                <constraints nullable="true" foreignKeyName="pull_request_task_pull_request_id_pull_request_id"
+                             references="pull_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bitbucket_version" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

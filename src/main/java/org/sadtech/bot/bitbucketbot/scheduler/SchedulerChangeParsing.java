@@ -3,14 +3,15 @@ package org.sadtech.bot.bitbucketbot.scheduler;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.bitbucketbot.domain.MessageSend;
-import org.sadtech.bot.bitbucketbot.domain.change.AnswerCommentChange;
 import org.sadtech.bot.bitbucketbot.domain.change.Change;
-import org.sadtech.bot.bitbucketbot.domain.change.CommentChange;
-import org.sadtech.bot.bitbucketbot.domain.change.ConflictPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.NewPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.ReviewersPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.StatusPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.UpdatePrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.comment.AnswerCommentChange;
+import org.sadtech.bot.bitbucketbot.domain.change.comment.CommentChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ConflictPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ReviewersPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.StatusPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.UpdatePrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.task.TaskChange;
 import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
 import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.MessageSendService;
@@ -21,6 +22,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Парсер изменений. Отслеживает изменения, которые были добавлены и добавляет событие на отправку уведомления
+ * пользователю.
+ *
+ * @author upagge
+ */
 @Service
 @RequiredArgsConstructor
 public class SchedulerChangeParsing {
@@ -28,6 +35,10 @@ public class SchedulerChangeParsing {
     private final MessageSendService messageSendService;
     private final ChangeService changeService;
 
+    /**
+     * Проверяет наличие новых изменений. Если изменения найдены, то создает новое сообщение и отправляет
+     * его в сервис отправки сообщений {@link MessageSendService}
+     */
     @Scheduled(cron = "*/15 * * * * *")
     public void parsing() {
         final List<Change> newChange = changeService.getNew().stream()
@@ -46,6 +57,12 @@ public class SchedulerChangeParsing {
         }
     }
 
+    /**
+     * Создает сообщение, которое необходимо отправить в зависимости от типа изменения.
+     *
+     * @param change Объект изменения
+     * @return Текстовое сообщение
+     */
     private String generateMessage(@NonNull Change change) {
         String message;
         switch (change.getType()) {
@@ -69,6 +86,16 @@ public class SchedulerChangeParsing {
                 break;
             case NEW_ANSWERS_COMMENT:
                 message = Message.generate(((AnswerCommentChange) change));
+                break;
+            case NEW_TASK:
+            case OPEN_TASK:
+                message = Message.generateNewTask(((TaskChange) change));
+                break;
+            case DELETED_TASK:
+                message = Message.generateDeleteTask(((TaskChange) change));
+                break;
+            case RESOLVED_TASK:
+                message = Message.generateResolveTask(((TaskChange) change));
                 break;
             default:
                 throw new NotFoundException("Нет обработчика для типа " + change.getType().name());

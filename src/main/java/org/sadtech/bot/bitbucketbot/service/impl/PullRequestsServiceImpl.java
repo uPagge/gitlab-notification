@@ -1,65 +1,78 @@
 package org.sadtech.bot.bitbucketbot.service.impl;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.sadtech.basic.context.page.Pagination;
+import org.sadtech.basic.context.page.Sheet;
+import org.sadtech.basic.core.service.AbstractBusinessLogicService;
+import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr;
-import org.sadtech.bot.bitbucketbot.domain.Pagination;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
-import org.sadtech.bot.bitbucketbot.repository.jpa.PullRequestsRepository;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest_;
+import org.sadtech.bot.bitbucketbot.domain.filter.PullRequestFilter;
+import org.sadtech.bot.bitbucketbot.exception.CreateException;
+import org.sadtech.bot.bitbucketbot.exception.UpdateException;
+import org.sadtech.bot.bitbucketbot.repository.PullRequestsRepository;
+import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.sadtech.bot.bitbucketbot.utils.ChangeGenerator;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class PullRequestsServiceImpl implements PullRequestsService {
+public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRequest, Long> implements PullRequestsService {
 
+    private final ChangeService changeService;
     private final PullRequestsRepository pullRequestsRepository;
 
-    @Override
-    public boolean existsByBitbucketIdAndReposId(@NonNull Long bitbucketId, @NonNull Long repositoryId) {
-        return pullRequestsRepository.existsByBitbucketIdAndRepositoryId(bitbucketId, repositoryId);
+    protected PullRequestsServiceImpl(PullRequestsRepository pullRequestsRepository, ChangeService changeService) {
+        super(pullRequestsRepository);
+        this.changeService = changeService;
+        this.pullRequestsRepository = pullRequestsRepository;
     }
 
     @Override
-    public Set<PullRequest> getAllById(@NonNull Set<Long> pullRequestJsonId) {
-        return pullRequestsRepository.findAllByIdIn(pullRequestJsonId);
+    public PullRequest create(@NonNull PullRequest pullRequest) {
+        if (pullRequest.getId() == null) {
+            final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
+            changeService.add(ChangeGenerator.create(newPullRequest));
+            return newPullRequest;
+        }
+        throw new CreateException("При создании идентификатор должен быть пустым");
     }
 
     @Override
-    @Transactional
-    public List<PullRequest> addAll(@NonNull Collection<PullRequest> pullRequests) {
-        return pullRequestsRepository.saveAll(pullRequests);
+    public PullRequest update(@NonNull PullRequest pullRequest) {
+        final PullRequest oldPullRequest = findAndFillId(pullRequest);
+
+        if (!oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())) {
+            oldPullRequest.setBitbucketVersion(pullRequest.getVersion());
+            oldPullRequest.setConflict(pullRequest.isConflict());
+            oldPullRequest.setTitle(pullRequest.getTitle());
+            oldPullRequest.setDescription(pullRequest.getDescription());
+            oldPullRequest.setStatus(pullRequest.getStatus());
+            oldPullRequest.setReviewers(pullRequest.getReviewers());
+
+            final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
+
+            changeService.add(ChangeGenerator.createUpdatePr(pullRequest, newPullRequest));
+            changeService.add(ChangeGenerator.createReviewersPr(pullRequest, newPullRequest));
+
+            return newPullRequest;
+        }
+        return oldPullRequest;
     }
 
-    @Override
-    public List<PullRequest> updateAll(@NonNull Collection<PullRequest> pullRequests) {
-        final List<PullRequest> updatePullRequests = pullRequests.stream()
-                .filter(pullRequest -> pullRequestsRepository.existsById(pullRequest.getId()))
-                .collect(Collectors.toList());
-        return pullRequestsRepository.saveAll(updatePullRequests);
-    }
-
-    @Override
-    public Optional<Long> getIdByBitbucketIdAndReposId(@NonNull Long bitbucketId, @NonNull Long repositoryId) {
-        return pullRequestsRepository.findIdByBitbucketIdAndRepositoryId(bitbucketId, repositoryId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteAll(@NonNull Set<Long> id) {
-        pullRequestsRepository.deleteAllByIdIn(id);
+    private PullRequest findAndFillId(@NonNull PullRequest pullRequest) {
+        return pullRequestsRepository.findByFilterQuery(
+                CriteriaQuery.create()
+                        .matchPhrase(PullRequest_.BITBUCKET_ID, pullRequest.getBitbucketId())
+                        .matchPhrase(PullRequest_.REPOSITORY_ID, pullRequest.getRepositoryId())
+        ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
     }
 
     @NonNull
@@ -74,24 +87,32 @@ public class PullRequestsServiceImpl implements PullRequestsService {
     }
 
     @Override
-    public Set<Long> getAllId() {
-        return pullRequestsRepository.findAllIds();
-    }
-
-    @Override
     public Set<IdAndStatusPr> getAllId(Set<PullRequestStatus> statuses) {
         return pullRequestsRepository.findAllIdByStatusIn(statuses);
     }
 
     @Override
-    public Page<PullRequest> getAll(@NonNull Pagination pagination) {
-        return pullRequestsRepository.findAll(PageRequest.of(pagination.getPage(), pagination.getSize()));
+    public Sheet<PullRequest> getAllByFilter(@NonNull PullRequestFilter filter, Pagination pagination) {
+        return null;
     }
 
     @Override
-    public List<PullRequest> getAllByAuthor(@NonNull String login, @NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo) {
-        return pullRequestsRepository.findAllByAuthorAndDateBetween(login, dateFrom, dateTo);
+    public Sheet<PullRequest> getALlByFilterQuery(@NonNull PullRequestFilter filter, Pagination pagination) {
+        return null;
     }
 
+    @Override
+    public Optional<PullRequest> getByFilterQuery(@NonNull PullRequestFilter filterQuery) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsByFilterQuery(@NonNull PullRequestFilter filter) {
+        return pullRequestsRepository.existsByFilterQuery(
+                CriteriaQuery.<PullRequest>create()
+                        .matchPhrase(PullRequest_.BITBUCKET_ID, filter.getBitbucketId())
+                        .matchPhrase(PullRequest_.REPOSITORY_ID, filter.getBitbucketRepositoryId())
+        );
+    }
 
 }

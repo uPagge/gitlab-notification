@@ -1,9 +1,13 @@
 package org.sadtech.bot.bitbucketbot.exception;
 
-class BitbucketBotException extends RuntimeException {
+abstract class BitbucketBotException extends RuntimeException {
 
-    public BitbucketBotException(String message) {
+    protected BitbucketBotException(String message) {
         super(message);
+    }
+
+    protected BitbucketBotException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 
 }

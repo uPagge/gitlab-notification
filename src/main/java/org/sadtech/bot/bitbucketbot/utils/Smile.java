@@ -26,6 +26,7 @@ public enum Smile {
     DAY_3("\uD83C\uDF18"),
     DAY_4("\uD83C\uDF11"),
     DAY_5("\uD83C\uDF1A"),
+    TASK("\uD83E\uDD39\uD83C\uDFFB\u200D♂️"),
     MEGA_FUN("\uD83D\uDE02"),
     DANGEROUS("⚠️"),
     BELL("\uD83D\uDECE"),

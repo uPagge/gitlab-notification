@@ -16,7 +16,12 @@ public class Seeker implements Callable<Optional<ResultScan>> {
     @Override
     public Optional<ResultScan> call() {
         return Utils.urlToJson(dataScan.getUrlComment(), token, CommentJson.class)
-                .map(commentJson -> new ResultScan(dataScan.getUrlComment(), dataScan.getUrlPr(), commentJson));
+                .map(
+                        commentJson -> new ResultScan(
+                                dataScan.getUrlComment(),
+                                dataScan.getPullRequestId(),
+                                commentJson)
+                );
     }
 
 }

@@ -1,13 +1,14 @@
 package org.sadtech.bot.bitbucketbot.utils;
 
 import lombok.NonNull;
-import org.sadtech.bot.bitbucketbot.domain.change.AnswerCommentChange;
-import org.sadtech.bot.bitbucketbot.domain.change.CommentChange;
-import org.sadtech.bot.bitbucketbot.domain.change.ConflictPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.NewPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.ReviewersPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.StatusPrChange;
-import org.sadtech.bot.bitbucketbot.domain.change.UpdatePrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.comment.AnswerCommentChange;
+import org.sadtech.bot.bitbucketbot.domain.change.comment.CommentChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ConflictPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ReviewersPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.StatusPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.UpdatePrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.task.TaskChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.util.ReviewerChange;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
@@ -40,7 +41,7 @@ public class Message {
     @NonNull
     public static String generate(NewPrChange newPrChange) {
         String message = Smile.FUN + " *Новый Pull Request*" + Smile.BR +
-                link(newPrChange.getName(), newPrChange.getUrl()) +
+                link(newPrChange.getTitle(), newPrChange.getUrl()) +
                 Smile.HR;
         if (newPrChange.getDescription() != null && !"".equals(newPrChange.getDescription())) {
             message += newPrChange.getDescription() + Smile.HR;
@@ -51,7 +52,7 @@ public class Message {
 
     public static String generate(@NonNull StatusPrChange change) {
         return Smile.PEN + " *Изменился статус вашего ПР*" + Smile.HR +
-                link(change.getName(), change.getUrl()) + Smile.BR +
+                link(change.getTitle(), change.getUrl()) + Smile.BR +
                 change.getOldStatus().name() + " -> " + change.getNewStatus().name() +
                 Smile.TWO_BR;
     }
@@ -89,13 +90,13 @@ public class Message {
         final String createMessage = stringBuilder.toString();
         return Smile.PEN + " *Изменения ревьюверов вашего ПР*" +
                 Smile.HR +
-                link(reviewersChange.getName(), reviewersChange.getUrl()) + Smile.BR +
+                link(reviewersChange.getTitle(), reviewersChange.getUrl()) + Smile.BR +
                 createMessage;
     }
 
     public static String generate(@NonNull UpdatePrChange change) {
         return Smile.UPDATE + " *Обновление Pull Request*" + Smile.BR +
-                link(change.getName(), change.getUrl()) +
+                link(change.getTitle(), change.getUrl()) +
                 Smile.HR +
                 Smile.AUTHOR + ": " + change.getAuthor() +
                 Smile.TWO_BR;
@@ -103,7 +104,7 @@ public class Message {
 
     public static String generate(@NonNull ConflictPrChange change) {
         return Smile.DANGEROUS + "*Внимание конфликт в ПР*" + Smile.HR +
-                link(change.getName(), change.getUrl()) + Smile.TWO_BR;
+                link(change.getTitle(), change.getUrl()) + Smile.TWO_BR;
     }
 
     @NonNull
@@ -132,7 +133,6 @@ public class Message {
                     .append(Smile.BR);
         }
         message
-                .append(Smile.BR)
                 .append("Удачного дня ").append(Smile.FLOWER).append(Smile.TWO_BR);
         return message.toString();
     }
@@ -162,6 +162,21 @@ public class Message {
         answerCommentChange.getAnswers().forEach(answer -> message.append(answer.getAuthorName()).append(": ")
                 .append(answer.getMessage(), 0, Math.min(answer.getMessage().length(), 500)).append(Smile.TWO_BR));
         return message.toString();
+    }
+
+    public static String generateNewTask(@NonNull TaskChange newTaskChange) {
+        return Smile.TASK + "*Назначена новая задача* | " + link("ПР", newTaskChange.getUrl()) + Smile.HR +
+                newTaskChange.getAuthorName() + ": " + newTaskChange.getMessageTask();
+    }
+
+    public static String generateDeleteTask(@NonNull TaskChange deletedTaskChange) {
+        return Smile.TASK + "*Задача была удалена* | " + link("ПР", deletedTaskChange.getUrl()) + Smile.HR +
+                deletedTaskChange.getAuthorName() + ": " + deletedTaskChange.getMessageTask();
+    }
+
+    public static String generateResolveTask(@NonNull TaskChange deletedTaskChange) {
+        return Smile.TASK + "*Задача выполнена* | " + link("ПР", deletedTaskChange.getUrl()) + Smile.HR +
+                deletedTaskChange.getAuthorName() + ": " + deletedTaskChange.getMessageTask();
     }
 
     private static String needWorkPr(@NonNull List<PullRequest> pullRequestsNeedWork) {

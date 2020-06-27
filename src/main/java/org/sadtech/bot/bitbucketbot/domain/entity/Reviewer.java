@@ -1,9 +1,7 @@
 package org.sadtech.bot.bitbucketbot.domain.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 
@@ -17,27 +15,35 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * TODO: Добавить описание класса.
+ * Ревьювер пулреквеста.
  *
  * @author upagge [01.02.2020]
  */
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "reviewer")
-@EqualsAndHashCode(of = "id")
+@Table(name = "pull_request_reviewer")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Reviewer {
 
+    /**
+     * Идентификатор
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Пользователь
+     */
     @Column(name = "user_login")
-    private String user;
+    private String userLogin;
 
+    /**
+     * Статус
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReviewerStatus status;

@@ -1,48 +1,58 @@
 package org.sadtech.bot.bitbucketbot.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-@ToString
+@Table(name = "pull_request_comment")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Comment {
 
+    /**
+     * Идентификатор
+     */
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "url")
     private String url;
 
-    @Column(name = "pr_url")
-    private String prUrl;
+    @Column(name = "pull_request_id")
+    private Long pullRequestId;
 
-    @Column(name = "telegram")
-    private Long telegram;
+    @Column(name = "author_login")
+    private String author;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(name = "message")
+    private String message;
+
+    @Column(name = "createDate")
+    private LocalDateTime createDate;
+
+    /**
+     * Версия объекта в битбакет
+     */
+    @Column(name = "bitbucket_version")
+    private Integer bitbucketVersion;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "comment_tree", joinColumns = @JoinColumn(name = "parent_id"))

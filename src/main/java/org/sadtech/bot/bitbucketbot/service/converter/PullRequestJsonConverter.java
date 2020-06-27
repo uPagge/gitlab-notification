@@ -5,15 +5,12 @@ import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.Reviewer;
-import org.sadtech.bot.bitbucketbot.domain.entity.User;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.Outcome;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.Properties;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.PullRequestJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.PullRequestState;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.UserDecisionJson;
-import org.sadtech.bot.bitbucketbot.dto.bitbucket.UserJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.UserPullRequestStatus;
-import org.sadtech.bot.bitbucketbot.service.UserService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -24,27 +21,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PullRequestJsonConverter implements Converter<PullRequestJson, PullRequest> {
 
-    private final UserJsonConverter userJsonConverter;
-    private final UserService userService;
-
     @Override
     public PullRequest convert(PullRequestJson json) {
-        return PullRequest.builder()
-                .bitbucketId(json.getId())
-                .version(json.getVersion())
-                .createDate(json.getCreatedDate())
-                .updateDate(json.getUpdatedDate())
-                .conflict(convertConflict(json.getProperties()))
-                .description(convertDescription(json.getDescription()))
-                .repositoryId(json.getFromRef().getRepository().getId())
-                .author(this.convertUser(json.getAuthor().getUser()))
-                .name(json.getTitle())
-                .url(json.getLinks().getSelf().get(0).getHref())
-                .status(convertPullRequestStatus(json.getState()))
-                .projectKey(json.getFromRef().getRepository().getProject().getKey())
-                .repositorySlug(json.getFromRef().getRepository().getSlug())
-                .reviewers(convertReviewers(json.getReviewers()))
-                .build();
+
+        final PullRequest pullRequest = new PullRequest();
+        pullRequest.setBitbucketId(json.getId());
+        pullRequest.setCreateDate(json.getCreatedDate());
+        pullRequest.setUpdateDate(json.getUpdatedDate());
+        pullRequest.setConflict(convertConflict(json.getProperties()));
+        pullRequest.setDescription(convertDescription(json.getDescription()));
+        pullRequest.setAuthorLogin(json.getAuthor().getUser().getName());
+        pullRequest.setTitle(json.getTitle());
+        pullRequest.setUrl(json.getLinks().getSelf().get(0).getHref());
+        pullRequest.setStatus(convertPullRequestStatus(json.getState()));
+        pullRequest.setProjectKey(json.getFromRef().getRepository().getProject().getKey());
+        pullRequest.setRepositorySlug(json.getFromRef().getRepository().getSlug());
+        pullRequest.setReviewers(convertReviewers(json.getReviewers()));
+        pullRequest.setBitbucketVersion(json.getVersion());
+
+        return pullRequest;
     }
 
     private boolean convertConflict(Properties properties) {
@@ -59,10 +54,6 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
             return description.length() > 180 ? description.substring(0, 180) + "..." : description;
         }
         return null;
-    }
-
-    private User convertUser(UserJson userJson) {
-        return userService.getByLogin(userJson.getName()).orElse(userJsonConverter.convert(userJson));
     }
 
     public static PullRequestStatus convertPullRequestStatus(PullRequestState state) {
@@ -82,7 +73,7 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .map(
                         jsonReviewer -> {
                             final Reviewer reviewer = new Reviewer();
-                            reviewer.setUser(jsonReviewer.getUser().getName());
+                            reviewer.setUserLogin(jsonReviewer.getUser().getName());
                             reviewer.setStatus(convertStatusReviewer(jsonReviewer.getStatus()));
                             return reviewer;
                         }

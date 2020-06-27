@@ -6,6 +6,6 @@ import lombok.Data;
 public class DataScan {
 
     private final String urlComment;
-    private final String urlPr;
+    private final Long pullRequestId;
 
 }

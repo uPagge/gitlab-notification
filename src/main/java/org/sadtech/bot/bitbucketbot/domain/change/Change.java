@@ -8,13 +8,15 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class Change {
 
     protected final ChangeType type;
     protected final LocalDateTime localDateTime = LocalDateTime.now();
     protected final Set<Long> telegramIds;
+
     @Setter
+    @EqualsAndHashCode.Include
     protected Long id;
 
     protected Change(ChangeType type, Set<Long> telegramIds) {

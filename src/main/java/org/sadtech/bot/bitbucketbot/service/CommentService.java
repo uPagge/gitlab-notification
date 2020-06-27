@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface CommentService {
 
@@ -17,8 +19,15 @@ public interface CommentService {
     @NonNull
     List<Comment> getAllBetweenDate(LocalDateTime dateFrom, LocalDateTime dateTo);
 
-    void save(@NonNull Comment comment);
+    Comment create(@NonNull Comment comment);
 
     void delete(@NonNull Long id);
 
+    Optional<Comment> getProxyById(@NonNull Long id);
+
+    List<Comment> createAll(List<Comment> newComments);
+
+    Comment update(Comment comment);
+
+    List<Comment> getAllById(@NonNull Set<Long> ids);
 }

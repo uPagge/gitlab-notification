@@ -3,7 +3,7 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sadtech.bot.bitbucketbot.config.BitbucketConfig;
+import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
 import org.sadtech.bot.bitbucketbot.service.executor.DataScan;
 import org.sadtech.bot.bitbucketbot.service.executor.Executor;
 import org.sadtech.bot.bitbucketbot.service.executor.ResultScan;
@@ -25,13 +25,13 @@ public class ExecutorScanner implements Executor<DataScan, ResultScan> {
 
     private final ExecutorService executorService;
     private List<Future<Optional<ResultScan>>> resultList = new ArrayList<>();
-    private final BitbucketConfig bitbucketConfig;
+    private final BitbucketProperty bitbucketProperty;
 
     @Override
     public boolean registration(@NonNull List<DataScan> dataScans) {
         resultList.addAll(
                 dataScans.stream()
-                        .map(dataScan -> new Seeker(dataScan, bitbucketConfig.getToken()))
+                        .map(dataScan -> new Seeker(dataScan, bitbucketProperty.getToken()))
                         .map(executorService::submit)
                         .collect(Collectors.toList())
         );

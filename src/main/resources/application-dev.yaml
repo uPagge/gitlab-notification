@@ -17,8 +17,13 @@ spring:
           lob:
             non_contextual_creation: true
 bitbucketbot:
+  scheduler:
+    comment:
+      settings:
+        no-comment-count: 20
+        comment-count: 100
   init:
-    start-comment-id:
+    start-comment-id: 5947
   server-send:
     url: http://188.225.35.149:8080/api/send
   bitbucket:
@@ -27,3 +32,4 @@ bitbucketbot:
     url-pull-request-close: http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
     url-pull-request-comment: http://192.168.236.164:7990/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
     url-pull-request: http://192.168.236.164:7990/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
+    url-users: http://192.168.236.164:7990/rest/api/1.0/admin/users
