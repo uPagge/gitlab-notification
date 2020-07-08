@@ -55,7 +55,7 @@ public class PullRequestParser {
         log.info("Закрыты: " + Arrays.toString(closeId.toArray()));
         log.info("Не найдены: " + Arrays.toString(newNotExistsId.toArray()));
         if (!newNotExistsId.isEmpty()) {
-            pullRequestsService.deleteAll(newNotExistsId);
+            pullRequestsService.deleteAllById(newNotExistsId);
         }
     }
 
@@ -86,9 +86,9 @@ public class PullRequestParser {
 
     private List<PullRequest> getExistsPr(@NonNull List<PullRequestJson> pullRequestJsons) {
         return pullRequestJsons.stream()
-                .filter(json -> pullRequestsService.existsByFilterQuery(bitbucketIdAndPullRequestId(json)))
-                .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
-                .peek(pullRequest -> pullRequestsService.getIdByBitbucketIdAndReposId(pullRequest.getBitbucketId(), pullRequest.getRepositoryId()).ifPresent(pullRequest::setId))
+                .map(json -> pullRequestsService.getByFilterQuery(bitbucketIdAndPullRequestId(json)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 

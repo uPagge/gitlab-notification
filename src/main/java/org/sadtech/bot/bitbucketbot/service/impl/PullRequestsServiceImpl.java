@@ -3,7 +3,9 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 import lombok.NonNull;
 import org.sadtech.basic.context.page.Pagination;
 import org.sadtech.basic.context.page.Sheet;
+import org.sadtech.basic.context.service.simple.FilterService;
 import org.sadtech.basic.core.service.AbstractBusinessLogicService;
+import org.sadtech.basic.filter.criteria.CriteriaFilter;
 import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
@@ -17,6 +19,7 @@ import org.sadtech.bot.bitbucketbot.repository.PullRequestsRepository;
 import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.sadtech.bot.bitbucketbot.utils.ChangeGenerator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +31,17 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
 
     private final ChangeService changeService;
     private final PullRequestsRepository pullRequestsRepository;
+    private final FilterService<PullRequest, PullRequestFilter> filterService;
 
-    protected PullRequestsServiceImpl(PullRequestsRepository pullRequestsRepository, ChangeService changeService) {
+    protected PullRequestsServiceImpl(
+            PullRequestsRepository pullRequestsRepository,
+            ChangeService changeService,
+            @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService
+    ) {
         super(pullRequestsRepository);
         this.changeService = changeService;
         this.pullRequestsRepository = pullRequestsRepository;
+        this.filterService = pullRequestsFilterService;
     }
 
     @Override
@@ -67,14 +76,6 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
         return oldPullRequest;
     }
 
-    private PullRequest findAndFillId(@NonNull PullRequest pullRequest) {
-        return pullRequestsRepository.findByFilterQuery(
-                CriteriaQuery.create()
-                        .matchPhrase(PullRequest_.BITBUCKET_ID, pullRequest.getBitbucketId())
-                        .matchPhrase(PullRequest_.REPOSITORY_ID, pullRequest.getRepositoryId())
-        ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
-    }
-
     @NonNull
     @Override
     public List<PullRequest> getAllByReviewerAndStatuses(String login, ReviewerStatus reviewerStatus, Set<PullRequestStatus> statuses) {
@@ -92,27 +93,33 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
     }
 
     @Override
-    public Sheet<PullRequest> getAllByFilter(@NonNull PullRequestFilter filter, Pagination pagination) {
-        return null;
+    public Sheet<PullRequest> getAll(@NonNull PullRequestFilter filter, Pagination pagination) {
+        return filterService.getAll(filter, pagination);
     }
 
     @Override
-    public Sheet<PullRequest> getALlByFilterQuery(@NonNull PullRequestFilter filter, Pagination pagination) {
-        return null;
+    public List<PullRequest> getAll(@NonNull PullRequestFilter filter) {
+        return filterService.getAll(filter);
     }
 
     @Override
-    public Optional<PullRequest> getByFilterQuery(@NonNull PullRequestFilter filterQuery) {
-        return Optional.empty();
+    public Optional<PullRequest> getFirst(@NonNull PullRequestFilter filter) {
+        return filterService.getFirst(filter);
     }
 
     @Override
-    public boolean existsByFilterQuery(@NonNull PullRequestFilter filter) {
-        return pullRequestsRepository.existsByFilterQuery(
-                CriteriaQuery.<PullRequest>create()
-                        .matchPhrase(PullRequest_.BITBUCKET_ID, filter.getBitbucketId())
-                        .matchPhrase(PullRequest_.REPOSITORY_ID, filter.getBitbucketRepositoryId())
-        );
+    public boolean exists(@NonNull PullRequestFilter filter) {
+        return filterService.exists(filter);
+    }
+
+    private PullRequest findAndFillId(@NonNull PullRequest pullRequest) {
+        return pullRequestsRepository.findFirst(
+                CriteriaFilter.create().and(
+                        CriteriaQuery.create()
+                                .matchPhrase(PullRequest_.BITBUCKET_ID, pullRequest.getBitbucketId())
+                                .matchPhrase(PullRequest_.REPOSITORY_ID, pullRequest.getRepositoryId())
+                )
+        ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
     }
 
 }
