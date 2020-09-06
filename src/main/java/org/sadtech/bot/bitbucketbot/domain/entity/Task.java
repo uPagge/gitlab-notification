@@ -12,8 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -46,7 +44,6 @@ public class Task {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
-    @OneToMany
     @Column(name = "pull_request_id")
     private Long pullRequestId;
 
@@ -62,8 +59,7 @@ public class Task {
     @Column(name = "bitbucket_version")
     private Integer bitbucketVersion;
 
-    @OneToMany
-    @JoinColumn(name = "author_login")
-    private Person author;
+    @Column(name = "author_login")
+    private String author;
 
 }

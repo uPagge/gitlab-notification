@@ -15,9 +15,10 @@ public class ChangeRepositoryImpl implements ChangeRepository {
     private long count = 0;
 
     @Override
-    public void add(@NonNull Change change) {
+    public <T extends Change> T add(@NonNull T change) {
         change.setId(count++);
         list.add(change);
+        return change;
     }
 
     @Override

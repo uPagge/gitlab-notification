@@ -44,7 +44,7 @@ public class PullRequest {
     /**
      * Идентификатор на стороне битбакета
      */
-    @Column(name = "bitbucket_pr_id")
+    @Column(name = "bitbucket_id")
     private Long bitbucketId;
 
     /**
@@ -64,12 +64,6 @@ public class PullRequest {
      */
     @Column(name = "repository_slug")
     private String repositorySlug;
-
-    /**
-     * Версия объекта для блокировок
-     */
-    @Column(name = "version")
-    private Integer version;
 
     /**
      * Описание пулреквеста
@@ -132,5 +126,10 @@ public class PullRequest {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "pull_request_id")
     private List<Reviewer> reviewers;
+
+    public void setReviewers(List<Reviewer> reviewers) {
+        reviewers.forEach(reviewer -> reviewer.setPullRequest(this));
+        this.reviewers = reviewers;
+    }
 
 }

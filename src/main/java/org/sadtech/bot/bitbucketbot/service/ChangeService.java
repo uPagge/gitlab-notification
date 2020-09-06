@@ -2,6 +2,9 @@ package org.sadtech.bot.bitbucketbot.service;
 
 import lombok.NonNull;
 import org.sadtech.bot.bitbucketbot.domain.change.Change;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.UpdatePrChange;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 
 import java.util.List;
 
@@ -13,12 +16,11 @@ import java.util.List;
  */
 public interface ChangeService {
 
-    /**
-     * Позволяет добавить новое изменение в хранилище
-     *
-     * @param change Объект, который содержит изменения
-     */
-    void add(@NonNull Change change);
+    NewPrChange create(@NonNull PullRequest newPullRequest);
+
+    UpdatePrChange createUpdatePr(@NonNull PullRequest oldPullRequest, @NonNull PullRequest newPullRequest);
+
+    Change createReviewersPr(@NonNull PullRequest oldPullRequest, @NonNull PullRequest newPullRequest);
 
     /**
      * Позволяет получить новые изменения.

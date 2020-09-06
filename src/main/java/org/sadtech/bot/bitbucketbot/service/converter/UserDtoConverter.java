@@ -10,11 +10,11 @@ public class UserDtoConverter implements Converter<UserDto, Person> {
 
     @Override
     public Person convert(UserDto source) {
-        return Person.builder()
-                .login(source.getLogin())
-                .token(source.getToken())
-                .telegramId(source.getTelegramId())
-                .build();
+        final Person person = new Person();
+        person.setLogin(source.getLogin());
+        person.setToken(source.getToken());
+        person.setTelegramId(source.getTelegramId());
+        return person;
     }
 
 }

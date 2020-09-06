@@ -11,6 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findFirstByOrderByIdDesc();
 
-    List<Comment> findByDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo);
+    List<Comment> findByCreateDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo);
 
 }

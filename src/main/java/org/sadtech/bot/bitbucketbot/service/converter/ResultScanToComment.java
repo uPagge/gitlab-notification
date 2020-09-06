@@ -1,8 +1,6 @@
 package org.sadtech.bot.bitbucketbot.service.converter;
 
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
-import org.sadtech.bot.bitbucketbot.domain.entity.Person;
-import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.Severity;
 import org.sadtech.bot.bitbucketbot.service.executor.ResultScan;
@@ -20,7 +18,7 @@ public class ResultScanToComment implements Converter<ResultScan, Comment> {
         final Comment comment = new Comment();
         comment.setCreateDate(commentJson.getCreatedDate());
         comment.setAuthor(commentJson.getAuthor().getName());
-        comment.setPullRequestId(getPullRequest(resultScan.getPullRequestId()));
+        comment.setPullRequestId(resultScan.getPullRequestId());
         comment.setMessage(commentJson.getText());
         comment.setUrl(resultScan.getUrlComment());
         comment.setBitbucketVersion(commentJson.getVersion());
@@ -32,18 +30,6 @@ public class ResultScanToComment implements Converter<ResultScan, Comment> {
         );
         return comment;
 
-    }
-
-    private PullRequest getPullRequest(Long pullRequestId) {
-        final PullRequest pullRequest = new PullRequest();
-        pullRequest.setId(pullRequestId);
-        return pullRequest;
-    }
-
-    private Person getAuthor(String name) {
-        final Person user = new Person();
-        user.setLogin(name);
-        return user;
     }
 
 }

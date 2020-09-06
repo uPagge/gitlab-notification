@@ -1,7 +1,7 @@
 package org.sadtech.bot.bitbucketbot.scheduler.parser;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.bitbucketbot.service.parser.PersonParser;
+import org.sadtech.bot.bitbucketbot.service.impl.parser.PersonBitbucketParser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PersonScheduler {
 
-    private final PersonParser personParser;
+    private final PersonBitbucketParser personParser;
 
-    @Scheduled(cron = "")
+    //    @Scheduled(cron = "0 0 0 */1 * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void scanPersons() {
         personParser.scanNewPerson();
     }
-
 
 }

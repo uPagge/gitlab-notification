@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +27,10 @@ public interface PullRequestsRepositoryJpa extends JpaRepositoryImplementation<P
 
     void deleteAllByIdIn(Collection<Long> id);
 
-    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.user=:reviewer AND r.status =:reviewerStatus AND p.status IN :pullRequestStatus")
+    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.userLogin=:reviewer AND r.status =:reviewerStatus AND p.status IN :pullRequestStatus")
     List<PullRequest> findAllByReviewerAndStatuses(@Param("reviewer") String reviewer, @Param("reviewerStatus") ReviewerStatus reviewerStatus, @Param("pullRequestStatus") Set<PullRequestStatus> pullRequestStatus);
 
-    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE p.author.login=:author AND r.status=:reviewerStatus")
+    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE p.authorLogin=:author AND r.status=:reviewerStatus")
     List<PullRequest> findAllByAuthorAndReviewerStatus(@Param("author") String author, @Param("reviewerStatus") ReviewerStatus reviewerStatus);
 
     //    @Query("SELECT new org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr(p.id, p.status) FROM PullRequest p WHERE p.status IN :statuses")
@@ -40,7 +39,7 @@ public interface PullRequestsRepositoryJpa extends JpaRepositoryImplementation<P
     @Query("SELECT p.id from PullRequest p")
     Set<Long> findAllIds();
 
-    @Query("SELECT p FROM PullRequest p WHERE p.author.login = :login AND p.createDate BETWEEN :dateFrom AND :dateTo")
-    List<PullRequest> findAllByAuthorAndDateBetween(@Param("login") String login, @Param("dateFrom") LocalDateTime dateFrom, @Param("dateTo") LocalDateTime dateTo);
+//    @Query("SELECT p FROM PullRequest p WHERE p.authorLogin = :login AND p.createDate BETWEEN :dateFrom AND :dateTo")
+//    List<PullRequest> findAllByAuthorAndDateBetween(@Param("login") String login, @Param("dateFrom") LocalDateTime dateFrom, @Param("dateTo") LocalDateTime dateTo);
 
 }

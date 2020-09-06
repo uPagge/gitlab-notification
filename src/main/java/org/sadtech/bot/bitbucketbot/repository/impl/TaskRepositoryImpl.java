@@ -30,4 +30,9 @@ public class TaskRepositoryImpl implements TaskRepository {
         return taskRepositoryJpa.findById(id);
     }
 
+    @Override
+    public Optional<Task> findFirstByOrderByIdDesc() {
+        return Optional.empty();
+    }
+
 }

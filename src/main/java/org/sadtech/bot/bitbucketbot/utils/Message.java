@@ -184,14 +184,14 @@ public class Message {
         pullRequestsNeedWork.stream()
                 .limit(3)
                 .forEach(
-                        pullRequest -> message.append("-- ").append(link(pullRequest.getName(), pullRequest.getUrl())).append(Smile.BR)
+                        pullRequest -> message.append("-- ").append(link(pullRequest.getTitle(), pullRequest.getUrl())).append(Smile.BR)
                 );
         return message.toString();
     }
 
     private static String topPr(PullRequest pullRequest) {
         return Smile.statusPr(pullRequest.getUpdateDate()) + " " +
-                link(pullRequest.getName(), pullRequest.getUrl()) +
+                link(pullRequest.getTitle(), pullRequest.getUrl()) +
                 Smile.BR;
     }
 

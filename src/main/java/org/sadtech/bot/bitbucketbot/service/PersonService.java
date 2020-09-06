@@ -24,8 +24,6 @@ public interface PersonService {
 
     Set<Long> getAllTelegramIdByLogin(Set<String> logins);
 
-    Optional<Person> getProxyByLogin(@NonNull String login);
-
     Person create(@NonNull Person person);
 
     List<Person> createAll(Collection<Person> newUsers);

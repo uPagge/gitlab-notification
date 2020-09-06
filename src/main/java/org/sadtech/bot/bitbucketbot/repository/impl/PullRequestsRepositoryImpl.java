@@ -1,6 +1,6 @@
 package org.sadtech.bot.bitbucketbot.repository.impl;
 
-import org.sadtech.basic.database.repository.AbstractBusinessLogicJpaRepository;
+import org.sadtech.basic.database.repository.manager.FilterManagerRepository;
 import org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
@@ -13,28 +13,28 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public class PullRequestsRepositoryImpl extends AbstractBusinessLogicJpaRepository<PullRequest, Long> implements PullRequestsRepository {
+public class PullRequestsRepositoryImpl extends FilterManagerRepository<PullRequest, Long> implements PullRequestsRepository {
 
-    private final PullRequestsRepositoryJpa pullRequestsRepositoryJpa;
+    private final PullRequestsRepositoryJpa repositoryJpa;
 
-    protected PullRequestsRepositoryImpl(PullRequestsRepositoryJpa pullRequestsRepositoryJpa) {
-        super(pullRequestsRepositoryJpa);
-        this.pullRequestsRepositoryJpa = pullRequestsRepositoryJpa;
+    public PullRequestsRepositoryImpl(PullRequestsRepositoryJpa jpaRepository) {
+        super(jpaRepository);
+        repositoryJpa = jpaRepository;
     }
 
     @Override
     public List<PullRequest> findAllByReviewerAndStatuses(String login, ReviewerStatus reviewerStatus, Set<PullRequestStatus> statuses) {
-        return pullRequestsRepositoryJpa.findAllByReviewerAndStatuses(login, reviewerStatus, statuses);
+        return repositoryJpa.findAllByReviewerAndStatuses(login, reviewerStatus, statuses);
     }
 
     @Override
     public List<PullRequest> findAllByAuthorAndReviewerStatus(String login, ReviewerStatus status) {
-        return pullRequestsRepositoryJpa.findAllByAuthorAndReviewerStatus(login, status);
+        return repositoryJpa.findAllByAuthorAndReviewerStatus(login, status);
     }
 
     @Override
     public Set<IdAndStatusPr> findAllIdByStatusIn(Set<PullRequestStatus> statuses) {
-        return pullRequestsRepositoryJpa.findAllIdByStatusIn(statuses);
+        return repositoryJpa.findAllIdByStatusIn(statuses);
     }
 
 }

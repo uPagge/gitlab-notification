@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ChangeRepository {
 
-    void add(@NonNull Change change);
+    <T extends Change> T add(@NonNull T change);
 
     List<Change> getAll();
 

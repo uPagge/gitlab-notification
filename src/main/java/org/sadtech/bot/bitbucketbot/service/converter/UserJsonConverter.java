@@ -3,9 +3,9 @@ package org.sadtech.bot.bitbucketbot.service.converter;
 import org.sadtech.bot.bitbucketbot.domain.entity.Person;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.UserJson;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class UserJsonConverter implements Converter<UserJson, Person> {
 
     @Override

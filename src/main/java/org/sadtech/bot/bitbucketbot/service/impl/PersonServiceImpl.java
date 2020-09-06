@@ -2,12 +2,13 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
 import org.sadtech.bot.bitbucketbot.domain.entity.Person;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.sheet.PullRequestSheetJson;
-import org.sadtech.bot.bitbucketbot.exception.CreateException;
 import org.sadtech.bot.bitbucketbot.exception.RegException;
-import org.sadtech.bot.bitbucketbot.repository.jpa.PersonRepository;
+import org.sadtech.bot.bitbucketbot.repository.PersonRepository;
 import org.sadtech.bot.bitbucketbot.service.PersonService;
 import org.sadtech.bot.bitbucketbot.service.Utils;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
@@ -27,12 +29,14 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getByLogin(String login) {
-        return personRepository.findById(login);
+        return personRepository.findByLogin(login);
     }
 
     @Override
     public Set<String> existsByLogin(@NonNull Set<String> logins) {
-        return logins.stream().filter(personRepository::existsById).collect(Collectors.toSet());
+        return logins.stream()
+                .filter(personRepository::existsByLogin)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -76,16 +80,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getProxyByLogin(@NonNull String login) {
-        return Optional.ofNullable(personRepository.getByLogin(login));
-    }
-
-    @Override
     public Person create(@NonNull Person person) {
-        if (person.getId() == null) {
-            return personRepository.save(person);
-        }
-        throw new CreateException("При создании пользователя должен отсутствовать id");
+        Assert.isNotNull(person.getLogin(), "При создании пользователя должен присутствовать логин");
+        return personRepository.save(person);
     }
 
     @Override

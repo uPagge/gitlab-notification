@@ -4,7 +4,8 @@ import lombok.NonNull;
 import org.sadtech.basic.context.page.Pagination;
 import org.sadtech.basic.context.page.Sheet;
 import org.sadtech.basic.context.service.simple.FilterService;
-import org.sadtech.basic.core.service.AbstractBusinessLogicService;
+import org.sadtech.basic.core.service.AbstractSimpleManagerService;
+import org.sadtech.basic.core.util.Assert;
 import org.sadtech.basic.filter.criteria.CriteriaFilter;
 import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr;
@@ -13,12 +14,10 @@ import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest_;
 import org.sadtech.bot.bitbucketbot.domain.filter.PullRequestFilter;
-import org.sadtech.bot.bitbucketbot.exception.CreateException;
 import org.sadtech.bot.bitbucketbot.exception.UpdateException;
 import org.sadtech.bot.bitbucketbot.repository.PullRequestsRepository;
 import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
-import org.sadtech.bot.bitbucketbot.utils.ChangeGenerator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRequest, Long> implements PullRequestsService {
+public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRequest, Long> implements PullRequestsService {
 
     private final ChangeService changeService;
     private final PullRequestsRepository pullRequestsRepository;
@@ -46,12 +45,13 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
 
     @Override
     public PullRequest create(@NonNull PullRequest pullRequest) {
-        if (pullRequest.getId() == null) {
-            final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
-            changeService.add(ChangeGenerator.create(newPullRequest));
-            return newPullRequest;
-        }
-        throw new CreateException("При создании идентификатор должен быть пустым");
+        Assert.isNull(pullRequest.getId(), "При создании идентификатор должен быть пустым");
+
+        final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
+
+        changeService.create(newPullRequest);
+
+        return newPullRequest;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
         final PullRequest oldPullRequest = findAndFillId(pullRequest);
 
         if (!oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())) {
-            oldPullRequest.setBitbucketVersion(pullRequest.getVersion());
+            oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
             oldPullRequest.setConflict(pullRequest.isConflict());
             oldPullRequest.setTitle(pullRequest.getTitle());
             oldPullRequest.setDescription(pullRequest.getDescription());
@@ -68,8 +68,8 @@ public class PullRequestsServiceImpl extends AbstractBusinessLogicService<PullRe
 
             final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
 
-            changeService.add(ChangeGenerator.createUpdatePr(pullRequest, newPullRequest));
-            changeService.add(ChangeGenerator.createReviewersPr(pullRequest, newPullRequest));
+            changeService.createUpdatePr(pullRequest, newPullRequest);
+            changeService.createReviewersPr(pullRequest, newPullRequest);
 
             return newPullRequest;
         }

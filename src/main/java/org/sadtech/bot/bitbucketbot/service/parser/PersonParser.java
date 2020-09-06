@@ -1,49 +1,15 @@
 package org.sadtech.bot.bitbucketbot.service.parser;
 
-import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
-import org.sadtech.bot.bitbucketbot.domain.entity.Person;
-import org.sadtech.bot.bitbucketbot.dto.bitbucket.UserJson;
-import org.sadtech.bot.bitbucketbot.dto.bitbucket.sheet.UserSheetJson;
-import org.sadtech.bot.bitbucketbot.service.PersonService;
-import org.sadtech.bot.bitbucketbot.service.Utils;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
+/**
+ * // TODO: 06.09.2020 Добавить описание.
+ *
+ * @author upagge 06.09.2020
+ */
+public interface PersonParser {
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-@Service
-@RequiredArgsConstructor
-public class PersonParser {
-
-    private final PersonService personService;
-    private final ConversionService conversionService;
-
-    private final BitbucketProperty bitbucketProperty;
-
-    public void scanNewPerson() {
-        Optional<UserSheetJson> sheetJson = Utils.urlToJson(bitbucketProperty.getUrlUsers(), bitbucketProperty.getToken(), UserSheetJson.class);
-        while (sheetJson.isPresent() && sheetJson.get().hasContent()) {
-            final UserSheetJson sheetUsers = sheetJson.get();
-            final List<UserJson> users = sheetUsers.getValues();
-            final Set<String> logins = users.stream().map(UserJson::getName).collect(Collectors.toSet());
-            final Set<String> existsLogins = personService.existsByLogin(logins);
-            final Set<Person> newUsers = users.stream()
-                    .filter(userJson -> !existsLogins.contains(userJson.getName()))
-                    .map(userJson -> conversionService.convert(userJson, Person.class))
-                    .collect(Collectors.toSet());
-            if (!newUsers.isEmpty()) {
-                personService.createAll(newUsers);
-            }
-            if (sheetUsers.getNextPageStart() != null) {
-                sheetJson = Utils.urlToJson(bitbucketProperty.getUrlUsers() + sheetUsers.getNextPageStart(), bitbucketProperty.getToken(), UserSheetJson.class);
-            } else {
-                break;
-            }
-        }
-    }
+    /**
+     * Извлечение новых пользователей SCV.
+     */
+    void scanNewPerson();
 
 }

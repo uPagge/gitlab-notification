@@ -45,7 +45,7 @@ public class Comment {
     @Column(name = "message")
     private String message;
 
-    @Column(name = "createDate")
+    @Column(name = "create_date")
     private LocalDateTime createDate;
 
     /**

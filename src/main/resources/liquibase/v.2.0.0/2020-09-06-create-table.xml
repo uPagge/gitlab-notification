@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="create-table-person" author="upagge">
+    <changeSet id="2020-09-06-create-table-person" author="upagge">
         <createTable tableName="person">
             <column name="login" type="varchar(64)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -18,7 +18,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="create-table-pull-request" author="upagge">
+    <changeSet id="2020-09-06-create-table-pull-request" author="upagge">
         <createTable tableName="pull_request">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -60,11 +60,11 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="pull_request" columnNames="bitbucket_pr_id, repository_id"/>
+        <addUniqueConstraint tableName="pull_request" columnNames="bitbucket_id, repository_id"/>
 
     </changeSet>
 
-    <changeSet id="create-table-pull-request-reviewer" author="upagge">
+    <changeSet id="2020-09-06-create-table-pull-request-reviewer" author="upagge">
         <createTable tableName="pull_request_reviewer">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -83,16 +83,16 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="reviewer" columnNames="pull_request_id, user_login"/>
+        <addUniqueConstraint tableName="pull_request_reviewer" columnNames="pull_request_id, user_login"/>
     </changeSet>
 
-    <changeSet id="create-table-comments" author="upagge">
+    <changeSet id="2020-09-06-create-table-comments" author="upagge">
         <createTable tableName="pull_request_comment">
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
             <column name="url" type="varchar(300)"/>
-            <column name="author_login" type="integer">
+            <column name="author_login" type="varchar(64)">
                 <constraints nullable="false" foreignKeyName="pull_request_task_author_login_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
@@ -110,14 +110,16 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="create-table-comment-tree" author="upagge">
+    <changeSet id="2020-09-06-create-table-comment-tree" author="upagge">
         <createTable tableName="comment_tree">
             <column name="parent_id" type="int">
-                <constraints foreignKeyName="fk_parent_id_from_comment_id" references="comment(id)" nullable="false"
+                <constraints foreignKeyName="comment_tree_parent_id_pull_request_comment_id"
+                             references="pull_request_comment(id)" nullable="false"
                              deleteCascade="true"/>
             </column>
             <column name="child_id" type="int">
-                <constraints foreignKeyName="fk_child_id_from_comment_id" references="comment(id)" nullable="false"
+                <constraints foreignKeyName="comment_tree_child_id_pull_request_comment_id"
+                             references="pull_request_comment(id)" nullable="false"
                              deleteCascade="true"/>
             </column>
         </createTable>
@@ -125,7 +127,7 @@
         <addPrimaryKey tableName="comment_tree" columnNames="parent_id, child_id"/>
     </changeSet>
 
-    <changeSet id="create-table-task" author="upagge">
+    <changeSet id="2020-09-06-create-table-task" author="upagge">
         <createTable tableName="pull_request_task">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
