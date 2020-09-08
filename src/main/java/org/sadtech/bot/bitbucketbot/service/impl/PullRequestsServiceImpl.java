@@ -13,7 +13,9 @@ import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest_;
+import org.sadtech.bot.bitbucketbot.domain.entity.Reviewer;
 import org.sadtech.bot.bitbucketbot.domain.filter.PullRequestFilter;
+import org.sadtech.bot.bitbucketbot.domain.util.ReviewerChange;
 import org.sadtech.bot.bitbucketbot.exception.UpdateException;
 import org.sadtech.bot.bitbucketbot.repository.PullRequestsRepository;
 import org.sadtech.bot.bitbucketbot.service.ChangeService;
@@ -21,9 +23,12 @@ import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRequest, Long> implements PullRequestsService {
@@ -57,23 +62,55 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     @Override
     public PullRequest update(@NonNull PullRequest pullRequest) {
         final PullRequest oldPullRequest = findAndFillId(pullRequest);
+        oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
+        oldPullRequest.setConflict(pullRequest.isConflict());
+        oldPullRequest.setTitle(pullRequest.getTitle());
+        oldPullRequest.setDescription(pullRequest.getDescription());
+        oldPullRequest.setStatus(pullRequest.getStatus());
+        updateReviewers(oldPullRequest, pullRequest);
 
-        if (!oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())) {
-            oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
-            oldPullRequest.setConflict(pullRequest.isConflict());
-            oldPullRequest.setTitle(pullRequest.getTitle());
-            oldPullRequest.setDescription(pullRequest.getDescription());
-            oldPullRequest.setStatus(pullRequest.getStatus());
-            oldPullRequest.setReviewers(pullRequest.getReviewers());
-
-            final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
-
+        final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
+        if (!pullRequest.getBitbucketVersion().equals(newPullRequest.getBitbucketVersion())) {
             changeService.createUpdatePr(pullRequest, newPullRequest);
-            changeService.createReviewersPr(pullRequest, newPullRequest);
-
-            return newPullRequest;
         }
-        return oldPullRequest;
+
+        return newPullRequest;
+    }
+
+    private void updateReviewers(PullRequest oldPullRequest, PullRequest newPullRequest) {
+        final Map<String, Reviewer> oldReviewers = oldPullRequest.getReviewers().stream()
+                .collect(Collectors.toMap(Reviewer::getUserLogin, reviewer -> reviewer));
+        final Map<String, Reviewer> newReviewers = newPullRequest.getReviewers().stream()
+                .collect(Collectors.toMap(Reviewer::getUserLogin, reviewer -> reviewer));
+        final List<ReviewerChange> reviewerChanges = new ArrayList<>();
+        for (Reviewer newReviewer : newReviewers.values()) {
+            if (oldReviewers.containsKey(newReviewer.getUserLogin())) {
+                final Reviewer oldReviewer = oldReviewers.get(newReviewer.getUserLogin());
+                final ReviewerStatus oldStatus = oldReviewer.getStatus();
+                final ReviewerStatus newStatus = newReviewer.getStatus();
+                if (!oldStatus.equals(newStatus)) {
+                    reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getUserLogin(), oldStatus, newStatus));
+                    oldReviewer.setStatus(newStatus);
+                }
+            } else {
+                reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getUserLogin(), newReviewer.getStatus()));
+                newReviewer.setPullRequest(oldPullRequest);
+                oldPullRequest.getReviewers().add(newReviewer);
+            }
+        }
+        final Set<String> oldIds = oldReviewers.keySet();
+        oldIds.removeAll(newReviewers.keySet());
+        reviewerChanges.addAll(
+                oldReviewers.entrySet().stream()
+                        .filter(e -> oldIds.contains(e.getKey()))
+                        .map(e -> ReviewerChange.ofDeleted(e.getValue().getUserLogin()))
+                        .collect(Collectors.toList())
+        );
+        oldPullRequest.getReviewers()
+                .removeIf(reviewer -> oldIds.contains(reviewer.getUserLogin()));
+        if (!reviewerChanges.isEmpty()) {
+            changeService.createReviewersPr(newPullRequest.getTitle(), newPullRequest.getUrl(), newPullRequest.getAuthorLogin(), reviewerChanges);
+        }
     }
 
     @NonNull

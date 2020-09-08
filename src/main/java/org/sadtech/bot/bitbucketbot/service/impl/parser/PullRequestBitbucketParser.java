@@ -114,9 +114,8 @@ public class PullRequestBitbucketParser implements PullRequestParser {
 
     private List<PullRequest> getExistsPr(@NonNull List<PullRequestJson> pullRequestJsons) {
         return pullRequestJsons.stream()
-                .map(json -> pullRequestsService.getFirst(bitbucketIdAndPullRequestId(json)))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(json -> pullRequestsService.exists(bitbucketIdAndPullRequestId(json)))
+                .map(json -> conversionService.convert(json, PullRequest.class))
                 .collect(Collectors.toList());
     }
 

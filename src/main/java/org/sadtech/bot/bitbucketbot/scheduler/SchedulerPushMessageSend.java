@@ -63,6 +63,7 @@ public class SchedulerPushMessageSend {
                 final String json = objectMapper.writeValueAsString(pushMessage);
 //                sendMessage(json);
                 System.out.println(json);
+                System.out.println("\n\n");
             } catch (JsonProcessingException e) {
                 log.error(e.getMessage());
             }

@@ -14,10 +14,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -123,9 +123,8 @@ public class PullRequest {
     /**
      * Ревьюверы
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "pull_request_id")
-    private List<Reviewer> reviewers;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "pullRequest")
+    private List<Reviewer> reviewers = new ArrayList<>();
 
     public void setReviewers(List<Reviewer> reviewers) {
         reviewers.forEach(reviewer -> reviewer.setPullRequest(this));

@@ -2,7 +2,6 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.change.Change;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ReviewersPrChange;
@@ -15,9 +14,8 @@ import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.PersonService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,37 +52,14 @@ public class ChangeServiceImpl implements ChangeService {
     }
 
     @Override
-    public Change createReviewersPr(@NonNull PullRequest oldPullRequest, @NonNull PullRequest newPullRequest) {
-        final Map<Long, Reviewer> oldReviewers = oldPullRequest.getReviewers().stream()
-                .collect(Collectors.toMap(Reviewer::getId, reviewer -> reviewer));
-        final Map<Long, Reviewer> newReviewers = newPullRequest.getReviewers().stream()
-                .collect(Collectors.toMap(Reviewer::getId, reviewer -> reviewer));
-        final List<ReviewerChange> reviewerChanges = new ArrayList<>();
-        for (Reviewer newReviewer : newReviewers.values()) {
-            if (oldReviewers.containsKey(newReviewer.getId())) {
-                final Reviewer oldReviewer = oldReviewers.get(newReviewer.getId());
-                final ReviewerStatus oldStatus = oldReviewer.getStatus();
-                final ReviewerStatus newStatus = newReviewer.getStatus();
-                if (!oldStatus.equals(newStatus)) {
-                    reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getUserLogin(), oldStatus, newStatus));
-                }
-            } else {
-                reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getUserLogin(), newReviewer.getStatus()));
-            }
-        }
-        final Set<Long> oldIds = oldReviewers.keySet();
-        oldIds.removeAll(newReviewers.keySet());
-        reviewerChanges.addAll(
-                oldReviewers.entrySet().stream()
-                        .filter(e -> oldIds.contains(e.getKey()))
-                        .map(e -> ReviewerChange.ofDeleted(e.getValue().getUserLogin()))
-                        .collect(Collectors.toList())
-        );
+    public Change createReviewersPr(String prName, String prUrl, String authorLogin, List<ReviewerChange> reviewerChanges) {
         return changeRepository.add(
                 ReviewersPrChange.builder()
-                        .title(newPullRequest.getTitle())
-                        .url(newPullRequest.getUrl())
-                        .telegramId(personService.getTelegramIdByLogin(newPullRequest.getAuthorLogin()).orElse(null))
+                        .title(prName)
+                        .url(prUrl)
+                        .telegramIds(
+                                personService.getAllTelegramIdByLogin(Collections.singleton(authorLogin))
+                        )
                         .reviewerChanges(reviewerChanges)
                         .build()
         );
