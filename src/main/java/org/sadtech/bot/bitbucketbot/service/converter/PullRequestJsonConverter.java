@@ -73,7 +73,7 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 .map(
                         jsonReviewer -> {
                             final Reviewer reviewer = new Reviewer();
-                            reviewer.setUserLogin(jsonReviewer.getUser().getName());
+                            reviewer.setPersonLogin(jsonReviewer.getUser().getName());
                             reviewer.setStatus(convertStatusReviewer(jsonReviewer.getStatus()));
                             return reviewer;
                         }

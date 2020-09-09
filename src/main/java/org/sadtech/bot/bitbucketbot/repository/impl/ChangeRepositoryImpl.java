@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public class ChangeRepositoryImpl implements ChangeRepository {
 
-    private List<Change> list = new ArrayList<>();
+    private final List<Change> list = new ArrayList<>();
     private long count = 0;
 
     @Override
@@ -23,8 +23,7 @@ public class ChangeRepositoryImpl implements ChangeRepository {
 
     @Override
     public List<Change> getAll() {
-        final ArrayList<Change> changes = new ArrayList<>(list);
-        return changes;
+        return new ArrayList<>(list);
     }
 
     @Override

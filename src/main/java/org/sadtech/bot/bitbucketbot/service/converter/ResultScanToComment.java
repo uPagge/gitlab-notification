@@ -16,6 +16,7 @@ public class ResultScanToComment implements Converter<ResultScan, Comment> {
     public Comment convert(ResultScan resultScan) {
         final CommentJson commentJson = resultScan.getCommentJson();
         final Comment comment = new Comment();
+        comment.setId(commentJson.getId());
         comment.setCreateDate(commentJson.getCreatedDate());
         comment.setAuthor(commentJson.getAuthor().getName());
         comment.setPullRequestId(resultScan.getPullRequestId());

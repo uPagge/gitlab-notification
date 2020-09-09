@@ -26,7 +26,7 @@ import javax.persistence.Table;
 @Entity
 @Getter
 @Setter
-@Table(name = "pull_request_reviewer")
+@Table(name = "reviewer")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Reviewer {
 
@@ -42,8 +42,8 @@ public class Reviewer {
     /**
      * Пользователь
      */
-    @Column(name = "user_login")
-    private String userLogin;
+    @Column(name = "person_login")
+    private String personLogin;
 
     /**
      * Статус

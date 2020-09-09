@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "bitbucketbot.init")
-public class InitConfig {
+public class InitProperty {
 
     private Long startCommentId;
 

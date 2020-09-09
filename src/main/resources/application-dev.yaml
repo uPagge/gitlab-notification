@@ -23,7 +23,7 @@ bitbucketbot:
         no-comment-count: 20
         comment-count: 100
   init:
-    start-comment-id: 5947
+    start-comment-id: 7623
   server-send:
     url: http://188.225.35.149:8080/api/send
   bitbucket:

@@ -27,7 +27,7 @@ public interface PullRequestsRepositoryJpa extends JpaRepositoryImplementation<P
 
     void deleteAllByIdIn(Collection<Long> id);
 
-    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.userLogin=:reviewer AND r.status =:reviewerStatus AND p.status IN :pullRequestStatus")
+    @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE r.personLogin=:reviewer AND r.status =:reviewerStatus AND p.status IN :pullRequestStatus")
     List<PullRequest> findAllByReviewerAndStatuses(@Param("reviewer") String reviewer, @Param("reviewerStatus") ReviewerStatus reviewerStatus, @Param("pullRequestStatus") Set<PullRequestStatus> pullRequestStatus);
 
     @Query("SELECT p FROM PullRequest p LEFT JOIN p.reviewers r WHERE p.authorLogin=:author AND r.status=:reviewerStatus")

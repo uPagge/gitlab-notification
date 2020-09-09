@@ -65,17 +65,17 @@
     </changeSet>
 
     <changeSet id="2020-09-06-create-table-pull-request-reviewer" author="upagge">
-        <createTable tableName="pull_request_reviewer">
+        <createTable tableName="reviewer">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="pull_request_id" type="integer">
-                <constraints nullable="false" foreignKeyName="pull_request_reviewer_pull_request_id_pull_request_id"
+                <constraints nullable="false" foreignKeyName="reviewer_pull_request_id_pull_request_id"
                              references="pull_request(id)" deleteCascade="true"/>
             </column>
-            <column name="user_login" type="varchar(64)">
+            <column name="person_login" type="varchar(64)">
                 <constraints nullable="false"
-                             foreignKeyName="pull_request_reviewer_user_id_user_login"
+                             foreignKeyName="reviewer_person_login_id_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
             <column name="status" type="varchar(50)">
@@ -83,21 +83,21 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint tableName="pull_request_reviewer" columnNames="pull_request_id, user_login"/>
+        <addUniqueConstraint tableName="reviewer" columnNames="pull_request_id, person_login"/>
     </changeSet>
 
     <changeSet id="2020-09-06-create-table-comments" author="upagge">
-        <createTable tableName="pull_request_comment">
+        <createTable tableName="comment">
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
             <column name="url" type="varchar(300)"/>
             <column name="author_login" type="varchar(64)">
-                <constraints nullable="false" foreignKeyName="pull_request_task_author_login_person_login"
+                <constraints nullable="false" foreignKeyName="task_author_login_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
             <column name="pull_request_id" type="integer">
-                <constraints nullable="false" foreignKeyName="pull_request_comment_pull_request_id_pull_request_id"
+                <constraints nullable="false" foreignKeyName="comment_pull_request_id_pull_request_id"
                              references="pull_request(id)" deleteCascade="true"/>
             </column>
             <column name="message" type="varchar(500)"/>
@@ -113,13 +113,13 @@
     <changeSet id="2020-09-06-create-table-comment-tree" author="upagge">
         <createTable tableName="comment_tree">
             <column name="parent_id" type="int">
-                <constraints foreignKeyName="comment_tree_parent_id_pull_request_comment_id"
-                             references="pull_request_comment(id)" nullable="false"
+                <constraints foreignKeyName="comment_tree_parent_id_comment_id"
+                             references="comment(id)" nullable="false"
                              deleteCascade="true"/>
             </column>
             <column name="child_id" type="int">
-                <constraints foreignKeyName="comment_tree_child_id_pull_request_comment_id"
-                             references="pull_request_comment(id)" nullable="false"
+                <constraints foreignKeyName="comment_tree_child_id_comment_id"
+                             references="comment(id)" nullable="false"
                              deleteCascade="true"/>
             </column>
         </createTable>
@@ -128,7 +128,7 @@
     </changeSet>
 
     <changeSet id="2020-09-06-create-table-task" author="upagge">
-        <createTable tableName="pull_request_task">
+        <createTable tableName="task">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -145,11 +145,11 @@
                 <constraints nullable="false"/>
             </column>
             <column name="author_login" type="varchar(64)">
-                <constraints nullable="false" foreignKeyName="pull_request_task_author_login_person_login"
+                <constraints nullable="false" foreignKeyName="task_author_login_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
             <column name="pull_request_id" type="int">
-                <constraints nullable="true" foreignKeyName="pull_request_task_pull_request_id_pull_request_id"
+                <constraints nullable="true" foreignKeyName="task_pull_request_id_pull_request_id"
                              references="pull_request(id)" deleteCascade="true"/>
             </column>
             <column name="create_date" type="datetime">
@@ -159,6 +159,20 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="2020-09-08-create-table-" author="">
+        <createTable tableName="task_comments">
+            <column name="task_id" type="integer">
+                <constraints nullable="false" foreignKeyName="task_comments_task_id_task_id" references="task(id)"/>
+            </column>
+            <column name="comment_id" type="integer">
+                <constraints nullable="false" foreignKeyName="task_comments_comment_id_comment_id"
+                             references="comment(id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="task_comments" columnNames="task_id, comment_id"/>
     </changeSet>
 
 </databaseChangeLog>
