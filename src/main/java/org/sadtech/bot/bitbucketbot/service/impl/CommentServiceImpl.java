@@ -3,31 +3,37 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.bot.bitbucketbot.config.InitProperty;
+import org.sadtech.bot.bitbucketbot.domain.change.comment.CommentChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
 import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
 import org.sadtech.bot.bitbucketbot.repository.CommentRepository;
+import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.CommentService;
 import org.sadtech.bot.bitbucketbot.service.PersonService;
-import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Long> implements CommentService {
 
+    private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
+
     private final CommentRepository commentRepository;
     private final PersonService personService;
-    private final PullRequestsService pullRequestsService;
+    private final ChangeService changeService;
     private final InitProperty initProperty;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PersonService personService, PullRequestsService pullRequestsService, InitProperty initProperty) {
+    public CommentServiceImpl(CommentRepository commentRepository, PersonService personService, ChangeService changeService, InitProperty initProperty) {
         super(commentRepository);
         this.personService = personService;
         this.commentRepository = commentRepository;
-        this.pullRequestsService = pullRequestsService;
+        this.changeService = changeService;
         this.initProperty = initProperty;
     }
 
@@ -47,7 +53,27 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
 
     @Override
     public Comment create(@NonNull Comment comment) {
-        return commentRepository.save(comment);
+        final Comment newComment = commentRepository.save(comment);
+        notificationPersonal(comment);
+        return newComment;
+    }
+
+    private void notificationPersonal(@NonNull Comment comment) {
+        Matcher matcher = PATTERN.matcher(comment.getMessage());
+        Set<String> recipientsLogins = new HashSet<>();
+        while (matcher.find()) {
+            final String login = matcher.group(0).replace("@", "");
+            recipientsLogins.add(login);
+        }
+        final Set<Long> recipientsIds = personService.getAllTelegramIdByLogin(recipientsLogins);
+        changeService.save(
+                CommentChange.builder()
+                        .authorName(comment.getAuthor())
+                        .url(comment.getUrl())
+                        .telegramIds(recipientsIds)
+                        .message(comment.getMessage())
+                        .build()
+        );
     }
 
     @Override

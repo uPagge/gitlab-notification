@@ -24,4 +24,6 @@ public abstract class Change {
         this.telegramIds = telegramIds;
     }
 
+    public abstract String generateMessage();
+
 }

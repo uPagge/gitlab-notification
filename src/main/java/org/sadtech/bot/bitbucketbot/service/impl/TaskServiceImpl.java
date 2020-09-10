@@ -1,35 +1,60 @@
 package org.sadtech.bot.bitbucketbot.service.impl;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.sadtech.basic.core.service.AbstractSimpleManagerService;
+import org.sadtech.basic.core.util.Assert;
+import org.sadtech.bot.bitbucketbot.domain.change.task.TaskNewChange;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.Task;
-import org.sadtech.bot.bitbucketbot.exception.CreateException;
 import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
 import org.sadtech.bot.bitbucketbot.repository.TaskRepository;
+import org.sadtech.bot.bitbucketbot.service.ChangeService;
+import org.sadtech.bot.bitbucketbot.service.PersonService;
+import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.sadtech.bot.bitbucketbot.service.TaskService;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> implements TaskService {
 
     private final TaskRepository taskRepository;
 
-    @Override
-    public Task create(@NonNull Task task) {
-        if (task.getId() == null) {
-            return taskRepository.save(task);
-        }
-        throw new CreateException("При создании объекта не должно быть идентификатора");
+    private final PullRequestsService pullRequestsService;
+    private final ChangeService changeService;
+    private final PersonService personService;
+
+    public TaskServiceImpl(TaskRepository taskRepository, PullRequestsService pullRequestsService, ChangeService changeService, PersonService personService) {
+        super(taskRepository);
+        this.taskRepository = taskRepository;
+        this.pullRequestsService = pullRequestsService;
+        this.changeService = changeService;
+        this.personService = personService;
     }
 
     @Override
-    public void deleteById(@NonNull Long id) {
-        taskRepository.deleteById(id);
+    public Task create(@NonNull Task task) {
+        Assert.isNotNull(task.getId(), "При создании объекта должен быть установлен идентификатор");
+        final Task newTask = taskRepository.save(task);
+
+        final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())
+                .orElseThrow(() -> new NotFoundException("ПР не найден"));
+
+        changeService.save(
+                TaskNewChange.builder()
+                        .authorName(task.getAuthor())
+                        .messageTask(task.getDescription())
+                        .url(task.getUrl())
+                        .telegramIds(
+                                personService.getAllTelegramIdByLogin(
+                                        Collections.singleton(pullRequest.getAuthorLogin())
+                                )
+                        )
+                        .build()
+        );
+
+        return newTask;
     }
 
     @Override
@@ -37,11 +62,6 @@ public class TaskServiceImpl implements TaskService {
         final Task oldTask = taskRepository.findById(task.getId()).orElseThrow(() -> new NotFoundException("Задача не найдена"));
         oldTask.setStatus(task.getStatus());
         return taskRepository.save(oldTask);
-    }
-
-    @Override
-    public List<Task> createAll(@NonNull Collection<Task> tasks) {
-        return tasks.stream().map(this::create).collect(Collectors.toList());
     }
 
     @Override

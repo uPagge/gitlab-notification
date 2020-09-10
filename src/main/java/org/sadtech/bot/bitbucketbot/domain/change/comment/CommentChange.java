@@ -5,7 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.bitbucketbot.domain.change.Change;
 import org.sadtech.bot.bitbucketbot.domain.change.ChangeType;
+import org.sadtech.bot.bitbucketbot.utils.Smile;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 @Getter
@@ -29,6 +31,14 @@ public class CommentChange extends Change {
         this.url = url;
     }
 
+    @Override
+    public String generateMessage() {
+        return MessageFormat.format(
+                "{0} *Новое упоминание* | [ПР]({1}){2}" +
+                        "{3}: {4}",
+                Smile.BELL, url, Smile.HR, authorName, message.replaceAll("@[\\w]+", "")
+        );
+    }
 }
 
 

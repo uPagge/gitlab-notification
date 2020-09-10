@@ -1,7 +1,6 @@
 package org.sadtech.bot.bitbucketbot.repository.impl;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerRepository;
 import org.sadtech.bot.bitbucketbot.domain.entity.Task;
 import org.sadtech.bot.bitbucketbot.repository.TaskRepository;
 import org.sadtech.bot.bitbucketbot.repository.jpa.TaskRepositoryJpa;
@@ -10,29 +9,18 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
-public class TaskRepositoryImpl implements TaskRepository {
+public class TaskRepositoryImpl extends AbstractSimpleManagerRepository<Task, Long> implements TaskRepository {
 
     private final TaskRepositoryJpa taskRepositoryJpa;
 
-    @Override
-    public Task save(@NonNull Task task) {
-        return taskRepositoryJpa.save(task);
-    }
-
-    @Override
-    public void deleteById(@NonNull Long id) {
-        taskRepositoryJpa.deleteById(id);
-    }
-
-    @Override
-    public Optional<Task> findById(@NonNull Long id) {
-        return taskRepositoryJpa.findById(id);
+    public TaskRepositoryImpl(TaskRepositoryJpa taskRepositoryJpa) {
+        super(taskRepositoryJpa);
+        this.taskRepositoryJpa = taskRepositoryJpa;
     }
 
     @Override
     public Optional<Task> findFirstByOrderByIdDesc() {
-        return Optional.empty();
+        return taskRepositoryJpa.findFirstByOrderByIdDesc();
     }
 
 }

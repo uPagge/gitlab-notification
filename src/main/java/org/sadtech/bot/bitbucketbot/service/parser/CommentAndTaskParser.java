@@ -9,7 +9,6 @@ import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
 import org.sadtech.bot.bitbucketbot.config.properties.CommentSchedulerProperty;
 import org.sadtech.bot.bitbucketbot.domain.Answer;
 import org.sadtech.bot.bitbucketbot.domain.change.comment.AnswerCommentChange;
-import org.sadtech.bot.bitbucketbot.domain.change.comment.CommentChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.Task;
@@ -30,12 +29,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -45,8 +41,6 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class CommentAndTaskParser {
-
-    private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
     private final CommentService commentService;
     private final PullRequestsService pullRequestsService;
@@ -68,8 +62,8 @@ public class CommentAndTaskParser {
             executorScanner.registration(dataScans);
             final List<ResultScan> resultScans = executorScanner.getResult();
             if (!resultScans.isEmpty()) {
-                processingComments(resultScans);
-                processingTasks(resultScans);
+                commentService.createAll(getCommentsByResultScan(resultScans));
+                taskService.createAll(getTaskByResultScan(resultScans));
                 count = 0;
             }
         } while (count++ < commentSchedulerProperty.getNoCommentCount());
@@ -81,16 +75,6 @@ public class CommentAndTaskParser {
             commentStartId = initProperty.getStartCommentId();
         }
         return commentStartId;
-    }
-
-    private void processingComments(List<ResultScan> resultScans) {
-        final List<Comment> newComments = commentService.createAll(getCommentsByResultScan(resultScans));
-        newComments.forEach(this::notificationPersonal);
-    }
-
-    private void processingTasks(List<ResultScan> resultScans) {
-        final List<Task> newTasks = taskService.createAll(getTaskByResultScan(resultScans));
-        newTasks.forEach(changeService::createTask);
     }
 
     private List<DataScan> generatingLinksToPossibleComments(@NonNull Long commentId) {
@@ -139,24 +123,6 @@ public class CommentAndTaskParser {
                 .replace("{repositorySlug}", pullRequest.getRepositorySlug())
                 .replace("{pullRequestId}", pullRequest.getBitbucketId().toString())
                 .replace("{commentId}", String.valueOf(commentId));
-    }
-
-    private void notificationPersonal(@NonNull Comment comment) {
-        Matcher matcher = PATTERN.matcher(comment.getMessage());
-        Set<String> recipientsLogins = new HashSet<>();
-        while (matcher.find()) {
-            final String login = matcher.group(0).replace("@", "");
-            recipientsLogins.add(login);
-        }
-        final Set<Long> recipientsIds = personService.getAllTelegramIdByLogin(recipientsLogins);
-        changeService.createCommentChange(
-                CommentChange.builder()
-                        .authorName(comment.getAuthor())
-                        .url(comment.getUrl())
-                        .telegramIds(recipientsIds)
-                        .message(comment.getMessage())
-                        .build()
-        );
     }
 
     public void scanOldComment() {

@@ -11,8 +11,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public abstract class PrChange extends Change {
 
-    private final String title;
-    private final String url;
+    protected final String title;
+    protected final String url;
 
     protected PrChange(ChangeType type, Set<Long> telegramIds, String title, String url) {
         super(type, telegramIds);
