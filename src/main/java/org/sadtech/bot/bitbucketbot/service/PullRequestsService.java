@@ -7,9 +7,11 @@ import org.sadtech.bot.bitbucketbot.domain.IdAndStatusPr;
 import org.sadtech.bot.bitbucketbot.domain.PullRequestStatus;
 import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequestMini;
 import org.sadtech.bot.bitbucketbot.domain.filter.PullRequestFilter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface PullRequestsService extends SimpleManagerService<PullRequest, Long>, FilterService<PullRequest, PullRequestFilter> {
@@ -26,5 +28,7 @@ public interface PullRequestsService extends SimpleManagerService<PullRequest, L
      * @return Объект, содержащий идентификатор и статус ПР
      */
     Set<IdAndStatusPr> getAllId(Set<PullRequestStatus> statuses);
+
+    Optional<PullRequestMini> getMiniInfo(@NonNull Long pullRequestId);
 
 }

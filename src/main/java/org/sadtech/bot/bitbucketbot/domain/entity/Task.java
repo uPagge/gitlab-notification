@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.sadtech.bot.bitbucketbot.domain.TaskStatus;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -63,8 +63,11 @@ public class Task {
     @Column(name = "author_login")
     private String author;
 
+    @Column(name = "responsible_login")
+    private String responsible;
+
     @JoinTable
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
 
 }

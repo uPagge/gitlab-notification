@@ -16,6 +16,7 @@ import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ReviewersPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.UpdatePrChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequestMini;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest_;
 import org.sadtech.bot.bitbucketbot.domain.entity.Reviewer;
 import org.sadtech.bot.bitbucketbot.domain.filter.PullRequestFilter;
@@ -180,6 +181,11 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     @Override
     public Set<IdAndStatusPr> getAllId(Set<PullRequestStatus> statuses) {
         return pullRequestsRepository.findAllIdByStatusIn(statuses);
+    }
+
+    @Override
+    public Optional<PullRequestMini> getMiniInfo(@NonNull Long pullRequestId) {
+        return pullRequestsRepository.findMiniInfoById(pullRequestId);
     }
 
     @Override

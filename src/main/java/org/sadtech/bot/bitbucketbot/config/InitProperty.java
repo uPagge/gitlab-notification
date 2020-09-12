@@ -12,5 +12,6 @@ import org.springframework.stereotype.Component;
 public class InitProperty {
 
     private Long startCommentId;
+    private boolean use = false;
 
 }

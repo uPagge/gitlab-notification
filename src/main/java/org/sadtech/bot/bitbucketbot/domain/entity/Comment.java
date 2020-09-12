@@ -30,6 +30,9 @@ public class Comment {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @Column(name = "url_api")
+    private String urlApi;
+
     @Column(name = "url")
     private String url;
 

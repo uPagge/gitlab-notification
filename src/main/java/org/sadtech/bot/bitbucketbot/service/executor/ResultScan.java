@@ -8,7 +8,7 @@ import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 @RequiredArgsConstructor
 public class ResultScan {
 
-    private final String urlComment;
+    private final String commentApiUrl;
     private final Long pullRequestId;
     private final CommentJson commentJson;
 

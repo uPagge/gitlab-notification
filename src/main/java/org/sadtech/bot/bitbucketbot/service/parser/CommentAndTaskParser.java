@@ -11,9 +11,11 @@ import org.sadtech.bot.bitbucketbot.domain.Answer;
 import org.sadtech.bot.bitbucketbot.domain.change.comment.AnswerCommentChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
+import org.sadtech.bot.bitbucketbot.domain.entity.PullRequestMini;
 import org.sadtech.bot.bitbucketbot.domain.entity.Task;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.Severity;
+import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
 import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.CommentService;
 import org.sadtech.bot.bitbucketbot.service.PersonService;
@@ -26,6 +28,7 @@ import org.sadtech.bot.bitbucketbot.service.impl.ExecutorScanner;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +57,8 @@ public class CommentAndTaskParser {
     private final CommentSchedulerProperty commentSchedulerProperty;
     private final InitProperty initProperty;
 
+    private boolean initStart = false;
+
     public void scanNewCommentAndTask() {
         long commentId = getLastIdCommentOrTask() + 1;
         int count = 0;
@@ -62,8 +67,13 @@ public class CommentAndTaskParser {
             executorScanner.registration(dataScans);
             final List<ResultScan> resultScans = executorScanner.getResult();
             if (!resultScans.isEmpty()) {
-                commentService.createAll(getCommentsByResultScan(resultScans));
-                taskService.createAll(getTaskByResultScan(resultScans));
+                final long commentMax = commentService.createAll(getCommentsByResultScan(resultScans)).stream()
+                        .mapToLong(Comment::getId)
+                        .max().orElse(0L);
+                final long taskMax = taskService.createAll(getTaskByResultScan(resultScans)).stream()
+                        .mapToLong(Task::getId)
+                        .max().orElse(0L);
+                commentId = Long.max(commentMax, taskMax) + 1;
                 count = 0;
             }
         } while (count++ < commentSchedulerProperty.getNoCommentCount());
@@ -71,8 +81,9 @@ public class CommentAndTaskParser {
 
     private long getLastIdCommentOrTask() {
         Long commentStartId = Long.max(commentService.getLastCommentId(), taskService.getLastTaskId());
-        if (commentStartId == 0L && initProperty != null) {
+        if (initProperty != null && !initStart && (commentStartId == 0L || initProperty.isUse())) {
             commentStartId = initProperty.getStartCommentId();
+            initStart = true;
         }
         return commentStartId;
     }
@@ -107,6 +118,13 @@ public class CommentAndTaskParser {
         return resultScans.stream()
                 .filter(resultScan -> Severity.NORMAL.equals(resultScan.getCommentJson().getSeverity()))
                 .map(resultScan -> conversionService.convert(resultScan, Comment.class))
+                .peek(
+                        comment -> {
+                            final PullRequestMini pullRequestMini = pullRequestsService.getMiniInfo(comment.getPullRequestId())
+                                    .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
+                            comment.setUrl(generateUrl(comment.getId(), pullRequestMini.getUrl()));
+                        }
+                )
                 .collect(Collectors.toList());
     }
 
@@ -114,7 +132,19 @@ public class CommentAndTaskParser {
         return resultScans.stream()
                 .filter(commentJson -> Severity.BLOCKER.equals(commentJson.getCommentJson().getSeverity()))
                 .map(resultScan -> conversionService.convert(resultScan, Task.class))
+                .peek(
+                        task -> {
+                            final PullRequestMini pullRequestMini = pullRequestsService.getMiniInfo(task.getPullRequestId())
+                                    .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
+                            task.setResponsible(pullRequestMini.getAuthorLogin());
+                            task.setUrl(generateUrl(task.getId(), pullRequestMini.getUrl()));
+                        }
+                )
                 .collect(Collectors.toList());
+    }
+
+    private String generateUrl(@NonNull Long id, @NonNull String pullRequestUrl) {
+        return MessageFormat.format("{0}/overview?commentId={1}", pullRequestUrl, id).replaceAll(" ", "");
     }
 
     private String getCommentUrl(long commentId, PullRequest pullRequest) {

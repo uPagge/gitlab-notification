@@ -36,6 +36,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     @Override
     public Task create(@NonNull Task task) {
         Assert.isNotNull(task.getId(), "При создании объекта должен быть установлен идентификатор");
+        task.getComments().clear();
         final Task newTask = taskRepository.save(task);
 
         final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())

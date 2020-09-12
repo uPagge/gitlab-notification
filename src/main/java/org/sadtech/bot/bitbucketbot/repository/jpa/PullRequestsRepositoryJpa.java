@@ -39,6 +39,9 @@ public interface PullRequestsRepositoryJpa extends JpaRepositoryImplementation<P
     @Query("SELECT p.id from PullRequest p")
     Set<Long> findAllIds();
 
+    @Query("SELECT p.authorLogin from PullRequest p WHERE p.id = :id")
+    Optional<String> findAuthorById(@Param("id") Long id);
+
 //    @Query("SELECT p FROM PullRequest p WHERE p.authorLogin = :login AND p.createDate BETWEEN :dateFrom AND :dateTo")
 //    List<PullRequest> findAllByAuthorAndDateBetween(@Param("login") String login, @Param("dateFrom") LocalDateTime dateFrom, @Param("dateTo") LocalDateTime dateTo);
 

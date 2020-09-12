@@ -21,7 +21,7 @@ public class ResultScanToComment implements Converter<ResultScan, Comment> {
         comment.setAuthor(commentJson.getAuthor().getName());
         comment.setPullRequestId(resultScan.getPullRequestId());
         comment.setMessage(commentJson.getText());
-        comment.setUrl(resultScan.getUrlComment());
+        comment.setUrlApi(resultScan.getCommentApiUrl());
         comment.setBitbucketVersion(commentJson.getVersion());
         comment.setAnswers(
                 commentJson.getComments().stream()

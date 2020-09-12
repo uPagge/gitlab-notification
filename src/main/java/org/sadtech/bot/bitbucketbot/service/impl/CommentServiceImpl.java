@@ -2,7 +2,6 @@ package org.sadtech.bot.bitbucketbot.service.impl;
 
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
-import org.sadtech.bot.bitbucketbot.config.InitProperty;
 import org.sadtech.bot.bitbucketbot.domain.change.comment.CommentChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
 import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
@@ -27,23 +26,17 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     private final CommentRepository commentRepository;
     private final PersonService personService;
     private final ChangeService changeService;
-    private final InitProperty initProperty;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PersonService personService, ChangeService changeService, InitProperty initProperty) {
+    public CommentServiceImpl(CommentRepository commentRepository, PersonService personService, ChangeService changeService) {
         super(commentRepository);
         this.personService = personService;
         this.commentRepository = commentRepository;
         this.changeService = changeService;
-        this.initProperty = initProperty;
     }
 
     @Override
     public Long getLastCommentId() {
-        return commentRepository.findFirstByOrderByIdDesc().map(Comment::getId).orElse(getInitCommentId());
-    }
-
-    private Long getInitCommentId() {
-        return initProperty.getStartCommentId() != null ? initProperty.getStartCommentId() : 0L;
+        return commentRepository.findFirstByOrderByIdDesc().map(Comment::getId).orElse(0L);
     }
 
     @Override
@@ -53,6 +46,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
 
     @Override
     public Comment create(@NonNull Comment comment) {
+        comment.getAnswers().clear();
         final Comment newComment = commentRepository.save(comment);
         notificationPersonal(comment);
         return newComment;

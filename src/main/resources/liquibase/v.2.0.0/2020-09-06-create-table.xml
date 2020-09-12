@@ -91,7 +91,12 @@
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="url" type="varchar(300)"/>
+            <column name="url" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="url_api" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="author_login" type="varchar(64)">
                 <constraints nullable="false" foreignKeyName="task_author_login_person_login"
                              references="person(login)" deleteCascade="true"/>
@@ -139,13 +144,17 @@
                 <constraints nullable="false"/>
             </column>
             <column name="url" type="varchar(300)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="url_api" type="varchar(300)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="author_login" type="varchar(64)">
                 <constraints nullable="false" foreignKeyName="task_author_login_person_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
+            <column name="responsible_login" type="varchar(64)">
+                <constraints nullable="false" foreignKeyName="task_responsible_login_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
             <column name="pull_request_id" type="int">
