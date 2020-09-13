@@ -16,9 +16,14 @@ public class CommentAndTaskScheduler {
         commentAndTaskParser.scanNewCommentAndTask();
     }
 
-    //    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void scanOldComment() {
         commentAndTaskParser.scanOldComment();
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void scanOldTask() {
+        commentAndTaskParser.scanOldTask();
     }
 
 }

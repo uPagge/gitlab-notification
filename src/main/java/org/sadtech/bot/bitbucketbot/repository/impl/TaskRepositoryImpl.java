@@ -6,6 +6,8 @@ import org.sadtech.bot.bitbucketbot.repository.TaskRepository;
 import org.sadtech.bot.bitbucketbot.repository.jpa.TaskRepositoryJpa;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,6 +23,11 @@ public class TaskRepositoryImpl extends AbstractSimpleManagerRepository<Task, Lo
     @Override
     public Optional<Task> findFirstByOrderByIdDesc() {
         return taskRepositoryJpa.findFirstByOrderByIdDesc();
+    }
+
+    @Override
+    public List<Task> findByCreateDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
+        return taskRepositoryJpa.findByCreateDateBetween(dateFrom, dateTo);
     }
 
 }

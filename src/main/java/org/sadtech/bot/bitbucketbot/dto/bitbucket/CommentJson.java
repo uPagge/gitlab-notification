@@ -26,4 +26,8 @@ public class CommentJson {
     @JsonDeserialize(using = LocalDateTimeFromEpochDeserializer.class)
     private LocalDateTime updatedDate;
 
+    private Long customPullRequestId;
+
+    private String customCommentApiUrl;
+
 }

@@ -4,9 +4,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
+import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 import org.sadtech.bot.bitbucketbot.service.executor.DataScan;
 import org.sadtech.bot.bitbucketbot.service.executor.Executor;
-import org.sadtech.bot.bitbucketbot.service.executor.ResultScan;
 import org.sadtech.bot.bitbucketbot.service.executor.Seeker;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExecutorScanner implements Executor<DataScan, ResultScan> {
+public class ExecutorScanner implements Executor<DataScan, CommentJson> {
 
     private final ExecutorService executorService;
-    private List<Future<Optional<ResultScan>>> resultList = new ArrayList<>();
+    private List<Future<Optional<CommentJson>>> resultList = new ArrayList<>();
     private final BitbucketProperty bitbucketProperty;
 
     @Override
@@ -39,11 +39,11 @@ public class ExecutorScanner implements Executor<DataScan, ResultScan> {
     }
 
     @Override
-    public List<ResultScan> getResult() {
+    public List<CommentJson> getResult() {
         while (!resultList.stream().allMatch(Future::isDone)) {
 
         }
-        final List<ResultScan> result = resultList.stream()
+        final List<CommentJson> result = resultList.stream()
                 .filter(Future::isDone)
                 .map(this::getResultScan)
                 .filter(Optional::isPresent)
@@ -53,7 +53,7 @@ public class ExecutorScanner implements Executor<DataScan, ResultScan> {
         return result;
     }
 
-    private Optional<ResultScan> getResultScan(Future<Optional<ResultScan>> test) {
+    private Optional<CommentJson> getResultScan(Future<Optional<CommentJson>> test) {
         try {
             return test.get();
         } catch (InterruptedException | ExecutionException e) {

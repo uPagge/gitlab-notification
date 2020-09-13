@@ -42,6 +42,9 @@ public class Comment {
     @Column(name = "author_login")
     private String author;
 
+    @Column(name = "responsible_login")
+    private String responsible;
+
     @Column(name = "message")
     private String message;
 

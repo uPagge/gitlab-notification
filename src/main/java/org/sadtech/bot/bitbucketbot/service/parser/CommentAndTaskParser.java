@@ -7,8 +7,6 @@ import org.sadtech.basic.core.page.PaginationImpl;
 import org.sadtech.bot.bitbucketbot.config.InitProperty;
 import org.sadtech.bot.bitbucketbot.config.properties.BitbucketProperty;
 import org.sadtech.bot.bitbucketbot.config.properties.CommentSchedulerProperty;
-import org.sadtech.bot.bitbucketbot.domain.Answer;
-import org.sadtech.bot.bitbucketbot.domain.change.comment.AnswerCommentChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.Comment;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequestMini;
@@ -16,14 +14,11 @@ import org.sadtech.bot.bitbucketbot.domain.entity.Task;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.Severity;
 import org.sadtech.bot.bitbucketbot.exception.NotFoundException;
-import org.sadtech.bot.bitbucketbot.service.ChangeService;
 import org.sadtech.bot.bitbucketbot.service.CommentService;
-import org.sadtech.bot.bitbucketbot.service.PersonService;
 import org.sadtech.bot.bitbucketbot.service.PullRequestsService;
 import org.sadtech.bot.bitbucketbot.service.TaskService;
 import org.sadtech.bot.bitbucketbot.service.Utils;
 import org.sadtech.bot.bitbucketbot.service.executor.DataScan;
-import org.sadtech.bot.bitbucketbot.service.executor.ResultScan;
 import org.sadtech.bot.bitbucketbot.service.impl.ExecutorScanner;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
@@ -31,10 +26,8 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -47,8 +40,6 @@ public class CommentAndTaskParser {
 
     private final CommentService commentService;
     private final PullRequestsService pullRequestsService;
-    private final PersonService personService;
-    private final ChangeService changeService;
     private final ExecutorScanner executorScanner;
     private final TaskService taskService;
     private final ConversionService conversionService;
@@ -65,7 +56,7 @@ public class CommentAndTaskParser {
         do {
             final List<DataScan> dataScans = generatingLinksToPossibleComments(commentId);
             executorScanner.registration(dataScans);
-            final List<ResultScan> resultScans = executorScanner.getResult();
+            final List<CommentJson> resultScans = executorScanner.getResult();
             if (!resultScans.isEmpty()) {
                 final long commentMax = commentService.createAll(getCommentsByResultScan(resultScans)).stream()
                         .mapToLong(Comment::getId)
@@ -114,23 +105,24 @@ public class CommentAndTaskParser {
         return commentUrls;
     }
 
-    private List<Comment> getCommentsByResultScan(List<ResultScan> resultScans) {
-        return resultScans.stream()
-                .filter(resultScan -> Severity.NORMAL.equals(resultScan.getCommentJson().getSeverity()))
+    private List<Comment> getCommentsByResultScan(List<CommentJson> commentJsons) {
+        return commentJsons.stream()
+                .filter(json -> Severity.NORMAL.equals(json.getSeverity()))
                 .map(resultScan -> conversionService.convert(resultScan, Comment.class))
                 .peek(
                         comment -> {
                             final PullRequestMini pullRequestMini = pullRequestsService.getMiniInfo(comment.getPullRequestId())
                                     .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
                             comment.setUrl(generateUrl(comment.getId(), pullRequestMini.getUrl()));
+                            comment.setResponsible(pullRequestMini.getAuthorLogin());
                         }
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<Task> getTaskByResultScan(List<ResultScan> resultScans) {
-        return resultScans.stream()
-                .filter(commentJson -> Severity.BLOCKER.equals(commentJson.getCommentJson().getSeverity()))
+    private List<Task> getTaskByResultScan(List<CommentJson> commentJsons) {
+        return commentJsons.stream()
+                .filter(json -> Severity.BLOCKER.equals(json.getSeverity()))
                 .map(resultScan -> conversionService.convert(resultScan, Task.class))
                 .peek(
                         task -> {
@@ -156,45 +148,50 @@ public class CommentAndTaskParser {
     }
 
     public void scanOldComment() {
-        @NonNull final List<Comment> comments = commentService.getAllBetweenDate(
-                LocalDateTime.now().minusDays(10), LocalDateTime.now()
+        final List<Comment> comments = commentService.getAllBetweenDate(
+                LocalDateTime.now().minusDays(20), LocalDateTime.now()
         );
         for (Comment oldComment : comments) {
             final Optional<CommentJson> optCommentJson = Utils.urlToJson(
-                    oldComment.getUrl(),
+                    oldComment.getUrlApi(),
                     bitbucketProperty.getToken(),
                     CommentJson.class
             );
-            final Comment newComment = commentService.update(conversionService.convert(oldComment, Comment.class));
-
             if (optCommentJson.isPresent()) {
-                final CommentJson commentJson = optCommentJson.get();
-                notifyNewCommentAnswers(oldComment, newComment);
+                final CommentJson json = optCommentJson.get();
+                if (Severity.BLOCKER.equals(json.getSeverity())) {
+                    taskService.convert(oldComment);
+                } else {
+                    final Comment newComment = conversionService.convert(json, Comment.class);
+                    commentService.update(newComment);
+                }
+            } else {
+                commentService.deleteById(oldComment.getId());
             }
         }
     }
 
-    private void notifyNewCommentAnswers(Comment oldComment, Comment newComment) {
-        final Set<Long> oldAnswerIds = oldComment.getAnswers();
-        final Set<Long> newAnswerIds = newComment.getAnswers();
-        if (!newAnswerIds.isEmpty()) {
-            final List<Comment> newAnswers = commentService.getAllById(newAnswerIds).stream()
-                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
-                    .collect(Collectors.toList());
-            changeService.save(
-                    AnswerCommentChange.builder()
-                            .telegramIds(
-                                    personService.getAllTelegramIdByLogin(Collections.singleton(newComment.getAuthor()))
-                            )
-                            .url(newComment.getPullRequestId().toString())
-                            .youMessage(newComment.getMessage())
-                            .answers(
-                                    newAnswers.stream()
-                                            .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
-                                            .collect(Collectors.toList())
-                            )
-                            .build()
+    public void scanOldTask() {
+        final List<Task> tasks = taskService.getAllBetweenDate(
+                LocalDateTime.now().minusDays(20), LocalDateTime.now()
+        );
+        for (Task oldTask : tasks) {
+            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
+                    oldTask.getUrlApi(),
+                    bitbucketProperty.getToken(),
+                    CommentJson.class
             );
+            if (optCommentJson.isPresent()) {
+                final CommentJson json = optCommentJson.get();
+                if (Severity.NORMAL.equals(json.getSeverity())) {
+                    commentService.convert(oldTask);
+                } else {
+                    final Task newTask = conversionService.convert(json, Task.class);
+                    taskService.update(newTask);
+                }
+            } else {
+                taskService.deleteById(oldTask.getId());
+            }
         }
     }
 

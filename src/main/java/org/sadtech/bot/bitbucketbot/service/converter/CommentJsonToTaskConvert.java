@@ -5,25 +5,32 @@ import org.sadtech.bot.bitbucketbot.domain.TaskStatus;
 import org.sadtech.bot.bitbucketbot.domain.entity.Task;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentJson;
 import org.sadtech.bot.bitbucketbot.dto.bitbucket.CommentState;
-import org.sadtech.bot.bitbucketbot.service.executor.ResultScan;
+import org.sadtech.bot.bitbucketbot.dto.bitbucket.Severity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
-public class ResultScanToTaskConvert implements Converter<ResultScan, Task> {
+public class CommentJsonToTaskConvert implements Converter<CommentJson, Task> {
 
     @Override
-    public Task convert(ResultScan resultScan) {
-        final CommentJson json = resultScan.getCommentJson();
+    public Task convert(CommentJson source) {
         final Task task = new Task();
-        task.setId(json.getId());
-        task.setAuthor(json.getAuthor().getName());
-        task.setDescription(json.getText());
-        task.setCreateDate(json.getCreatedDate());
-        task.setBitbucketVersion(json.getVersion());
-        task.setPullRequestId(resultScan.getPullRequestId());
-        task.setStatus(convertState(json.getState()));
-        task.setUrlApi(resultScan.getCommentApiUrl());
+        task.setId(source.getId());
+        task.setAuthor(source.getAuthor().getName());
+        task.setDescription(source.getText());
+        task.setCreateDate(source.getCreatedDate());
+        task.setBitbucketVersion(source.getVersion());
+        task.setPullRequestId(source.getCustomPullRequestId());
+        task.setStatus(convertState(source.getState()));
+        task.setUrlApi(source.getCustomCommentApiUrl());
+        task.setAnswers(
+                source.getComments().stream()
+                        .filter(json -> Severity.NORMAL.equals(json.getSeverity()))
+                        .map(CommentJson::getId)
+                        .collect(Collectors.toSet())
+        );
         return task;
     }
 

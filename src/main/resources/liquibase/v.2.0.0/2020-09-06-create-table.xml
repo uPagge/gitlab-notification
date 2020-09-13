@@ -101,6 +101,10 @@
                 <constraints nullable="false" foreignKeyName="task_author_login_person_login"
                              references="person(login)" deleteCascade="true"/>
             </column>
+            <column name="responsible_login" type="varchar(64)">
+                <constraints nullable="false" foreignKeyName="comment_responsible_login_person_login"
+                             references="person(login)" deleteCascade="true"/>
+            </column>
             <column name="pull_request_id" type="integer">
                 <constraints nullable="false" foreignKeyName="comment_pull_request_id_pull_request_id"
                              references="pull_request(id)" deleteCascade="true"/>

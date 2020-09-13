@@ -22,4 +22,6 @@ public interface CommentRepository extends SimpleManagerRepository<Comment, Long
 
     List<Comment> findAllById(@NonNull Set<Long> ids);
 
+    Set<Long> existsById(Set<Long> ids);
+
 }

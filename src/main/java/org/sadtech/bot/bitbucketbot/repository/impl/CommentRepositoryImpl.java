@@ -42,4 +42,9 @@ public class CommentRepositoryImpl extends AbstractSimpleManagerRepository<Comme
         return repositoryJpa.findAllById(ids);
     }
 
+    @Override
+    public Set<Long> existsById(Set<Long> ids) {
+        return repositoryJpa.existsAllById(ids);
+    }
+
 }
