@@ -27,7 +27,7 @@ public class TaskCloseChange extends TaskChange {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} Задача выполнена* | [ПР]({1}){2}" +
+                "{0} *Задача выполнена* | [ПР]({1}){2}" +
                         "{3}: {4}",
                 Smile.TASK, url, Smile.HR, authorName, messageTask
         );

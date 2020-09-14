@@ -11,8 +11,7 @@ public class PersonScheduler {
 
     private final PersonBitbucketParser personParser;
 
-    //    @Scheduled(cron = "0 0 0 */1 * *")
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "${bitbucketbot.scheduler.person:0 0 0 */1 * *}")
     public void scanPersons() {
         personParser.scanNewPerson();
     }

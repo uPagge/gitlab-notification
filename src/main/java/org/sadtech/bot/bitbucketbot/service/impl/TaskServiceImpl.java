@@ -96,10 +96,10 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                     changeService.save(
                             TaskNewChange.builder()
                                     .messageTask(task.getDescription())
-                                    .authorName(task.getAuthor())
-                                    .url(task.getUrl())
+                                    .authorName(oldTask.getAuthor())
+                                    .url(oldTask.getUrl())
                                     .telegramIds(
-                                            personService.getAllTelegramIdByLogin(Collections.singleton(task.getResponsible()))
+                                            personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getResponsible()))
                                     )
                                     .build()
                     );
@@ -107,11 +107,11 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                 case RESOLVED:
                     changeService.save(
                             TaskCloseChange.builder()
-                                    .messageTask(task.getDescription())
-                                    .authorName(task.getAuthor())
-                                    .url(task.getUrl())
+                                    .messageTask(oldTask.getDescription())
+                                    .authorName(oldTask.getAuthor())
+                                    .url(oldTask.getUrl())
                                     .telegramIds(
-                                            personService.getAllTelegramIdByLogin(Collections.singleton(task.getAuthor()))
+                                            personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getAuthor()))
                                     )
                                     .build()
                     );

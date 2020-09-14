@@ -136,7 +136,7 @@ public class CommentAndTaskParser {
     }
 
     private String generateUrl(@NonNull Long id, @NonNull String pullRequestUrl) {
-        return MessageFormat.format("{0}/overview?commentId={1}", pullRequestUrl, id).replaceAll(" ", "");
+        return MessageFormat.format("{0}/overview?commentId={1}", pullRequestUrl, Long.toString(id));
     }
 
     private String getCommentUrl(long commentId, PullRequest pullRequest) {

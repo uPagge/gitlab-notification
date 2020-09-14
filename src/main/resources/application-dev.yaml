@@ -18,13 +18,14 @@ spring:
             non_contextual_creation: true
 bitbucketbot:
   scheduler:
+    person: 0 */1 * * * *
     comment:
       settings:
         no-comment-count: 20
         comment-count: 100
   init:
     start-comment-id: 7807
-    use: false
+    use: true
   server-send:
     url: http://188.225.35.149:8080/api/send
   bitbucket:
