@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class SchedulerNotification {
 
     private static final Set<String> tksLoginNotify = new HashSet<>(Arrays.asList(
-            "mstruchkov", "drasskazov", "dganin", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"
+            "mstruchkov", "dganin", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"
     ));
     private static final Set<PullRequestStatus> statuses = Collections.singleton(PullRequestStatus.OPEN);
 

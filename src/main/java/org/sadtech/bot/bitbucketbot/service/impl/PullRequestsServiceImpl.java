@@ -89,24 +89,12 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     public PullRequest update(@NonNull PullRequest pullRequest) {
         final PullRequest oldPullRequest = findAndFillId(pullRequest);
 
-        if (!oldPullRequest.isConflict() && pullRequest.isConflict()) {
-            changeService.save(
-                    ConflictPrChange.builder()
-                            .name(pullRequest.getTitle())
-                            .url(pullRequest.getUrl())
-                            .telegramIds(
-                                    personService.getAllTelegramIdByLogin(Collections.singleton(pullRequest.getAuthorLogin()))
-                            )
-                            .build()
-            );
-        }
-
         oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
-        oldPullRequest.setConflict(pullRequest.isConflict());
         oldPullRequest.setTitle(pullRequest.getTitle());
         oldPullRequest.setDescription(pullRequest.getDescription());
         updateReviewers(oldPullRequest, pullRequest);
         updateStatus(oldPullRequest, pullRequest);
+        updateConflict(oldPullRequest, pullRequest);
 
         final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
         if (!pullRequest.getBitbucketVersion().equals(newPullRequest.getBitbucketVersion())) {
@@ -121,6 +109,21 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
 
         return newPullRequest;
+    }
+
+    private void updateConflict(PullRequest oldPullRequest, PullRequest pullRequest) {
+        if (!oldPullRequest.isConflict() && pullRequest.isConflict()) {
+            changeService.save(
+                    ConflictPrChange.builder()
+                            .name(pullRequest.getTitle())
+                            .url(pullRequest.getUrl())
+                            .telegramIds(
+                                    personService.getAllTelegramIdByLogin(Collections.singleton(pullRequest.getAuthorLogin()))
+                            )
+                            .build()
+            );
+        }
+        oldPullRequest.setConflict(pullRequest.isConflict());
     }
 
     private void updateStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {

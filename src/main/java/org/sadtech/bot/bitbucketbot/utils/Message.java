@@ -21,13 +21,12 @@ public final class Message {
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
     private static final Integer PR_COUNT = 4;
     private static final String DONATION_LINK = "https://www.tinkoff.ru/sl/1T9s4esiMf";
-    private static final String HELP_LINK = "https://nuzhnapomosh.ru/about/";
 
     @NonNull
     public static String goodMorningStatistic(List<PullRequest> pullRequestsReviews, List<PullRequest> pullRequestsNeedWork) {
-        StringBuilder message = new StringBuilder().append(Smile.SUN).append(" Доброе утро ").append(Smile.SUN).append(Smile.HR);
+        StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро* ").append(Smile.SUN).append(Smile.HR);
         if (!pullRequestsReviews.isEmpty()) {
-            message.append("Сегодня тебя ждет проверка ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BR)
+            message.append("Необходимо проверить ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BR)
                     .append("Самые старые:").append(Smile.BR);
             List<PullRequest> oldPr = pullRequestsReviews.stream()
                     .sorted(COMPARATOR)
@@ -44,12 +43,11 @@ public final class Message {
         }
         if (dayX()) {
             message.append(Smile.BR).append(Smile.FUN).append(" Кстати, поздравляю, сегодня день З/П").append(Smile.BR)
-                    .append(Smile.DANGEROUS).append("Спасибо всем, кто ").append(link("донатил", DONATION_LINK)).append(", мы оплатили хостинг до октября :)")
-                    .append(Smile.BR).append("Теперь стоит ").append(link("помочь", HELP_LINK)).append(" тем, кто действительно в этом нуждается))")
+                    .append(Smile.DANGEROUS).append("Хостинг оплачен до 5 октября! Прошу неравнодушных ").append(link("задонатить", DONATION_LINK))
                     .append(Smile.BR);
         }
         message
-                .append("Удачного дня ").append(Smile.FLOWER).append(Smile.TWO_BR);
+                .append(Smile.BR).append("Удачного дня ").append(Smile.FLOWER).append(Smile.TWO_BR);
         return message.toString();
     }
 
