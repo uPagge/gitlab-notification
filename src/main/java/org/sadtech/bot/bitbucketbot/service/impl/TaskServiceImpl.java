@@ -126,7 +126,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     private void updateAnswer(Task oldTask, Task task) {
         final Set<Long> oldAnswerIds = oldTask.getAnswers();
         final Set<Long> newAnswerIds = task.getAnswers();
-        if (!newAnswerIds.isEmpty()) {
+        if (!oldAnswerIds.equals(newAnswerIds)) {
             final Set<Long> existsNewAnswersIds = commentService.existsById(newAnswerIds);
             final List<Comment> newAnswers = commentService.getAllById(existsNewAnswersIds).stream()
                     .filter(comment -> !oldAnswerIds.contains(comment.getId()))

@@ -63,9 +63,9 @@ public class ReviewersPrChange extends PrChange {
                     );
         }
         final String createMessage = stringBuilder.toString();
-        return Smile.PEN + " *Изменения ревьюверов вашего ПР*" +
+        return Smile.PEN + " *Изменения ревьюверов PullRequest*" +
                 Smile.HR +
-                "[" + title + "](" + url + ")\n" +
+                "[" + title + "](" + url + ")" + Smile.HR +
                 createMessage;
     }
 }

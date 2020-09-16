@@ -14,6 +14,7 @@ import org.sadtech.bot.bitbucketbot.domain.ReviewerStatus;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ConflictPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.NewPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.ReviewersPrChange;
+import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.StatusPrChange;
 import org.sadtech.bot.bitbucketbot.domain.change.pullrequest.UpdatePrChange;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequest;
 import org.sadtech.bot.bitbucketbot.domain.entity.PullRequestMini;
@@ -104,8 +105,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         oldPullRequest.setConflict(pullRequest.isConflict());
         oldPullRequest.setTitle(pullRequest.getTitle());
         oldPullRequest.setDescription(pullRequest.getDescription());
-        oldPullRequest.setStatus(pullRequest.getStatus());
         updateReviewers(oldPullRequest, pullRequest);
+        updateStatus(oldPullRequest, pullRequest);
 
         final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
         if (!pullRequest.getBitbucketVersion().equals(newPullRequest.getBitbucketVersion())) {
@@ -120,6 +121,27 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
 
         return newPullRequest;
+    }
+
+    private void updateStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
+        final PullRequestStatus oldStatus = oldPullRequest.getStatus();
+        final PullRequestStatus newStatus = newPullRequest.getStatus();
+        if (!oldStatus.equals(newStatus)) {
+            changeService.save(
+                    StatusPrChange.builder()
+                            .name(newPullRequest.getTitle())
+                            .url(oldPullRequest.getUrl())
+                            .newStatus(newStatus)
+                            .oldStatus(oldStatus)
+                            .telegramIds(
+                                    personService.getAllTelegramIdByLogin(
+                                            Collections.singleton(oldPullRequest.getAuthorLogin())
+                                    )
+                            )
+                            .build()
+            );
+            oldPullRequest.setStatus(newStatus);
+        }
     }
 
     private void updateReviewers(PullRequest oldPullRequest, PullRequest newPullRequest) {

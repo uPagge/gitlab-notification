@@ -125,7 +125,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     private void updateAnswer(Comment oldComment, Comment newComment) {
         final Set<Long> oldAnswerIds = oldComment.getAnswers();
         final Set<Long> newAnswerIds = newComment.getAnswers();
-        if (!newAnswerIds.isEmpty()) {
+        if (!oldAnswerIds.equals(newAnswerIds)) {
             final Set<Long> existsNewAnswersIds = commentRepository.existsById(newAnswerIds);
             final List<Comment> newAnswers = commentRepository.findAllById(existsNewAnswersIds).stream()
                     .filter(comment -> !oldAnswerIds.contains(comment.getId()))
