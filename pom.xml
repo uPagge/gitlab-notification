@@ -8,9 +8,10 @@
         <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>org.sadtech.bot.bitbucketbot</groupId>
     <artifactId>bitbucketbot</artifactId>
-    <version>2.0.0-SNAPHOT</version>
+    <version>2.0.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -75,7 +76,7 @@
             <artifactId>liquibase-core</artifactId>
             <version>3.8.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -125,7 +126,7 @@
         <developer>
             <id>uPagge</id>
             <name>Struchkov Mark</name>
-            <email>upagge@mail.ru</email>
+            <email>upagge@ya.ru</email>
         </developer>
     </developers>
 
