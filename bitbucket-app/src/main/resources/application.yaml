@@ -1,0 +1,5 @@
+server:
+  port: 8018
+telegram-config:
+  bot-username: tsc_test_two_bot
+  bot-token: 1304335862:AAFXGxRkTZBiL9Gjce_oFoP2cOn7j8qEwDI

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bitbucketbot</artifactId>
+        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <version>2.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bitbucket-app</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <artifactId>bot-core</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <artifactId>bot-rest</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <artifactId>telegram-bot</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <artifactId>bitbucket-sdk</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
