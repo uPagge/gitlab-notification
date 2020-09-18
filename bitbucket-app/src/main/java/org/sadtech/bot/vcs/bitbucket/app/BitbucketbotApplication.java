@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket;
+package org.sadtech.bot.vcs.bitbucket.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

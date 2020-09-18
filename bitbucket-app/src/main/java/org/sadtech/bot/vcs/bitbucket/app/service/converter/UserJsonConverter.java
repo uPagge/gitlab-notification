@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.service.converter;
+package org.sadtech.bot.vcs.bitbucket.app.service.converter;
 
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.UserJson;
 import org.sadtech.bot.vcs.core.domain.entity.Person;

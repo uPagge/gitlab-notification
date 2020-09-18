@@ -1,7 +1,7 @@
-package org.sadtech.bot.vcs.bitbucket.scheduler;
+package org.sadtech.bot.vcs.bitbucket.app.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.bitbucket.service.parser.PersonBitbucketParser;
+import org.sadtech.bot.vcs.bitbucket.app.service.parser.PersonBitbucketParser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

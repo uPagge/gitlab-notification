@@ -18,18 +18,16 @@ spring:
             non_contextual_creation: true
 bitbucketbot:
   scheduler:
-    person: 0 */1 * * * *
+    person: 0 0 0 */1 * *
     comment:
       settings:
         no-comment-count: 20
         comment-count: 100
   init:
     start-comment-id: 7807
-    use: true
-  server-send:
-    url: http://188.225.35.149:8080/api/send
+    use: false
   bitbucket:
-    token: Nzg5NjUyNDQwMzk2OlA+6naQz02+GxOG0Q9li/jnsn7E
+    token: ${BITBUCKET_ADMIN_TOKEN}
     url-pull-request-open: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
     url-pull-request-close: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
     url-pull-request-comment: http://localhost:7990/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}

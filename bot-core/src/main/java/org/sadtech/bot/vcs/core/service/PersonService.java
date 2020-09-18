@@ -28,4 +28,8 @@ public interface PersonService {
 
     List<Person> createAll(Collection<Person> newUsers);
 
+    boolean existsByTelegram(Long telegramId);
+
+    Optional<Person> getByTelegramId(@NonNull Long telegramId);
+
 }

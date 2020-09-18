@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.utils;
+package org.sadtech.bot.vcs.bitbucket.app.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

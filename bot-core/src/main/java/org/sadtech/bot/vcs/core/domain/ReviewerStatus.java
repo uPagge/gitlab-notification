@@ -10,11 +10,11 @@ import lombok.Getter;
 @Getter
 public enum ReviewerStatus {
 
-    NEEDS_WORK("'NEEDS WORK'"),
-    APPROVED("'APPROVED'"),
-    UNAPPROVED("'UNAPPROVED'");
+    NEEDS_WORK("NEEDS WORK"),
+    APPROVED("APPROVED"),
+    UNAPPROVED("UNAPPROVED");
 
-    private String value;
+    private final String value;
 
     ReviewerStatus(String value) {
         this.value = value;

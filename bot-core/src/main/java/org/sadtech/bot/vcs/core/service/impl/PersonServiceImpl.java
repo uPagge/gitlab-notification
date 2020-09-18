@@ -89,4 +89,14 @@ public class PersonServiceImpl implements PersonService {
         return newPersons.stream().map(this::create).collect(Collectors.toList());
     }
 
+    @Override
+    public boolean existsByTelegram(Long telegramId) {
+        return personRepository.existsByTelegramId(telegramId);
+    }
+
+    @Override
+    public Optional<Person> getByTelegramId(@NonNull Long telegramId) {
+        return personRepository.findByTelegramId(telegramId);
+    }
+
 }

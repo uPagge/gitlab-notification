@@ -31,12 +31,10 @@ public class NewPrChange extends PrChange {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Новый Pull Request*\n" +
-                        "[{1}]({2})" +
-                        "{3}\n" +
-                        "{4}" +
-                        "{5}: {6}\n\n",
-                Smile.FUN, title, url, Smile.HR,
+                "{0} *Новый Pull Request*{1}" +
+                        "[{2}]({3})" +
+                        "{4}{5}{6}: {7}\n\n",
+                Smile.FUN, Smile.HR, title, url, Smile.HR,
                 (description != null && !"".equals(description)) ? description + Smile.HR : "",
                 Smile.AUTHOR, author
         );

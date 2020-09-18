@@ -1,8 +1,16 @@
 package org.sadtech.bot.vcs.telegram.unit;
 
+import lombok.RequiredArgsConstructor;
+import org.sadtech.bot.vcs.core.service.PersonService;
+import org.sadtech.bot.vcs.telegram.service.unit.PullRequestProcessing;
+import org.sadtech.bot.vcs.telegram.service.unit.TaskProcessing;
+import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
+import org.sadtech.social.bot.domain.unit.AnswerText;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Mail;
+import org.sadtech.social.core.domain.content.Message;
+import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,10 +20,67 @@ import org.springframework.context.annotation.Configuration;
  * @author upagge [30.01.2020]
  */
 @Configuration
+@RequiredArgsConstructor
 public class UnitConfig {
 
+    private final PersonService personService;
+
     @Bean
-    public AnswerProcessing<Mail> menu() {
+    public AnswerCheck regCheck(
+            AnswerProcessing<Mail> noRegister,
+            AnswerText menu
+    ) {
+        return AnswerCheck.builder()
+                .check(
+                        message -> personService.existsByTelegram(message.getPersonId())
+                )
+                .unitFalse(noRegister)
+                .unitTrue(menu)
+                .build();
+    }
+
+    @Bean
+    public AnswerText menu(
+            AnswerProcessing<Message> getTasks,
+            AnswerProcessing<Message> getPr
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(
+                        BoxAnswer.builder()
+                                .message("Привет, выбери пункт меню!")
+                                .keyBoard(KeyBoards.verticalMenuString(
+                                        "Мои задачи", "Проверить ПР"
+                                ))
+                                .build()
+                )
+                .nextUnit(getTasks)
+                .nextUnit(getPr)
+                .build();
+    }
+
+    @Bean
+    public AnswerProcessing<Message> getTasks(
+            TaskProcessing taskProcessing
+    ) {
+        return AnswerProcessing.builder()
+                .processingData(taskProcessing)
+                .phrase("Мои задачи")
+                .build();
+    }
+
+    @Bean
+    public AnswerProcessing<Message> getPr(
+            PullRequestProcessing pullRequestProcessing
+    ) {
+        return AnswerProcessing.builder()
+                .processingData(pullRequestProcessing)
+                .phrase("Проверить ПР")
+                .build();
+    }
+
+
+    @Bean
+    public AnswerProcessing<Mail> noRegister() {
         return AnswerProcessing.<Mail>builder()
                 .processingData(message ->
                         BoxAnswer.builder()

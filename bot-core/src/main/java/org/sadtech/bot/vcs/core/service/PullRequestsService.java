@@ -16,7 +16,13 @@ import java.util.Set;
 
 public interface PullRequestsService extends SimpleManagerService<PullRequest, Long>, FilterService<PullRequest, PullRequestFilter> {
 
-    @NonNull
+    /**
+     * Получить все пулреквесты ревьювера с определенным статусом.
+     *
+     * @param login               Логин ревьювера
+     * @param reviewerStatus      Статус ревьювера в ПР
+     * @param pullRequestStatuses Статус ПР
+     */
     List<PullRequest> getAllByReviewerAndStatuses(@NonNull String login, @NonNull ReviewerStatus reviewerStatus, @NonNull Set<PullRequestStatus> pullRequestStatuses);
 
     List<PullRequest> getAllByAuthorAndReviewerStatus(@NonNull String login, @NonNull ReviewerStatus status);

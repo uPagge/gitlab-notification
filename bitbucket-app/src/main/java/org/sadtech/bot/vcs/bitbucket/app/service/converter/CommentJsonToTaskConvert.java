@@ -1,6 +1,6 @@
-package org.sadtech.bot.vcs.bitbucket.service.converter;
+package org.sadtech.bot.vcs.bitbucket.app.service.converter;
 
-import org.sadtech.bot.vcs.bitbucket.exception.ConvertException;
+import org.sadtech.bot.vcs.bitbucket.app.exception.ConvertException;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentState;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;

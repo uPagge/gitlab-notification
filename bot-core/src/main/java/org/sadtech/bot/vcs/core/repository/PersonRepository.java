@@ -28,4 +28,6 @@ public interface PersonRepository {
 
     Optional<Person> findByLogin(@NonNull String login);
 
+    Optional<Person> findByTelegramId(@NonNull Long telegramId);
+
 }

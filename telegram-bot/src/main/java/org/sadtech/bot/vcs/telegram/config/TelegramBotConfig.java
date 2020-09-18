@@ -2,7 +2,8 @@ package org.sadtech.bot.vcs.telegram.config;
 
 import org.sadtech.autoresponder.repository.UnitPointerRepository;
 import org.sadtech.autoresponder.repository.UnitPointerRepositoryMap;
-import org.sadtech.social.bot.domain.unit.AnswerProcessing;
+import org.sadtech.bot.vcs.telegram.service.ReplaceUrlLocalhost;
+import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.core.domain.content.Mail;
 import org.sadtech.social.core.repository.impl.local.MailRepositoryList;
 import org.sadtech.social.core.service.MailService;
@@ -43,13 +44,13 @@ public class TelegramBotConfig {
 
     @Bean
     public MessageAutoresponderTelegram messageAutoresponderTelegram(
-            AnswerProcessing<Mail> menu,
+            AnswerCheck regCheck,
             Sending sending,
             MessageService<Mail> messageService,
             UnitPointerRepository unitPointerRepository
     ) {
         return new MessageAutoresponderTelegram(
-                Collections.singleton(menu),
+                Collections.singleton(regCheck),
                 sending,
                 messageService,
                 unitPointerRepository
@@ -57,8 +58,13 @@ public class TelegramBotConfig {
     }
 
     @Bean
-    public Sending sending(TelegramConnect telegramConnect) {
-        return new TelegramSender(telegramConnect);
+    public Sending sending(
+            TelegramConnect telegramConnect,
+            ReplaceUrlLocalhost replaceUrlLocalhost
+    ) {
+        final TelegramSender telegramSender = new TelegramSender(telegramConnect);
+        telegramSender.setSendPreProcessing(replaceUrlLocalhost);
+        return telegramSender;
     }
 
     @Bean

@@ -169,6 +169,11 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         return taskRepository.findByCreateDateBetween(dateFrom, dateTo);
     }
 
+    @Override
+    public List<Task> getAllByResponsibleAndStatus(@NonNull String login, @NonNull TaskStatus status) {
+        return taskRepository.findAllByResponsibleAndStatus(login, status);
+    }
+
     private void notifyNewTask(Task task) {
         final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())
                 .orElseThrow(() -> new NotFoundException("ПР не найден"));

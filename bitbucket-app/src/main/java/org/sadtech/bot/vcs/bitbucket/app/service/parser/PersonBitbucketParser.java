@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.service.parser;
+package org.sadtech.bot.vcs.bitbucket.app.service.parser;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.UserJson;

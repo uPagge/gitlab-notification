@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.service.executor;
+package org.sadtech.bot.vcs.bitbucket.app.service.executor;
 
 import lombok.NonNull;
 

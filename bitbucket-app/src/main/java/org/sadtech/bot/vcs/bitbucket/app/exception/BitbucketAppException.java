@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.exception;
+package org.sadtech.bot.vcs.bitbucket.app.exception;
 
 /**
  * // TODO: 16.09.2020 Добавить описание.

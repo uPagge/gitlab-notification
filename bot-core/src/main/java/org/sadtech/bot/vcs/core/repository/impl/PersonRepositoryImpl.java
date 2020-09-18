@@ -71,4 +71,9 @@ public class PersonRepositoryImpl implements PersonRepository {
         return jpaRepository.findById(login);
     }
 
+    @Override
+    public Optional<Person> findByTelegramId(@NonNull Long telegramId) {
+        return jpaRepository.findByTelegramId(telegramId);
+    }
+
 }

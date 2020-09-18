@@ -33,9 +33,9 @@ public class StatusPrChange extends PrChange {
     public String generateMessage() {
         return MessageFormat.format(
                 "{0} *Изменился статус вашего ПР*{1}" +
-                        "[{2}]({3})\n" +
-                        "{4} -> {5}\n\n",
-                Smile.PEN, Smile.HR, title, url, oldStatus.name(), newStatus.name()
+                        "[{2}]({3}){4}" +
+                        "{5} -> {6}\n\n",
+                Smile.PEN, Smile.HR, title, url, Smile.HR, oldStatus.name(), newStatus.name()
         );
     }
 

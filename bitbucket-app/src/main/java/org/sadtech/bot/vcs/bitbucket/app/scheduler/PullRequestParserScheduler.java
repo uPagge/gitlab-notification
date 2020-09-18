@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.scheduler;
+package org.sadtech.bot.vcs.bitbucket.app.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

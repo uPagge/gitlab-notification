@@ -1,12 +1,12 @@
-package org.sadtech.bot.vcs.bitbucket.service;
+package org.sadtech.bot.vcs.bitbucket.app.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.basic.context.page.Sheet;
 import org.sadtech.basic.core.page.PaginationImpl;
+import org.sadtech.bot.vcs.bitbucket.app.service.executor.DataScan;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;
-import org.sadtech.bot.vcs.bitbucket.service.executor.DataScan;
 import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
 import org.sadtech.bot.vcs.core.config.properties.CommentSchedulerProperty;
 import org.sadtech.bot.vcs.core.config.properties.InitProperty;

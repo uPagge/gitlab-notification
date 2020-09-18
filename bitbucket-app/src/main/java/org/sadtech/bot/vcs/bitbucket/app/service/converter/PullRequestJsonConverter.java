@@ -1,7 +1,7 @@
-package org.sadtech.bot.vcs.bitbucket.service.converter;
+package org.sadtech.bot.vcs.bitbucket.app.service.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.bitbucket.exception.ConvertException;
+import org.sadtech.bot.vcs.bitbucket.app.exception.ConvertException;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Outcome;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Properties;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.PullRequestJson;

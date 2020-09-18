@@ -6,7 +6,6 @@ import org.sadtech.bot.vcs.core.domain.MessageSend;
 import org.sadtech.bot.vcs.core.service.MessageSendService;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.service.sender.Sending;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
  *
  * @author upagge 17.09.2020
  */
-@Profile("prod")
+//@Profile("prod")
 @Service
 @RequiredArgsConstructor
 public class MessageSendTelegramService implements MessageSendService {
