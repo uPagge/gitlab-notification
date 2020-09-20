@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.core.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.sadtech.bot.vcs.core.scheduler.SchedulerComments;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

@@ -12,8 +12,8 @@ import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 @Getter
 public class ReviewerChange {
 
-    private String name;
-    private Type type;
+    private final String name;
+    private final Type type;
     private ReviewerStatus status;
     private ReviewerStatus oldStatus;
 

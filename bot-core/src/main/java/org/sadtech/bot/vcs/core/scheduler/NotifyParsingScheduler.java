@@ -2,8 +2,8 @@ package org.sadtech.bot.vcs.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.domain.MessageSend;
-import org.sadtech.bot.vcs.core.domain.change.Change;
-import org.sadtech.bot.vcs.core.service.ChangeService;
+import org.sadtech.bot.vcs.core.domain.notify.Notify;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.MessageSendService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class SchedulerChangeParsing {
+public class NotifyParsingScheduler {
 
     private final MessageSendService messageSendService;
-    private final ChangeService changeService;
+    private final NotifyService notifyService;
 
     /**
      * Проверяет наличие новых изменений. Если изменения найдены, то создает новое сообщение и отправляет
@@ -30,12 +30,12 @@ public class SchedulerChangeParsing {
      */
     @Scheduled(cron = "*/15 * * * * *")
     public void parsing() {
-        final List<Change> newChange = changeService.getNew().stream()
-                .filter(change -> change.getTelegramIds() != null && !change.getTelegramIds().isEmpty())
+        final List<Notify> newNotify = notifyService.getNew().stream()
+                .filter(notify -> notify.getTelegramIds() != null && !notify.getTelegramIds().isEmpty())
                 .collect(Collectors.toList());
-        for (Change change : newChange) {
-            final String message = change.generateMessage();
-            change.getTelegramIds().forEach(
+        for (Notify notify : newNotify) {
+            final String message = notify.generateMessage();
+            notify.getTelegramIds().forEach(
                     telegramId -> messageSendService.add(
                             MessageSend.builder()
                                     .telegramId(telegramId)

@@ -1,6 +1,6 @@
-package org.sadtech.bot.vcs.core.domain.change;
+package org.sadtech.bot.vcs.core.domain.notify;
 
-public enum ChangeType {
+public enum NotifyType {
 
     STATUS_PR,
     UPDATE_PR,

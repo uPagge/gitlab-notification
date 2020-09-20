@@ -5,16 +5,16 @@ import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.domain.Answer;
 import org.sadtech.bot.vcs.core.domain.TaskStatus;
-import org.sadtech.bot.vcs.core.domain.change.comment.AnswerCommentChange;
-import org.sadtech.bot.vcs.core.domain.change.comment.CommentChange;
-import org.sadtech.bot.vcs.core.domain.change.task.TaskCloseChange;
-import org.sadtech.bot.vcs.core.domain.change.task.TaskNewChange;
+import org.sadtech.bot.vcs.core.domain.notify.comment.AnswerCommentNotify;
+import org.sadtech.bot.vcs.core.domain.notify.comment.CommentNotify;
+import org.sadtech.bot.vcs.core.domain.notify.task.TaskCloseNotify;
+import org.sadtech.bot.vcs.core.domain.notify.task.TaskNewNotify;
 import org.sadtech.bot.vcs.core.domain.entity.Comment;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
 import org.sadtech.bot.vcs.core.domain.entity.Task;
 import org.sadtech.bot.vcs.core.exception.NotFoundException;
 import org.sadtech.bot.vcs.core.repository.TaskRepository;
-import org.sadtech.bot.vcs.core.service.ChangeService;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.CommentService;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
@@ -39,7 +39,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     private final TaskRepository taskRepository;
 
     private final PullRequestsService pullRequestsService;
-    private final ChangeService changeService;
+    private final NotifyService notifyService;
     private final PersonService personService;
     private final CommentService commentService;
 
@@ -48,7 +48,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     public TaskServiceImpl(
             TaskRepository taskRepository,
             PullRequestsService pullRequestsService,
-            ChangeService changeService,
+            NotifyService notifyService,
             PersonService personService,
             CommentService commentService,
             ConversionService conversionService
@@ -56,7 +56,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         super(taskRepository);
         this.taskRepository = taskRepository;
         this.pullRequestsService = pullRequestsService;
-        this.changeService = changeService;
+        this.notifyService = notifyService;
         this.personService = personService;
         this.commentService = commentService;
         this.conversionService = conversionService;
@@ -93,8 +93,8 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         if (!oldStatus.equals(newStatus)) {
             switch (newStatus) {
                 case OPEN:
-                    changeService.save(
-                            TaskNewChange.builder()
+                    notifyService.save(
+                            TaskNewNotify.builder()
                                     .messageTask(task.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
@@ -105,8 +105,8 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                     );
                     break;
                 case RESOLVED:
-                    changeService.save(
-                            TaskCloseChange.builder()
+                    notifyService.save(
+                            TaskCloseNotify.builder()
                                     .messageTask(oldTask.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
@@ -133,8 +133,8 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                     .collect(Collectors.toList());
             oldTask.getAnswers().clear();
             oldTask.setAnswers(existsNewAnswersIds);
-            changeService.save(
-                    AnswerCommentChange.builder()
+            notifyService.save(
+                    AnswerCommentNotify.builder()
                             .telegramIds(
                                     personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getAuthor()))
                             )
@@ -178,8 +178,8 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())
                 .orElseThrow(() -> new NotFoundException("ПР не найден"));
 
-        changeService.save(
-                TaskNewChange.builder()
+        notifyService.save(
+                TaskNewNotify.builder()
                         .authorName(task.getAuthor())
                         .messageTask(task.getDescription())
                         .url(task.getUrl())
@@ -200,8 +200,8 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             recipientsLogins.add(login);
         }
         final Set<Long> recipientsIds = personService.getAllTelegramIdByLogin(recipientsLogins);
-        changeService.save(
-                CommentChange.builder()
+        notifyService.save(
+                CommentNotify.builder()
                         .authorName(task.getAuthor())
                         .url(task.getUrl())
                         .telegramIds(recipientsIds)

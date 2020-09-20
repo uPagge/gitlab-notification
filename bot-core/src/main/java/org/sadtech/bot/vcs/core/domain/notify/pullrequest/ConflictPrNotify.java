@@ -1,23 +1,23 @@
-package org.sadtech.bot.vcs.core.domain.change.pullrequest;
+package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
 import java.util.Set;
 
 @Getter
-public class ConflictPrChange extends PrChange {
+public class ConflictPrNotify extends PrNotify {
 
     @Builder
-    private ConflictPrChange(
+    private ConflictPrNotify(
             Set<Long> telegramIds,
             String name,
             String url
     ) {
-        super(ChangeType.CONFLICT_PR, telegramIds, name, url);
+        super(NotifyType.CONFLICT_PR, telegramIds, name, url);
     }
 
     @Override

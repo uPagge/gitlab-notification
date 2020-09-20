@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SchedulerNotification {
+public class NotificationScheduler {
 
     private static final Set<String> tksLoginNotify = new HashSet<>(Arrays.asList(
             "mstruchkov", "dganin", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"

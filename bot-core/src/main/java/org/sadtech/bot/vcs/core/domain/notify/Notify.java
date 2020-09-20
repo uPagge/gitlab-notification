@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.core.domain.change;
+package org.sadtech.bot.vcs.core.domain.notify;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import java.util.Set;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public abstract class Change {
+public abstract class Notify {
 
-    protected final ChangeType type;
+    protected final NotifyType type;
     protected final LocalDateTime localDateTime = LocalDateTime.now();
     protected final Set<Long> telegramIds;
 
@@ -19,7 +19,7 @@ public abstract class Change {
     @EqualsAndHashCode.Include
     protected Long id;
 
-    protected Change(ChangeType type, Set<Long> telegramIds) {
+    protected Notify(NotifyType type, Set<Long> telegramIds) {
         this.type = type;
         this.telegramIds = telegramIds;
     }

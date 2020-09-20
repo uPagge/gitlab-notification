@@ -11,11 +11,11 @@ import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.vcs.core.domain.IdAndStatusPr;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
-import org.sadtech.bot.vcs.core.domain.change.pullrequest.ConflictPrChange;
-import org.sadtech.bot.vcs.core.domain.change.pullrequest.NewPrChange;
-import org.sadtech.bot.vcs.core.domain.change.pullrequest.ReviewersPrChange;
-import org.sadtech.bot.vcs.core.domain.change.pullrequest.StatusPrChange;
-import org.sadtech.bot.vcs.core.domain.change.pullrequest.UpdatePrChange;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ConflictPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.NewPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ReviewersPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.StatusPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.UpdatePrNotify;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequestMini;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest_;
@@ -24,7 +24,7 @@ import org.sadtech.bot.vcs.core.domain.filter.PullRequestFilter;
 import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
 import org.sadtech.bot.vcs.core.exception.UpdateException;
 import org.sadtech.bot.vcs.core.repository.PullRequestsRepository;
-import org.sadtech.bot.vcs.core.service.ChangeService;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,18 +41,18 @@ import java.util.stream.Collectors;
 @Service
 public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRequest, Long> implements PullRequestsService {
 
-    private final ChangeService changeService;
+    private final NotifyService notifyService;
     private final PullRequestsRepository pullRequestsRepository;
     private final PersonService personService;
     private final FilterService<PullRequest, PullRequestFilter> filterService;
 
     protected PullRequestsServiceImpl(
             PullRequestsRepository pullRequestsRepository,
-            ChangeService changeService,
+            NotifyService notifyService,
             PersonService personService, @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService
     ) {
         super(pullRequestsRepository);
-        this.changeService = changeService;
+        this.notifyService = notifyService;
         this.pullRequestsRepository = pullRequestsRepository;
         this.personService = personService;
         this.filterService = pullRequestsFilterService;
@@ -64,8 +64,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
 
-        changeService.save(
-                NewPrChange.builder()
+        notifyService.save(
+                NewPrNotify.builder()
                         .author(newPullRequest.getAuthorLogin())
                         .description(newPullRequest.getDescription())
                         .title(newPullRequest.getTitle())
@@ -98,8 +98,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
         if (!pullRequest.getBitbucketVersion().equals(newPullRequest.getBitbucketVersion())) {
-            changeService.save(
-                    UpdatePrChange.builder()
+            notifyService.save(
+                    UpdatePrNotify.builder()
                             .author(oldPullRequest.getAuthorLogin())
                             .name(newPullRequest.getTitle())
                             .telegramIds(getReviewerTelegrams(newPullRequest.getReviewers()))
@@ -113,8 +113,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
     private void updateConflict(PullRequest oldPullRequest, PullRequest pullRequest) {
         if (!oldPullRequest.isConflict() && pullRequest.isConflict()) {
-            changeService.save(
-                    ConflictPrChange.builder()
+            notifyService.save(
+                    ConflictPrNotify.builder()
                             .name(pullRequest.getTitle())
                             .url(pullRequest.getUrl())
                             .telegramIds(
@@ -130,8 +130,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         final PullRequestStatus oldStatus = oldPullRequest.getStatus();
         final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
-            changeService.save(
-                    StatusPrChange.builder()
+            notifyService.save(
+                    StatusPrNotify.builder()
                             .name(newPullRequest.getTitle())
                             .url(oldPullRequest.getUrl())
                             .newStatus(newStatus)
@@ -179,8 +179,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         oldPullRequest.getReviewers()
                 .removeIf(reviewer -> oldIds.contains(reviewer.getPersonLogin()));
         if (!reviewerChanges.isEmpty()) {
-            changeService.save(
-                    ReviewersPrChange.builder()
+            notifyService.save(
+                    ReviewersPrNotify.builder()
                             .title(newPullRequest.getTitle())
                             .url(newPullRequest.getUrl())
                             .telegramIds(

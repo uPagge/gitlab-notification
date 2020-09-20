@@ -1,7 +1,8 @@
-package org.sadtech.bot.vcs.core.domain.change.task;
+package org.sadtech.bot.vcs.core.domain.notify.task;
 
 import lombok.Builder;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import lombok.Getter;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -12,22 +13,23 @@ import java.util.Set;
  *
  * @author upagge 10.09.2020
  */
-public class TaskCloseChange extends TaskChange {
+@Getter
+public class TaskNewNotify extends TaskNotify {
 
     @Builder
-    protected TaskCloseChange(
+    protected TaskNewNotify(
             Set<Long> telegramIds,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(ChangeType.RESOLVED_TASK, telegramIds, authorName, url, messageTask);
+        super(NotifyType.NEW_TASK, telegramIds, authorName, url, messageTask);
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Задача выполнена* | [ПР]({1}){2}" +
+                "{0} *Назначена новая задача* | [ПР]({1}){2}" +
                         "{3}: {4}",
                 Smile.TASK, url, Smile.HR, authorName, messageTask
         );

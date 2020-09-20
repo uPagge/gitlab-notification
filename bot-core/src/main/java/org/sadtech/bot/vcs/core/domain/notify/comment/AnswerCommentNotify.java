@@ -1,11 +1,11 @@
-package org.sadtech.bot.vcs.core.domain.change.comment;
+package org.sadtech.bot.vcs.core.domain.notify.comment;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.Answer;
-import org.sadtech.bot.vcs.core.domain.change.Change;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import org.sadtech.bot.vcs.core.domain.notify.Notify;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -15,20 +15,20 @@ import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class AnswerCommentChange extends Change {
+public class AnswerCommentNotify extends Notify {
 
     private final String youMessage;
     private final String url;
     private final List<Answer> answers;
 
     @Builder
-    protected AnswerCommentChange(
+    protected AnswerCommentNotify(
             Set<Long> telegramIds,
             String youMessage,
             String url,
             List<Answer> answers
     ) {
-        super(ChangeType.NEW_ANSWERS_COMMENT, telegramIds);
+        super(NotifyType.NEW_ANSWERS_COMMENT, telegramIds);
         this.youMessage = youMessage;
         this.url = url;
         this.answers = answers;

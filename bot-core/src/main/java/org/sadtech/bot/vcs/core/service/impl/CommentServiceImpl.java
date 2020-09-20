@@ -3,13 +3,13 @@ package org.sadtech.bot.vcs.core.service.impl;
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.bot.vcs.core.domain.Answer;
-import org.sadtech.bot.vcs.core.domain.change.comment.AnswerCommentChange;
-import org.sadtech.bot.vcs.core.domain.change.comment.CommentChange;
+import org.sadtech.bot.vcs.core.domain.notify.comment.AnswerCommentNotify;
+import org.sadtech.bot.vcs.core.domain.notify.comment.CommentNotify;
 import org.sadtech.bot.vcs.core.domain.entity.Comment;
 import org.sadtech.bot.vcs.core.domain.entity.Task;
 import org.sadtech.bot.vcs.core.exception.NotFoundException;
 import org.sadtech.bot.vcs.core.repository.CommentRepository;
-import org.sadtech.bot.vcs.core.service.ChangeService;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.CommentService;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.TaskService;
@@ -33,7 +33,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
 
     private final CommentRepository commentRepository;
     private final PersonService personService;
-    private final ChangeService changeService;
+    private final NotifyService notifyService;
     private final TaskService taskService;
 
     private final ConversionService conversionService;
@@ -41,14 +41,14 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     public CommentServiceImpl(
             CommentRepository commentRepository,
             PersonService personService,
-            ChangeService changeService,
+            NotifyService notifyService,
             @Lazy TaskService taskService,
             ConversionService conversionService
     ) {
         super(commentRepository);
         this.personService = personService;
         this.commentRepository = commentRepository;
-        this.changeService = changeService;
+        this.notifyService = notifyService;
         this.taskService = taskService;
         this.conversionService = conversionService;
     }
@@ -79,8 +79,8 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
             recipientsLogins.add(login);
         }
         final Set<Long> recipientsIds = personService.getAllTelegramIdByLogin(recipientsLogins);
-        changeService.save(
-                CommentChange.builder()
+        notifyService.save(
+                CommentNotify.builder()
                         .authorName(comment.getAuthor())
                         .url(comment.getUrl())
                         .telegramIds(recipientsIds)
@@ -132,8 +132,8 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
                     .collect(Collectors.toList());
             oldComment.getAnswers().clear();
             oldComment.setAnswers(existsNewAnswersIds);
-            changeService.save(
-                    AnswerCommentChange.builder()
+            notifyService.save(
+                    AnswerCommentNotify.builder()
                             .telegramIds(
                                     personService.getAllTelegramIdByLogin(Collections.singleton(newComment.getAuthor()))
                             )

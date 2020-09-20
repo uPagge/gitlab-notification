@@ -1,9 +1,9 @@
-package org.sadtech.bot.vcs.core.domain.change.pullrequest;
+package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -11,16 +11,16 @@ import java.util.Set;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class UpdatePrChange extends PrChange {
+public class UpdatePrNotify extends PrNotify {
 
     private final String author;
 
     @Builder
-    private UpdatePrChange(
+    private UpdatePrNotify(
             Set<Long> telegramIds,
             String name,
             String url, String author) {
-        super(ChangeType.UPDATE_PR, telegramIds, name, url);
+        super(NotifyType.UPDATE_PR, telegramIds, name, url);
         this.author = author;
     }
 

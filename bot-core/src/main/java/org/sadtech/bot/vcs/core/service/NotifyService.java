@@ -1,6 +1,6 @@
 package org.sadtech.bot.vcs.core.service;
 
-import org.sadtech.bot.vcs.core.domain.change.Change;
+import org.sadtech.bot.vcs.core.domain.notify.Notify;
 
 import java.util.List;
 
@@ -8,15 +8,15 @@ import java.util.List;
  * Сервис по работе с изменениями в битбакете.
  *
  * @author upagge
- * @see Change
+ * @see Notify
  */
-public interface ChangeService {
+public interface NotifyService {
 
-    <T extends Change> void save(T task);
+    <T extends Notify> void save(T notify);
 
     /**
      * Позволяет получить новые изменения.
      */
-    List<Change> getNew();
+    List<Notify> getNew();
 
 }

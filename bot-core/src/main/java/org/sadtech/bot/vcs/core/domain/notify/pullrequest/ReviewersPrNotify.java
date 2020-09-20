@@ -1,9 +1,9 @@
-package org.sadtech.bot.vcs.core.domain.change.pullrequest;
+package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
@@ -18,17 +18,17 @@ import static org.sadtech.bot.vcs.core.domain.util.ReviewerChange.Type.OLD;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public class ReviewersPrChange extends PrChange {
+public class ReviewersPrNotify extends PrNotify {
 
     private final List<ReviewerChange> reviewerChanges;
 
     @Builder
-    private ReviewersPrChange(
+    private ReviewersPrNotify(
             Set<Long> telegramIds,
             String title,
             String url,
             List<ReviewerChange> reviewerChanges) {
-        super(ChangeType.REVIEWERS, telegramIds, title, url);
+        super(NotifyType.REVIEWERS, telegramIds, title, url);
         this.reviewerChanges = reviewerChanges;
     }
 

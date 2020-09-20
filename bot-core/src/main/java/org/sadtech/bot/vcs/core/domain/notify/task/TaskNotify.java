@@ -1,22 +1,22 @@
-package org.sadtech.bot.vcs.core.domain.change.task;
+package org.sadtech.bot.vcs.core.domain.notify.task;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.change.Change;
-import org.sadtech.bot.vcs.core.domain.change.ChangeType;
+import org.sadtech.bot.vcs.core.domain.notify.Notify;
+import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 
 import java.util.Set;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-public abstract class TaskChange extends Change {
+public abstract class TaskNotify extends Notify {
 
     protected final String authorName;
     protected final String url;
     protected final String messageTask;
 
-    protected TaskChange(
-            ChangeType type,
+    protected TaskNotify(
+            NotifyType type,
             Set<Long> telegramIds,
             String authorName,
             String url,
