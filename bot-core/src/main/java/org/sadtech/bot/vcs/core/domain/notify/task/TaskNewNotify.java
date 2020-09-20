@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.core.domain.notify.task;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -18,12 +17,12 @@ public class TaskNewNotify extends TaskNotify {
 
     @Builder
     protected TaskNewNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(NotifyType.NEW_TASK, telegramIds, authorName, url, messageTask);
+        super(logins, authorName, url, messageTask);
     }
 
     @Override

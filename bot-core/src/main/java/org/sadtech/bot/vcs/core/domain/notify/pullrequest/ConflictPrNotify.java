@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -13,11 +12,11 @@ public class ConflictPrNotify extends PrNotify {
 
     @Builder
     private ConflictPrNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String name,
             String url
     ) {
-        super(NotifyType.CONFLICT_PR, telegramIds, name, url);
+        super(logins, name, url);
     }
 
     @Override
@@ -29,4 +28,5 @@ public class ConflictPrNotify extends PrNotify {
                 Smile.DANGEROUS, Smile.HR, title, url
         );
     }
+
 }

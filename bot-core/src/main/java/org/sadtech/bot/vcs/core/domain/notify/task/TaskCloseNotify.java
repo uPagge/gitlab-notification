@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.core.domain.notify.task;
 
 import lombok.Builder;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -16,12 +15,12 @@ public class TaskCloseNotify extends TaskNotify {
 
     @Builder
     protected TaskCloseNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(NotifyType.RESOLVED_TASK, telegramIds, authorName, url, messageTask);
+        super(logins, authorName, url, messageTask);
     }
 
     @Override

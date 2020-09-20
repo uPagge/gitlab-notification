@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.telegram.service.unit.PullRequestProcessing;
 import org.sadtech.bot.vcs.telegram.service.unit.TaskProcessing;
+import org.sadtech.bot.vcs.telegram.utils.GeneratorKeyBoards;
 import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
 import org.sadtech.social.bot.domain.unit.AnswerText;
@@ -42,19 +43,37 @@ public class UnitConfig {
     @Bean
     public AnswerText menu(
             AnswerProcessing<Message> getTasks,
-            AnswerProcessing<Message> getPr
+            AnswerProcessing<Message> getPr,
+            AnswerText settings
     ) {
         return AnswerText.builder()
                 .boxAnswer(
                         BoxAnswer.builder()
                                 .message("Привет, выбери пункт меню!")
-                                .keyBoard(KeyBoards.verticalMenuString(
-                                        "Мои задачи", "Проверить ПР"
-                                ))
+                                .keyBoard(GeneratorKeyBoards.menu())
                                 .build()
                 )
                 .nextUnit(getTasks)
                 .nextUnit(getPr)
+                .nextUnit(settings)
+                .build();
+    }
+
+    @Bean
+    public AnswerText settings(
+            AnswerText notifySetting
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(
+                        BoxAnswer.builder()
+                                .message("Здесь вы можете персонализировать бота")
+                                .keyBoard(
+                                        KeyBoards.verticalMenuString("Уведомления")
+                                )
+                                .build()
+                )
+                .phrase("Настройки")
+                .nextUnit(notifySetting)
                 .build();
     }
 

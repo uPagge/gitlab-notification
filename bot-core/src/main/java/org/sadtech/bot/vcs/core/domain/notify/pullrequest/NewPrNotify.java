@@ -3,7 +3,6 @@ package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -18,12 +17,12 @@ public class NewPrNotify extends PrNotify {
 
     @Builder
     private NewPrNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String title,
             String url,
             String description,
             String author) {
-        super(NotifyType.NEW_PR, telegramIds, title, url);
+        super(logins, title, url);
         this.description = description;
         this.author = author;
     }
@@ -39,4 +38,5 @@ public class NewPrNotify extends PrNotify {
                 Smile.AUTHOR, author
         );
     }
+
 }

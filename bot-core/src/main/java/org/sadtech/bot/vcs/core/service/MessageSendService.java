@@ -1,10 +1,11 @@
 package org.sadtech.bot.vcs.core.service;
 
 import lombok.NonNull;
-import org.sadtech.bot.vcs.core.domain.MessageSend;
+import org.sadtech.bot.vcs.core.domain.notify.Notify;
 
+@FunctionalInterface
 public interface MessageSendService {
 
-    void add(@NonNull MessageSend messageSend);
+    void send(@NonNull Notify notify);
 
 }

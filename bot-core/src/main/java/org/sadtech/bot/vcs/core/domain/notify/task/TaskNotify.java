@@ -3,7 +3,6 @@ package org.sadtech.bot.vcs.core.domain.notify.task;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 
 import java.util.Set;
 
@@ -16,13 +15,12 @@ public abstract class TaskNotify extends Notify {
     protected final String messageTask;
 
     protected TaskNotify(
-            NotifyType type,
-            Set<Long> telegramIds,
+            Set<String> logins,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(type, telegramIds);
+        super(logins);
         this.authorName = authorName;
         this.url = url;
         this.messageTask = messageTask;

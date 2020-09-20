@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -20,12 +19,12 @@ public class CommentNotify extends Notify {
 
     @Builder
     private CommentNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String url,
             String authorName,
             String message
     ) {
-        super(NotifyType.NEW_COMMENT, telegramIds);
+        super(logins);
         this.authorName = authorName;
         this.message = message;
         this.url = url;
@@ -39,6 +38,7 @@ public class CommentNotify extends Notify {
                 Smile.BELL, url, Smile.HR, authorName, message.replaceAll("@[\\w]+", "")
         );
     }
+
 }
 
 

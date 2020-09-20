@@ -1,8 +1,10 @@
 package org.sadtech.bot.vcs.core.service;
 
+import lombok.NonNull;
+import org.sadtech.bot.vcs.core.domain.entity.NotifySetting;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис по работе с изменениями в битбакете.
@@ -12,11 +14,18 @@ import java.util.List;
  */
 public interface NotifyService {
 
-    <T extends Notify> void save(T notify);
+    <T extends Notify> void send(T notify);
 
     /**
-     * Позволяет получить новые изменения.
+     * Сохранить настройки уведомлений
      */
-    List<Notify> getNew();
+    void saveSettings(@NonNull NotifySetting setting);
+
+    /**
+     * Получить настройки уведомлений по логину.
+     *
+     * @param login Логин пользователя
+     */
+    Optional<NotifySetting> getSetting(@NonNull String login);
 
 }

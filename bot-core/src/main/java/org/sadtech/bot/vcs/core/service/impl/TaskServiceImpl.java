@@ -5,18 +5,17 @@ import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.domain.Answer;
 import org.sadtech.bot.vcs.core.domain.TaskStatus;
+import org.sadtech.bot.vcs.core.domain.entity.Comment;
+import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
+import org.sadtech.bot.vcs.core.domain.entity.Task;
 import org.sadtech.bot.vcs.core.domain.notify.comment.AnswerCommentNotify;
 import org.sadtech.bot.vcs.core.domain.notify.comment.CommentNotify;
 import org.sadtech.bot.vcs.core.domain.notify.task.TaskCloseNotify;
 import org.sadtech.bot.vcs.core.domain.notify.task.TaskNewNotify;
-import org.sadtech.bot.vcs.core.domain.entity.Comment;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.domain.entity.Task;
 import org.sadtech.bot.vcs.core.exception.NotFoundException;
 import org.sadtech.bot.vcs.core.repository.TaskRepository;
-import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.CommentService;
-import org.sadtech.bot.vcs.core.service.PersonService;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
 import org.sadtech.bot.vcs.core.service.TaskService;
 import org.springframework.core.convert.ConversionService;
@@ -40,7 +39,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
 
     private final PullRequestsService pullRequestsService;
     private final NotifyService notifyService;
-    private final PersonService personService;
     private final CommentService commentService;
 
     private final ConversionService conversionService;
@@ -49,7 +47,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             TaskRepository taskRepository,
             PullRequestsService pullRequestsService,
             NotifyService notifyService,
-            PersonService personService,
             CommentService commentService,
             ConversionService conversionService
     ) {
@@ -57,7 +54,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         this.taskRepository = taskRepository;
         this.pullRequestsService = pullRequestsService;
         this.notifyService = notifyService;
-        this.personService = personService;
         this.commentService = commentService;
         this.conversionService = conversionService;
     }
@@ -93,26 +89,22 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         if (!oldStatus.equals(newStatus)) {
             switch (newStatus) {
                 case OPEN:
-                    notifyService.save(
+                    notifyService.send(
                             TaskNewNotify.builder()
                                     .messageTask(task.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .telegramIds(
-                                            personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getResponsible()))
-                                    )
+                                    .logins(Collections.singleton(oldTask.getResponsible()))
                                     .build()
                     );
                     break;
                 case RESOLVED:
-                    notifyService.save(
+                    notifyService.send(
                             TaskCloseNotify.builder()
                                     .messageTask(oldTask.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .telegramIds(
-                                            personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getAuthor()))
-                                    )
+                                    .logins(Collections.singleton(oldTask.getAuthor()))
                                     .build()
                     );
                     break;
@@ -133,11 +125,9 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                     .collect(Collectors.toList());
             oldTask.getAnswers().clear();
             oldTask.setAnswers(existsNewAnswersIds);
-            notifyService.save(
+            notifyService.send(
                     AnswerCommentNotify.builder()
-                            .telegramIds(
-                                    personService.getAllTelegramIdByLogin(Collections.singleton(oldTask.getAuthor()))
-                            )
+                            .logins(Collections.singleton(oldTask.getAuthor()))
                             .url(task.getUrl())
                             .youMessage(oldTask.getDescription())
                             .answers(
@@ -178,16 +168,12 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())
                 .orElseThrow(() -> new NotFoundException("ПР не найден"));
 
-        notifyService.save(
+        notifyService.send(
                 TaskNewNotify.builder()
                         .authorName(task.getAuthor())
                         .messageTask(task.getDescription())
                         .url(task.getUrl())
-                        .telegramIds(
-                                personService.getAllTelegramIdByLogin(
-                                        Collections.singleton(pullRequest.getAuthorLogin())
-                                )
-                        )
+                        .logins(Collections.singleton(pullRequest.getAuthorLogin()))
                         .build()
         );
     }
@@ -199,12 +185,11 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             final String login = matcher.group(0).replace("@", "");
             recipientsLogins.add(login);
         }
-        final Set<Long> recipientsIds = personService.getAllTelegramIdByLogin(recipientsLogins);
-        notifyService.save(
+        notifyService.send(
                 CommentNotify.builder()
                         .authorName(task.getAuthor())
                         .url(task.getUrl())
-                        .telegramIds(recipientsIds)
+                        .logins(recipientsLogins)
                         .message(task.getDescription())
                         .build()
         );

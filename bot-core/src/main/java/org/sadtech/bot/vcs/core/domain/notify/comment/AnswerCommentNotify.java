@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.Answer;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -23,12 +22,12 @@ public class AnswerCommentNotify extends Notify {
 
     @Builder
     protected AnswerCommentNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String youMessage,
             String url,
             List<Answer> answers
     ) {
-        super(NotifyType.NEW_ANSWERS_COMMENT, telegramIds);
+        super(logins);
         this.youMessage = youMessage;
         this.url = url;
         this.answers = answers;
@@ -46,4 +45,5 @@ public class AnswerCommentNotify extends Notify {
                 Smile.BELL, url, Smile.HR, youMessage.substring(0, Math.min(youMessage.length(), 180)), Smile.HR, answerText
         );
     }
+
 }

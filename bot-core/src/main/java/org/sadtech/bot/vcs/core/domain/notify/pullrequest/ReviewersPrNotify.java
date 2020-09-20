@@ -3,7 +3,6 @@ package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
@@ -24,11 +23,11 @@ public class ReviewersPrNotify extends PrNotify {
 
     @Builder
     private ReviewersPrNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String title,
             String url,
             List<ReviewerChange> reviewerChanges) {
-        super(NotifyType.REVIEWERS, telegramIds, title, url);
+        super(logins, title, url);
         this.reviewerChanges = reviewerChanges;
     }
 
@@ -68,4 +67,5 @@ public class ReviewersPrNotify extends PrNotify {
                 "[" + title + "](" + url + ")" + Smile.HR +
                 createMessage;
     }
+
 }

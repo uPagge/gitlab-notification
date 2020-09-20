@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
-import org.sadtech.bot.vcs.core.domain.notify.NotifyType;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
 import java.text.MessageFormat;
@@ -19,12 +18,12 @@ public class StatusPrNotify extends PrNotify {
 
     @Builder
     private StatusPrNotify(
-            Set<Long> telegramIds,
+            Set<String> logins,
             String name,
             String url,
             PullRequestStatus oldStatus,
             PullRequestStatus newStatus) {
-        super(NotifyType.STATUS_PR, telegramIds, name, url);
+        super(logins, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }

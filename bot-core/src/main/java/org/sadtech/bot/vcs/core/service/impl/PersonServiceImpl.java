@@ -1,17 +1,20 @@
 package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
+import org.sadtech.bot.vcs.core.domain.entity.NotifySetting;
 import org.sadtech.bot.vcs.core.domain.entity.Person;
 import org.sadtech.bot.vcs.core.exception.RegException;
 import org.sadtech.bot.vcs.core.repository.PersonRepository;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.Utils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +23,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
     private final BitbucketProperty bitbucketProperty;
+
+    private final NotifyService notifyService;
+
+    public PersonServiceImpl(
+            PersonRepository personRepository,
+            BitbucketProperty bitbucketProperty,
+            @Lazy NotifyService notifyService
+    ) {
+        this.personRepository = personRepository;
+        this.bitbucketProperty = bitbucketProperty;
+        this.notifyService = notifyService;
+    }
 
     @Override
     public Optional<Person> getByLogin(String login) {
@@ -52,6 +66,9 @@ public class PersonServiceImpl implements PersonService {
                 Optional<Object> sheetJson = Utils.urlToJson(bitbucketProperty.getUrlPullRequestClose(), user.getToken(), Object.class);
                 if (sheetJson.isPresent()) {
                     oldUser.setTelegramId(user.getTelegramId());
+
+                    defaultSettings(oldUser);
+
                     return personRepository.save(oldUser);
                 } else {
                     throw new RegException("Ваш токен не валиден");
@@ -61,6 +78,13 @@ public class PersonServiceImpl implements PersonService {
             }
         }
         throw new RegException("Пользователь не найден, подождите обновление базы пользователей!");
+    }
+
+    private void defaultSettings(Person person) {
+        final NotifySetting notifySetting = new NotifySetting();
+        notifySetting.setLogin(person.getLogin());
+        notifySetting.setStartReceiving(LocalDateTime.now());
+        notifyService.saveSettings(notifySetting);
     }
 
     @Override

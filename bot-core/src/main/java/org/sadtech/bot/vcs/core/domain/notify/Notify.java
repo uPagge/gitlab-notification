@@ -1,27 +1,18 @@
 package org.sadtech.bot.vcs.core.domain.notify;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Setter
 public abstract class Notify {
 
-    protected final NotifyType type;
-    protected final LocalDateTime localDateTime = LocalDateTime.now();
-    protected final Set<Long> telegramIds;
+    protected Set<String> logins;
 
-    @Setter
-    @EqualsAndHashCode.Include
-    protected Long id;
-
-    protected Notify(NotifyType type, Set<Long> telegramIds) {
-        this.type = type;
-        this.telegramIds = telegramIds;
+    protected Notify(Set<String> logins) {
+        this.logins = logins;
     }
 
     public abstract String generateMessage();

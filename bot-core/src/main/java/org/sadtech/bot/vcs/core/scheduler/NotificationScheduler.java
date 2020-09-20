@@ -1,15 +1,15 @@
 package org.sadtech.bot.vcs.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.MessageSend;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 import org.sadtech.bot.vcs.core.domain.entity.Person;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.service.MessageSendService;
+import org.sadtech.bot.vcs.core.domain.notify.GoodMorningNotify;
+import org.sadtech.bot.vcs.core.domain.notify.SimpleTextNotify;
+import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
-import org.sadtech.bot.vcs.core.utils.Message;
 import org.sadtech.bot.vcs.core.utils.Smile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 public class NotificationScheduler {
 
     private static final Set<String> tksLoginNotify = new HashSet<>(Arrays.asList(
-            "mstruchkov", "dganin", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"
+            "mstruchkov", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"
     ));
-    private static final Set<PullRequestStatus> statuses = Collections.singleton(PullRequestStatus.OPEN);
 
     private final PersonService personService;
     private final PullRequestsService pullRequestsService;
-    private final MessageSendService messageSendService;
+
+    private final NotifyService notifyService;
 
     // Утреннее сообщение
     @Scheduled(cron = "0 15 8 * * MON-FRI")
@@ -42,44 +42,53 @@ public class NotificationScheduler {
             List<PullRequest> pullRequestsReviews = pullRequestsService.getAllByReviewerAndStatuses(
                     user.getLogin(),
                     ReviewerStatus.NEEDS_WORK,
-                    statuses
+                    Collections.singleton(PullRequestStatus.OPEN)
             );
             List<PullRequest> pullRequestsNeedWork = pullRequestsService.getAllByAuthorAndReviewerStatus(user.getLogin(), ReviewerStatus.UNAPPROVED);
-            messageSendService.add(
-                    MessageSend.builder()
-                            .telegramId(user.getTelegramId())
-                            .message(Message.goodMorningStatistic(pullRequestsReviews, pullRequestsNeedWork))
+            notifyService.send(
+                    GoodMorningNotify.builder()
+                            .pullRequestsNeedWork(pullRequestsNeedWork)
+                            .pullRequestsReviews(pullRequestsReviews)
+                            .logins(Collections.singleton(user.getLogin()))
                             .build()
             );
         }
     }
 
-    @Scheduled(cron = "0 25 10 * * MON-FRI")
+    @Scheduled(cron = "0 29 10 * * MON-FRI")
     public void tks() {
         List<Person> usersTks = personService.getAllRegister().stream()
                 .filter(user -> tksLoginNotify.contains(user.getLogin()))
                 .collect(Collectors.toList());
-        for (Person person : usersTks) {
-            messageSendService.add(
-                    MessageSend.builder()
-                            .telegramId(person.getTelegramId())
-                            .message("☎️ Скоро созвон" + Smile.HR + "https://meet.google.com/czs-vigu-mte")
-                            .build()
-            );
-        }
+        notifyService.send(
+                SimpleTextNotify
+                        .builder()
+                        .logins(
+                                usersTks.stream()
+                                        .map(Person::getLogin)
+                                        .collect(Collectors.toSet())
+                        )
+                        .message("☎️ Внимание созвон" + Smile.HR + "https://meet.google.com/czs-vigu-mte")
+                        .build()
+        );
+
     }
 
     @Scheduled(cron = "0 0 18 * * FRI")
     public void goodWeekEnd() {
         List<Person> allRegister = personService.getAllRegister();
-        for (Person user : allRegister) {
-            messageSendService.add(
-                    MessageSend.builder()
-                            .telegramId(user.getTelegramId())
-                            .message(Message.goodWeekEnd())
-                            .build()
-            );
-        }
+        notifyService.send(
+                SimpleTextNotify.builder()
+                        .message("Ну вот и все! Веселых выходных " + Smile.MIG + Smile.BR +
+                                "До понедельника" + Smile.BUY + Smile.TWO_BR)
+                        .logins(
+                                allRegister.stream()
+                                        .map(Person::getLogin)
+                                        .collect(Collectors.toSet())
+                        )
+                        .build()
+        );
     }
-
 }
+
+
