@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.core.config.properties;
+package org.sadtech.bot.vcs.bitbucket.app.config.property;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,8 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Данные для конфигурации {@link SchedulerComments}
- *
  * @author upagge
  */
 @Getter

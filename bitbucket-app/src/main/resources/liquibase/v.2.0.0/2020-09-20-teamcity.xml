@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2020-09-20-create-table-teamcity_builds" author="upagge">
+        <createTable tableName="teamcity_builds">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2020-09-20-create-table-teamcity-setting" author="upagge">
+        <createTable tableName="teamcity_setting">
+            <column name=""></column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
