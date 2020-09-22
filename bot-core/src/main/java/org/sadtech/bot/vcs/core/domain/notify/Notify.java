@@ -9,9 +9,11 @@ import java.util.Set;
 @Setter
 public abstract class Notify {
 
+    protected TypeNotify typeNotify;
     protected Set<String> logins;
 
     protected Notify(Set<String> logins) {
+        this.typeNotify = TypeNotify.PERSON;
         this.logins = logins;
     }
 

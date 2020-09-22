@@ -128,7 +128,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             notifyService.send(
                     AnswerCommentNotify.builder()
                             .logins(Collections.singleton(oldTask.getAuthor()))
-                            .url(task.getUrl())
+                            .url(oldTask.getUrl())
                             .youMessage(oldTask.getDescription())
                             .answers(
                                     newAnswers.stream()

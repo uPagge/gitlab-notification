@@ -55,8 +55,8 @@ public class GoodMorningNotify extends Notify {
         StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро* ").append(Smile.SUN).append(Smile.HR);
         if (!pullRequestsReviews.isEmpty()) {
             message.append("Необходимо проверить ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BR)
-                    .append("Самые старые:").append(Smile.BR)
-                    .append(MessageUtils.pullRequestForReview(pullRequestsReviews));
+                    .append("Самые старые:").append(Smile.BR);
+            MessageUtils.pullRequestForReview(pullRequestsReviews).ifPresent(message::append);
         } else {
             message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР ").append(Smile.MEGA_FUN).append(Smile.TWO_BR)
                     .append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);

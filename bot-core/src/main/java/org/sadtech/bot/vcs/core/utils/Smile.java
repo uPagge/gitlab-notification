@@ -30,7 +30,10 @@ public enum Smile {
     MEGA_FUN("\uD83D\uDE02"),
     DANGEROUS("⚠️"),
     BELL("\uD83D\uDECE"),
-    HR("\n -- -- -- -- --\n");
+    HR("\n -- -- -- -- --\n"),
+    FAILURE("❌"),
+    SUCCESS("✅"),
+    BUILD("♻️");
 
     @Getter
     private String value;

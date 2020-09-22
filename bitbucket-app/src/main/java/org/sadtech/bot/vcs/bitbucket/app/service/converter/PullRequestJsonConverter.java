@@ -30,9 +30,9 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         pullRequest.setCreateDate(json.getCreatedDate());
         pullRequest.setUpdateDate(json.getUpdatedDate());
         pullRequest.setConflict(convertConflict(json.getProperties()));
-        pullRequest.setDescription(convertDescription(json.getDescription()));
+        pullRequest.setDescription(convertString(json.getDescription(), 180));
         pullRequest.setAuthorLogin(json.getAuthor().getUser().getName());
-        pullRequest.setTitle(json.getTitle());
+        pullRequest.setTitle(convertString(json.getTitle(), 90));
         pullRequest.setUrl(json.getLinks().getSelf().get(0).getHref());
         pullRequest.setStatus(convertPullRequestStatus(json.getState()));
         pullRequest.setProjectKey(json.getFromRef().getRepository().getProject().getKey());
@@ -50,9 +50,9 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 && Outcome.CONFLICTED.equals(properties.getMergeResult().getOutcome());
     }
 
-    private String convertDescription(String description) {
-        if (description != null) {
-            return description.length() > 180 ? description.substring(0, 180) + "..." : description;
+    private String convertString(String string, int length) {
+        if (string != null) {
+            return string.length() > length ? string.substring(0, length) + "..." : string;
         }
         return null;
     }

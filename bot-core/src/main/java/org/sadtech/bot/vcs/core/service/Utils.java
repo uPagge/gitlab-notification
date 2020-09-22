@@ -39,6 +39,7 @@ public class Utils {
         Request request = new Request.Builder()
                 .url(urlValue)
                 .header("Authorization", "Bearer " + token)
+                .header("Accept", "text/html,application/xhtml+xml,application/json")
                 .build();
         try (final Response execute = client.newCall(request).execute()) {
             if (execute.isSuccessful() && execute.body() != null) {

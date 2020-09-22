@@ -33,3 +33,7 @@ bitbucketbot:
     url-pull-request-comment: http://192.168.236.164:7990/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
     url-pull-request: http://192.168.236.164:7990/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
     url-users: http://192.168.236.164:7990/rest/api/1.0/admin/users
+  teamcity:
+    token: ${TEAMCITY_ADMIN_TOKEN}
+    project-url: http://192.168.236.164:8111/app/rest/projects
+    build-url: http://192.168.236.164:8111/app/rest/builds/?locator=project:(id:{0}),branch:(default:any)
