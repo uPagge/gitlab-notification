@@ -22,4 +22,19 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2020-10-01-create-table-rating-list" author="upagge">
+        <createTable tableName="rating_list">
+            <column name="login" type="varchar(64)">
+                <constraints nullable="false" foreignKeyName="rating_list_login_person_login"
+                             references="person(login)"/>
+            </column>
+            <column name="number" type="integer">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="points" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

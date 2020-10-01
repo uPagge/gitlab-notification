@@ -25,7 +25,7 @@ bitbucketbot:
         comment-count: 100
   init:
     start-comment-id: 8157
-    use: false
+    use: true
   bitbucket:
     token: ${BITBUCKET_ADMIN_TOKEN}
     url-pull-request-open: http://192.168.236.164:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN

@@ -12,4 +12,8 @@ public interface RatingService {
 
     void addRating(@NonNull String login, @NonNull PointType type, @NonNull Integer points);
 
+    void ratingRecalculation();
+
+    String getRatingTop(@NonNull String login);
+
 }

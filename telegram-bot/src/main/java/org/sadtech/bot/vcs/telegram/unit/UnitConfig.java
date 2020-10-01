@@ -3,6 +3,7 @@ package org.sadtech.bot.vcs.telegram.unit;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.telegram.service.unit.PullRequestProcessing;
+import org.sadtech.bot.vcs.telegram.service.unit.RatingTopProcessing;
 import org.sadtech.bot.vcs.telegram.service.unit.TaskProcessing;
 import org.sadtech.bot.vcs.telegram.utils.GeneratorKeyBoards;
 import org.sadtech.social.bot.domain.unit.AnswerCheck;
@@ -44,7 +45,8 @@ public class UnitConfig {
     public AnswerText menu(
             AnswerProcessing<Message> getTasks,
             AnswerProcessing<Message> getPr,
-            AnswerText settings
+            AnswerText settings,
+            AnswerProcessing<Message> getTopRating
     ) {
         return AnswerText.builder()
                 .boxAnswer(
@@ -56,6 +58,7 @@ public class UnitConfig {
                 .nextUnit(getTasks)
                 .nextUnit(getPr)
                 .nextUnit(settings)
+                .nextUnit(getTopRating)
                 .build();
     }
 
@@ -97,6 +100,16 @@ public class UnitConfig {
                 .build();
     }
 
+    @Bean
+    AnswerProcessing<Message> getTopRating(
+            RatingTopProcessing ratingTopProcessing
+    ) {
+        return AnswerProcessing.builder()
+                .processingData(ratingTopProcessing)
+                .keyWord("таблица")
+                .keyWord("рейтинга")
+                .build();
+    }
 
     @Bean
     public AnswerProcessing<Mail> noRegister() {

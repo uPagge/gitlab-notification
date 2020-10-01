@@ -17,6 +17,7 @@ public class GeneratorKeyBoards {
     public static KeyBoard menu() {
         final KeyBoardButtonText tasks = KeyBoardButtonText.builder().label("Мои задачи").build();
         final KeyBoardButtonText pr = KeyBoardButtonText.builder().label("Проверить ПР").build();
+        final KeyBoardButtonText top = KeyBoardButtonText.builder().label("\uD83C\uDF1F Таблица рейтинга \uD83C\uDF1F").build();
         final KeyBoardButtonText settings = KeyBoardButtonText.builder().label("Настройки").build();
 
         final KeyBoardLine oneLine = KeyBoardLine.builder()
@@ -25,12 +26,17 @@ public class GeneratorKeyBoards {
                 .build();
 
         final KeyBoardLine twoLine = KeyBoardLine.builder()
+                .buttonKeyBoard(top)
+                .build();
+
+        final KeyBoardLine threeLine = KeyBoardLine.builder()
                 .buttonKeyBoard(settings)
                 .build();
 
         return KeyBoard.builder()
                 .lineKeyBoard(oneLine)
                 .lineKeyBoard(twoLine)
+                .lineKeyBoard(threeLine)
                 .build();
     }
 
