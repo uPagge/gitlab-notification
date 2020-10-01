@@ -24,7 +24,7 @@ bitbucketbot:
         no-comment-count: 20
         comment-count: 100
   init:
-    start-comment-id: 7914
+    start-comment-id: 8157
     use: false
   bitbucket:
     token: ${BITBUCKET_ADMIN_TOKEN}

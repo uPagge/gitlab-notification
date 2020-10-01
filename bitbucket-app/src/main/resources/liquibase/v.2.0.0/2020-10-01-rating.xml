@@ -1,0 +1,25 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2020-10-01-create-table-rating-history" author="upagge">
+        <createTable tableName="rating_history">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="login" type="varchar(64)">
+                <constraints nullable="false" foreignKeyName="rating_history_login_person_login"
+                             references="person(login)"/>
+            </column>
+            <column name="points" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(64)"/>
+            <column name="date_add" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -7,5 +7,6 @@
     <include file="liquibase/v.2.0.0/2020-09-15-fix-task-comments.xml"/>
     <include file="liquibase/v.2.0.0/2020-09-20-setting-notify.xml"/>
     <include file="liquibase/v.2.0.0/2020-09-20-teamcity.xml"/>
+    <include file="liquibase/v.2.0.0/2020-10-01-rating.xml"/>
 
 </databaseChangeLog>

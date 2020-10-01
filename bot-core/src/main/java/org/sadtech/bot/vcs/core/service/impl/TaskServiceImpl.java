@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.domain.Answer;
+import org.sadtech.bot.vcs.core.domain.PointType;
 import org.sadtech.bot.vcs.core.domain.TaskStatus;
 import org.sadtech.bot.vcs.core.domain.entity.Comment;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
@@ -17,6 +18,7 @@ import org.sadtech.bot.vcs.core.repository.TaskRepository;
 import org.sadtech.bot.vcs.core.service.CommentService;
 import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
+import org.sadtech.bot.vcs.core.service.RatingService;
 import org.sadtech.bot.vcs.core.service.TaskService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     private final PullRequestsService pullRequestsService;
     private final NotifyService notifyService;
     private final CommentService commentService;
+    private final RatingService ratingService;
 
     private final ConversionService conversionService;
 
@@ -48,6 +51,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             PullRequestsService pullRequestsService,
             NotifyService notifyService,
             CommentService commentService,
+            RatingService ratingService,
             ConversionService conversionService
     ) {
         super(taskRepository);
@@ -55,6 +59,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         this.pullRequestsService = pullRequestsService;
         this.notifyService = notifyService;
         this.commentService = commentService;
+        this.ratingService = ratingService;
         this.conversionService = conversionService;
     }
 
@@ -65,6 +70,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         final Task newTask = taskRepository.save(task);
         notifyNewTask(task);
         notificationPersonal(task);
+        ratingCreateTask(task.getAuthor(), task.getResponsible());
         return newTask;
     }
 
@@ -195,6 +201,23 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                         .message(task.getDescription())
                         .build()
         );
+    }
+
+    @Override
+    public void deleteById(@NonNull Long id) {
+        final Task task = taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Задача не найдена"));
+        ratingDeleteTask(task.getAuthor(), task.getResponsible());
+        super.deleteById(id);
+    }
+
+    private void ratingCreateTask(String authorLogin, String responsibleLogin) {
+        ratingService.addRating(authorLogin, PointType.TASK_CREATE, PointType.TASK_CREATE.getPoints());
+        ratingService.addRating(responsibleLogin, PointType.TASK_RECIPIENT, PointType.TASK_RECIPIENT.getPoints());
+    }
+
+    private void ratingDeleteTask(String authorLogin, String responsibleLogin) {
+        ratingService.addRating(authorLogin, PointType.TASK_DELETE, PointType.TASK_DELETE.getPoints());
+        ratingService.addRating(responsibleLogin, PointType.TASK_DELETE_RECIPIENT, PointType.TASK_DELETE_RECIPIENT.getPoints());
     }
 
 }

@@ -9,6 +9,7 @@ import org.sadtech.basic.core.util.Assert;
 import org.sadtech.basic.filter.criteria.CriteriaFilter;
 import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.vcs.core.domain.IdAndStatusPr;
+import org.sadtech.bot.vcs.core.domain.PointType;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
@@ -26,6 +27,7 @@ import org.sadtech.bot.vcs.core.exception.UpdateException;
 import org.sadtech.bot.vcs.core.repository.PullRequestsRepository;
 import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.core.service.PullRequestsService;
+import org.sadtech.bot.vcs.core.service.RatingService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -42,16 +44,19 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
     private final NotifyService notifyService;
     private final PullRequestsRepository pullRequestsRepository;
+    private final RatingService ratingService;
     private final FilterService<PullRequest, PullRequestFilter> filterService;
 
     protected PullRequestsServiceImpl(
             PullRequestsRepository pullRequestsRepository,
             NotifyService notifyService,
+            RatingService ratingService,
             @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService
     ) {
         super(pullRequestsRepository);
         this.notifyService = notifyService;
         this.pullRequestsRepository = pullRequestsRepository;
+        this.ratingService = ratingService;
         this.filterService = pullRequestsFilterService;
     }
 
@@ -61,6 +66,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
 
+        ratingService.addRating(newPullRequest.getAuthorLogin(), PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
         notifyService.send(
                 NewPrNotify.builder()
                         .author(newPullRequest.getAuthorLogin())
@@ -77,14 +83,6 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         return newPullRequest;
     }
-//
-//    private Set<Long> getReviewerTelegrams(@NonNull List<Reviewer> reviewers) {
-//        return personService.getAllTelegramIdByLogin(
-//                reviewers.stream()
-//                        .map(Reviewer::getPersonLogin)
-//                        .collect(Collectors.toSet())
-//        );
-//    }
 
     @Override
     public PullRequest update(@NonNull PullRequest pullRequest) {
@@ -133,6 +131,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         final PullRequestStatus oldStatus = oldPullRequest.getStatus();
         final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
+            ratingStatus(oldPullRequest, newPullRequest);
             notifyService.send(
                     StatusPrNotify.builder()
                             .name(newPullRequest.getTitle())
@@ -143,6 +142,21 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                             .build()
             );
             oldPullRequest.setStatus(newStatus);
+        }
+    }
+
+    private void ratingStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
+        final String authorLogin = oldPullRequest.getAuthorLogin();
+        switch (newPullRequest.getStatus()) {
+            case OPEN:
+                ratingService.addRating(authorLogin, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
+                break;
+            case MERGED:
+                // TODO: 01.10.2020 Нужно продумать как расчитывать баллы при мерже.
+                break;
+            case DECLINED:
+                ratingService.addRating(authorLogin, PointType.DECLINE_PULL_REQUEST, PointType.DECLINE_PULL_REQUEST.getPoints());
+                break;
         }
     }
 

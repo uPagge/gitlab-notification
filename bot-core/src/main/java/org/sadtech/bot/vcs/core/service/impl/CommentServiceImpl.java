@@ -2,7 +2,9 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
+import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.domain.Answer;
+import org.sadtech.bot.vcs.core.domain.PointType;
 import org.sadtech.bot.vcs.core.domain.entity.Comment;
 import org.sadtech.bot.vcs.core.domain.entity.Task;
 import org.sadtech.bot.vcs.core.domain.notify.comment.AnswerCommentNotify;
@@ -11,6 +13,7 @@ import org.sadtech.bot.vcs.core.exception.NotFoundException;
 import org.sadtech.bot.vcs.core.repository.CommentRepository;
 import org.sadtech.bot.vcs.core.service.CommentService;
 import org.sadtech.bot.vcs.core.service.NotifyService;
+import org.sadtech.bot.vcs.core.service.RatingService;
 import org.sadtech.bot.vcs.core.service.TaskService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConversionService;
@@ -33,6 +36,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     private final CommentRepository commentRepository;
     private final NotifyService notifyService;
     private final TaskService taskService;
+    private final RatingService ratingService;
 
     private final ConversionService conversionService;
 
@@ -40,12 +44,14 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
             CommentRepository commentRepository,
             NotifyService notifyService,
             @Lazy TaskService taskService,
+            RatingService ratingService,
             ConversionService conversionService
     ) {
         super(commentRepository);
         this.commentRepository = commentRepository;
         this.notifyService = notifyService;
         this.taskService = taskService;
+        this.ratingService = ratingService;
         this.conversionService = conversionService;
     }
 
@@ -61,10 +67,16 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
 
     @Override
     public Comment create(@NonNull Comment comment) {
+        Assert.isNotNull(comment.getId(), "При создании объекта должен быть установлен идентификатор");
         comment.getAnswers().clear();
         final Comment newComment = commentRepository.save(comment);
+        ratingCreateComment(comment.getAuthor());
         notificationPersonal(comment);
         return newComment;
+    }
+
+    private void ratingCreateComment(String author) {
+        ratingService.addRating(author, PointType.COMMENT_ADD, PointType.COMMENT_ADD.getPoints());
     }
 
     private void notificationPersonal(@NonNull Comment comment) {
@@ -108,7 +120,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
         taskService.deleteById(task.getId());
         final Comment comment = conversionService.convert(task, Comment.class);
         final Comment newComment = commentRepository.save(comment);
-        notificationPersonal(newComment);
+        ratingService.addRating(newComment.getAuthor(), PointType.COMMENT_ADD, PointType.COMMENT_ADD.getPoints());
         return newComment;
     }
 
@@ -142,6 +154,14 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
                 );
             }
         }
+    }
+
+    @Override
+    public void deleteById(@NonNull Long id) {
+        final Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Комментарий не найден"));
+        ratingService.addRating(comment.getAuthor(), PointType.COMMENT_DELETE, PointType.COMMENT_DELETE.getPoints());
+        super.deleteById(id);
     }
 
 }

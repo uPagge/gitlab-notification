@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class NotificationScheduler {
 
     private static final Set<String> tksLoginNotify = new HashSet<>(Arrays.asList(
-            "mstruchkov", "emukhin", "ktorgaeva", "imescheryakov", "kkeglev"
+            "mstruchkov", "emukhin", "imescheryakov", "kkeglev"
     ));
 
     private final PersonService personService;
