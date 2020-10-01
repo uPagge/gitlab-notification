@@ -12,6 +12,7 @@ import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
 import org.sadtech.bot.vcs.core.domain.entity.Reviewer;
+import org.sadtech.bot.vcs.core.utils.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +31,9 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         pullRequest.setCreateDate(json.getCreatedDate());
         pullRequest.setUpdateDate(json.getUpdatedDate());
         pullRequest.setConflict(convertConflict(json.getProperties()));
-        pullRequest.setDescription(convertString(json.getDescription(), 180));
+        pullRequest.setDescription(StringUtils.cutOff(json.getDescription(), 180));
         pullRequest.setAuthorLogin(json.getAuthor().getUser().getName());
-        pullRequest.setTitle(convertString(json.getTitle(), 90));
+        pullRequest.setTitle(StringUtils.cutOff(json.getTitle(), 90));
         pullRequest.setUrl(json.getLinks().getSelf().get(0).getHref());
         pullRequest.setStatus(convertPullRequestStatus(json.getState()));
         pullRequest.setProjectKey(json.getFromRef().getRepository().getProject().getKey());
@@ -48,13 +49,6 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
                 && properties.getMergeResult() != null
                 && properties.getMergeResult().getOutcome() != null
                 && Outcome.CONFLICTED.equals(properties.getMergeResult().getOutcome());
-    }
-
-    private String convertString(String string, int length) {
-        if (string != null) {
-            return string.length() > length ? string.substring(0, length) + "..." : string;
-        }
-        return null;
     }
 
     public static PullRequestStatus convertPullRequestStatus(PullRequestState state) {

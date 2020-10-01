@@ -52,8 +52,4 @@ public enum Smile {
         return value;
     }
 
-    public static class Constants {
-        public static final String EMPTY = "";
-    }
-
 }

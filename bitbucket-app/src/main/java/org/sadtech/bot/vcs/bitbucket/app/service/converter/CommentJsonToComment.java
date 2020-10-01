@@ -4,6 +4,7 @@ package org.sadtech.bot.vcs.bitbucket.app.service.converter;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;
 import org.sadtech.bot.vcs.core.domain.entity.Comment;
+import org.sadtech.bot.vcs.core.utils.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class CommentJsonToComment implements Converter<CommentJson, Comment> {
         comment.setCreateDate(source.getCreatedDate());
         comment.setAuthor(source.getAuthor().getName());
         comment.setPullRequestId(source.getCustomPullRequestId());
-        comment.setMessage(source.getText());
+        comment.setMessage(StringUtils.cutOff(source.getText(), 490));
         comment.setUrlApi(source.getCustomCommentApiUrl());
         comment.setBitbucketVersion(source.getVersion());
         comment.setAnswers(

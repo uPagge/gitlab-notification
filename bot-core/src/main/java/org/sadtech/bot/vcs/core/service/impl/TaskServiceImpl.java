@@ -120,23 +120,25 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
         final Set<Long> newAnswerIds = task.getAnswers();
         if (!oldAnswerIds.equals(newAnswerIds)) {
             final Set<Long> existsNewAnswersIds = commentService.existsById(newAnswerIds);
-            final List<Comment> newAnswers = commentService.getAllById(existsNewAnswersIds).stream()
-                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
-                    .collect(Collectors.toList());
-            oldTask.getAnswers().clear();
-            oldTask.setAnswers(existsNewAnswersIds);
-            notifyService.send(
-                    AnswerCommentNotify.builder()
-                            .logins(Collections.singleton(oldTask.getAuthor()))
-                            .url(oldTask.getUrl())
-                            .youMessage(oldTask.getDescription())
-                            .answers(
-                                    newAnswers.stream()
-                                            .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
-                                            .collect(Collectors.toList())
-                            )
-                            .build()
-            );
+            if (!existsNewAnswersIds.isEmpty()) {
+                final List<Comment> newAnswers = commentService.getAllById(existsNewAnswersIds).stream()
+                        .filter(comment -> !oldAnswerIds.contains(comment.getId()))
+                        .collect(Collectors.toList());
+                oldTask.getAnswers().clear();
+                oldTask.setAnswers(existsNewAnswersIds);
+                notifyService.send(
+                        AnswerCommentNotify.builder()
+                                .logins(Collections.singleton(oldTask.getAuthor()))
+                                .url(oldTask.getUrl())
+                                .youMessage(oldTask.getDescription())
+                                .answers(
+                                        newAnswers.stream()
+                                                .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
+                                                .collect(Collectors.toList())
+                                )
+                                .build()
+                );
+            }
         }
     }
 

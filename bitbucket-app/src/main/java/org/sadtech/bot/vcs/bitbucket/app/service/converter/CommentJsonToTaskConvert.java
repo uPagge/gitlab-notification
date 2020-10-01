@@ -6,6 +6,7 @@ import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentState;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;
 import org.sadtech.bot.vcs.core.domain.TaskStatus;
 import org.sadtech.bot.vcs.core.domain.entity.Task;
+import org.sadtech.bot.vcs.core.utils.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class CommentJsonToTaskConvert implements Converter<CommentJson, Task> {
         final Task task = new Task();
         task.setId(source.getId());
         task.setAuthor(source.getAuthor().getName());
-        task.setDescription(source.getText());
+        task.setDescription(StringUtils.cutOff(source.getText(), 490));
         task.setCreateDate(source.getCreatedDate());
         task.setBitbucketVersion(source.getVersion());
         task.setPullRequestId(source.getCustomPullRequestId());
