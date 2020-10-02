@@ -3,11 +3,13 @@ package org.sadtech.bot.vcs.core.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.domain.PointType;
+import org.sadtech.bot.vcs.core.domain.entity.Person;
 import org.sadtech.bot.vcs.core.domain.entity.RatingHistory;
 import org.sadtech.bot.vcs.core.domain.entity.RatingList;
 import org.sadtech.bot.vcs.core.exception.NotFoundException;
 import org.sadtech.bot.vcs.core.repository.RatingHistoryRepository;
 import org.sadtech.bot.vcs.core.repository.RatingListRepository;
+import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.core.service.RatingService;
 import org.sadtech.bot.vcs.core.utils.Smile;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class RatingServiceImpl implements RatingService {
 
     private final RatingHistoryRepository ratingHistoryRepository;
     private final RatingListRepository ratingListRepository;
+    private final PersonService personService;
 
     @Override
     public void addRating(@NonNull String login, @NonNull PointType type, @NonNull Integer points) {
@@ -47,10 +51,32 @@ public class RatingServiceImpl implements RatingService {
                 .collect(Collectors.groupingBy(RatingHistory::getLogin, Collectors.summingInt(RatingHistory::getPoints)))
                 .entrySet().stream()
                 .map(this::createRatingList)
-                .sorted()
-                .peek(ratingList -> ratingList.setNumber(i.getAndIncrement()))
                 .collect(Collectors.toList());
-        ratingListRepository.saveAll(newRatingList);
+        final Set<String> ratingListLogins = newRatingList.stream()
+                .map(RatingList::getLogin)
+                .collect(Collectors.toSet());
+        final Set<String> regLogins = personService.getAllRegister().stream()
+                .map(Person::getLogin)
+                .collect(Collectors.toSet());
+        newRatingList.addAll(
+                regLogins.stream()
+                        .filter(s -> !ratingListLogins.contains(s))
+                        .map(this::createEmptyRatingList)
+                        .collect(Collectors.toList())
+        );
+        ratingListRepository.saveAll(
+                newRatingList.stream()
+                        .sorted()
+                        .peek(ratingList -> ratingList.setNumber(i.getAndIncrement()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private RatingList createEmptyRatingList(String s) {
+        final RatingList ratingList = new RatingList();
+        ratingList.setLogin(s);
+        ratingList.setPoints(0);
+        return ratingList;
     }
 
     private RatingList createRatingList(Map.Entry<String, Integer> entry) {
@@ -70,10 +96,10 @@ public class RatingServiceImpl implements RatingService {
                 .map(this::createString)
                 .collect(Collectors.joining("\n"));
         final String lastMessage = ratingListRepository.findLastThree().stream()
+                .limit(countPerson - 3 < 0 ? 0 : countPerson - 3)
                 .map(this::createString)
-                .limit(countPerson - 3)
                 .collect(Collectors.joining("\n"));
-        String message = threeMessage;
+        String message = "Рейтинговая таблица | Всего участников: " + countPerson + "\n\n" + threeMessage;
 
         if (numberRatingList <= 2) {
             if (countPerson > 3) {
@@ -92,13 +118,13 @@ public class RatingServiceImpl implements RatingService {
         String message = "";
         final Integer number = ratingList.getNumber();
         if (number == 0) {
-            message += Smile.TOP_ONE + " " + ratingList.getLogin() + " " + Smile.TOP_ONE;
+            message += Smile.TOP_ONE.getValue() + " " + ratingList.getLogin() + " " + Smile.TOP_ONE.getValue();
         } else if (number == 1) {
-            message += Smile.TOP_TWO + " " + ratingList.getLogin() + " " + Smile.TOP_TWO;
+            message += Smile.TOP_TWO.getValue() + " " + ratingList.getLogin() + " " + Smile.TOP_TWO.getValue();
         } else if (number == 2) {
-            message += Smile.TOP_THREE + " " + ratingList.getLogin() + " " + Smile.TOP_THREE;
+            message += Smile.TOP_THREE.getValue() + " " + ratingList.getLogin() + " " + Smile.TOP_THREE.getValue();
         } else {
-            message += Smile.KAKASHKA + " " + ratingList.getLogin();
+            message += Smile.KAKASHKA.getValue() + " " + ratingList.getLogin();
         }
         return message;
     }

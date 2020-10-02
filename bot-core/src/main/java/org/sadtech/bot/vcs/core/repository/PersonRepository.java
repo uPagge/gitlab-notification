@@ -22,8 +22,6 @@ public interface PersonRepository {
 
     List<Person> findAllByTelegramIdNotNullAndTokenNotNull();
 
-    Long findTelegramIdByLogin(String login);
-
     Set<Long> findAllTelegramIdByLogin(Set<String> logins);
 
     Optional<Person> findByLogin(@NonNull String login);

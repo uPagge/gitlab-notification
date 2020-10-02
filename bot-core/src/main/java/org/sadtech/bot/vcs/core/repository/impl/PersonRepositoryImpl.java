@@ -57,11 +57,6 @@ public class PersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
-    public Long findTelegramIdByLogin(String login) {
-        return jpaRepository.findTelegramIdByLogin(login);
-    }
-
-    @Override
     public Set<Long> findAllTelegramIdByLogin(Set<String> logins) {
         return jpaRepository.findAllTelegramIdByLogin(logins);
     }

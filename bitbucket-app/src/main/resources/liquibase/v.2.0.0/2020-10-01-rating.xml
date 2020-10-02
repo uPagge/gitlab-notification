@@ -37,4 +37,8 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2020-10-01-delete-unique" author="upagge">
+        <dropUniqueConstraint tableName="rating_list" constraintName="rating_list_number_key"/>
+    </changeSet>
+
 </databaseChangeLog>

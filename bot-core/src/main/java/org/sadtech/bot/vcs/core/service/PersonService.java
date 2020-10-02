@@ -10,17 +10,11 @@ import java.util.Set;
 
 public interface PersonService {
 
-    Optional<Person> getByLogin(String login);
-
     Set<String> existsByLogin(@NonNull Set<String> logins);
-
-    boolean existsByLogin(@NonNull String login);
 
     Person reg(@NonNull Person user);
 
     List<Person> getAllRegister();
-
-    Optional<Long> getTelegramIdByLogin(@NonNull String login);
 
     Set<Long> getAllTelegramIdByLogin(Set<String> logins);
 

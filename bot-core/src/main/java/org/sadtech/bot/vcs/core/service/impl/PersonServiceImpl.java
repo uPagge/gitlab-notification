@@ -41,20 +41,10 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getByLogin(String login) {
-        return personRepository.findByLogin(login);
-    }
-
-    @Override
     public Set<String> existsByLogin(@NonNull Set<String> logins) {
         return logins.stream()
                 .filter(personRepository::existsByLogin)
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public boolean existsByLogin(@NonNull String login) {
-        return personRepository.existsByLogin(login);
     }
 
     @Override
@@ -90,11 +80,6 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllRegister() {
         return personRepository.findAllByTelegramIdNotNullAndTokenNotNull();
-    }
-
-    @Override
-    public Optional<Long> getTelegramIdByLogin(@NonNull String login) {
-        return Optional.ofNullable(personRepository.findTelegramIdByLogin(login));
     }
 
     @Override
