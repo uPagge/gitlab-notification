@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="2020-10-02" author="upagge">
+        <addColumn tableName="teamcity_setting">
+            <column name="success" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="teamcity_setting">
+            <column name="failure" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

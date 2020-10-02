@@ -5,9 +5,11 @@ import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.teamcity.core.domain.ServiceNotify;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
+import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcitySetting;
 import org.sadtech.bot.vcs.teamcity.core.repository.BuildShortRepository;
 import org.sadtech.bot.vcs.teamcity.core.service.BuildShortService;
 import org.sadtech.bot.vcs.teamcity.core.service.TeamcitySettingService;
+import org.sadtech.bot.vcs.teamcity.sdk.BuildStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -41,16 +43,23 @@ public class BuildShortServiceImpl extends AbstractSimpleManagerService<BuildSho
         final BuildShort newBuildShort = buildShortRepository.save(buildShort);
 
         teamcitySettingService.getAllByProjectId(buildShort.getProjectId())
-                .forEach(
-                        teamcitySetting -> notifyService.send(
-                                ServiceNotify.builder()
-                                        .buildShort(buildShort)
-                                        .chatId(teamcitySetting.getChatId())
-                                        .build()
-                        )
-                );
+                .forEach(teamcitySetting -> sendNotification(teamcitySetting, buildShort));
 
         return newBuildShort;
+    }
+
+    private void sendNotification(TeamcitySetting teamcitySetting, BuildShort buildShort) {
+        if (
+                (teamcitySetting.isFailure() && BuildStatus.FAILURE.equals(buildShort.getStatus()))
+                        || (teamcitySetting.isSuccess() && BuildStatus.SUCCESS.equals(buildShort.getStatus()))
+        ) {
+            notifyService.send(
+                    ServiceNotify.builder()
+                            .buildShort(buildShort)
+                            .chatId(teamcitySetting.getChatId())
+                            .build()
+            );
+        }
     }
 
     @Override

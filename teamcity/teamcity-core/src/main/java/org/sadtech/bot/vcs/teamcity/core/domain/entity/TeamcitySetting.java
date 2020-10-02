@@ -35,4 +35,10 @@ public class TeamcitySetting {
     @Column(name = "project_id")
     private String projectId;
 
+    @Column(name = "success")
+    private boolean success;
+
+    @Column(name = "failure")
+    private boolean failure;
+
 }
