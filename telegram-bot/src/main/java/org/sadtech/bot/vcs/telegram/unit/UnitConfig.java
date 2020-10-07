@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.telegram.unit;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.telegram.service.unit.PullRequestProcessing;
 import org.sadtech.bot.vcs.telegram.service.unit.RatingTopProcessing;
 import org.sadtech.bot.vcs.telegram.service.unit.TaskProcessing;
 import org.sadtech.bot.vcs.telegram.utils.GeneratorKeyBoards;
@@ -44,7 +43,7 @@ public class UnitConfig {
     @Bean
     public AnswerText menu(
             AnswerProcessing<Message> getTasks,
-            AnswerProcessing<Message> getPr,
+            AnswerText menuPullRequest,
             AnswerText settings,
             AnswerProcessing<Message> getTopRating
     ) {
@@ -56,7 +55,7 @@ public class UnitConfig {
                                 .build()
                 )
                 .nextUnit(getTasks)
-                .nextUnit(getPr)
+                .nextUnit(menuPullRequest)
                 .nextUnit(settings)
                 .nextUnit(getTopRating)
                 .build();
@@ -87,16 +86,6 @@ public class UnitConfig {
         return AnswerProcessing.builder()
                 .processingData(taskProcessing)
                 .phrase("Мои задачи")
-                .build();
-    }
-
-    @Bean
-    public AnswerProcessing<Message> getPr(
-            PullRequestProcessing pullRequestProcessing
-    ) {
-        return AnswerProcessing.builder()
-                .processingData(pullRequestProcessing)
-                .phrase("Проверить ПР")
                 .build();
     }
 

@@ -9,5 +9,6 @@
     <include file="liquibase/v.2.0.0/2020-09-20-teamcity.xml"/>
     <include file="liquibase/v.2.0.0/2020-10-01-rating.xml"/>
     <include file="liquibase/v.2.0.0/2020-10-02-add-column-status-teamcity.xml"/>
+    <include file="liquibase/v.2.0.0/2020-10-07-add-colum-reviewer-date.xml"/>
 
 </databaseChangeLog>

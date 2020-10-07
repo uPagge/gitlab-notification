@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 /**
  * Ревьювер пулреквеста.
@@ -51,6 +52,9 @@ public class Reviewer {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReviewerStatus status;
+
+    @Column(name = "date_change")
+    private LocalDateTime dateChange;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, optional = false)
     @JoinColumn(name = "pull_request_id")

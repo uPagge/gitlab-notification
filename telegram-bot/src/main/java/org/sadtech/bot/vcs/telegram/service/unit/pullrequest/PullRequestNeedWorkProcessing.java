@@ -1,7 +1,6 @@
-package org.sadtech.bot.vcs.telegram.service.unit;
+package org.sadtech.bot.vcs.telegram.service.unit.pullrequest;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 import org.sadtech.bot.vcs.core.domain.entity.Person;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
@@ -14,7 +13,6 @@ import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +22,7 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
-public class PullRequestProcessing implements ProcessingData<Message> {
+public class PullRequestNeedWorkProcessing implements ProcessingData<Message> {
 
     private final PersonService personService;
     private final PullRequestsService pullRequestsService;
@@ -33,14 +31,10 @@ public class PullRequestProcessing implements ProcessingData<Message> {
     public BoxAnswer processing(Message message) {
         final Person person = personService.getByTelegramId(message.getPersonId())
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        final List<PullRequest> pullRequests = pullRequestsService.getAllByReviewerAndStatuses(
-                person.getLogin(),
-                ReviewerStatus.NEEDS_WORK,
-                Collections.singleton(PullRequestStatus.OPEN)
-        );
+        final List<PullRequest> pullRequests = pullRequestsService.getAllByAuthorAndReviewerStatus(person.getLogin(), ReviewerStatus.UNAPPROVED);
         return BoxAnswer.of(
-                MessageUtils.pullRequestForReview(pullRequests)
-                        .orElse("Все ПР проверены :)")
+                MessageUtils.pullRequestForNeedWork(pullRequests)
+                        .orElse("Не найдено ПРов, которые нуждаются в доработке :)")
         );
     }
 

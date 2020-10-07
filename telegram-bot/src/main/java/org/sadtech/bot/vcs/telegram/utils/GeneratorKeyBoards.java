@@ -16,7 +16,7 @@ public class GeneratorKeyBoards {
 
     public static KeyBoard menu() {
         final KeyBoardButtonText tasks = KeyBoardButtonText.builder().label("Мои задачи").build();
-        final KeyBoardButtonText pr = KeyBoardButtonText.builder().label("Проверить ПР").build();
+        final KeyBoardButtonText pr = KeyBoardButtonText.builder().label("Pull Requests").build();
         final KeyBoardButtonText top = KeyBoardButtonText.builder().label("\uD83C\uDF1F Таблица рейтинга \uD83C\uDF1F").build();
         final KeyBoardButtonText settings = KeyBoardButtonText.builder().label("Настройки").build();
 

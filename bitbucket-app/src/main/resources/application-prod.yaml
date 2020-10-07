@@ -16,6 +16,8 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+logging:
+  config: classpath:logback-prod.xml
 bitbucketbot:
   scheduler:
     person: 0 0 0 */1 * *

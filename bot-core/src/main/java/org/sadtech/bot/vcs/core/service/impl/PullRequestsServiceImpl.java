@@ -31,6 +31,7 @@ import org.sadtech.bot.vcs.core.service.RatingService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +64,10 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     @Override
     public PullRequest create(@NonNull PullRequest pullRequest) {
         Assert.isNull(pullRequest.getId(), "При создании идентификатор должен быть пустым");
+
+        pullRequest.getReviewers().forEach(
+                reviewer -> reviewer.setDateChange(LocalDateTime.now())
+        );
 
         final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
 
@@ -174,6 +179,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                 if (!oldStatus.equals(newStatus)) {
                     reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getPersonLogin(), oldStatus, newStatus));
                     oldReviewer.setStatus(newStatus);
+                    oldReviewer.setDateChange(LocalDateTime.now());
                 }
             } else {
                 reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getPersonLogin(), newReviewer.getStatus()));

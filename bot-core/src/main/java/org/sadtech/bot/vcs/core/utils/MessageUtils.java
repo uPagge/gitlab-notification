@@ -18,22 +18,35 @@ import java.util.stream.Collectors;
 public final class MessageUtils {
 
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
-    private static final Integer PR_COUNT = 4;
 
     public static Optional<String> pullRequestForReview(@NonNull List<PullRequest> pullRequestsReviews) {
         if (!pullRequestsReviews.isEmpty()) {
             return Optional.of(
                     pullRequestsReviews.stream()
                             .sorted(COMPARATOR)
-                            .limit(PR_COUNT)
-                            .map(MessageUtils::topPr)
+                            .map(MessageUtils::generateStringItemPullRequestReview)
                             .collect(Collectors.joining("\n"))
             );
         }
         return Optional.empty();
     }
 
-    private static String topPr(PullRequest pullRequest) {
+    public static Optional<String> pullRequestForNeedWork(@NonNull List<PullRequest> pullRequestNeedWork) {
+        if (!pullRequestNeedWork.isEmpty()) {
+            return Optional.of(
+                    pullRequestNeedWork.stream()
+                            .map(MessageUtils::generateStringItemPullRequestNeedWork)
+                            .collect(Collectors.joining("\n"))
+            );
+        }
+        return Optional.empty();
+    }
+
+    private static String generateStringItemPullRequestNeedWork(PullRequest pullRequest) {
+        return "-- " + link(pullRequest.getTitle(), pullRequest.getUrl());
+    }
+
+    private static String generateStringItemPullRequestReview(PullRequest pullRequest) {
         return Smile.statusPr(pullRequest.getUpdateDate()) + " " +
                 link(pullRequest.getTitle(), pullRequest.getUrl()) +
                 Smile.BR;

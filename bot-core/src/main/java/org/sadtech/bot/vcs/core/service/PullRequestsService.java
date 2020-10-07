@@ -25,6 +25,12 @@ public interface PullRequestsService extends SimpleManagerService<PullRequest, L
      */
     List<PullRequest> getAllByReviewerAndStatuses(@NonNull String login, @NonNull ReviewerStatus reviewerStatus, @NonNull Set<PullRequestStatus> pullRequestStatuses);
 
+    /**
+     * Получить все ПР с определенным статусом, который есть хотя бы у одного ревьювера.
+     *
+     * @param login  Автор ПР.
+     * @param status Статус ревьювера.
+     */
     List<PullRequest> getAllByAuthorAndReviewerStatus(@NonNull String login, @NonNull ReviewerStatus status);
 
     /**
