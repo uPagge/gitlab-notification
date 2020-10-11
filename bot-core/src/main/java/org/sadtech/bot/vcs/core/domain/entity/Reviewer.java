@@ -56,6 +56,9 @@ public class Reviewer {
     @Column(name = "date_change")
     private LocalDateTime dateChange;
 
+    @Column(name = "date_smart_notify")
+    private LocalDateTime dateSmartNotify;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, optional = false)
     @JoinColumn(name = "pull_request_id")
     private PullRequest pullRequest;

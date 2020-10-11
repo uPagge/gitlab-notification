@@ -26,7 +26,7 @@ public class UpdatePrNotify extends PrNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Обновление Pull Request*\n" +
+                "{0} *Обновление PullRequest*\n" +
                         "[{1}]({2})" +
                         "{3}" +
                         "{4}: {5}\n\n",

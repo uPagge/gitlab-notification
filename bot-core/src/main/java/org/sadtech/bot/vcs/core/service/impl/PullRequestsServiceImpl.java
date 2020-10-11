@@ -18,8 +18,10 @@ import org.sadtech.bot.vcs.core.domain.entity.PullRequest_;
 import org.sadtech.bot.vcs.core.domain.entity.Reviewer;
 import org.sadtech.bot.vcs.core.domain.filter.PullRequestFilter;
 import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ConflictPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ForgottenSmartPrNotify;
 import org.sadtech.bot.vcs.core.domain.notify.pullrequest.NewPrNotify;
 import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ReviewersPrNotify;
+import org.sadtech.bot.vcs.core.domain.notify.pullrequest.SmartPrNotify;
 import org.sadtech.bot.vcs.core.domain.notify.pullrequest.StatusPrNotify;
 import org.sadtech.bot.vcs.core.domain.notify.pullrequest.UpdatePrNotify;
 import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
@@ -93,30 +95,58 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     public PullRequest update(@NonNull PullRequest pullRequest) {
         final PullRequest oldPullRequest = findAndFillId(pullRequest);
 
-        oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
+        forgottenNotification(oldPullRequest);
+
         oldPullRequest.setTitle(pullRequest.getTitle());
         oldPullRequest.setDescription(pullRequest.getDescription());
         updateReviewers(oldPullRequest, pullRequest);
+        oldPullRequest.setUpdateDate(pullRequest.getUpdateDate());
+        updateBitbucketVersion(oldPullRequest, pullRequest);
         updateStatus(oldPullRequest, pullRequest);
         updateConflict(oldPullRequest, pullRequest);
 
-        final PullRequest newPullRequest = pullRequestsRepository.save(oldPullRequest);
-        if (!pullRequest.getBitbucketVersion().equals(newPullRequest.getBitbucketVersion())) {
+        return pullRequestsRepository.save(oldPullRequest);
+    }
+
+    private void forgottenNotification(PullRequest pullRequest) {
+        if (LocalDateTime.now().isAfter(pullRequest.getUpdateDate().plusHours(2L))) {
+            final Set<String> smartReviewers = pullRequest.getReviewers().stream()
+                    .filter(
+                            reviewer -> ReviewerStatus.NEEDS_WORK.equals(reviewer.getStatus())
+                                    && LocalDateTime.now().isAfter(reviewer.getDateChange().plusHours(2L))
+                                    && reviewer.getDateSmartNotify() == null
+                    )
+                    .peek(reviewer -> reviewer.setDateSmartNotify(LocalDateTime.now()))
+                    .map(Reviewer::getPersonLogin)
+                    .collect(Collectors.toSet());
+            if (!smartReviewers.isEmpty()) {
+                notifyService.send(
+                        ForgottenSmartPrNotify.builder()
+                                .recipients(smartReviewers)
+                                .title(pullRequest.getTitle())
+                                .url(pullRequest.getUrl())
+                                .build()
+                );
+            }
+        }
+    }
+
+    private void updateBitbucketVersion(PullRequest oldPullRequest, PullRequest pullRequest) {
+        if (!oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())) {
+            oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
             notifyService.send(
                     UpdatePrNotify.builder()
                             .author(oldPullRequest.getAuthorLogin())
-                            .name(newPullRequest.getTitle())
+                            .name(pullRequest.getTitle())
                             .recipients(
-                                    newPullRequest.getReviewers().stream()
+                                    pullRequest.getReviewers().stream()
                                             .map(Reviewer::getPersonLogin)
                                             .collect(Collectors.toSet())
                             )
-                            .url(newPullRequest.getUrl())
+                            .url(oldPullRequest.getUrl())
                             .build()
             );
         }
-
-        return newPullRequest;
     }
 
     private void updateConflict(PullRequest oldPullRequest, PullRequest pullRequest) {
@@ -180,10 +210,12 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getPersonLogin(), oldStatus, newStatus));
                     oldReviewer.setStatus(newStatus);
                     oldReviewer.setDateChange(LocalDateTime.now());
+                    smartNotifyAfterReviewerDecision(newReviewer, oldPullRequest);
                 }
             } else {
                 reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getPersonLogin(), newReviewer.getStatus()));
                 newReviewer.setPullRequest(oldPullRequest);
+                newReviewer.setDateChange(LocalDateTime.now());
                 oldPullRequest.getReviewers().add(newReviewer);
             }
         }
@@ -207,6 +239,36 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                             .build()
             );
         }
+    }
+
+    /**
+     * Умное уведомление ревьюверов, после того, как кто-то изменил свое решение.
+     */
+    private void smartNotifyAfterReviewerDecision(Reviewer newReviewer, PullRequest oldPullRequest) {
+        final ReviewerStatus newStatus = newReviewer.getStatus();
+        if (!ReviewerStatus.NEEDS_WORK.equals(newStatus) && enoughTimHasPassedSinceUpdatePr(oldPullRequest.getUpdateDate())) {
+            final List<Reviewer> smartReviewers = oldPullRequest.getReviewers().stream()
+                    .filter(reviewer -> LocalDateTime.now().isAfter(reviewer.getDateChange().plusHours(2L)))
+                    .collect(Collectors.toList());
+            if (!smartReviewers.isEmpty()) {
+                notifyService.send(
+                        SmartPrNotify.builder()
+                                .reviewerTriggered(newReviewer)
+                                .title(oldPullRequest.getTitle())
+                                .url(oldPullRequest.getUrl())
+                                .recipients(
+                                        smartReviewers.stream()
+                                                .map(Reviewer::getPersonLogin)
+                                                .collect(Collectors.toSet())
+                                )
+                                .build()
+                );
+            }
+        }
+    }
+
+    private boolean enoughTimHasPassedSinceUpdatePr(LocalDateTime updateDate) {
+        return LocalDateTime.now().isAfter(updateDate.plusHours(4L));
     }
 
     @NonNull

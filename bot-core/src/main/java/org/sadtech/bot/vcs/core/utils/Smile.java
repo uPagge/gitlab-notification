@@ -38,7 +38,8 @@ public enum Smile {
     HR("\n -- -- -- -- --\n"),
     FAILURE("❌"),
     SUCCESS("✅"),
-    BUILD("♻️");
+    BUILD("♻️"),
+    SMART("\uD83E\uDDE0");
 
     @Getter
     private final String value;
