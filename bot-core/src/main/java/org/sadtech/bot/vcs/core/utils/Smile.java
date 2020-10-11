@@ -40,7 +40,7 @@ public enum Smile {
     BUILD("♻️");
 
     @Getter
-    private String value;
+    private final String value;
 
     public static Smile statusPr(LocalDateTime updateDate) {
         int periodDay = Period.between(updateDate.toLocalDate(), LocalDate.now()).getDays();
