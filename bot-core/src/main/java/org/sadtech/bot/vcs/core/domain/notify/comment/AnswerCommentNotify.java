@@ -37,7 +37,7 @@ public class AnswerCommentNotify extends Notify {
     @Override
     public String generateMessage() {
         final String answerText = answers.stream()
-                .map(answer -> answer.getAuthorName() + ": " + answer.getMessage().substring(0, Math.min(answer.getMessage().length(), 500)))
+                .map(answer -> "*" + answer.getAuthorName() + "*: " + answer.getMessage().substring(0, Math.min(answer.getMessage().length(), 500)))
                 .collect(Collectors.joining("\n\n"));
         return MessageFormat.format(
                 "{0} *Новые ответы на ваш комментарий* | [ПР]({1}){2}" +

@@ -132,8 +132,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             oldTask.getAnswers().clear();
             oldTask.setAnswers(existsNewAnswersIds);
             if (!newAnswers.isEmpty()) {
-                oldTask.getAnswers().clear();
-                oldTask.setAnswers(existsNewAnswersIds);
                 notifyService.send(
                         AnswerCommentNotify.builder()
                                 .recipients(Collections.singleton(oldTask.getAuthor()))

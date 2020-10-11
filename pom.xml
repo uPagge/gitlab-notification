@@ -148,36 +148,14 @@
                 <version>${javax.persistance}</version>
             </dependency>
 
-
-            <!--        <dependency>-->
-            <!--            <groupId>org.springframework.boot</groupId>-->
-            <!--            <artifactId>spring-boot-starter-test</artifactId>-->
-            <!--            <scope>test</scope>-->
-            <!--            <exclusions>-->
-            <!--                <exclusion>-->
-            <!--                    <groupId>org.junit.vintage</groupId>-->
-            <!--                    <artifactId>junit-vintage-engine</artifactId>-->
-            <!--                </exclusion>-->
-            <!--            </exclusions>-->
-            <!--        </dependency>-->
         </dependencies>
     </dependencyManagement>
-
-<!--    <build>-->
-<!--        <finalName>bitbucketbot</finalName>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
 
     <developers>
         <developer>
             <id>uPagge</id>
             <name>Struchkov Mark</name>
-            <email>upagge@ya.ru</email>
+            <email>upagge@mail.ru</email>
         </developer>
     </developers>
 

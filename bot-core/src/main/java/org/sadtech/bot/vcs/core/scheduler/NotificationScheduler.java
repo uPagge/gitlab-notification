@@ -1,6 +1,7 @@
 package org.sadtech.bot.vcs.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
+import org.sadtech.bot.vcs.core.config.properties.AppProperty;
 import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
@@ -35,8 +36,10 @@ public class NotificationScheduler {
 
     private final NotifyService notifyService;
 
+    private final AppProperty appProperty;
+
     // Утреннее сообщение
-    @Scheduled(cron = "0 15 8 * * MON-FRI")
+    @Scheduled(cron = "0 */1 * * * *")
     public void goodMorning() {
         List<Person> allRegister = personService.getAllRegister();
         for (Person user : allRegister) {
@@ -48,9 +51,11 @@ public class NotificationScheduler {
             List<PullRequest> pullRequestsNeedWork = pullRequestsService.getAllByAuthorAndReviewerStatus(user.getLogin(), ReviewerStatus.UNAPPROVED);
             notifyService.send(
                     GoodMorningNotify.builder()
+                            .personName(user.getFullName())
                             .pullRequestsNeedWork(pullRequestsNeedWork)
                             .pullRequestsReviews(pullRequestsReviews)
                             .recipients(Collections.singleton(user.getLogin()))
+                            .version(appProperty.getVersion())
                             .build()
             );
         }

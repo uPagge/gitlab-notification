@@ -3,3 +3,5 @@ server:
 telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
+bitbucketbot:
+  version: 2.15.3

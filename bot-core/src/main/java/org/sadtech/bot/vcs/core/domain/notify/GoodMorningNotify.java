@@ -25,42 +25,49 @@ public class GoodMorningNotify extends Notify {
 
     private final List<PullRequest> pullRequestsReviews;
     private final List<PullRequest> pullRequestsNeedWork;
+    private final String personName;
+    private final String version;
 
     @Builder
     protected GoodMorningNotify(
             Set<String> recipients,
             List<PullRequest> pullRequestsReviews,
-            List<PullRequest> pullRequestsNeedWork
-    ) {
+            List<PullRequest> pullRequestsNeedWork,
+            String personName, String version) {
         super(EntityType.PERSON, recipients);
         this.pullRequestsReviews = pullRequestsReviews;
         this.pullRequestsNeedWork = pullRequestsNeedWork;
+        this.personName = personName;
+        this.version = version;
     }
 
     @Override
     public String generateMessage() {
-        StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро* ").append(Smile.SUN).append(Smile.HR);
+        StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
         if (!pullRequestsReviews.isEmpty()) {
-            message.append("Необходимо проверить ").append(pullRequestsReviews.size()).append(" ПР!").append(Smile.TWO_BR)
-                    .append("Самые старые:").append(Smile.BR);
+            message.append("Необходимо проверить ").append(pullRequestsReviews.size()).append(" ПР:").append(Smile.BR);
             MessageUtils.pullRequestForReview(
                     pullRequestsReviews.stream()
                             .limit(3)
                             .collect(Collectors.toList())
             ).ifPresent(message::append);
         } else {
-            message.append("Ты либо самый лучший работник, либо тебе не доверяют проверку ПР ").append(Smile.MEGA_FUN).append(Smile.TWO_BR)
-                    .append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);
+            message.append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);
         }
         MessageUtils.pullRequestForNeedWork(
                 pullRequestsNeedWork.stream()
                         .limit(3)
                         .collect(Collectors.toList())
         ).ifPresent(
-                messageNeedWork -> message.append(Smile.BR).append(Smile.DANGEROUS).append("Требуется доработать ").append(pullRequestsNeedWork.size()).append(" ПР:").append(Smile.BR).append(messageNeedWork)
+                messageNeedWork -> message.append(Smile.TWO_BR)
+                        .append(Smile.DANGEROUS).append(" Требуется доработать ").append(pullRequestsNeedWork.size()).append(" ПР:").append(Smile.BR)
+                        .append(messageNeedWork)
+                        .append(Smile.BR)
         );
         message
-                .append(Smile.BR).append("Удачного дня ").append(Smile.FLOWER).append(Smile.TWO_BR);
+                .append(Smile.BR).append("Удачного дня ").append(Smile.FLOWER)
+                .append(Smile.HR)
+                .append("_Version ").append(version).append(" | Developer @uPagge_");
         return message.toString();
     }
 

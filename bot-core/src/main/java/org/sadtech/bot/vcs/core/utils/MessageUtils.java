@@ -48,8 +48,7 @@ public final class MessageUtils {
 
     private static String generateStringItemPullRequestReview(PullRequest pullRequest) {
         return Smile.statusPr(pullRequest.getUpdateDate()) + " " +
-                link(pullRequest.getTitle(), pullRequest.getUrl()) +
-                Smile.BR;
+                link(pullRequest.getTitle(), pullRequest.getUrl());
     }
 
     @NonNull
