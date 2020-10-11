@@ -75,7 +75,7 @@ public class PullRequestBitbucketParser implements PullRequestParser {
                 pullRequestsService.createAll(newPullRequest);
 
                 if (pullRequestBitbucketSheet.getNextPageStart() != null) {
-                    sheetJson = Utils.urlToJson(bitbucketProperty.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), bitbucketProperty.getToken(), PullRequestSheetJson.class);
+                    sheetJson = Utils.urlToJson(bitbucketProperty.getUrlPullRequestOpen() + pullRequestBitbucketSheet.getNextPageStart(), user.getToken(), PullRequestSheetJson.class);
                 } else {
                     break;
                 }
