@@ -36,7 +36,7 @@ public class CommentNotify extends Notify {
         return MessageFormat.format(
                 "{0} *Новое упоминание* | [ПР]({1}){2}" +
                         "{3}: {4}",
-                Smile.BELL, url, Smile.HR, authorName, message.replaceAll("@[\\w]+", "")
+                Smile.BELL, url, Smile.HR, authorName, escapeMarkdown(message.replaceAll("@[\\w]+", ""))
         );
     }
 

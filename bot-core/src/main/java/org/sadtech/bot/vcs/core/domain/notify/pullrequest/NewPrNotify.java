@@ -32,9 +32,9 @@ public class NewPrNotify extends PrNotify {
         return MessageFormat.format(
                 "{0} *Новый Pull Request*{1}" +
                         "[{2}]({3})" +
-                        "{4}{5}{6}: {7}\n\n",
-                Smile.FUN, Smile.HR, title, url, Smile.HR,
-                (description != null && !"".equals(description)) ? description + Smile.HR : "",
+                        "{1}{4}{5}: {6}\n\n",
+                Smile.FUN, Smile.HR, title, url,
+                (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : "",
                 Smile.AUTHOR, author
         );
     }

@@ -30,7 +30,7 @@ public class TaskNewNotify extends TaskNotify {
         return MessageFormat.format(
                 "{0} *Назначена новая задача* | [ПР]({1}){2}" +
                         "{3}: {4}",
-                Smile.TASK, url, Smile.HR, authorName, messageTask
+                Smile.TASK, url, Smile.HR, authorName, escapeMarkdown(messageTask)
         );
     }
 

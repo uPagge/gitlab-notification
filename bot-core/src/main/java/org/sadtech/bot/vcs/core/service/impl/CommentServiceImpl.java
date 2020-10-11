@@ -134,12 +134,12 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
         final Set<Long> newAnswerIds = newComment.getAnswers();
         if (!oldAnswerIds.equals(newAnswerIds)) {
             final Set<Long> existsNewAnswersIds = commentRepository.existsById(newAnswerIds);
-            if (!existsNewAnswersIds.isEmpty()) {
-                final List<Comment> newAnswers = commentRepository.findAllById(existsNewAnswersIds).stream()
-                        .filter(comment -> !oldAnswerIds.contains(comment.getId()))
-                        .collect(Collectors.toList());
-                oldComment.getAnswers().clear();
-                oldComment.setAnswers(existsNewAnswersIds);
+            final List<Comment> newAnswers = commentRepository.findAllById(existsNewAnswersIds).stream()
+                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
+                    .collect(Collectors.toList());
+            oldComment.getAnswers().clear();
+            oldComment.setAnswers(existsNewAnswersIds);
+            if (!newAnswers.isEmpty()) {
                 notifyService.send(
                         AnswerCommentNotify.builder()
                                 .recipients(Collections.singleton(newComment.getAuthor()))

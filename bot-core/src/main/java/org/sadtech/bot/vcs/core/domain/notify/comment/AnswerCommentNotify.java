@@ -41,9 +41,13 @@ public class AnswerCommentNotify extends Notify {
                 .collect(Collectors.joining("\n\n"));
         return MessageFormat.format(
                 "{0} *Новые ответы на ваш комментарий* | [ПР]({1}){2}" +
-                        "{3}{4}" +
-                        "{5}",
-                Smile.BELL, url, Smile.HR, youMessage.substring(0, Math.min(youMessage.length(), 180)), Smile.HR, answerText
+                        "{3}{2}" +
+                        "{4}",
+                Smile.BELL,
+                url,
+                Smile.HR,
+                escapeMarkdown(youMessage.substring(0, Math.min(youMessage.length(), 180))),
+                escapeMarkdown(answerText)
         );
     }
 

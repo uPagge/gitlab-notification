@@ -36,7 +36,7 @@ public class TeamcityBuildNotify extends Notify {
                 Smile.BUILD,
                 buildShort.getId(),
                 buildShort.getNumber(),
-                buildShort.getProjectId(),
+                escapeMarkdown(buildShort.getProjectId()),
                 Smile.HR,
                 buildShort.getBuildTypeId(),
                 buildShort.getUrl(),
