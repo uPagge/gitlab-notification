@@ -34,6 +34,7 @@ public enum Smile {
     LUPA("\uD83D\uDD0D"),
     DANGEROUS("⚠️"),
     BELL("\uD83D\uDECE"),
+    ARROW("➜"),
     HR("\n -- -- -- -- --\n"),
     FAILURE("❌"),
     SUCCESS("✅"),

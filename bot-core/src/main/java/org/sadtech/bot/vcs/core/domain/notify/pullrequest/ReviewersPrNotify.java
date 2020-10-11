@@ -37,25 +37,25 @@ public class ReviewersPrNotify extends PrNotify {
         final Map<ReviewerChange.Type, List<ReviewerChange>> changes = reviewerChanges.stream()
                 .collect(Collectors.groupingBy(ReviewerChange::getType));
         if (changes.containsKey(OLD)) {
-            stringBuilder.append(Smile.BR).append("Изменили свое решение:").append(Smile.BR);
             changes.get(OLD).forEach(
                     change -> stringBuilder
                             .append(Smile.AUTHOR).append(change.getName()).append(": ")
-                            .append(change.getOldStatus().getValue()).append(" -> ")
+                            .append(change.getOldStatus().getValue()).append(" ").append(Smile.ARROW).append(" ")
                             .append(change.getStatus().getValue())
                             .append(Smile.BR)
             );
+            stringBuilder.append(Smile.BR);
         }
         if (changes.containsKey(NEW)) {
-            stringBuilder.append(Smile.BR).append("Новые ревьюверы:").append(Smile.BR);
+            stringBuilder.append("Новые ревьюверы:").append(Smile.BR);
             changes.get(NEW).forEach(
                     change -> stringBuilder
-                            .append(change.getName()).append(" (").append(change.getStatus().getValue()).append(")")
-                            .append(Smile.BR)
+                            .append(change.getName()).append(": ").append(change.getStatus().getValue()).append(Smile.BR)
             );
+            stringBuilder.append(Smile.BR);
         }
         if (changes.containsKey(DELETED)) {
-            stringBuilder.append(Smile.BR).append("Не выдержали ревью:").append(Smile.BR)
+            stringBuilder.append("Не выдержали ревью:").append(Smile.BR)
                     .append(
                             changes.get(DELETED).stream()
                                     .map(ReviewerChange::getName).collect(Collectors.joining(","))

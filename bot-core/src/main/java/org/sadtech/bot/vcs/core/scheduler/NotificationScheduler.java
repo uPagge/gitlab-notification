@@ -39,7 +39,7 @@ public class NotificationScheduler {
     private final AppProperty appProperty;
 
     // Утреннее сообщение
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 15 8 * * MON-FRI")
     public void goodMorning() {
         List<Person> allRegister = personService.getAllRegister();
         for (Person user : allRegister) {
@@ -61,7 +61,7 @@ public class NotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "0 29 10 * * MON-FRI")
+    @Scheduled(cron = "0 44 10 * * MON-FRI")
     public void tks() {
         List<Person> usersTks = personService.getAllRegister().stream()
                 .filter(user -> tksLoginNotify.contains(user.getLogin()))

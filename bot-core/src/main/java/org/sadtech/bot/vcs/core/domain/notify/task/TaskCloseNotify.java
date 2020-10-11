@@ -26,8 +26,8 @@ public class TaskCloseNotify extends TaskNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Задача выполнена* | [ПР]({1}){2}" +
-                        "{3}: {4}",
+                "{0} *Закрыта* [задача]({1}){2}" +
+                        "*{3}*: {4}",
                 Smile.TASK, url, Smile.HR, authorName, escapeMarkdown(messageTask)
         );
     }
