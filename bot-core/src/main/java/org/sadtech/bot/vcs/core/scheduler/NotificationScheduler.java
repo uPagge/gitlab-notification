@@ -1,6 +1,7 @@
 package org.sadtech.bot.vcs.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
 import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
 import org.sadtech.bot.vcs.core.domain.entity.Person;
@@ -49,7 +50,7 @@ public class NotificationScheduler {
                     GoodMorningNotify.builder()
                             .pullRequestsNeedWork(pullRequestsNeedWork)
                             .pullRequestsReviews(pullRequestsReviews)
-                            .logins(Collections.singleton(user.getLogin()))
+                            .recipients(Collections.singleton(user.getLogin()))
                             .build()
             );
         }
@@ -63,7 +64,7 @@ public class NotificationScheduler {
         notifyService.send(
                 SimpleTextNotify
                         .builder()
-                        .logins(
+                        .recipients(
                                 usersTks.stream()
                                         .map(Person::getLogin)
                                         .collect(Collectors.toSet())
@@ -79,9 +80,10 @@ public class NotificationScheduler {
         List<Person> allRegister = personService.getAllRegister();
         notifyService.send(
                 SimpleTextNotify.builder()
+                        .entityType(EntityType.PERSON)
                         .message("Ну вот и все! Веселых выходных " + Smile.MIG + Smile.BR +
                                 "До понедельника" + Smile.BUY + Smile.TWO_BR)
-                        .logins(
+                        .recipients(
                                 allRegister.stream()
                                         .map(Person::getLogin)
                                         .collect(Collectors.toSet())

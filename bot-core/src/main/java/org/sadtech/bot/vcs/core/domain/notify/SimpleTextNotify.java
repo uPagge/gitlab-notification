@@ -2,6 +2,7 @@ package org.sadtech.bot.vcs.core.domain.notify;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 
 import java.util.Set;
 
@@ -16,8 +17,8 @@ public class SimpleTextNotify extends Notify {
     private final String message;
 
     @Builder
-    private SimpleTextNotify(Set<String> logins, String message) {
-        super(logins);
+    private SimpleTextNotify(EntityType entityType, Set<String> recipients, String message) {
+        super(entityType, recipients);
         this.message = message;
     }
 
@@ -25,4 +26,5 @@ public class SimpleTextNotify extends Notify {
     public String generateMessage() {
         return message;
     }
+
 }

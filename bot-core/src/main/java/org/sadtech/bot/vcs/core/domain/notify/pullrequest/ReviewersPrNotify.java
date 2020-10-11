@@ -23,11 +23,11 @@ public class ReviewersPrNotify extends PrNotify {
 
     @Builder
     private ReviewersPrNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String title,
             String url,
             List<ReviewerChange> reviewerChanges) {
-        super(logins, title, url);
+        super(recipients, title, url);
         this.reviewerChanges = reviewerChanges;
     }
 

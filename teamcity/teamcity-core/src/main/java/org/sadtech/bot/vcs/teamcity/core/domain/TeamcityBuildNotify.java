@@ -2,14 +2,14 @@ package org.sadtech.bot.vcs.teamcity.core.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.domain.notify.TypeNotify;
 import org.sadtech.bot.vcs.core.utils.Smile;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.sdk.BuildStatus;
 
 import java.text.MessageFormat;
-import java.util.Collections;
+import java.util.Set;
 
 /**
  * // TODO: 21.09.2020 Добавить описание.
@@ -17,17 +17,14 @@ import java.util.Collections;
  * @author upagge 21.09.2020
  */
 @Getter
-public class ServiceNotify extends Notify {
+public class TeamcityBuildNotify extends Notify {
 
-    private final Long chatId;
     private final BuildShort buildShort;
 
     @Builder
-    private ServiceNotify(Long chatId, BuildShort buildShort) {
-        super(Collections.emptySet());
-        this.chatId = chatId;
+    private TeamcityBuildNotify(EntityType entityType, Set<String> recipients, BuildShort buildShort) {
+        super(entityType, recipients);
         this.buildShort = buildShort;
-        this.typeNotify = TypeNotify.SERVICE;
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.sadtech.bot.vcs.core.domain.notify.comment;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
@@ -19,12 +20,12 @@ public class CommentNotify extends Notify {
 
     @Builder
     private CommentNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String url,
             String authorName,
             String message
     ) {
-        super(logins);
+        super(EntityType.PERSON, recipients);
         this.authorName = authorName;
         this.message = message;
         this.url = url;

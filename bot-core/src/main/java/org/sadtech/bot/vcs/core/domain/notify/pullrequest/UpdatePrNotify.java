@@ -16,10 +16,10 @@ public class UpdatePrNotify extends PrNotify {
 
     @Builder
     private UpdatePrNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String name,
             String url, String author) {
-        super(logins, name, url);
+        super(recipients, name, url);
         this.author = author;
     }
 

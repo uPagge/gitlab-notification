@@ -12,11 +12,11 @@ public class ConflictPrNotify extends PrNotify {
 
     @Builder
     private ConflictPrNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String name,
             String url
     ) {
-        super(logins, name, url);
+        super(recipients, name, url);
     }
 
     @Override

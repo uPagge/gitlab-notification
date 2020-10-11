@@ -15,12 +15,12 @@ public class TaskCloseNotify extends TaskNotify {
 
     @Builder
     protected TaskCloseNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(logins, authorName, url, messageTask);
+        super(recipients, authorName, url, messageTask);
     }
 
     @Override

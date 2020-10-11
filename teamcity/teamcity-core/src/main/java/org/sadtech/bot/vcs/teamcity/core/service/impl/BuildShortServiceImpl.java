@@ -3,7 +3,7 @@ package org.sadtech.bot.vcs.teamcity.core.service.impl;
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.bot.vcs.core.service.NotifyService;
-import org.sadtech.bot.vcs.teamcity.core.domain.ServiceNotify;
+import org.sadtech.bot.vcs.teamcity.core.domain.TeamcityBuildNotify;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcitySetting;
 import org.sadtech.bot.vcs.teamcity.core.repository.BuildShortRepository;
@@ -12,6 +12,7 @@ import org.sadtech.bot.vcs.teamcity.core.service.TeamcitySettingService;
 import org.sadtech.bot.vcs.teamcity.sdk.BuildStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -49,17 +50,25 @@ public class BuildShortServiceImpl extends AbstractSimpleManagerService<BuildSho
     }
 
     private void sendNotification(TeamcitySetting teamcitySetting, BuildShort buildShort) {
-        if (
-                (teamcitySetting.isFailure() && BuildStatus.FAILURE.equals(buildShort.getStatus()))
-                        || (teamcitySetting.isSuccess() && BuildStatus.SUCCESS.equals(buildShort.getStatus()))
-        ) {
+        if (isStatusBuild(teamcitySetting, buildShort.getStatus()) && isTypeBuild(teamcitySetting, buildShort.getBuildTypeId())) {
             notifyService.send(
-                    ServiceNotify.builder()
+                    TeamcityBuildNotify.builder()
+                            .entityType(teamcitySetting.getRecipientType())
+                            .recipients(Collections.singleton(teamcitySetting.getRecipientId()))
                             .buildShort(buildShort)
-                            .chatId(teamcitySetting.getChatId())
                             .build()
             );
         }
+    }
+
+    private boolean isTypeBuild(TeamcitySetting teamcitySetting, String buildTypeId) {
+        return teamcitySetting.getBuildTypeId() == null
+                || (teamcitySetting.getBuildTypeId().equals(buildTypeId));
+    }
+
+    private boolean isStatusBuild(TeamcitySetting teamcitySetting, BuildStatus buildStatus) {
+        return (teamcitySetting.isFailure() && BuildStatus.FAILURE.equals(buildStatus))
+                || (teamcitySetting.isSuccess() && BuildStatus.SUCCESS.equals(buildStatus));
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.sadtech.bot.vcs.core.domain.notify;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 
 import java.util.Set;
 
@@ -9,12 +10,12 @@ import java.util.Set;
 @Setter
 public abstract class Notify {
 
-    protected TypeNotify typeNotify;
-    protected Set<String> logins;
+    protected EntityType entityType;
+    protected Set<String> recipients;
 
-    protected Notify(Set<String> logins) {
-        this.typeNotify = TypeNotify.PERSON;
-        this.logins = logins;
+    protected Notify(EntityType entityType, Set<String> recipients) {
+        this.entityType = entityType;
+        this.recipients = recipients;
     }
 
     public abstract String generateMessage();

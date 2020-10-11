@@ -3,9 +3,12 @@ package org.sadtech.bot.vcs.teamcity.core.domain.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,11 +32,18 @@ public class TeamcitySetting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "chat_id")
-    private Long chatId;
+    @Column(name = "recipient_id")
+    private String recipientId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recipient_type")
+    private EntityType recipientType;
 
     @Column(name = "project_id")
     private String projectId;
+
+    @Column(name = "build_type_id")
+    private String buildTypeId;
 
     @Column(name = "success")
     private boolean success;

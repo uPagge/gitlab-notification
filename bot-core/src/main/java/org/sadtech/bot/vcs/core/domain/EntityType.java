@@ -1,13 +1,13 @@
-package org.sadtech.bot.vcs.core.domain.notify;
+package org.sadtech.bot.vcs.core.domain;
 
 /**
  * // TODO: 21.09.2020 Добавить описание.
  *
  * @author upagge 21.09.2020
  */
-public enum TypeNotify {
+public enum EntityType {
 
-    SERVICE,
+    CHAT,
     PERSON
 
 }

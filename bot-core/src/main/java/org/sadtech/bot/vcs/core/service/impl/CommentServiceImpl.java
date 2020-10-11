@@ -90,7 +90,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
                 CommentNotify.builder()
                         .authorName(comment.getAuthor())
                         .url(comment.getUrl())
-                        .logins(recipientsLogins)
+                        .recipients(recipientsLogins)
                         .message(comment.getMessage())
                         .build()
         );
@@ -142,7 +142,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
                 oldComment.setAnswers(existsNewAnswersIds);
                 notifyService.send(
                         AnswerCommentNotify.builder()
-                                .logins(Collections.singleton(newComment.getAuthor()))
+                                .recipients(Collections.singleton(newComment.getAuthor()))
                                 .url(oldComment.getUrl())
                                 .youMessage(newComment.getMessage())
                                 .answers(

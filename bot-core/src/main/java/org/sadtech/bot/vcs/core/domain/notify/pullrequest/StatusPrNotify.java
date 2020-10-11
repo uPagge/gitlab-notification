@@ -18,12 +18,12 @@ public class StatusPrNotify extends PrNotify {
 
     @Builder
     private StatusPrNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String name,
             String url,
             PullRequestStatus oldStatus,
             PullRequestStatus newStatus) {
-        super(logins, name, url);
+        super(recipients, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }

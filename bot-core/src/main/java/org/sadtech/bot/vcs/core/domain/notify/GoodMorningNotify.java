@@ -2,6 +2,7 @@ package org.sadtech.bot.vcs.core.domain.notify;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
 import org.sadtech.bot.vcs.core.utils.MessageUtils;
 import org.sadtech.bot.vcs.core.utils.Smile;
@@ -27,11 +28,11 @@ public class GoodMorningNotify extends Notify {
 
     @Builder
     protected GoodMorningNotify(
-            Set<String> logins,
+            Set<String> recipients,
             List<PullRequest> pullRequestsReviews,
             List<PullRequest> pullRequestsNeedWork
     ) {
-        super(logins);
+        super(EntityType.PERSON, recipients);
         this.pullRequestsReviews = pullRequestsReviews;
         this.pullRequestsNeedWork = pullRequestsNeedWork;
     }

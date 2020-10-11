@@ -100,7 +100,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                                     .messageTask(task.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .logins(Collections.singleton(oldTask.getResponsible()))
+                                    .recipients(Collections.singleton(oldTask.getResponsible()))
                                     .build()
                     );
                     break;
@@ -110,7 +110,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                                     .messageTask(oldTask.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .logins(Collections.singleton(oldTask.getAuthor()))
+                                    .recipients(Collections.singleton(oldTask.getAuthor()))
                                     .build()
                     );
                     break;
@@ -134,7 +134,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                 oldTask.setAnswers(existsNewAnswersIds);
                 notifyService.send(
                         AnswerCommentNotify.builder()
-                                .logins(Collections.singleton(oldTask.getAuthor()))
+                                .recipients(Collections.singleton(oldTask.getAuthor()))
                                 .url(oldTask.getUrl())
                                 .youMessage(oldTask.getDescription())
                                 .answers(
@@ -181,7 +181,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                         .authorName(task.getAuthor())
                         .messageTask(task.getDescription())
                         .url(task.getUrl())
-                        .logins(Collections.singleton(pullRequest.getAuthorLogin()))
+                        .recipients(Collections.singleton(pullRequest.getAuthorLogin()))
                         .build()
         );
     }
@@ -197,7 +197,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                 CommentNotify.builder()
                         .authorName(task.getAuthor())
                         .url(task.getUrl())
-                        .logins(recipientsLogins)
+                        .recipients(recipientsLogins)
                         .message(task.getDescription())
                         .build()
         );

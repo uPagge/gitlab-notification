@@ -78,7 +78,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                         .description(newPullRequest.getDescription())
                         .title(newPullRequest.getTitle())
                         .url(newPullRequest.getUrl())
-                        .logins(
+                        .recipients(
                                 newPullRequest.getReviewers().stream()
                                         .map(Reviewer::getPersonLogin)
                                         .collect(Collectors.toSet())
@@ -106,7 +106,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     UpdatePrNotify.builder()
                             .author(oldPullRequest.getAuthorLogin())
                             .name(newPullRequest.getTitle())
-                            .logins(
+                            .recipients(
                                     newPullRequest.getReviewers().stream()
                                             .map(Reviewer::getPersonLogin)
                                             .collect(Collectors.toSet())
@@ -125,7 +125,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     ConflictPrNotify.builder()
                             .name(pullRequest.getTitle())
                             .url(pullRequest.getUrl())
-                            .logins(Collections.singleton(pullRequest.getAuthorLogin()))
+                            .recipients(Collections.singleton(pullRequest.getAuthorLogin()))
                             .build()
             );
         }
@@ -143,7 +143,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                             .url(oldPullRequest.getUrl())
                             .newStatus(newStatus)
                             .oldStatus(oldStatus)
-                            .logins(Collections.singleton(oldPullRequest.getAuthorLogin()))
+                            .recipients(Collections.singleton(oldPullRequest.getAuthorLogin()))
                             .build()
             );
             oldPullRequest.setStatus(newStatus);
@@ -202,7 +202,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     ReviewersPrNotify.builder()
                             .title(newPullRequest.getTitle())
                             .url(newPullRequest.getUrl())
-                            .logins(Collections.singleton(newPullRequest.getAuthorLogin()))
+                            .recipients(Collections.singleton(newPullRequest.getAuthorLogin()))
                             .reviewerChanges(reviewerChanges)
                             .build()
             );

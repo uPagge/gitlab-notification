@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.Answer;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
 import org.sadtech.bot.vcs.core.utils.Smile;
 
@@ -22,12 +23,12 @@ public class AnswerCommentNotify extends Notify {
 
     @Builder
     protected AnswerCommentNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String youMessage,
             String url,
             List<Answer> answers
     ) {
-        super(logins);
+        super(EntityType.PERSON, recipients);
         this.youMessage = youMessage;
         this.url = url;
         this.answers = answers;

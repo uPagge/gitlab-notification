@@ -7,6 +7,7 @@ package org.sadtech.bot.vcs.bitbucket.app.scheduler;
  */
 
 import lombok.RequiredArgsConstructor;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.entity.Person;
 import org.sadtech.bot.vcs.core.domain.notify.SimpleTextNotify;
 import org.sadtech.bot.vcs.core.service.NotifyService;
@@ -38,8 +39,9 @@ public class RatingScheduler {
             final String message = ratingService.getRatingTop(person.getLogin());
             notifyService.send(
                     SimpleTextNotify.builder()
+                            .entityType(EntityType.PERSON)
                             .message(message)
-                            .logins(Collections.singleton(person.getLogin()))
+                            .recipients(Collections.singleton(person.getLogin()))
                             .build()
             );
         }

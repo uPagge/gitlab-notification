@@ -2,6 +2,7 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.entity.NotifySetting;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
 import org.sadtech.bot.vcs.core.repository.NotifySettingRepository;
@@ -22,8 +23,10 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Override
     public <T extends Notify> void send(T notify) {
-        final Set<String> recipientLogins = settingRepository.isNotification(notify.getLogins());
-        notify.setLogins(recipientLogins);
+        if (EntityType.PERSON.equals(notify.getEntityType())) {
+            final Set<String> recipientLogins = settingRepository.isNotification(notify.getRecipients());
+            notify.setRecipients(recipientLogins);
+        }
         messageSendService.send(notify);
     }
 

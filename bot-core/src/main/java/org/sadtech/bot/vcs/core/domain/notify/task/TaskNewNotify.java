@@ -17,12 +17,12 @@ public class TaskNewNotify extends TaskNotify {
 
     @Builder
     protected TaskNewNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(logins, authorName, url, messageTask);
+        super(recipients, authorName, url, messageTask);
     }
 
     @Override

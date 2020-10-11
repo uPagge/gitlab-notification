@@ -17,12 +17,12 @@ public class NewPrNotify extends PrNotify {
 
     @Builder
     private NewPrNotify(
-            Set<String> logins,
+            Set<String> recipients,
             String title,
             String url,
             String description,
             String author) {
-        super(logins, title, url);
+        super(recipients, title, url);
         this.description = description;
         this.author = author;
     }
