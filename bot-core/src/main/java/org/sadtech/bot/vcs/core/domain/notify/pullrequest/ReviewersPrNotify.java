@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.core.domain.notify.pullrequest;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
 import org.sadtech.bot.vcs.core.utils.Smile;
@@ -16,7 +15,6 @@ import static org.sadtech.bot.vcs.core.domain.util.ReviewerChange.Type.NEW;
 import static org.sadtech.bot.vcs.core.domain.util.ReviewerChange.Type.OLD;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
 public class ReviewersPrNotify extends PrNotify {
 
     private final List<ReviewerChange> reviewerChanges;

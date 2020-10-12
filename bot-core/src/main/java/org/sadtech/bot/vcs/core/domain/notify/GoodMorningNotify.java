@@ -52,7 +52,7 @@ public class GoodMorningNotify extends Notify {
                             .collect(Collectors.toList())
             ).ifPresent(message::append);
         } else {
-            message.append("Поздравляю, у тебя ни одного ПР на проверку!").append(Smile.BR);
+            message.append("Поздравляю, у тебя ни одного ПР на проверку!");
         }
         MessageUtils.pullRequestForNeedWork(
                 pullRequestsNeedWork.stream()

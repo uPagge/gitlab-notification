@@ -74,7 +74,7 @@ public class NotificationScheduler {
                                         .map(Person::getLogin)
                                         .collect(Collectors.toSet())
                         )
-                        .message("☎️ Внимание созвон" + Smile.HR + "https://meet.google.com/czs-vigu-mte")
+                        .message("☎️ Внимание созвон" + Smile.HR + "https://meet.google.com/avj-cdyy-enu")
                         .build()
         );
 

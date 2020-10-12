@@ -27,7 +27,7 @@ public class SmartPrNotify extends PrNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Напоминание о просмотре PullRequest*\n" +
+                "{0} *Напоминание о просмотре PullRequest*" +
                         "{3}[{1}]({2})" +
                         "{3}" +
                         "{4} изменил свое решение на {5}\n\n",

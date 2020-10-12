@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.core.domain.notify.comment;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.EntityType;
 import org.sadtech.bot.vcs.core.domain.notify.Notify;
@@ -11,7 +10,6 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
 public class CommentNotify extends Notify {
 
     private final String authorName;
@@ -36,7 +34,7 @@ public class CommentNotify extends Notify {
         return MessageFormat.format(
                 "{0} *Новое упоминание* | [ПР]({1}){2}" +
                         "*{3}*: {4}",
-                Smile.BELL, url, Smile.HR, authorName, escapeMarkdown(message.replaceAll("@[\\w]+", ""))
+                Smile.BELL, url, Smile.HR, authorName, escapeMarkdown(message)
         );
     }
 

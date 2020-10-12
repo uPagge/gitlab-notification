@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.core.domain.notify.comment;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.sadtech.bot.vcs.core.domain.Answer;
 import org.sadtech.bot.vcs.core.domain.EntityType;
@@ -14,7 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
 public class AnswerCommentNotify extends Notify {
 
     private final String youMessage;
