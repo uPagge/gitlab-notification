@@ -19,9 +19,12 @@ public class StatusPrNotify extends PrNotify {
             Set<String> recipients,
             String name,
             String url,
+            String projectKey,
+            String repositorySlug,
             PullRequestStatus oldStatus,
-            PullRequestStatus newStatus) {
-        super(recipients, name, url);
+            PullRequestStatus newStatus
+    ) {
+        super(recipients, projectKey, repositorySlug, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }
@@ -29,10 +32,10 @@ public class StatusPrNotify extends PrNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Изменился статус вашего ПР*{1}" +
+                "{0} *Изменился статус PullRequest | {7} | {8}*{1}" +
                         "[{2}]({3}){1}" +
                         "{4} {5} {6}\n\n",
-                Smile.PEN, Smile.HR, title, url, oldStatus.name(), Smile.ARROW, newStatus.name()
+                Smile.PEN, Smile.HR, title, url, oldStatus.name(), Smile.ARROW, newStatus.name(), projectKey, repositorySlug
         );
     }
 

@@ -16,19 +16,23 @@ public class UpdatePrNotify extends PrNotify {
     private UpdatePrNotify(
             Set<String> recipients,
             String name,
-            String url, String author) {
-        super(recipients, name, url);
+            String url,
+            String author,
+            String projectKey,
+            String repositorySlug
+    ) {
+        super(recipients, projectKey, repositorySlug, name, url);
         this.author = author;
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Обновление PullRequest*\n" +
+                "{0} *Обновление PullRequest | {6} | {7}*{3}" +
                         "[{1}]({2})" +
                         "{3}" +
                         "{4}: {5}\n\n",
-                Smile.UPDATE, title, url, Smile.HR, Smile.AUTHOR, author
+                Smile.UPDATE, title, url, Smile.HR, Smile.AUTHOR, author, projectKey, repositorySlug
         );
     }
 

@@ -19,8 +19,11 @@ public class NewPrNotify extends PrNotify {
             String title,
             String url,
             String description,
-            String author) {
-        super(recipients, title, url);
+            String author,
+            String projectKey,
+            String repositorySlug
+    ) {
+        super(recipients, projectKey, repositorySlug, title, url);
         this.description = description;
         this.author = author;
     }
@@ -28,12 +31,12 @@ public class NewPrNotify extends PrNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Новый Pull Request*{1}" +
+                "{0} *Новый PullRequest | {7} | {8}*{1}" +
                         "[{2}]({3})" +
                         "{1}{4}{5}: {6}\n\n",
                 Smile.FUN, Smile.HR, title, url,
                 (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : "",
-                Smile.AUTHOR, author
+                Smile.AUTHOR, author, projectKey, repositorySlug
         );
     }
 

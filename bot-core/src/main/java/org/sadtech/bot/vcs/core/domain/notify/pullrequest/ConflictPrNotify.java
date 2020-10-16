@@ -14,18 +14,20 @@ public class ConflictPrNotify extends PrNotify {
     private ConflictPrNotify(
             Set<String> recipients,
             String name,
-            String url
+            String url,
+            String projectKey,
+            String repositorySlug
     ) {
-        super(recipients, name, url);
+        super(recipients, projectKey, repositorySlug, name, url);
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Внимание конфликт в ПР*" +
+                "{0} *Внимание конфликт в ПР | {4} | {5}*" +
                         "{1}" +
                         "[{2}]({3})\n\n",
-                Smile.DANGEROUS, Smile.HR, title, url
+                Smile.DANGEROUS, Smile.HR, title, url, projectKey, repositorySlug
         );
     }
 

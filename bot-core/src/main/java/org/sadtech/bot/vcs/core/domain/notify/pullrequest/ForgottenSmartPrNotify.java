@@ -16,16 +16,22 @@ import java.util.Set;
 public class ForgottenSmartPrNotify extends PrNotify {
 
     @Builder
-    protected ForgottenSmartPrNotify(Set<String> recipients, String title, String url) {
-        super(recipients, title, url);
+    protected ForgottenSmartPrNotify(
+            Set<String> recipients,
+            String title,
+            String url,
+            String projectKey,
+            String repositorySlug
+    ) {
+        super(recipients, projectKey, repositorySlug, title, url);
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Напоминание о просмотре PullRequest*" +
+                "{0} *Напоминание о просмотре PullRequest  | {4} | {5}*" +
                         "{3}[{1}]({2})",
-                Smile.SMART, title, url, Smile.HR
+                Smile.SMART, title, url, Smile.HR, projectKey, repositorySlug
         );
     }
 

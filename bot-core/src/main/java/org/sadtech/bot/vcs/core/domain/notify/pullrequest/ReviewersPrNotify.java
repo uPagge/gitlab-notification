@@ -24,8 +24,11 @@ public class ReviewersPrNotify extends PrNotify {
             Set<String> recipients,
             String title,
             String url,
-            List<ReviewerChange> reviewerChanges) {
-        super(recipients, title, url);
+            String projectKey,
+            String repositorySlug,
+            List<ReviewerChange> reviewerChanges
+    ) {
+        super(recipients, projectKey, repositorySlug, title, url);
         this.reviewerChanges = reviewerChanges;
     }
 
@@ -60,7 +63,7 @@ public class ReviewersPrNotify extends PrNotify {
                     );
         }
         final String createMessage = stringBuilder.toString();
-        return Smile.PEN + " *Изменения ревьюверов | PullRequest*" +
+        return Smile.PEN + " *Изменения ревьюверов PullRequest | " + projectKey + " | " + repositorySlug + "*" +
                 Smile.HR +
                 "[" + title + "](" + url + ")" + Smile.HR +
                 createMessage;

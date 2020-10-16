@@ -19,19 +19,27 @@ public class SmartPrNotify extends PrNotify {
     private final Reviewer reviewerTriggered;
 
     @Builder
-    protected SmartPrNotify(Set<String> recipients, String title, String url, Reviewer reviewerTriggered) {
-        super(recipients, title, url);
+    protected SmartPrNotify(
+            Set<String> recipients,
+            String title,
+            String url,
+            String projectKey,
+            String repositorySlug,
+            Reviewer reviewerTriggered
+    ) {
+        super(recipients, projectKey, repositorySlug, title, url);
         this.reviewerTriggered = reviewerTriggered;
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Напоминание о просмотре PullRequest*" +
+                "{0} *Напоминание о PullRequest | {6} | {7}*" +
                         "{3}[{1}]({2})" +
                         "{3}" +
                         "{4} изменил свое решение на {5}\n\n",
-                Smile.SMART, title, url, Smile.HR, reviewerTriggered.getPersonLogin(), reviewerTriggered.getStatus().getValue()
+                Smile.SMART, title, url, Smile.HR, reviewerTriggered.getPersonLogin(), reviewerTriggered.getStatus().getValue(),
+                projectKey, repositorySlug
         );
     }
 

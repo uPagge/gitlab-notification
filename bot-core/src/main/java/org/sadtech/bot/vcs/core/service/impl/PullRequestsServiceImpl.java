@@ -80,6 +80,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                         .description(newPullRequest.getDescription())
                         .title(newPullRequest.getTitle())
                         .url(newPullRequest.getUrl())
+                        .projectKey(newPullRequest.getProjectKey())
+                        .repositorySlug(newPullRequest.getRepositorySlug())
                         .recipients(
                                 newPullRequest.getReviewers().stream()
                                         .map(Reviewer::getPersonLogin)
@@ -122,6 +124,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
             if (!smartReviewers.isEmpty()) {
                 notifyService.send(
                         ForgottenSmartPrNotify.builder()
+                                .projectKey(pullRequest.getProjectKey())
+                                .repositorySlug(pullRequest.getRepositorySlug())
                                 .recipients(smartReviewers)
                                 .title(pullRequest.getTitle())
                                 .url(pullRequest.getUrl())
@@ -132,7 +136,9 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     }
 
     private void updateBitbucketVersion(PullRequest oldPullRequest, PullRequest pullRequest) {
-        if (!oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())) {
+        if (
+                !oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())
+        ) {
             oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
             notifyService.send(
                     UpdatePrNotify.builder()
@@ -144,6 +150,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                                             .collect(Collectors.toSet())
                             )
                             .url(oldPullRequest.getUrl())
+                            .projectKey(oldPullRequest.getProjectKey())
+                            .repositorySlug(oldPullRequest.getRepositorySlug())
                             .build()
             );
         }
@@ -155,6 +163,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     ConflictPrNotify.builder()
                             .name(pullRequest.getTitle())
                             .url(pullRequest.getUrl())
+                            .projectKey(pullRequest.getProjectKey())
+                            .repositorySlug(pullRequest.getRepositorySlug())
                             .recipients(Collections.singleton(pullRequest.getAuthorLogin()))
                             .build()
             );
@@ -171,6 +181,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     StatusPrNotify.builder()
                             .name(newPullRequest.getTitle())
                             .url(oldPullRequest.getUrl())
+                            .projectKey(oldPullRequest.getProjectKey())
+                            .repositorySlug(oldPullRequest.getRepositorySlug())
                             .newStatus(newStatus)
                             .oldStatus(oldStatus)
                             .recipients(Collections.singleton(oldPullRequest.getAuthorLogin()))
@@ -234,6 +246,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                     ReviewersPrNotify.builder()
                             .title(newPullRequest.getTitle())
                             .url(newPullRequest.getUrl())
+                            .projectKey(newPullRequest.getProjectKey())
+                            .repositorySlug(newPullRequest.getRepositorySlug())
                             .recipients(Collections.singleton(newPullRequest.getAuthorLogin()))
                             .reviewerChanges(reviewerChanges)
                             .build()
@@ -256,6 +270,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                                 .reviewerTriggered(newReviewer)
                                 .title(oldPullRequest.getTitle())
                                 .url(oldPullRequest.getUrl())
+                                .projectKey(oldPullRequest.getProjectKey())
+                                .repositorySlug(oldPullRequest.getRepositorySlug())
                                 .recipients(
                                         smartReviewers.stream()
                                                 .map(Reviewer::getPersonLogin)
