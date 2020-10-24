@@ -30,4 +30,5 @@ public class RatingTopProcessing implements ProcessingData<Message> {
                 .message(ratingService.getRatingTop(person.getLogin()))
                 .build();
     }
+
 }

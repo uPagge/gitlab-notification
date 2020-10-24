@@ -140,20 +140,22 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                 !oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())
         ) {
             oldPullRequest.setBitbucketVersion(pullRequest.getBitbucketVersion());
-            notifyService.send(
-                    UpdatePrNotify.builder()
-                            .author(oldPullRequest.getAuthorLogin())
-                            .name(pullRequest.getTitle())
-                            .recipients(
-                                    pullRequest.getReviewers().stream()
-                                            .map(Reviewer::getPersonLogin)
-                                            .collect(Collectors.toSet())
-                            )
-                            .url(oldPullRequest.getUrl())
-                            .projectKey(oldPullRequest.getProjectKey())
-                            .repositorySlug(oldPullRequest.getRepositorySlug())
-                            .build()
-            );
+            if (PullRequestStatus.OPEN.equals(pullRequest.getStatus())) {
+                notifyService.send(
+                        UpdatePrNotify.builder()
+                                .author(oldPullRequest.getAuthorLogin())
+                                .name(pullRequest.getTitle())
+                                .recipients(
+                                        pullRequest.getReviewers().stream()
+                                                .map(Reviewer::getPersonLogin)
+                                                .collect(Collectors.toSet())
+                                )
+                                .url(oldPullRequest.getUrl())
+                                .projectKey(oldPullRequest.getProjectKey())
+                                .repositorySlug(oldPullRequest.getRepositorySlug())
+                                .build()
+                );
+            }
         }
     }
 

@@ -62,10 +62,9 @@ public class GoodMorningNotify extends Notify {
                 messageNeedWork -> message.append(Smile.TWO_BR)
                         .append(Smile.DANGEROUS).append(" Требуется доработать ").append(pullRequestsNeedWork.size()).append(" ПР:").append(Smile.BR)
                         .append(messageNeedWork)
-                        .append(Smile.BR)
         );
         message
-                .append(Smile.BR).append("Удачного дня ").append(Smile.FLOWER)
+                .append(Smile.TWO_BR).append("Удачного дня ").append(Smile.FLOWER)
                 .append(Smile.HR)
                 .append("_Version ").append(version).append(" | Developer @uPagge_");
         return message.toString();

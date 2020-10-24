@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public abstract class Notify {
 
     public static final Set<Character> FORBIDDEN_SYMBOLS = Stream.of(
-            '\\', '+', '`', '[', ']', '\"', '~', '*', '#', '=', '-', '_', '>', '<', '!'
+            '\\', '+', '`', '[', ']', '\"', '~', '*', '#', '=', '_', '>', '<'
     ).collect(Collectors.toSet());
 
     protected EntityType entityType;

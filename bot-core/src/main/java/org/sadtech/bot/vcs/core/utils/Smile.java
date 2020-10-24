@@ -39,7 +39,9 @@ public enum Smile {
     FAILURE("❌"),
     SUCCESS("✅"),
     BUILD("♻️"),
-    SMART("\uD83E\uDDE0");
+    SMART("\uD83E\uDDE0"),
+    SADLY("\uD83D\uDE14"),
+    TOP("\uD83D\uDD1D");
 
     @Getter
     private final String value;

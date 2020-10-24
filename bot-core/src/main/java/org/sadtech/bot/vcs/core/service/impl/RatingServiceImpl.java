@@ -90,7 +90,7 @@ public class RatingServiceImpl implements RatingService {
     public String getRatingTop(@NonNull String login) {
         final RatingList personRating = ratingListRepository.getByLogin(login)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        final Integer numberRatingList = personRating.getNumber();
+
         final long countPerson = ratingListRepository.count();
         final String threeMessage = ratingListRepository.findFirstThree().stream()
                 .map(this::createString)
@@ -99,16 +99,24 @@ public class RatingServiceImpl implements RatingService {
                 .limit(countPerson - 3 < 0 ? 0 : countPerson - 3)
                 .map(this::createString)
                 .collect(Collectors.joining("\n"));
-        String message = "Рейтинговая таблица | Всего участников: " + countPerson + "\n\n" + threeMessage;
 
-        if (numberRatingList <= 2) {
-            if (countPerson > 3) {
-                message += "\n... ... ...\n";
-            }
-        } else if (numberRatingList > 3 && numberRatingList <= (countPerson - 3)) {
-            message += "\n... ... ...\n" + personRating.getNumber() + ": " + personRating.getLogin() + "\n... ... ...\n";
+        String message;
+
+        if (personRating.getPoints() == 0) {
+            message = Smile.SADLY + " У вас не обнаружена активность в битбакете, поэтому вы не учавствуйте в рейтинге" +
+                    "\n\n" + Smile.TOP + " Рейтинговая таблица " + Smile.TOP + Smile.HR + threeMessage + "\n... ... ... ... ...\n";
         } else {
-            message += "\n... ... ...\n";
+            message = Smile.TOP + " Рейтинговая таблица " + Smile.TOP + Smile.HR + threeMessage;
+            final Integer numberRatingList = personRating.getNumber();
+            if (numberRatingList <= 2) {
+                if (countPerson > 3) {
+                    message += "\n... ... ... ... ...\n";
+                }
+            } else if (numberRatingList > 3 && numberRatingList <= (countPerson - 3)) {
+                message += "\n... ... ... ... ...\n" + personRating.getNumber() + ": " + personRating.getLogin() + "\n... ... ... ... ...\n";
+            } else {
+                message += "\n... ... ... ... ...\n";
+            }
         }
         message += lastMessage;
         return message;

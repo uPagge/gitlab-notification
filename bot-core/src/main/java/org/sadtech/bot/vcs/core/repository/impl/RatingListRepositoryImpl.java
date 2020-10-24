@@ -4,8 +4,6 @@ import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerReposi
 import org.sadtech.bot.vcs.core.domain.entity.RatingList;
 import org.sadtech.bot.vcs.core.repository.RatingListRepository;
 import org.sadtech.bot.vcs.core.repository.jpa.RatingListJpaRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,21 +31,17 @@ public class RatingListRepositoryImpl extends AbstractSimpleManagerRepository<Ra
 
     @Override
     public List<RatingList> findFirstThree() {
-        return jpaRepository.findAll(
-                PageRequest.of(0, 3, Sort.by(Sort.Direction.ASC, "number"))
-        ).getContent();
+        return jpaRepository.findTop3ByPointsGreaterThanOrderByNumberAsc(0);
     }
 
     @Override
     public List<RatingList> findLastThree() {
-        return jpaRepository.findAll(
-                PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "number"))
-        ).getContent();
+        return jpaRepository.findTop3ByPointsGreaterThanOrderByNumberDesc(0);
     }
 
     @Override
     public long count() {
-        return jpaRepository.count();
+        return jpaRepository.countByNumberGreaterThan(0);
     }
 
 }

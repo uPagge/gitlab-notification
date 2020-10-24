@@ -2,8 +2,8 @@ package org.sadtech.bot.vcs.core.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +35,7 @@ public class RatingList implements Comparable<RatingList> {
     private Integer number;
 
     @Override
-    public int compareTo(@NotNull RatingList ratingList) {
+    public int compareTo(@NonNull RatingList ratingList) {
         return Integer.compare(ratingList.getPoints(), points);
     }
 

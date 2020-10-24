@@ -24,7 +24,7 @@ public class SimpleTextNotify extends Notify {
 
     @Override
     public String generateMessage() {
-        return escapeMarkdown(message);
+        return message;
     }
 
 }
