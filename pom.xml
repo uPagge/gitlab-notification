@@ -19,18 +19,20 @@
 
     <groupId>org.sadtech.bot.bitbucketbot</groupId>
     <artifactId>bitbucketbot</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>3.0.0-RELEASE</version>
     <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>
 
-        <org.sadtech.bot-core.version>2.1.0-SNAPSHOT</org.sadtech.bot-core.version>
-        <org.sadtech.bot.teamcity-core.version>2.1.0-SNAPSHOT</org.sadtech.bot.teamcity-core.version>
-        <org.sadtech.bot.teamcity-sdk.version>2.1.0-SNAPSHOT</org.sadtech.bot.teamcity-sdk.version>
-        <org.sadtech.bot.bitbucket-sdk.version>2.1.0-SNAPSHOT</org.sadtech.bot.bitbucket-sdk.version>
-        <org.sadtech.bot.rest.version>2.1.0-SNAPSHOT</org.sadtech.bot.rest.version>
-        <org.sadtech.bot.telegram.version>2.1.0-SNAPSHOT</org.sadtech.bot.telegram.version>
+        <org.sadtech.bot.bitbucket-app.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-app.version>
+        <org.sadtech.bot-core.version>3.0.0-RELEASE</org.sadtech.bot-core.version>
+        <org.sadtech.bot.teamcity-core.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-core.version>
+        <org.sadtech.bot.teamcity-sdk.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-sdk.version>
+        <org.sadtech.bot.bitbucket-sdk.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-sdk.version>
+        <org.sadtech.bot.rest.version>3.0.0-RELEASE</org.sadtech.bot.rest.version>
+        <org.sadtech.bot.telegram.version>3.0.0-RELEASE</org.sadtech.bot.telegram.version>
+
         <org.sadtech.telegram.bot-core.version>0.0.1-DEVELOPER</org.sadtech.telegram.bot-core.version>
 
         <sadtech.project.database.version>0.1.0-SNAPSHOT</sadtech.project.database.version>
