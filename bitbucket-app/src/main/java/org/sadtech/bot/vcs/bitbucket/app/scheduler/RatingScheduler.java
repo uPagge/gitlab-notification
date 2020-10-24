@@ -32,8 +32,7 @@ public class RatingScheduler {
         ratingService.ratingRecalculation();
     }
 
-    //    @Scheduled(cron = "0 20 8 * * MON-FRI")
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 20 8 * * MON-FRI")
     private void goodMorningRating() {
         List<Person> allRegister = personService.getAllRegister();
         for (Person person : allRegister) {
