@@ -2,12 +2,12 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.EntityType;
-import org.sadtech.bot.vcs.core.domain.entity.NotifySetting;
-import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.repository.NotifySettingRepository;
-import org.sadtech.bot.vcs.core.service.MessageSendService;
-import org.sadtech.bot.vcs.core.service.NotifyService;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.NotifySetting;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.Notify;
+import org.sadtech.bot.vsc.bitbucketbot.context.repository.NotifySettingRepository;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.MessageSendService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

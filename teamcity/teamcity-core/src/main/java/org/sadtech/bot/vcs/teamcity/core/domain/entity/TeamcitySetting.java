@@ -3,7 +3,7 @@ package org.sadtech.bot.vcs.teamcity.core.domain.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.sadtech.bot.vcs.core.domain.EntityType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

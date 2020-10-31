@@ -15,6 +15,9 @@
         <module>bitbucket-app</module>
         <module>bot-rest</module>
         <module>teamcity</module>
+        <module>bitbucketbot-core</module>
+        <module>bitbucketbot-context</module>
+        <module>bitbucketbot-data</module>
     </modules>
 
     <groupId>org.sadtech.bot.bitbucketbot</groupId>

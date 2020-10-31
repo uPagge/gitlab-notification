@@ -2,11 +2,11 @@ package org.sadtech.bot.vcs.teamcity.core.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.vcs.core.domain.EntityType;
-import org.sadtech.bot.vcs.core.domain.notify.Notify;
-import org.sadtech.bot.vcs.core.utils.Smile;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.sdk.BuildStatus;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.Notify;
+import org.sadtech.bot.vsc.bitbucketbot.context.utils.Smile;
 
 import java.text.MessageFormat;
 import java.util.Set;

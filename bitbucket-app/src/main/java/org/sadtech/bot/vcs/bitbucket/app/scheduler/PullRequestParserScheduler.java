@@ -2,7 +2,7 @@ package org.sadtech.bot.vcs.bitbucket.app.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sadtech.bot.vcs.core.service.parser.PullRequestParser;
+import org.sadtech.bot.vsc.context.service.PullRequestParser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

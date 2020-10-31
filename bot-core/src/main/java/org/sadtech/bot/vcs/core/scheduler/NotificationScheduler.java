@@ -2,17 +2,17 @@ package org.sadtech.bot.vcs.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.vcs.core.config.properties.AppProperty;
-import org.sadtech.bot.vcs.core.domain.EntityType;
-import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
-import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.domain.notify.GoodMorningNotify;
-import org.sadtech.bot.vcs.core.domain.notify.SimpleTextNotify;
-import org.sadtech.bot.vcs.core.service.NotifyService;
-import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.core.service.PullRequestsService;
-import org.sadtech.bot.vcs.core.utils.Smile;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.GoodMorningNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.SimpleTextNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
+import org.sadtech.bot.vsc.bitbucketbot.context.utils.Smile;
+import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
+import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

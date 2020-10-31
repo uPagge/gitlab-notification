@@ -1,13 +1,13 @@
 package org.sadtech.bot.vcs.telegram.service.unit.pullrequest;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.exception.NotFoundException;
-import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.core.service.PullRequestsService;
-import org.sadtech.bot.vcs.core.utils.MessageUtils;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
+import org.sadtech.bot.vsc.bitbucketbot.context.exception.NotFoundException;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
+import org.sadtech.bot.vsc.bitbucketbot.context.utils.MessageUtils;
+import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;

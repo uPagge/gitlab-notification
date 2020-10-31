@@ -9,7 +9,7 @@ package org.sadtech.bot.vcs.teamcity.core.service.parser;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.basic.context.page.Sheet;
 import org.sadtech.basic.core.page.PaginationImpl;
-import org.sadtech.bot.vcs.core.service.Utils;
+import org.sadtech.bot.vcs.core.utils.Utils;
 import org.sadtech.bot.vcs.teamcity.core.config.property.TeamcityProperty;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcityProject;

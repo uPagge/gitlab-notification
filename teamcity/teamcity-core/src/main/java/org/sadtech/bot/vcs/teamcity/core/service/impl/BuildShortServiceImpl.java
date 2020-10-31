@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.teamcity.core.service.impl;
 
 import lombok.NonNull;
 import org.sadtech.basic.core.service.AbstractSimpleManagerService;
-import org.sadtech.bot.vcs.core.service.NotifyService;
 import org.sadtech.bot.vcs.teamcity.core.domain.TeamcityBuildNotify;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcitySetting;
@@ -10,6 +9,7 @@ import org.sadtech.bot.vcs.teamcity.core.repository.BuildShortRepository;
 import org.sadtech.bot.vcs.teamcity.core.service.BuildShortService;
 import org.sadtech.bot.vcs.teamcity.core.service.TeamcitySettingService;
 import org.sadtech.bot.vcs.teamcity.sdk.BuildStatus;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

@@ -2,16 +2,16 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.PointType;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.domain.entity.RatingHistory;
-import org.sadtech.bot.vcs.core.domain.entity.RatingList;
-import org.sadtech.bot.vcs.core.exception.NotFoundException;
-import org.sadtech.bot.vcs.core.repository.RatingHistoryRepository;
-import org.sadtech.bot.vcs.core.repository.RatingListRepository;
-import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.core.service.RatingService;
-import org.sadtech.bot.vcs.core.utils.Smile;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.PointType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.RatingHistory;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.RatingList;
+import org.sadtech.bot.vsc.bitbucketbot.context.exception.NotFoundException;
+import org.sadtech.bot.vsc.bitbucketbot.context.repository.RatingHistoryRepository;
+import org.sadtech.bot.vsc.bitbucketbot.context.repository.RatingListRepository;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
+import org.sadtech.bot.vsc.bitbucketbot.context.utils.Smile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

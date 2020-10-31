@@ -2,8 +2,8 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.repository.ChatRepository;
-import org.sadtech.bot.vcs.core.service.ChatService;
+import org.sadtech.bot.vsc.bitbucketbot.context.repository.ChatRepository;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.ChatService;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;

@@ -1,12 +1,12 @@
 package org.sadtech.bot.vcs.telegram.service.unit;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.TaskStatus;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.domain.entity.Task;
-import org.sadtech.bot.vcs.core.exception.NotFoundException;
-import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.core.service.TaskService;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.TaskStatus;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Task;
+import org.sadtech.bot.vsc.bitbucketbot.context.exception.NotFoundException;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.TaskService;
 import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;

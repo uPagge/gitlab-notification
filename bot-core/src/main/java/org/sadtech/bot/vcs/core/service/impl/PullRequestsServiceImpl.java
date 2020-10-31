@@ -8,28 +8,29 @@ import org.sadtech.basic.core.service.AbstractSimpleManagerService;
 import org.sadtech.basic.core.util.Assert;
 import org.sadtech.basic.filter.criteria.CriteriaFilter;
 import org.sadtech.basic.filter.criteria.CriteriaQuery;
-import org.sadtech.bot.vcs.core.domain.IdAndStatusPr;
-import org.sadtech.bot.vcs.core.domain.PointType;
-import org.sadtech.bot.vcs.core.domain.PullRequestStatus;
-import org.sadtech.bot.vcs.core.domain.ReviewerStatus;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequestMini;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest_;
-import org.sadtech.bot.vcs.core.domain.entity.Reviewer;
-import org.sadtech.bot.vcs.core.domain.filter.PullRequestFilter;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ConflictPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ForgottenSmartPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.NewPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.ReviewersPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.SmartPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.StatusPrNotify;
-import org.sadtech.bot.vcs.core.domain.notify.pullrequest.UpdatePrNotify;
-import org.sadtech.bot.vcs.core.domain.util.ReviewerChange;
-import org.sadtech.bot.vcs.core.exception.UpdateException;
-import org.sadtech.bot.vcs.core.repository.PullRequestsRepository;
-import org.sadtech.bot.vcs.core.service.NotifyService;
-import org.sadtech.bot.vcs.core.service.PullRequestsService;
-import org.sadtech.bot.vcs.core.service.RatingService;
+import org.sadtech.bot.vcs.core.config.properties.RatingProperty;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.IdAndStatusPr;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.PointType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequestMini;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest_;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Reviewer;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.filter.PullRequestFilter;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.ConflictPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.ForgottenSmartPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.NewPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.ReviewersPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.SmartPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.StatusPrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.pullrequest.UpdatePrNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.util.ReviewerChange;
+import org.sadtech.bot.vsc.bitbucketbot.context.exception.UpdateException;
+import org.sadtech.bot.vsc.bitbucketbot.context.repository.PullRequestsRepository;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
+import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
+import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -50,17 +51,21 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     private final RatingService ratingService;
     private final FilterService<PullRequest, PullRequestFilter> filterService;
 
+    private final RatingProperty ratingProperty;
+
     protected PullRequestsServiceImpl(
             PullRequestsRepository pullRequestsRepository,
             NotifyService notifyService,
             RatingService ratingService,
-            @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService
+            @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService,
+            RatingProperty ratingProperty
     ) {
         super(pullRequestsRepository);
         this.notifyService = notifyService;
         this.pullRequestsRepository = pullRequestsRepository;
         this.ratingService = ratingService;
         this.filterService = pullRequestsFilterService;
+        this.ratingProperty = ratingProperty;
     }
 
     @Override
@@ -73,7 +78,8 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
 
-        ratingService.addRating(newPullRequest.getAuthorLogin(), PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
+        addRatingCreate(newPullRequest.getAuthorLogin());
+
         notifyService.send(
                 NewPrNotify.builder()
                         .author(newPullRequest.getAuthorLogin())
@@ -91,6 +97,12 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         );
 
         return newPullRequest;
+    }
+
+    private void addRatingCreate(@NonNull String login) {
+        if (ratingProperty.isEnabled()) {
+            ratingService.addRating(login, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
+        }
     }
 
     @Override
@@ -195,17 +207,19 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     }
 
     private void ratingStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
-        final String authorLogin = oldPullRequest.getAuthorLogin();
-        switch (newPullRequest.getStatus()) {
-            case OPEN:
-                ratingService.addRating(authorLogin, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
-                break;
-            case MERGED:
-                // TODO: 01.10.2020 Нужно продумать как расчитывать баллы при мерже.
-                break;
-            case DECLINED:
-                ratingService.addRating(authorLogin, PointType.DECLINE_PULL_REQUEST, PointType.DECLINE_PULL_REQUEST.getPoints());
-                break;
+        if (ratingProperty.isEnabled()) {
+            final String authorLogin = oldPullRequest.getAuthorLogin();
+            switch (newPullRequest.getStatus()) {
+                case OPEN:
+                    ratingService.addRating(authorLogin, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
+                    break;
+                case MERGED:
+                    // TODO: 01.10.2020 Нужно продумать как расчитывать баллы при мерже.
+                    break;
+                case DECLINED:
+                    ratingService.addRating(authorLogin, PointType.DECLINE_PULL_REQUEST, PointType.DECLINE_PULL_REQUEST.getPoints());
+                    break;
+            }
         }
     }
 

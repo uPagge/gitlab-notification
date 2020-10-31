@@ -1,10 +1,10 @@
 package org.sadtech.bot.vcs.telegram.unit;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.telegram.service.unit.RatingTopProcessing;
 import org.sadtech.bot.vcs.telegram.service.unit.TaskProcessing;
 import org.sadtech.bot.vcs.telegram.utils.GeneratorKeyBoards;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
 import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
 import org.sadtech.social.bot.domain.unit.AnswerText;

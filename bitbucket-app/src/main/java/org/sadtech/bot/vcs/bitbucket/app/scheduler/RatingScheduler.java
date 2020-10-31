@@ -1,24 +1,23 @@
 package org.sadtech.bot.vcs.bitbucket.app.scheduler;
 
-/**
- * // TODO: 01.10.2020 Добавить описание.
- *
- * @author upagge 01.10.2020
- */
-
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.EntityType;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.domain.notify.SimpleTextNotify;
-import org.sadtech.bot.vcs.core.service.NotifyService;
-import org.sadtech.bot.vcs.core.service.PersonService;
-import org.sadtech.bot.vcs.core.service.RatingService;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.SimpleTextNotify;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * // TODO: 01.10.2020 Добавить описание.
+ *
+ * @author upagge 01.10.2020
+ */
 @Component
 @RequiredArgsConstructor
 public class RatingScheduler {

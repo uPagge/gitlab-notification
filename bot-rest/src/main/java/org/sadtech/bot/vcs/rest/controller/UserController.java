@@ -1,9 +1,9 @@
 package org.sadtech.bot.vcs.rest.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.domain.entity.Person;
-import org.sadtech.bot.vcs.core.service.PersonService;
 import org.sadtech.bot.vcs.rest.dto.UserDto;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;

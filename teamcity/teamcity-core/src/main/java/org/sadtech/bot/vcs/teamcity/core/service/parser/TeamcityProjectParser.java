@@ -1,7 +1,7 @@
 package org.sadtech.bot.vcs.teamcity.core.service.parser;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.core.service.Utils;
+import org.sadtech.bot.vcs.core.utils.Utils;
 import org.sadtech.bot.vcs.teamcity.core.config.property.TeamcityProperty;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcityProject;
 import org.sadtech.bot.vcs.teamcity.core.service.TeamcityProjectService;

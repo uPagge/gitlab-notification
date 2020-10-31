@@ -1,7 +1,7 @@
 package org.sadtech.bot.vcs.bitbucket.app.service;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.sadtech.basic.context.exception.NotFoundException;
 import org.sadtech.basic.context.page.Sheet;
 import org.sadtech.basic.core.page.PaginationImpl;
 import org.sadtech.bot.vcs.bitbucket.app.config.property.CommentSchedulerProperty;
@@ -10,15 +10,14 @@ import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;
 import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
 import org.sadtech.bot.vcs.core.config.properties.InitProperty;
-import org.sadtech.bot.vcs.core.domain.entity.Comment;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequest;
-import org.sadtech.bot.vcs.core.domain.entity.PullRequestMini;
-import org.sadtech.bot.vcs.core.domain.entity.Task;
-import org.sadtech.bot.vcs.core.exception.NotFoundException;
-import org.sadtech.bot.vcs.core.service.CommentService;
-import org.sadtech.bot.vcs.core.service.PullRequestsService;
-import org.sadtech.bot.vcs.core.service.TaskService;
-import org.sadtech.bot.vcs.core.service.Utils;
+import org.sadtech.bot.vcs.core.utils.Utils;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Comment;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequestMini;
+import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Task;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.CommentService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
+import org.sadtech.bot.vsc.bitbucketbot.context.service.TaskService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
  * <p>К несчастью, у битбакета не очень удобный API, и у них таска это то же самое что и комментарий, только с флагом</p>
  */
 @Component
-@RequiredArgsConstructor
 public class CommentAndTaskParser {
 
     private final CommentService commentService;
@@ -48,6 +46,26 @@ public class CommentAndTaskParser {
     private final InitProperty initProperty;
 
     private boolean initStart = false;
+
+    public CommentAndTaskParser(
+            CommentService commentService,
+            PullRequestsService pullRequestsService,
+            ExecutorScanner executorScanner,
+            TaskService taskService,
+            ConversionService conversionService,
+            BitbucketProperty bitbucketProperty,
+            CommentSchedulerProperty commentSchedulerProperty,
+            InitProperty initProperty
+    ) {
+        this.commentService = commentService;
+        this.pullRequestsService = pullRequestsService;
+        this.executorScanner = executorScanner;
+        this.taskService = taskService;
+        this.conversionService = conversionService;
+        this.bitbucketProperty = bitbucketProperty;
+        this.commentSchedulerProperty = commentSchedulerProperty;
+        this.initProperty = initProperty;
+    }
 
     public void scanNewCommentAndTask() {
         long commentId = getLastIdCommentOrTask() + 1;
