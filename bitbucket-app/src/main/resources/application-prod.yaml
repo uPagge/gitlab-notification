@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bitbucket_bot
-    username: postgres
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
     driver-class-name: org.postgresql.Driver
-    password:
+    password: ${DATASOURCE_PASSWORD}
   liquibase:
     change-log: classpath:liquibase/change-log.xml
   jpa:
@@ -30,12 +30,12 @@ bitbucketbot:
     use: false
   bitbucket:
     token: ${BITBUCKET_ADMIN_TOKEN}
-    url-pull-request-open: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
-    url-pull-request-close: http://localhost:7990/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
-    url-pull-request-comment: http://localhost:7990/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
-    url-pull-request: http://localhost:7990/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
-    url-users: http://localhost:7990/rest/api/1.0/admin/users
+    url-pull-request-open: ${BITBUCKET_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
+    url-pull-request-close: ${BITBUCKET_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
+    url-pull-request-comment: ${BITBUCKET_URL}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
+    url-pull-request: ${BITBUCKET_URL}/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
+    url-users: ${BITBUCKET_URL}/rest/api/1.0/admin/users
   teamcity:
     token: ${TEAMCITY_ADMIN_TOKEN}
-    project-url: http://localhost:8111/app/rest/projects
-    build-url: http://localhost:8111/app/rest/builds/?locator=project:(id:{0}),branch:(default:any)
+    project-url: ${TEAMCITY_URL}/app/rest/projects
+    build-url: ${TEAMCITY_URL}/app/rest/builds/?locator=project:(id:{0}),branch:(default:any)

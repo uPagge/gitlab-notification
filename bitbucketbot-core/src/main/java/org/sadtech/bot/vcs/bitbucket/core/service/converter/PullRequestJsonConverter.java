@@ -41,6 +41,9 @@ public class PullRequestJsonConverter implements Converter<PullRequestJson, Pull
         pullRequest.setReviewers(convertReviewers(json.getReviewers()));
         pullRequest.setBitbucketVersion(json.getVersion());
         pullRequest.setRepositoryId(json.getFromRef().getRepository().getId());
+        pullRequest.setResolvedTaskCount(json.getProperties().getResolvedTaskCount());
+        pullRequest.setCommentCount(json.getProperties().getCommentCount());
+        pullRequest.setOpenTaskCount(json.getProperties().getOpenTaskCount());
         return pullRequest;
     }
 

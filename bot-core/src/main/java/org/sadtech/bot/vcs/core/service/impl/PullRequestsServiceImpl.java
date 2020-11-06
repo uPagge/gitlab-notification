@@ -46,12 +46,12 @@ import java.util.stream.Collectors;
 @Service
 public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRequest, Long> implements PullRequestsService {
 
-    private final NotifyService notifyService;
-    private final PullRequestsRepository pullRequestsRepository;
-    private final RatingService ratingService;
-    private final FilterService<PullRequest, PullRequestFilter> filterService;
+    protected final NotifyService notifyService;
+    protected final PullRequestsRepository pullRequestsRepository;
+    protected final RatingService ratingService;
+    protected final FilterService<PullRequest, PullRequestFilter> filterService;
 
-    private final RatingProperty ratingProperty;
+    protected final RatingProperty ratingProperty;
 
     protected PullRequestsServiceImpl(
             PullRequestsRepository pullRequestsRepository,
@@ -99,7 +99,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         return newPullRequest;
     }
 
-    private void addRatingCreate(@NonNull String login) {
+    protected void addRatingCreate(@NonNull String login) {
         if (ratingProperty.isEnabled()) {
             ratingService.addRating(login, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
         }
@@ -113,6 +113,9 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
 
         oldPullRequest.setTitle(pullRequest.getTitle());
         oldPullRequest.setDescription(pullRequest.getDescription());
+        oldPullRequest.setOpenTaskCount(pullRequest.getResolvedTaskCount());
+        oldPullRequest.setCommentCount(pullRequest.getOpenTaskCount());
+        oldPullRequest.setResolvedTaskCount(pullRequest.getResolvedTaskCount());
         updateReviewers(oldPullRequest, pullRequest);
         oldPullRequest.setUpdateDate(pullRequest.getUpdateDate());
         updateBitbucketVersion(oldPullRequest, pullRequest);
@@ -122,7 +125,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         return pullRequestsRepository.save(oldPullRequest);
     }
 
-    private void forgottenNotification(PullRequest pullRequest) {
+    protected void forgottenNotification(PullRequest pullRequest) {
         if (LocalDateTime.now().isAfter(pullRequest.getUpdateDate().plusHours(2L))) {
             final Set<String> smartReviewers = pullRequest.getReviewers().stream()
                     .filter(
@@ -147,7 +150,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
     }
 
-    private void updateBitbucketVersion(PullRequest oldPullRequest, PullRequest pullRequest) {
+    protected void updateBitbucketVersion(PullRequest oldPullRequest, PullRequest pullRequest) {
         if (
                 !oldPullRequest.getBitbucketVersion().equals(pullRequest.getBitbucketVersion())
         ) {
@@ -171,7 +174,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
     }
 
-    private void updateConflict(PullRequest oldPullRequest, PullRequest pullRequest) {
+    protected void updateConflict(PullRequest oldPullRequest, PullRequest pullRequest) {
         if (!oldPullRequest.isConflict() && pullRequest.isConflict()) {
             notifyService.send(
                     ConflictPrNotify.builder()
@@ -186,7 +189,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         oldPullRequest.setConflict(pullRequest.isConflict());
     }
 
-    private void updateStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
+    protected void updateStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
         final PullRequestStatus oldStatus = oldPullRequest.getStatus();
         final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
@@ -206,7 +209,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
     }
 
-    private void ratingStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
+    protected void ratingStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
         if (ratingProperty.isEnabled()) {
             final String authorLogin = oldPullRequest.getAuthorLogin();
             switch (newPullRequest.getStatus()) {
@@ -223,7 +226,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
     }
 
-    private void updateReviewers(PullRequest oldPullRequest, PullRequest newPullRequest) {
+    protected void updateReviewers(PullRequest oldPullRequest, PullRequest newPullRequest) {
         final Map<String, Reviewer> oldReviewers = oldPullRequest.getReviewers().stream()
                 .collect(Collectors.toMap(Reviewer::getPersonLogin, reviewer -> reviewer));
         final Map<String, Reviewer> newReviewers = newPullRequest.getReviewers().stream()
@@ -274,7 +277,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     /**
      * Умное уведомление ревьюверов, после того, как кто-то изменил свое решение.
      */
-    private void smartNotifyAfterReviewerDecision(Reviewer newReviewer, PullRequest oldPullRequest) {
+    protected void smartNotifyAfterReviewerDecision(Reviewer newReviewer, PullRequest oldPullRequest) {
         final ReviewerStatus newStatus = newReviewer.getStatus();
         if (!ReviewerStatus.NEEDS_WORK.equals(newStatus) && enoughTimHasPassedSinceUpdatePr(oldPullRequest.getUpdateDate())) {
             final List<Reviewer> smartReviewers = oldPullRequest.getReviewers().stream()
@@ -299,7 +302,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         }
     }
 
-    private boolean enoughTimHasPassedSinceUpdatePr(LocalDateTime updateDate) {
+    protected boolean enoughTimHasPassedSinceUpdatePr(LocalDateTime updateDate) {
         return LocalDateTime.now().isAfter(updateDate.plusHours(4L));
     }
 
@@ -344,7 +347,7 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         return filterService.exists(filter);
     }
 
-    private PullRequest findAndFillId(@NonNull PullRequest pullRequest) {
+    protected PullRequest findAndFillId(@NonNull PullRequest pullRequest) {
         return pullRequestsRepository.findFirst(
                 CriteriaFilter.create().and(
                         CriteriaQuery.create()

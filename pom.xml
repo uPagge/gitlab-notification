@@ -27,12 +27,15 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
         <org.sadtech.bot.bitbucket-app.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-app.version>
         <org.sadtech.bot-core.version>3.0.0-RELEASE</org.sadtech.bot-core.version>
         <org.sadtech.bot.teamcity-core.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-core.version>
         <org.sadtech.bot.teamcity-sdk.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-sdk.version>
         <org.sadtech.bot.bitbucket-sdk.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-sdk.version>
+        <org.sadtech.bot.bitbucket-context.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-context.version>
         <org.sadtech.bot.rest.version>3.0.0-RELEASE</org.sadtech.bot.rest.version>
         <org.sadtech.bot.telegram.version>3.0.0-RELEASE</org.sadtech.bot.telegram.version>
 
@@ -72,6 +75,12 @@
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>teamcity-sdk</artifactId>
                 <version>${org.sadtech.bot.teamcity-sdk.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <artifactId>bitbucketbot-context</artifactId>
+                <version>${org.sadtech.bot.bitbucket-context.version}</version>
             </dependency>
 
             <dependency>
@@ -166,6 +175,46 @@
 
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <developers>
         <developer>

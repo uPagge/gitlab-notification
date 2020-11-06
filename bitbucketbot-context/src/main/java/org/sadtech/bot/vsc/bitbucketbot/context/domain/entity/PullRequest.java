@@ -120,6 +120,15 @@ public class PullRequest {
     @Column(name = "author_login")
     private String authorLogin;
 
+    @Column(name = "resolved_task_count")
+    private Integer resolvedTaskCount;
+
+    @Column(name = "comment_count")
+    private Integer commentCount;
+
+    @Column(name = "open_task_count")
+    private Integer openTaskCount;
+
     /**
      * Ревьюверы
      */

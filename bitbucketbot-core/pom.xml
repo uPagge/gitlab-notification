@@ -10,13 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bitbucketbot-core</artifactId>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>${org.sadtech.bot.bitbucket-context.version}</version>
 
     <dependencies>
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>
             <artifactId>bitbucketbot-context</artifactId>
-            <version>3.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

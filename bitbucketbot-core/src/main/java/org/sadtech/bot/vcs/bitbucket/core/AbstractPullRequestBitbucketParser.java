@@ -55,7 +55,7 @@ public abstract class AbstractPullRequestBitbucketParser implements PullRequestP
         log.info("Открыты: " + Arrays.toString(openId.toArray()));
         log.info("Закрыты: " + Arrays.toString(closeId.toArray()));
         log.info("Не найдены: " + Arrays.toString(newNotExistsId.toArray()));
-        if (!newNotExistsId.isEmpty()) {
+        if (!newNotExistsId.isEmpty() && !openId.isEmpty()) {
             pullRequestsService.deleteAllById(newNotExistsId);
         }
     }
