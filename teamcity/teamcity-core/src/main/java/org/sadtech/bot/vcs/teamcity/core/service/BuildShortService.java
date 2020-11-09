@@ -1,7 +1,7 @@
 package org.sadtech.bot.vcs.teamcity.core.service;
 
-import org.sadtech.basic.context.service.SimpleManagerService;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
+import org.sadtech.haiti.context.service.SimpleManagerService;
 
 import java.util.Set;
 

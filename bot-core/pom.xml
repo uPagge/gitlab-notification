@@ -14,19 +14,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.basic.filter</groupId>
+            <groupId>org.sadtech.haiti.filter</groupId>
             <artifactId>criteria-filter</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>
             <artifactId>bitbucketbot-context</artifactId>
-            <version>3.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.basic</groupId>
-            <artifactId>project-database</artifactId>
+            <groupId>org.sadtech.haiti</groupId>
+            <artifactId>haiti-database</artifactId>
         </dependency>
 
         <dependency>

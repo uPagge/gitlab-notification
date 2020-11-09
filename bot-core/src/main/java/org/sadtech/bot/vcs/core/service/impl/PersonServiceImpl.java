@@ -2,7 +2,6 @@ package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
 import org.sadtech.bot.vcs.core.utils.Utils;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.NotifySetting;
@@ -11,6 +10,7 @@ import org.sadtech.bot.vsc.bitbucketbot.context.exception.RegException;
 import org.sadtech.bot.vsc.bitbucketbot.context.repository.PersonRepository;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
+import org.sadtech.haiti.core.util.Assert;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

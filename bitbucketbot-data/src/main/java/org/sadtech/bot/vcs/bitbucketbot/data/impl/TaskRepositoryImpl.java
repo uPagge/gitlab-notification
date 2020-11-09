@@ -1,11 +1,11 @@
 package org.sadtech.bot.vcs.bitbucketbot.data.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerRepository;
 import org.sadtech.bot.vcs.bitbucketbot.data.jpa.TaskRepositoryJpa;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.TaskStatus;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Task;
 import org.sadtech.bot.vsc.bitbucketbot.context.repository.TaskRepository;
+import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;

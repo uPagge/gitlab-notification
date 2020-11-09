@@ -1,8 +1,6 @@
 package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.core.service.AbstractSimpleManagerService;
-import org.sadtech.basic.core.util.Assert;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.Answer;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.PointType;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Comment;
@@ -15,6 +13,8 @@ import org.sadtech.bot.vsc.bitbucketbot.context.service.CommentService;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.TaskService;
+import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
+import org.sadtech.haiti.core.util.Assert;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -163,5 +163,4 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
         ratingService.addRating(comment.getAuthor(), PointType.COMMENT_DELETE, PointType.COMMENT_DELETE.getPoints());
         super.deleteById(id);
     }
-
 }

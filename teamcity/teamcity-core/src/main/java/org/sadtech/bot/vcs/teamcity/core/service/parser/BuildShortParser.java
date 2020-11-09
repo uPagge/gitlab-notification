@@ -7,8 +7,6 @@ package org.sadtech.bot.vcs.teamcity.core.service.parser;
  */
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.basic.context.page.Sheet;
-import org.sadtech.basic.core.page.PaginationImpl;
 import org.sadtech.bot.vcs.core.utils.Utils;
 import org.sadtech.bot.vcs.teamcity.core.config.property.TeamcityProperty;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
@@ -17,6 +15,8 @@ import org.sadtech.bot.vcs.teamcity.core.service.BuildShortService;
 import org.sadtech.bot.vcs.teamcity.core.service.TeamcityProjectService;
 import org.sadtech.bot.vcs.teamcity.sdk.BuildShortJson;
 import org.sadtech.bot.vcs.teamcity.sdk.sheet.BuildShortJsonSheet;
+import org.sadtech.haiti.context.page.Sheet;
+import org.sadtech.haiti.core.page.PaginationImpl;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 

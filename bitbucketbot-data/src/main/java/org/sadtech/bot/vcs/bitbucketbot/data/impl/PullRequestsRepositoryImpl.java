@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.bitbucketbot.data.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.database.repository.manager.FilterManagerRepository;
 import org.sadtech.bot.vcs.bitbucketbot.data.jpa.PullRequestMiniRepositoryJpa;
 import org.sadtech.bot.vcs.bitbucketbot.data.jpa.PullRequestsRepositoryJpa;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.IdAndStatusPr;
@@ -10,6 +9,7 @@ import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequestMini;
 import org.sadtech.bot.vsc.bitbucketbot.context.repository.PullRequestsRepository;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
+import org.sadtech.haiti.database.repository.manager.FilterManagerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

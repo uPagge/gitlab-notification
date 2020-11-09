@@ -1,8 +1,8 @@
 package org.sadtech.bot.vcs.teamcity.core.service;
 
 import lombok.NonNull;
-import org.sadtech.basic.context.service.SimpleManagerService;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.TeamcitySetting;
+import org.sadtech.haiti.context.service.SimpleManagerService;
 
 import java.util.List;
 

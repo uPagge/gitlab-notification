@@ -33,7 +33,7 @@ public enum Smile {
     KAKASHKA("\uD83D\uDCA9"),
     LUPA("\uD83D\uDD0D"),
     DANGEROUS("⚠️"),
-    BELL("\uD83D\uDECE"),
+    COMMENT("\uD83D\uDCAC"),
     ARROW("➜"),
     HR("\n -- -- -- -- --\n"),
     FAILURE("❌"),

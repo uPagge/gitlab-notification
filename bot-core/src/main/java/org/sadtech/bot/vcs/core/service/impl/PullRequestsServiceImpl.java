@@ -1,13 +1,6 @@
 package org.sadtech.bot.vcs.core.service.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.context.page.Pagination;
-import org.sadtech.basic.context.page.Sheet;
-import org.sadtech.basic.context.service.simple.FilterService;
-import org.sadtech.basic.core.service.AbstractSimpleManagerService;
-import org.sadtech.basic.core.util.Assert;
-import org.sadtech.basic.filter.criteria.CriteriaFilter;
-import org.sadtech.basic.filter.criteria.CriteriaQuery;
 import org.sadtech.bot.vcs.core.config.properties.RatingProperty;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.IdAndStatusPr;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.PointType;
@@ -31,6 +24,13 @@ import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
 import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
+import org.sadtech.haiti.context.page.Pagination;
+import org.sadtech.haiti.context.page.Sheet;
+import org.sadtech.haiti.context.service.simple.FilterService;
+import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
+import org.sadtech.haiti.core.util.Assert;
+import org.sadtech.haiti.filter.criteria.CriteriaFilter;
+import org.sadtech.haiti.filter.criteria.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 

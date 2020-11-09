@@ -1,14 +1,14 @@
 package org.sadtech.bot.vsc.bitbucketbot.context.service;
 
 import lombok.NonNull;
-import org.sadtech.basic.context.service.SimpleManagerService;
-import org.sadtech.basic.context.service.simple.FilterService;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.IdAndStatusPr;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequestMini;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.filter.PullRequestFilter;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
+import org.sadtech.haiti.context.service.SimpleManagerService;
+import org.sadtech.haiti.context.service.simple.FilterService;
 
 import java.util.List;
 import java.util.Optional;

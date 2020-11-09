@@ -1,8 +1,8 @@
 package org.sadtech.bot.vsc.bitbucketbot.context.repository;
 
 import lombok.NonNull;
-import org.sadtech.basic.context.repository.SimpleManagerRepository;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.RatingHistory;
+import org.sadtech.haiti.context.repository.SimpleManagerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

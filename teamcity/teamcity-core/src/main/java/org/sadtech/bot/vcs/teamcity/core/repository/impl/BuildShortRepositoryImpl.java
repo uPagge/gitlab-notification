@@ -1,10 +1,10 @@
 package org.sadtech.bot.vcs.teamcity.core.repository.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerRepository;
 import org.sadtech.bot.vcs.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.vcs.teamcity.core.repository.BuildShortRepository;
 import org.sadtech.bot.vcs.teamcity.core.repository.jpa.BuildShortJpaRepository;
+import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;

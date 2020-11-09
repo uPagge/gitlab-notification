@@ -1,10 +1,10 @@
 package org.sadtech.bot.vsc.bitbucketbot.context.service;
 
 import lombok.NonNull;
-import org.sadtech.basic.context.service.SimpleManagerService;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.TaskStatus;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Comment;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Task;
+import org.sadtech.haiti.context.service.SimpleManagerService;
 
 import java.time.LocalDateTime;
 import java.util.List;

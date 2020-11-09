@@ -39,9 +39,12 @@
         <org.sadtech.bot.rest.version>3.0.0-RELEASE</org.sadtech.bot.rest.version>
         <org.sadtech.bot.telegram.version>3.0.0-RELEASE</org.sadtech.bot.telegram.version>
 
+        <org.sadtech.haiti.context.version>0.0.1-SNAPSHOT</org.sadtech.haiti.context.version>
+        <org.sadtech.haiti.filter.version>0.0.1-SNAPSHOT</org.sadtech.haiti.filter.version>
         <org.sadtech.telegram.bot-core.version>0.0.1-DEVELOPER</org.sadtech.telegram.bot-core.version>
+        <org.sadtech.bot.vsc.context.version>0.0.1-DEVELOP</org.sadtech.bot.vsc.context.version>
 
-        <sadtech.project.database.version>0.1.0-SNAPSHOT</sadtech.project.database.version>
+        <org.sadtech.haiti.database.version>0.0.1-SNAPSHOT</org.sadtech.haiti.database.version>
         <sadtech.project.filter.criteria.version>0.1.0-SNAPSHOT</sadtech.project.filter.criteria.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
@@ -102,15 +105,33 @@
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.basic</groupId>
-                <artifactId>project-database</artifactId>
-                <version>${sadtech.project.database.version}</version>
+                <groupId>org.sadtech.haiti</groupId>
+                <artifactId>haiti-database</artifactId>
+                <version>${org.sadtech.haiti.database.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.telegram</groupId>
                 <artifactId>telegram-bot</artifactId>
                 <version>${org.sadtech.telegram.bot-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.haiti</groupId>
+                <artifactId>haiti-context</artifactId>
+                <version>${org.sadtech.haiti.context.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.bot.vcs</groupId>
+                <artifactId>vcs-bot-context</artifactId>
+                <version>${org.sadtech.bot.vsc.context.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.haiti.filter</groupId>
+                <artifactId>criteria-filter</artifactId>
+                <version>${org.sadtech.haiti.filter.version}</version>
             </dependency>
 
             <dependency>

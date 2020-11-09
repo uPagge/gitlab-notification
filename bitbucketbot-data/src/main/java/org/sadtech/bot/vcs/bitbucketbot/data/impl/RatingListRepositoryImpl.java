@@ -1,9 +1,9 @@
 package org.sadtech.bot.vcs.bitbucketbot.data.impl;
 
-import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerRepository;
 import org.sadtech.bot.vcs.bitbucketbot.data.jpa.RatingListJpaRepository;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.RatingList;
 import org.sadtech.bot.vsc.bitbucketbot.context.repository.RatingListRepository;
+import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

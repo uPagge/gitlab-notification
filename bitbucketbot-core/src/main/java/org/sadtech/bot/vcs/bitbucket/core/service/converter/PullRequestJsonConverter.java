@@ -1,7 +1,6 @@
 package org.sadtech.bot.vcs.bitbucket.core.service.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.basic.context.exception.ConvertException;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Outcome;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.Properties;
 import org.sadtech.bot.vcs.bitbucket.sdk.domain.PullRequestJson;
@@ -13,6 +12,7 @@ import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Reviewer;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
+import org.sadtech.haiti.context.exception.ConvertException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

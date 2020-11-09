@@ -41,7 +41,7 @@ public class AnswerCommentNotify extends Notify {
                 "{0} *Новые ответы* на [комментарий]({1}){2}" +
                         "{3}{2}" +
                         "{4}",
-                Smile.BELL,
+                Smile.COMMENT,
                 url,
                 Smile.HR,
                 escapeMarkdown(youMessage.substring(0, Math.min(youMessage.length(), 180))),

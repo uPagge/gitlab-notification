@@ -1,10 +1,10 @@
 package org.sadtech.bot.vcs.bitbucketbot.data.impl;
 
 import lombok.NonNull;
-import org.sadtech.basic.database.repository.manager.AbstractSimpleManagerRepository;
 import org.sadtech.bot.vcs.bitbucketbot.data.jpa.RatingHistoryJpaRepository;
 import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.RatingHistory;
 import org.sadtech.bot.vsc.bitbucketbot.context.repository.RatingHistoryRepository;
+import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
