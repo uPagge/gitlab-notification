@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bitbucketbot-context</artifactId>
-    <version>${org.sadtech.bot.bitbucket-context.version}</version>
+    <version>${sadtech.bitbucketbot.context.version}</version>
 
     <dependencies>
         <dependency>
@@ -25,7 +25,7 @@
 
         <dependency>
             <groupId>org.sadtech.haiti.filter</groupId>
-            <artifactId>criteria-filter</artifactId>
+            <artifactId>haiti-filter-criteria</artifactId>
         </dependency>
 
         <dependency>

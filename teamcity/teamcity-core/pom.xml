@@ -10,10 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>teamcity-core</artifactId>
-    <version>${org.sadtech.bot.teamcity-core.version}</version>
+    <version>${sadtech.bitbucketbot.teamcity.core.version}</version>
 
     <dependencies>
-
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>
             <artifactId>bot-core</artifactId>

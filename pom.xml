@@ -30,22 +30,23 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <org.sadtech.bot.bitbucket-app.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-app.version>
-        <org.sadtech.bot-core.version>3.0.0-RELEASE</org.sadtech.bot-core.version>
-        <org.sadtech.bot.teamcity-core.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-core.version>
-        <org.sadtech.bot.teamcity-sdk.version>3.0.0-RELEASE</org.sadtech.bot.teamcity-sdk.version>
-        <org.sadtech.bot.bitbucket-sdk.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-sdk.version>
-        <org.sadtech.bot.bitbucket-context.version>3.0.0-RELEASE</org.sadtech.bot.bitbucket-context.version>
-        <org.sadtech.bot.rest.version>3.0.0-RELEASE</org.sadtech.bot.rest.version>
-        <org.sadtech.bot.telegram.version>3.0.0-RELEASE</org.sadtech.bot.telegram.version>
+        <sadtech.bitbucketbot.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.core.version>
+        <sadtech.bitbucketbot.app.version>3.0.0-RELEASE</sadtech.bitbucketbot.app.version>
+        <sadtech.bitbucketbot.teamcity.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.version>
+        <sadtech.bitbucketbot.teamcity.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.core.version>
+        <sadtech.bitbucketbot.teamcity.sdk.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.sdk.version>
+        <sadtech.bitbucketbot.bitbucket.sdk.version>3.0.0-RELEASE</sadtech.bitbucketbot.bitbucket.sdk.version>
+        <sadtech.bitbucketbot.context.version>3.0.0-RELEASE</sadtech.bitbucketbot.context.version>
+        <sadtech.bitbucketbot.data.version>3.0.0-RELEASE</sadtech.bitbucketbot.data.version>
+        <sadtech.bitbucketbot.rest.version>3.0.0-RELEASE</sadtech.bitbucketbot.rest.version>
+        <sadtech.bitbucketbot.telegram.version>3.0.0-RELEASE</sadtech.bitbucketbot.telegram.version>
+        <sadtech.bitbucketbot.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.core.version>
 
-        <org.sadtech.haiti.context.version>0.0.1-SNAPSHOT</org.sadtech.haiti.context.version>
-        <org.sadtech.haiti.filter.version>0.0.1-SNAPSHOT</org.sadtech.haiti.filter.version>
-        <org.sadtech.telegram.bot-core.version>0.0.1-DEVELOPER</org.sadtech.telegram.bot-core.version>
-        <org.sadtech.bot.vsc.context.version>0.0.1-DEVELOP</org.sadtech.bot.vsc.context.version>
-
-        <org.sadtech.haiti.database.version>0.0.1-SNAPSHOT</org.sadtech.haiti.database.version>
-        <sadtech.project.filter.criteria.version>0.1.0-SNAPSHOT</sadtech.project.filter.criteria.version>
+        <haiti.context.version>0.0.1-RELEASE</haiti.context.version>
+        <haiti.database.version>0.0.1-RELEASE</haiti.database.version>
+        <haiti.filter.criteria.version>0.0.1-RELEASE</haiti.filter.criteria.version>
+        <sadtech.bot.telegram.core.version>0.0.1-RELEASE</sadtech.bot.telegram.core.version>
+        <sadtech.bot.vsc.context.version>0.0.1-DEVELOP</sadtech.bot.vsc.context.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
@@ -56,100 +57,105 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- абстракции -->
+
+            <dependency>
+                <groupId>org.sadtech.bot.vcs</groupId>
+                <artifactId>vcs-bot-context</artifactId>
+                <version>${sadtech.bot.vsc.context.version}</version>
+            </dependency>
+
+            <!-- /абстракции -->
+            <!-- модули проекта -->
+
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bot-rest</artifactId>
-                <version>${org.sadtech.bot.rest.version}</version>
+                <artifactId>bitbucketbot-core</artifactId>
+                <version>${sadtech.bitbucketbot.core.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>telegram-bot</artifactId>
-                <version>${org.sadtech.bot.telegram.version}</version>
+                <artifactId>bot-rest</artifactId>
+                <version>${sadtech.bitbucketbot.rest.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>bot-core</artifactId>
-                <version>${org.sadtech.bot-core.version}</version>
+                <version>${sadtech.bitbucketbot.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <artifactId>telegram-bot</artifactId>
+                <version>${sadtech.bitbucketbot.telegram.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>teamcity-sdk</artifactId>
-                <version>${org.sadtech.bot.teamcity-sdk.version}</version>
+                <version>${sadtech.bitbucketbot.teamcity.sdk.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>bitbucketbot-context</artifactId>
-                <version>${org.sadtech.bot.bitbucket-context.version}</version>
+                <version>${sadtech.bitbucketbot.context.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>bitbucket-sdk</artifactId>
-                <version>${org.sadtech.bot.bitbucket-sdk.version}</version>
+                <version>${sadtech.bitbucketbot.bitbucket.sdk.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.bitbucketbot</groupId>
                 <artifactId>teamcity-core</artifactId>
-                <version>${org.sadtech.bot.teamcity-core.version}</version>
+                <version>${sadtech.bitbucketbot.teamcity.core.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.basic.filter</groupId>
-                <artifactId>criteria-filter</artifactId>
-                <version>${sadtech.project.filter.criteria.version}</version>
+                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <artifactId>bitbucketbot-data</artifactId>
+                <version>${sadtech.bitbucketbot.data.version}</version>
             </dependency>
 
+            <!-- /модули проекта -->
+            <!-- SADTECH -->
+
             <dependency>
-                <groupId>org.sadtech.haiti</groupId>
+                <groupId>org.sadtech.haiti.data</groupId>
                 <artifactId>haiti-database</artifactId>
-                <version>${org.sadtech.haiti.database.version}</version>
+                <version>${haiti.database.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.telegram</groupId>
+                <groupId>org.sadtech.bot.godfather</groupId>
                 <artifactId>telegram-bot</artifactId>
-                <version>${org.sadtech.telegram.bot-core.version}</version>
+                <version>0.0.1-RELEASE</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.haiti</groupId>
                 <artifactId>haiti-context</artifactId>
-                <version>${org.sadtech.haiti.context.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.vcs</groupId>
-                <artifactId>vcs-bot-context</artifactId>
-                <version>${org.sadtech.bot.vsc.context.version}</version>
+                <version>${haiti.context.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.haiti.filter</groupId>
-                <artifactId>criteria-filter</artifactId>
-                <version>${org.sadtech.haiti.filter.version}</version>
+                <artifactId>haiti-filter-criteria</artifactId>
+                <version>${haiti.filter.criteria.version}</version>
             </dependency>
+
+            <!-- /SADTECH -->
+            <!-- БД -->
 
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-jpamodelgen</artifactId>
                 <version>${hibernate.jpa-modelgen.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${google.guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase.version}</version>
             </dependency>
 
             <dependency>
@@ -159,10 +165,34 @@
             </dependency>
 
             <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax.persistance.version}</version>
+            </dependency>
+
+            <!-- /БД -->
+            <!-- утилиты -->
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${google.guava.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+
+            <!-- /утилиты -->
+            <!-- spring -->
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -176,6 +206,9 @@
                 </exclusions>
             </dependency>
 
+            <!-- /spring -->
+            <!-- http -->
+
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
@@ -188,11 +221,7 @@
                 <version>${jackson.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>javax.persistence-api</artifactId>
-                <version>${javax.persistance.version}</version>
-            </dependency>
+            <!-- /http -->
 
         </dependencies>
     </dependencyManagement>
@@ -241,7 +270,8 @@
         <developer>
             <id>uPagge</id>
             <name>Struchkov Mark</name>
-            <email>upagge@mail.ru</email>
+            <email>upagge@ya.ru</email>
+            <organization>SADTECH</organization>
         </developer>
     </developers>
 

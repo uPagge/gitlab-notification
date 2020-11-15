@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bitbucketbot-data</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>${sadtech.bitbucketbot.data.version}</version>
 
     <dependencies>
         <dependency>
@@ -22,7 +22,7 @@
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.sadtech.haiti</groupId>
+            <groupId>org.sadtech.haiti.data</groupId>
             <artifactId>haiti-database</artifactId>
         </dependency>
     </dependencies>

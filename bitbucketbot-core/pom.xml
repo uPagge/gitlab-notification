@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bitbucketbot-core</artifactId>
-    <version>${org.sadtech.bot.bitbucket-context.version}</version>
+    <version>${sadtech.bitbucketbot.context.version}</version>
 
     <dependencies>
         <dependency>
@@ -36,7 +36,6 @@
         <dependency>
             <groupId>org.sadtech.bot.vcs</groupId>
             <artifactId>vcs-bot-context</artifactId>
-            <version>0.0.1-DEVELOP</version>
         </dependency>
 
         <dependency>

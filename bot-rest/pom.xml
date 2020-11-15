@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bot-rest</artifactId>
-    <version>${org.sadtech.bot.rest.version}</version>
+    <version>${sadtech.bitbucketbot.rest.version}</version>
 
     <dependencies>
         <dependency>

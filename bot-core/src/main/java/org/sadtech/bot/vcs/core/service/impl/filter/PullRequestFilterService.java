@@ -32,5 +32,4 @@ public class PullRequestFilterService extends AbstractFilterService<PullRequest,
                 .matchPhrase(PullRequest_.BITBUCKET_ID, filter.getBitbucketId())
                 .matchPhrase(PullRequest_.REPOSITORY_ID, filter.getBitbucketRepositoryId());
     }
-
 }

@@ -10,21 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>teamcity</artifactId>
+    <version>${sadtech.bitbucketbot.teamcity.version}</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>teamcity-sdk</module>
         <module>teamcity-core</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>teamcity-sdk</artifactId>
-                <version>${org.sadtech.bot.teamcity-sdk.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 
 </project>

@@ -26,9 +26,9 @@ import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
-import org.sadtech.haiti.context.service.simple.FilterService;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.sadtech.haiti.core.util.Assert;
+import org.sadtech.haiti.filter.FilterService;
 import org.sadtech.haiti.filter.criteria.CriteriaFilter;
 import org.sadtech.haiti.filter.criteria.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -333,18 +333,18 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
     }
 
     @Override
-    public List<PullRequest> getAll(@NonNull PullRequestFilter filter) {
-        return filterService.getAll(filter);
-    }
-
-    @Override
-    public Optional<PullRequest> getFirst(@NonNull PullRequestFilter filter) {
-        return filterService.getFirst(filter);
+    public Optional<PullRequest> getFirst(@NonNull PullRequestFilter pullRequestFilter) {
+        return filterService.getFirst(pullRequestFilter);
     }
 
     @Override
     public boolean exists(@NonNull PullRequestFilter filter) {
         return filterService.exists(filter);
+    }
+
+    @Override
+    public long count(@NonNull PullRequestFilter pullRequestFilter) {
+        return filterService.count(pullRequestFilter);
     }
 
     protected PullRequest findAndFillId(@NonNull PullRequest pullRequest) {

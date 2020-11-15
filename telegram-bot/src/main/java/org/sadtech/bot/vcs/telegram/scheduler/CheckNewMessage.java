@@ -1,7 +1,7 @@
 package org.sadtech.bot.vcs.telegram.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.telegram.bot.autoresponder.MessageAutoresponderTelegram;
+import org.sadtech.bot.godfather.telegram.autoresponder.MessageAutoresponderTelegram;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

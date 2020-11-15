@@ -8,7 +8,7 @@ import org.sadtech.bot.vsc.bitbucketbot.context.domain.filter.PullRequestFilter;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.haiti.context.service.SimpleManagerService;
-import org.sadtech.haiti.context.service.simple.FilterService;
+import org.sadtech.haiti.filter.FilterService;
 
 import java.util.List;
 import java.util.Optional;

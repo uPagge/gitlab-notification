@@ -1,6 +1,6 @@
 package org.sadtech.bot.vcs.telegram.service;
 
-import org.sadtech.telegram.bot.service.SendPreProcessing;
+import org.sadtech.bot.godfather.telegram.service.SendPreProcessing;
 import org.springframework.stereotype.Component;
 
 /**

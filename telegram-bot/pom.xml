@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>telegram-bot</artifactId>
+    <version>${sadtech.bitbucketbot.telegram.version}</version>
 
     <dependencies>
         <dependency>
@@ -23,7 +24,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.telegram</groupId>
+            <groupId>org.sadtech.bot.godfather</groupId>
             <artifactId>telegram-bot</artifactId>
         </dependency>
     </dependencies>

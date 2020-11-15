@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>teamcity-sdk</artifactId>
-    <version>${org.sadtech.bot.teamcity-sdk.version}</version>
+    <version>${sadtech.bitbucketbot.teamcity.sdk.version}</version>
 
     <dependencies>
         <dependency>
