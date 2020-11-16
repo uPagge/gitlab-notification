@@ -22,7 +22,7 @@
 
     <groupId>org.sadtech.bot.bitbucketbot</groupId>
     <artifactId>bitbucketbot</artifactId>
-    <version>3.0.0-RELEASE</version>
+    <version>3.0.1-RELEASE</version>
     <packaging>pom</packaging>
 
     <name>Parent Bitbucket Server Notify Bot</name>
@@ -79,21 +79,21 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <sadtech.bitbucketbot.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.core.version>
-        <sadtech.bitbucketbot.app.version>3.0.0-RELEASE</sadtech.bitbucketbot.app.version>
-        <sadtech.bitbucketbot.teamcity.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.version>
-        <sadtech.bitbucketbot.teamcity.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.core.version>
-        <sadtech.bitbucketbot.teamcity.sdk.version>3.0.0-RELEASE</sadtech.bitbucketbot.teamcity.sdk.version>
-        <sadtech.bitbucketbot.bitbucket.sdk.version>3.0.0-RELEASE</sadtech.bitbucketbot.bitbucket.sdk.version>
-        <sadtech.bitbucketbot.context.version>3.0.0-RELEASE</sadtech.bitbucketbot.context.version>
-        <sadtech.bitbucketbot.data.version>3.0.0-RELEASE</sadtech.bitbucketbot.data.version>
-        <sadtech.bitbucketbot.rest.version>3.0.0-RELEASE</sadtech.bitbucketbot.rest.version>
-        <sadtech.bitbucketbot.telegram.version>3.0.0-RELEASE</sadtech.bitbucketbot.telegram.version>
-        <sadtech.bitbucketbot.core.version>3.0.0-RELEASE</sadtech.bitbucketbot.core.version>
+        <sadtech.bitbucketbot.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.core.version>
+        <sadtech.bitbucketbot.app.version>3.0.1-RELEASE</sadtech.bitbucketbot.app.version>
+        <sadtech.bitbucketbot.teamcity.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.version>
+        <sadtech.bitbucketbot.teamcity.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.core.version>
+        <sadtech.bitbucketbot.teamcity.sdk.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.sdk.version>
+        <sadtech.bitbucketbot.bitbucket.sdk.version>3.0.1-RELEASE</sadtech.bitbucketbot.bitbucket.sdk.version>
+        <sadtech.bitbucketbot.context.version>3.0.1-RELEASE</sadtech.bitbucketbot.context.version>
+        <sadtech.bitbucketbot.data.version>3.0.1-RELEASE</sadtech.bitbucketbot.data.version>
+        <sadtech.bitbucketbot.rest.version>3.0.1-RELEASE</sadtech.bitbucketbot.rest.version>
+        <sadtech.bitbucketbot.telegram.version>3.0.1-RELEASE</sadtech.bitbucketbot.telegram.version>
+        <sadtech.bitbucketbot.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.core.version>
 
         <haiti.context.version>0.0.1-RELEASE</haiti.context.version>
-        <haiti.database.version>0.0.1-RELEASE</haiti.database.version>
-        <haiti.filter.criteria.version>0.0.1-RELEASE</haiti.filter.criteria.version>
+        <haiti.database.version>0.0.2-RELEASE</haiti.database.version>
+        <haiti.filter.criteria.version>0.0.2-RELEASE</haiti.filter.criteria.version>
         <sadtech.bot.telegram.core.version>0.0.1-RELEASE</sadtech.bot.telegram.core.version>
         <sadtech.bot.vsc.context.version>0.0.1-RELEASE</sadtech.bot.vsc.context.version>
 
