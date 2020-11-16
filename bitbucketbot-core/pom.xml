@@ -12,6 +12,10 @@
     <artifactId>bitbucketbot-core</artifactId>
     <version>${sadtech.bitbucketbot.context.version}</version>
 
+    <name>Bitbucket Bot Server Core</name>
+    <description>Implementation of the Bitbucket server version service layer</description>
+    <url>https://github.com/uPagge/bitbucketbot</url>
+
     <dependencies>
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>

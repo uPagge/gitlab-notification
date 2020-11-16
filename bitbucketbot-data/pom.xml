@@ -12,6 +12,10 @@
     <artifactId>bitbucketbot-data</artifactId>
     <version>${sadtech.bitbucketbot.data.version}</version>
 
+    <name>Bitbucket Bot Server Data</name>
+    <description>Implementation of the Bitbucket server version repository layer</description>
+    <url>https://github.com/uPagge/bitbucketbot</url>
+
     <dependencies>
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>

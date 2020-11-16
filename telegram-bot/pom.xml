@@ -12,9 +12,6 @@
     <artifactId>telegram-bot</artifactId>
     <version>${sadtech.bitbucketbot.telegram.version}</version>
 
-    <name>Bitbucket Server Notify Bot</name>
-    <description>Notifications about Bitbucket Server events in Telegram</description>
-
     <dependencies>
         <dependency>
             <groupId>org.sadtech.bot.bitbucketbot</groupId>
