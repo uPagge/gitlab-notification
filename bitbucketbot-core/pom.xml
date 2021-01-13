@@ -3,33 +3,33 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>bitbucketbot</artifactId>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bitbucketbot-core</artifactId>
-    <version>${sadtech.bitbucketbot.context.version}</version>
+    <artifactId>gitlab-core</artifactId>
+    <version>${gitlab.context.version}</version>
 
-    <name>Bitbucket Bot Server Core</name>
+    <name>GitLab Server Core</name>
     <description>Implementation of the Bitbucket server version service layer</description>
     <url>https://github.com/uPagge/bitbucketbot</url>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucketbot-context</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>bot-context</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucket-sdk</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>gitlab-sdk</artifactId>
         </dependency>
 
         <dependency>

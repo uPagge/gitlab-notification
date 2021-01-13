@@ -9,25 +9,24 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modules>
+        <module>bot-context</module>
         <module>telegram-bot</module>
-        <module>bitbucket-sdk</module>
+        <module>gitlab-sdk</module>
         <module>bot-core</module>
-        <module>bitbucket-app</module>
-        <module>bot-rest</module>
+        <module>bot-app</module>
         <module>teamcity</module>
         <module>bitbucketbot-core</module>
-        <module>bitbucketbot-context</module>
-        <module>bitbucketbot-data</module>
+        <module>bot-data</module>
     </modules>
 
-    <groupId>org.sadtech.bot.bitbucketbot</groupId>
-    <artifactId>bitbucketbot</artifactId>
+    <groupId>org.sadtech.bot.gitlab</groupId>
+    <artifactId>gitlab-bot</artifactId>
     <version>3.0.1-RELEASE</version>
     <packaging>pom</packaging>
 
-    <name>Parent Bitbucket Server Notify Bot</name>
-    <description>Notifications about Bitbucket Server events in Telegram</description>
-    <url>https://github.com/uPagge/bitbucketbot</url>
+    <name>Parent GitLab Notify Bot</name>
+    <description>Notifications about gitlab events in Telegram</description>
+    <url>https://github.com/uPagge/gitlab-notification</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -57,9 +56,9 @@
     </organization>
 
     <scm>
-        <connection>scm:git:https://github.com/uPagge/bitbucketbot.git</connection>
-        <url>https://github.com/uPagge/bitbucketbot</url>
-        <developerConnection>scm:git:https://github.com/uPagge/bitbucketbot.git</developerConnection>
+        <connection>scm:git:https://github.com/uPagge/gitlab-notification.git</connection>
+        <url>https://github.com/uPagge/gitlab-notification</url>
+        <developerConnection>scm:git:https://github.com/uPagge/gitlab-notification.git</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -71,7 +70,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/uPagge/bitbucketbot/issues</url>
+        <url>https://github.com/uPagge/gitlab-notification/issues</url>
     </issueManagement>
 
     <properties>
@@ -79,17 +78,17 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <sadtech.bitbucketbot.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.core.version>
-        <sadtech.bitbucketbot.app.version>3.0.1-RELEASE</sadtech.bitbucketbot.app.version>
-        <sadtech.bitbucketbot.teamcity.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.version>
-        <sadtech.bitbucketbot.teamcity.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.core.version>
-        <sadtech.bitbucketbot.teamcity.sdk.version>3.0.1-RELEASE</sadtech.bitbucketbot.teamcity.sdk.version>
-        <sadtech.bitbucketbot.bitbucket.sdk.version>3.0.1-RELEASE</sadtech.bitbucketbot.bitbucket.sdk.version>
-        <sadtech.bitbucketbot.context.version>3.0.1-RELEASE</sadtech.bitbucketbot.context.version>
-        <sadtech.bitbucketbot.data.version>3.0.1-RELEASE</sadtech.bitbucketbot.data.version>
-        <sadtech.bitbucketbot.rest.version>3.0.1-RELEASE</sadtech.bitbucketbot.rest.version>
-        <sadtech.bitbucketbot.telegram.version>3.0.1-RELEASE</sadtech.bitbucketbot.telegram.version>
-        <sadtech.bitbucketbot.core.version>3.0.1-RELEASE</sadtech.bitbucketbot.core.version>
+        <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
+        <gitlab.app.version>3.0.1-RELEASE</gitlab.app.version>
+        <gitlab.teamcity.version>3.0.1-RELEASE</gitlab.teamcity.version>
+        <gitlab.teamcity.core.version>3.0.1-RELEASE</gitlab.teamcity.core.version>
+        <gitlab.teamcity.sdk.version>3.0.1-RELEASE</gitlab.teamcity.sdk.version>
+        <gitlab.sdk.version>3.0.1-RELEASE</gitlab.sdk.version>
+        <gitlab.context.version>3.0.1-RELEASE</gitlab.context.version>
+        <gitlab.data.version>3.0.1-RELEASE</gitlab.data.version>
+        <gitlab.rest.version>3.0.1-RELEASE</gitlab.rest.version>
+        <gitlab.telegram.version>3.0.1-RELEASE</gitlab.telegram.version>
+        <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
 
         <haiti.context.version>0.0.1-RELEASE</haiti.context.version>
         <haiti.database.version>0.0.2-RELEASE</haiti.database.version>
@@ -117,57 +116,51 @@
             <!-- модули проекта -->
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bitbucketbot-core</artifactId>
-                <version>${sadtech.bitbucketbot.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bot-rest</artifactId>
-                <version>${sadtech.bitbucketbot.rest.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>bot-core</artifactId>
-                <version>${sadtech.bitbucketbot.core.version}</version>
+                <version>${sadtech.gitlab.core.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <groupId>org.sadtech.bot.gitlab</groupId>
+                <artifactId>bot-core</artifactId>
+                <version>${gitlab.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>telegram-bot</artifactId>
-                <version>${sadtech.bitbucketbot.telegram.version}</version>
+                <version>${gitlab.telegram.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>teamcity-sdk</artifactId>
-                <version>${sadtech.bitbucketbot.teamcity.sdk.version}</version>
+                <version>${gitlab.teamcity.sdk.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bitbucketbot-context</artifactId>
-                <version>${sadtech.bitbucketbot.context.version}</version>
+                <groupId>org.sadtech.bot.gitlab</groupId>
+                <artifactId>bot-context</artifactId>
+                <version>${gitlab.context.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bitbucket-sdk</artifactId>
-                <version>${sadtech.bitbucketbot.bitbucket.sdk.version}</version>
+                <groupId>org.sadtech.bot.gitlab</groupId>
+                <artifactId>gitlab-sdk</artifactId>
+                <version>${gitlab.sdk.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
+                <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>teamcity-core</artifactId>
-                <version>${sadtech.bitbucketbot.teamcity.core.version}</version>
+                <version>${gitlab.teamcity.core.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.bitbucketbot</groupId>
-                <artifactId>bitbucketbot-data</artifactId>
-                <version>${sadtech.bitbucketbot.data.version}</version>
+                <groupId>org.sadtech.bot.gitlab</groupId>
+                <artifactId>bot-data</artifactId>
+                <version>${gitlab.data.version}</version>
             </dependency>
 
             <!-- /модули проекта -->

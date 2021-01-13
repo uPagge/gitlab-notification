@@ -3,23 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>bitbucketbot</artifactId>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>telegram-bot</artifactId>
-    <version>${sadtech.bitbucketbot.telegram.version}</version>
+    <version>${gitlab.telegram.version}</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>teamcity-core</artifactId>
         </dependency>
 
@@ -60,7 +60,7 @@
             <email>upagge@ya.ru</email>
             <organization>SADTECH</organization>
             <organizationUrl>https://sadtech.org</organizationUrl>
-            <url>https://uPagge.sadtech.org</url>
+            <url>https://uPagge.ru</url>
             <roles>
                 <role>Project lead</role>
             </roles>

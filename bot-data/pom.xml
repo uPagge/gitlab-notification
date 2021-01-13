@@ -3,23 +3,23 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>bitbucketbot</artifactId>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bitbucketbot-data</artifactId>
-    <version>${sadtech.bitbucketbot.data.version}</version>
+    <artifactId>bot-data</artifactId>
+    <version>${gitlab.data.version}</version>
 
-    <name>Bitbucket Bot Server Data</name>
+    <name>GitLab Server Data</name>
     <description>Implementation of the Bitbucket server version repository layer</description>
     <url>https://github.com/uPagge/bitbucketbot</url>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucketbot-context</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>bot-context</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>

@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
-        <artifactId>bitbucketbot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
+        <artifactId>gitlab-bot</artifactId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>bot-core</artifactId>
-    <version>${sadtech.bitbucketbot.core.version}</version>
+    <version>${gitlab.core.version}</version>
 
     <dependencies>
         <dependency>
@@ -19,8 +19,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucketbot-context</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>bot-context</artifactId>
         </dependency>
 
         <dependency>

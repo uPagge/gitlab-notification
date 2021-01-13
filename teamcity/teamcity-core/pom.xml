@@ -4,22 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>teamcity</artifactId>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>teamcity-core</artifactId>
-    <version>${sadtech.bitbucketbot.teamcity.core.version}</version>
+    <version>${gitlab.teamcity.core.version}</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>teamcity-sdk</artifactId>
         </dependency>
 

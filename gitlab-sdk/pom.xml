@@ -3,30 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>bitbucketbot</artifactId>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bot-rest</artifactId>
-    <version>${sadtech.bitbucketbot.rest.version}</version>
+    <artifactId>gitlab-sdk</artifactId>
+    <version>${gitlab.sdk.version}</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bot-core</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 

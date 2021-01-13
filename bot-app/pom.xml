@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.sadtech.bot.bitbucketbot</groupId>
-        <artifactId>bitbucketbot</artifactId>
+        <groupId>org.sadtech.bot.gitlab</groupId>
+        <artifactId>gitlab-bot</artifactId>
         <version>3.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bitbucket-app</artifactId>
-    <version>${sadtech.bitbucketbot.app.version}</version>
+    <artifactId>gitlab-app</artifactId>
+    <version>${gitlab.app.version}</version>
 
     <name>Parent Bitbucket Server Notify Bot</name>
     <description>Notifications about Bitbucket Server events in Telegram</description>
@@ -46,38 +46,33 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucketbot-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucketbot-data</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bot-rest</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>bot-data</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>telegram-bot</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
             <artifactId>teamcity-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.bitbucketbot</groupId>
-            <artifactId>bitbucket-sdk</artifactId>
+            <groupId>org.sadtech.bot.gitlab</groupId>
+            <artifactId>gitlab-sdk</artifactId>
         </dependency>
 
         <dependency>
