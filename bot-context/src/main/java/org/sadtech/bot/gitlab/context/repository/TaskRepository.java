@@ -1,0 +1,20 @@
+package org.sadtech.bot.gitlab.context.repository;
+
+import lombok.NonNull;
+import org.sadtech.bot.gitlab.context.domain.TaskStatus;
+import org.sadtech.bot.gitlab.context.domain.entity.Task;
+import org.sadtech.haiti.context.repository.SimpleManagerRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+public interface TaskRepository extends SimpleManagerRepository<Task, Long> {
+
+    Optional<Task> findFirstByOrderByIdDesc();
+
+    List<Task> findByCreateDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo);
+
+    List<Task> findAllByResponsibleAndStatus(@NonNull String responsibleLogin, @NonNull TaskStatus status);
+
+}

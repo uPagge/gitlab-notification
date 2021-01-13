@@ -1,7 +1,7 @@
 package org.sadtech.bot.vcs.bitbucket.core.service.converter;
 
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.UserJson;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
+import org.sadtech.bot.gitlab.context.domain.entity.Person;
+import org.sadtech.bot.gitlab.sdk.domain.UserJson;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

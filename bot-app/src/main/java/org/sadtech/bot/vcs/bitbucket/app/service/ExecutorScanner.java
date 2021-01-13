@@ -3,11 +3,11 @@ package org.sadtech.bot.vcs.bitbucket.app.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.sadtech.bot.gitlab.core.config.properties.BitbucketProperty;
+import org.sadtech.bot.gitlab.sdk.domain.CommentJson;
 import org.sadtech.bot.vcs.bitbucket.app.service.executor.DataScan;
 import org.sadtech.bot.vcs.bitbucket.app.service.executor.Executor;
 import org.sadtech.bot.vcs.bitbucket.app.service.executor.Seeker;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
-import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

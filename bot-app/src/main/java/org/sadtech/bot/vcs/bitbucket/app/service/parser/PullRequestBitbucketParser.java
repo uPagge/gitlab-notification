@@ -1,11 +1,11 @@
 package org.sadtech.bot.vcs.bitbucket.app.service.parser;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sadtech.bot.gitlab.context.domain.entity.Person;
+import org.sadtech.bot.gitlab.context.service.PersonService;
+import org.sadtech.bot.gitlab.context.service.PullRequestsService;
+import org.sadtech.bot.gitlab.core.config.properties.BitbucketProperty;
 import org.sadtech.bot.vcs.bitbucket.core.AbstractPullRequestBitbucketParser;
-import org.sadtech.bot.vcs.core.config.properties.BitbucketProperty;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
-import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
-import org.sadtech.bot.vsc.bitbucketbot.context.service.PullRequestsService;
 import org.sadtech.bot.vsc.context.service.PullRequestParser;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;

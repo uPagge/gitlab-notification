@@ -2,7 +2,7 @@ package org.sadtech.bot.vcs.bitbucket.app.service.executor;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
+import org.sadtech.bot.gitlab.sdk.domain.CommentJson;
 
 @Getter
 @RequiredArgsConstructor

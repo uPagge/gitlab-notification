@@ -1,9 +1,9 @@
 package org.sadtech.bot.vcs.bitbucket.core.service.converter;
 
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.CommentJson;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.Severity;
-import org.sadtech.bot.vcs.core.utils.StringUtils;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.core.utils.StringUtils;
+import org.sadtech.bot.gitlab.sdk.domain.CommentJson;
+import org.sadtech.bot.gitlab.sdk.domain.Severity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

@@ -86,7 +86,6 @@
         <gitlab.sdk.version>3.0.1-RELEASE</gitlab.sdk.version>
         <gitlab.context.version>3.0.1-RELEASE</gitlab.context.version>
         <gitlab.data.version>3.0.1-RELEASE</gitlab.data.version>
-        <gitlab.rest.version>3.0.1-RELEASE</gitlab.rest.version>
         <gitlab.telegram.version>3.0.1-RELEASE</gitlab.telegram.version>
         <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
 
@@ -118,12 +117,12 @@
             <dependency>
                 <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>bot-core</artifactId>
-                <version>${sadtech.gitlab.core.version}</version>
+                <version>${gitlab.core.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.sadtech.bot.gitlab</groupId>
-                <artifactId>bot-core</artifactId>
+                <artifactId>gitlab-core</artifactId>
                 <version>${gitlab.core.version}</version>
             </dependency>
 

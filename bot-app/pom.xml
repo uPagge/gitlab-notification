@@ -47,7 +47,7 @@
 
         <dependency>
             <groupId>org.sadtech.bot.gitlab</groupId>
-            <artifactId>bot-core</artifactId>
+            <artifactId>gitlab-core</artifactId>
         </dependency>
 
         <dependency>

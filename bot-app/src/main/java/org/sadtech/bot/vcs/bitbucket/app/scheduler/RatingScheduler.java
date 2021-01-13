@@ -1,12 +1,12 @@
 package org.sadtech.bot.vcs.bitbucket.app.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.EntityType;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Person;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.notify.SimpleTextNotify;
-import org.sadtech.bot.vsc.bitbucketbot.context.service.NotifyService;
-import org.sadtech.bot.vsc.bitbucketbot.context.service.PersonService;
-import org.sadtech.bot.vsc.bitbucketbot.context.service.RatingService;
+import org.sadtech.bot.gitlab.context.domain.EntityType;
+import org.sadtech.bot.gitlab.context.domain.entity.Person;
+import org.sadtech.bot.gitlab.context.domain.notify.SimpleTextNotify;
+import org.sadtech.bot.gitlab.context.service.NotifyService;
+import org.sadtech.bot.gitlab.context.service.PersonService;
+import org.sadtech.bot.gitlab.context.service.RatingService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

@@ -1,15 +1,15 @@
 package org.sadtech.bot.vcs.bitbucket.core.service.converter;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.Outcome;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.Properties;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.PullRequestJson;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.PullRequestState;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.UserDecisionJson;
-import org.sadtech.bot.vcs.bitbucket.sdk.domain.UserPullRequestStatus;
-import org.sadtech.bot.vcs.core.utils.StringUtils;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.PullRequest;
-import org.sadtech.bot.vsc.bitbucketbot.context.domain.entity.Reviewer;
+import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.Reviewer;
+import org.sadtech.bot.gitlab.core.utils.StringUtils;
+import org.sadtech.bot.gitlab.sdk.domain.Outcome;
+import org.sadtech.bot.gitlab.sdk.domain.Properties;
+import org.sadtech.bot.gitlab.sdk.domain.PullRequestJson;
+import org.sadtech.bot.gitlab.sdk.domain.PullRequestState;
+import org.sadtech.bot.gitlab.sdk.domain.UserDecisionJson;
+import org.sadtech.bot.gitlab.sdk.domain.UserPullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.haiti.context.exception.ConvertException;
