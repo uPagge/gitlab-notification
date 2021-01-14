@@ -2,7 +2,6 @@ package org.sadtech.bot.gitlab.core.service.impl;
 
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.Answer;
-import org.sadtech.bot.gitlab.context.domain.PointType;
 import org.sadtech.bot.gitlab.context.domain.entity.Comment;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.AnswerCommentNotify;
@@ -12,13 +11,14 @@ import org.sadtech.bot.gitlab.context.repository.CommentRepository;
 import org.sadtech.bot.gitlab.context.service.CommentService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
+import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.sadtech.haiti.core.util.Assert;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Service
+//@Service
 public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Long> implements CommentService {
 
     private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
@@ -35,7 +35,6 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     private final CommentRepository commentRepository;
     private final NotifyService notifyService;
     private final TaskService taskService;
-    private final RatingService ratingService;
 
     private final ConversionService conversionService;
 
@@ -43,14 +42,12 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
             CommentRepository commentRepository,
             NotifyService notifyService,
             @Lazy TaskService taskService,
-            RatingService ratingService,
             ConversionService conversionService
     ) {
         super(commentRepository);
         this.commentRepository = commentRepository;
         this.notifyService = notifyService;
         this.taskService = taskService;
-        this.ratingService = ratingService;
         this.conversionService = conversionService;
     }
 
@@ -69,13 +66,8 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
         Assert.isNotNull(comment.getId(), "При создании объекта должен быть установлен идентификатор");
         comment.getAnswers().clear();
         final Comment newComment = commentRepository.save(comment);
-        ratingCreateComment(comment.getAuthor());
         notificationPersonal(comment);
         return newComment;
-    }
-
-    private void ratingCreateComment(String author) {
-        ratingService.addRating(author, PointType.COMMENT_ADD, PointType.COMMENT_ADD.getPoints());
     }
 
     private void notificationPersonal(@NonNull Comment comment) {
@@ -118,9 +110,7 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     public Comment convert(@NonNull Task task) {
         taskService.deleteById(task.getId());
         final Comment comment = conversionService.convert(task, Comment.class);
-        final Comment newComment = commentRepository.save(comment);
-        ratingService.addRating(newComment.getAuthor(), PointType.COMMENT_ADD, PointType.COMMENT_ADD.getPoints());
-        return newComment;
+        return commentRepository.save(comment);
     }
 
     @Override
@@ -156,10 +146,8 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
     }
 
     @Override
-    public void deleteById(@NonNull Long id) {
-        final Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Комментарий не найден"));
-        ratingService.addRating(comment.getAuthor(), PointType.COMMENT_DELETE, PointType.COMMENT_DELETE.getPoints());
-        super.deleteById(id);
+    public ExistsContainer<Comment, Long> existsById(@NonNull Collection<Long> collection) {
+        return null;
     }
+
 }

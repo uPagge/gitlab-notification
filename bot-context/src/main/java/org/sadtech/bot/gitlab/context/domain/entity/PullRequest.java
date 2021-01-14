@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
+import org.sadtech.haiti.context.domain.BasicEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -15,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +26,10 @@ import java.util.List;
  */
 @Getter
 @Setter
-@Entity
-@Table(name = "pull_request")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class PullRequest {
-
-    /**
-     * Идентификатор
-     */
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
+//@Entity
+//@Table(name = "pull_request")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+public class PullRequest extends BasicEntity<Long> {
 
     /**
      * Идентификатор на стороне битбакета
@@ -140,4 +130,17 @@ public class PullRequest {
         this.reviewers = reviewers;
     }
 
+    @Id
+    @Override
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

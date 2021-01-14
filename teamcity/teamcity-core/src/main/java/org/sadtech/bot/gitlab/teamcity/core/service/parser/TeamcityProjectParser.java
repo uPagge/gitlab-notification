@@ -5,21 +5,24 @@ import org.sadtech.bot.gitlab.teamcity.core.config.property.TeamcityProperty;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.TeamcityProject;
 import org.sadtech.bot.gitlab.teamcity.core.service.TeamcityProjectService;
 import org.sadtech.bot.gitlab.teamcity.sdk.TeamcityProjectJson;
-import org.sadtech.bot.gitlab.teamcity.sdk.sheet.TeamcityProjectJsonSheet;
+import org.sadtech.haiti.utils.network.HttpHeader;
+import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.sadtech.haiti.utils.network.HttpParse.ACCEPT;
+import static org.sadtech.haiti.utils.network.HttpParse.AUTHORIZATION;
+import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
 
 /**
  * // TODO: 21.09.2020 Добавить описание.
  *
  * @author upagge 21.09.2020
  */
-@Component
+//@Component
 @RequiredArgsConstructor
 public class TeamcityProjectParser {
 
@@ -30,13 +33,13 @@ public class TeamcityProjectParser {
     private final ConversionService conversionService;
 
     public void parseNewProject() {
-        final Optional<TeamcityProjectJsonSheet> optTeamcityProjectJsonSheet = Utils.urlToJson(
-                teamcityProperty.getProjectUrl(),
-                teamcityProperty.getToken(),
-                TeamcityProjectJsonSheet.class
-        );
-        if (optTeamcityProjectJsonSheet.isPresent()) {
-            final List<TeamcityProjectJson> teamcityProjectJsons = optTeamcityProjectJsonSheet.get().getContent();
+
+        final List<TeamcityProjectJson> teamcityProjectJsons = HttpParse.request(teamcityProperty.getProjectUrl())
+                .header(ACCEPT)
+                .header(HttpHeader.of(AUTHORIZATION, BEARER + teamcityProperty.getToken()))
+                .executeList(TeamcityProjectJson.class);
+
+        if (!teamcityProjectJsons.isEmpty()) {
             final Set<String> projectIds = teamcityProjectJsons.stream()
                     .map(TeamcityProjectJson::getId)
                     .collect(Collectors.toSet());

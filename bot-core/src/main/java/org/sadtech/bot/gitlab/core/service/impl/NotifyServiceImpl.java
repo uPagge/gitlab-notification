@@ -8,12 +8,11 @@ import org.sadtech.bot.gitlab.context.domain.notify.Notify;
 import org.sadtech.bot.gitlab.context.repository.NotifySettingRepository;
 import org.sadtech.bot.gitlab.context.service.MessageSendService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class NotifyServiceImpl implements NotifyService {
 

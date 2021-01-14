@@ -9,9 +9,8 @@ import org.sadtech.haiti.filter.Filter;
 import org.sadtech.haiti.filter.FilterQuery;
 import org.sadtech.haiti.filter.criteria.CriteriaFilter;
 import org.sadtech.haiti.filter.criteria.CriteriaQuery;
-import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public class PullRequestFilterService extends AbstractFilterService<PullRequest, PullRequestFilter> {
 
     public PullRequestFilterService(PullRequestsRepository filterOperation) {

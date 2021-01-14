@@ -3,7 +3,6 @@ package org.sadtech.bot.gitlab.telegram.unit;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.telegram.service.unit.TaskProcessing;
 import org.sadtech.bot.gitlab.telegram.utils.GeneratorKeyBoards;
-import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
 import org.sadtech.social.bot.domain.unit.AnswerText;
 import org.sadtech.social.core.domain.BoxAnswer;
@@ -11,39 +10,22 @@ import org.sadtech.social.core.domain.content.Mail;
 import org.sadtech.social.core.domain.content.Message;
 import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * TODO: Добавить описание класса.
  *
  * @author upagge [30.01.2020]
  */
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class UnitConfig {
 
-    private final PersonService personService;
-
-    @Bean
-    public AnswerCheck regCheck(
-            AnswerProcessing<Mail> noRegister,
-            AnswerText menu
-    ) {
-        return AnswerCheck.builder()
-                .check(
-                        message -> personService.existsByTelegram(message.getPersonId())
-                )
-                .unitFalse(noRegister)
-                .unitTrue(menu)
-                .build();
-    }
 
     @Bean
     public AnswerText menu(
             AnswerProcessing<Message> getTasks,
             AnswerText menuPullRequest,
-            AnswerText settings,
-            AnswerProcessing<Message> getTopRating
+            AnswerText settings
     ) {
         return AnswerText.builder()
                 .boxAnswer(
@@ -55,7 +37,6 @@ public class UnitConfig {
                 .nextUnit(getTasks)
                 .nextUnit(menuPullRequest)
                 .nextUnit(settings)
-                .nextUnit(getTopRating)
                 .build();
     }
 
@@ -84,17 +65,6 @@ public class UnitConfig {
         return AnswerProcessing.builder()
                 .processingData(taskProcessing)
                 .phrase("Мои задачи")
-                .build();
-    }
-
-    @Bean
-    AnswerProcessing<Message> getTopRating(
-            RatingTopProcessing ratingTopProcessing
-    ) {
-        return AnswerProcessing.builder()
-                .processingData(ratingTopProcessing)
-                .keyWord("таблица")
-                .keyWord("рейтинга")
                 .build();
     }
 

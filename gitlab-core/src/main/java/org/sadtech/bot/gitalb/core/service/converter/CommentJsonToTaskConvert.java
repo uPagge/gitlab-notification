@@ -1,4 +1,4 @@
-package org.sadtech.bot.vcs.bitbucket.core.service.converter;
+package org.sadtech.bot.gitalb.core.service.converter;
 
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;

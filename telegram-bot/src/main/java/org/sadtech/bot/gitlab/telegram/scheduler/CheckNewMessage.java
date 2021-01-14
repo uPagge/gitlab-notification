@@ -3,9 +3,8 @@ package org.sadtech.bot.gitlab.telegram.scheduler;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.godfather.telegram.autoresponder.MessageAutoresponderTelegram;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class CheckNewMessage {
 

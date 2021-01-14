@@ -13,19 +13,22 @@ import org.sadtech.bot.gitlab.teamcity.core.domain.entity.TeamcityProject;
 import org.sadtech.bot.gitlab.teamcity.core.service.BuildShortService;
 import org.sadtech.bot.gitlab.teamcity.core.service.TeamcityProjectService;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildShortJson;
-import org.sadtech.bot.gitlab.teamcity.sdk.sheet.BuildShortJsonSheet;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
+import org.sadtech.haiti.utils.network.HttpHeader;
+import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+import static org.sadtech.haiti.utils.network.HttpParse.ACCEPT;
+import static org.sadtech.haiti.utils.network.HttpParse.AUTHORIZATION;
+import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
+
+//@Service
 @RequiredArgsConstructor
 public class BuildShortParser {
 
@@ -42,16 +45,11 @@ public class BuildShortParser {
     }
 
     private void parse(TeamcityProject project) {
-        final Optional<BuildShortJsonSheet> buildShortJsonSheet = Utils.urlToJson(
-                MessageFormat.format(
-                        teamcityProperty.getBuildUrl(),
-                        project.getId()
-                ),
-                teamcityProperty.getToken(),
-                BuildShortJsonSheet.class
-        );
-        if (buildShortJsonSheet.isPresent()) {
-            final List<BuildShortJson> buildShortJsons = buildShortJsonSheet.get().getContent();
+        final List<BuildShortJson> buildShortJsons = HttpParse.request(MessageFormat.format(teamcityProperty.getBuildUrl(), project.getId()))
+                .header(ACCEPT)
+                .header(HttpHeader.of(AUTHORIZATION, BEARER + teamcityProperty.getToken()))
+                .executeList(BuildShortJson.class);
+        if (!buildShortJsons.isEmpty()) {
             final Set<Long> buildIds = buildShortJsons.stream()
                     .map(BuildShortJson::getId)
                     .collect(Collectors.toSet());

@@ -4,9 +4,10 @@ import lombok.NonNull;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.TeamcitySetting;
 import org.sadtech.bot.gitlab.teamcity.core.repository.TeamcitySettingRepository;
 import org.sadtech.bot.gitlab.teamcity.core.service.TeamcitySettingService;
+import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
-import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author upagge 21.09.2020
  */
-@Service
+//@Service
 public class TeamcitySettingServiceImpl extends AbstractSimpleManagerService<TeamcitySetting, Long> implements TeamcitySettingService {
 
     private final TeamcitySettingRepository teamcitySettingRepository;
@@ -36,6 +37,11 @@ public class TeamcitySettingServiceImpl extends AbstractSimpleManagerService<Tea
 
     @Override
     public TeamcitySetting update(@NonNull TeamcitySetting entity) {
+        return null;
+    }
+
+    @Override
+    public ExistsContainer<TeamcitySetting, Long> existsById(@NonNull Collection<Long> collection) {
         return null;
     }
 

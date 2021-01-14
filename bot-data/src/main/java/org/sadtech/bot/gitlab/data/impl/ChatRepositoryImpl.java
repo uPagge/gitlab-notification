@@ -5,7 +5,6 @@ import org.sadtech.bot.gitlab.context.domain.entity.Chat;
 import org.sadtech.bot.gitlab.context.repository.ChatRepository;
 import org.sadtech.bot.gitlab.data.jpa.ChatJpaRepository;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
@@ -14,7 +13,7 @@ import java.util.Set;
  *
  * @author upagge 11.10.2020
  */
-@Repository
+//@Repository
 public class ChatRepositoryImpl extends AbstractSimpleManagerRepository<Chat, String> implements ChatRepository {
 
     private final ChatJpaRepository jpaRepository;

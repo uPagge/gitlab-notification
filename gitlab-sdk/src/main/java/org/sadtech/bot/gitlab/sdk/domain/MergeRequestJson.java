@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @author upagge [30.01.2020]
  */
 @Data
-public class PullRequestJson {
+public class MergeRequestJson {
 
     private Long id;
 

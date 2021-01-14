@@ -42,4 +42,6 @@ public class GitlabProperty {
      */
     private String urlPullRequest;
 
+    private String urlProject;
+
 }

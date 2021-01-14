@@ -2,17 +2,14 @@ package org.sadtech.bot.gitlab.app.service.parser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
 import org.sadtech.bot.gitlab.context.service.PullRequestsService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
-import org.sadtech.bot.gitlab.core.utils.Pair;
-import org.sadtech.bot.gitlab.sdk.domain.PullRequestJson;
+import org.sadtech.bot.gitlab.sdk.domain.MergeRequestJson;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.service.PullRequestParser;
 import org.sadtech.haiti.utils.network.HttpHeader;
 import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
@@ -24,7 +21,7 @@ import static org.sadtech.haiti.utils.network.HttpParse.AUTHORIZATION;
 import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
 
 @Slf4j
-@Service
+//@Service
 @RequiredArgsConstructor
 public class PullRequestBitbucketParser implements PullRequestParser {
 
@@ -41,23 +38,22 @@ public class PullRequestBitbucketParser implements PullRequestParser {
 
     @Override
     public void parsingNewPullRequest() {
-
-        final List<PullRequestJson> pullRequestJsons = HttpParse.request(gitlabProperty.getUrlPullRequestOpen())
+        final List<MergeRequestJson> mergeRequestJsons = HttpParse.request(gitlabProperty.getUrlPullRequestOpen())
                 .header(HttpHeader.of(AUTHORIZATION, BEARER + gitlabProperty.getToken()))
                 .header(ACCEPT)
-                .executeList(PullRequestJson.class);
+                .executeList(MergeRequestJson.class);
 
-        while (pullRequestJsons != null && !pullRequestJsons.isEmpty()) {
-            final List<PullRequest> newPullRequest = pullRequestJsons.stream()
-                    .collect(Collectors.toMap(pullRequestJson -> new Pair<>(pullRequestJson.getId(), pullRequestJson.getFromRef().getRepository().getId()), pullRequestJson -> pullRequestJson))
-                    .values()
-                    .stream()
+//        while (mergeRequestJsons != null && !mergeRequestJsons.isEmpty()) {
+//            final List<PullRequest> newPullRequest = mergeRequestJsons.stream()
+//                    .collect(Collectors.toMap(mergeRequestJson -> new Pair<>(mergeRequestJson.getId(), mergeRequestJson.getFromRef().getRepository().getId()), mergeRequestJson -> mergeRequestJson))
+//                    .values()
+//                    .stream()
 //                    .filter(pullRequestJson -> !pullRequestsService.exists(bitbucketIdAndPullRequestId(pullRequestJson)))
-                    .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
-                    .collect(Collectors.toList());
-
-            pullRequestsService.createAll(newPullRequest);
-        }
+//                    .map(pullRequestJson -> conversionService.convert(pullRequestJson, PullRequest.class))
+//                    .collect(Collectors.toList());
+//
+//            pullRequestsService.createAll(newPullRequest);
+//        }
     }
 
 //    private Set<Long> getExistsPullRequestIds(String bitbucketUrl) {

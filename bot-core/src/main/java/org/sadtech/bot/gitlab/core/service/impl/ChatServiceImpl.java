@@ -4,7 +4,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.repository.ChatRepository;
 import org.sadtech.bot.gitlab.context.service.ChatService;
-import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
@@ -13,7 +12,7 @@ import java.util.Set;
  *
  * @author upagge 11.10.2020
  */
-@Service
+//@Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 

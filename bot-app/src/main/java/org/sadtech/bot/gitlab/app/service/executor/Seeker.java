@@ -14,14 +14,15 @@ public class Seeker implements Callable<Optional<CommentJson>> {
 
     @Override
     public Optional<CommentJson> call() {
-        return Utils.urlToJson(dataScan.getUrlComment(), token, CommentJson.class)
-                .map(
-                        commentJson -> {
-                            commentJson.setCustomPullRequestId(dataScan.getPullRequestId());
-                            commentJson.setCustomCommentApiUrl(dataScan.getUrlComment());
-                            return commentJson;
-                        }
-                );
+//        return Utils.urlToJson(dataScan.getUrlComment(), token, CommentJson.class)
+//                .map(
+//                        commentJson -> {
+//                            commentJson.setCustomPullRequestId(dataScan.getPullRequestId());
+//                            commentJson.setCustomCommentApiUrl(dataScan.getUrlComment());
+//                            return commentJson;
+//                        }
+//                );
+        return Optional.empty();
     }
 
 }

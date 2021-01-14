@@ -89,8 +89,8 @@
         <gitlab.telegram.version>3.0.1-RELEASE</gitlab.telegram.version>
         <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
 
-        <haiti.context.version>0.0.1-RELEASE</haiti.context.version>
-        <haiti.database.version>0.0.2-RELEASE</haiti.database.version>
+        <haiti.context.version>0.0.2-SNAPSHOT</haiti.context.version>
+        <haiti.database.version>0.0.3-SNAPSHOT</haiti.database.version>
         <haiti.filter.criteria.version>0.0.2-RELEASE</haiti.filter.criteria.version>
         <sadtech.bot.telegram.core.version>0.0.1-RELEASE</sadtech.bot.telegram.core.version>
         <sadtech.bot.vsc.context.version>0.0.1-RELEASE</sadtech.bot.vsc.context.version>

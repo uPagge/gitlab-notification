@@ -8,14 +8,13 @@ import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;
 import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * // TODO: 02.10.2020 Добавить описание.
  *
  * @author upagge 02.10.2020
  */
-@Configuration
+//@Configuration
 public class PullRequestUnitConfig {
 
     @Bean

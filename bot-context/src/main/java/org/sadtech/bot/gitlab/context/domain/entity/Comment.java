@@ -3,32 +3,23 @@ package org.sadtech.bot.gitlab.context.domain.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.sadtech.haiti.context.domain.BasicEntity;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "comment")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Comment {
-
-    /**
-     * Идентификатор
-     */
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    private Long id;
+//@Entity
+//@Table(name = "comment")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+public class Comment extends BasicEntity<Long> {
 
     @Column(name = "url_api")
     private String urlApi;
@@ -62,4 +53,16 @@ public class Comment {
     @Column(name = "child_id")
     private Set<Long> answers;
 
+    @Override
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

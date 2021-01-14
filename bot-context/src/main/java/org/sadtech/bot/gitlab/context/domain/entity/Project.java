@@ -1,4 +1,4 @@
-package org.sadtech.bot.gitlab.teamcity.core.domain.entity;
+package org.sadtech.bot.gitlab.context.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,18 +9,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 /**
- * // TODO: 21.09.2020 Добавить описание.
+ * // TODO: 14.01.2021 Добавить описание.
  *
- * @author upagge 21.09.2020
+ * @author upagge 14.01.2021
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "teamcity_project")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class TeamcityProject extends BasicEntity<String> {
+@Table(name = "project")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+public class Project extends BasicEntity<Long> {
 
     @Column(name = "name")
     private String name;
@@ -28,19 +29,21 @@ public class TeamcityProject extends BasicEntity<String> {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "url")
-    private String url;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
-    @Override
+    @Column(name = "creator_id")
+    private Integer creatorId;
+
     @Id
     @Column(name = "id")
-    @EqualsAndHashCode.Include
-    public String getId() {
+    @Override
+    public Long getId() {
         return super.getId();
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(Long id) {
         super.setId(id);
     }
 }

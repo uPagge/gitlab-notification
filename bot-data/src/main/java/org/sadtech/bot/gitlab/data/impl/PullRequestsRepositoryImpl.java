@@ -10,13 +10,12 @@ import org.sadtech.bot.gitlab.data.jpa.PullRequestsRepositoryJpa;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.haiti.database.repository.manager.FilterManagerRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Repository
+//@Repository
 public class PullRequestsRepositoryImpl extends FilterManagerRepository<PullRequest, Long> implements PullRequestsRepository {
 
     private final PullRequestsRepositoryJpa repositoryJpa;

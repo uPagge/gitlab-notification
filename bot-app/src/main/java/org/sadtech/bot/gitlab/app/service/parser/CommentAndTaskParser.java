@@ -1,7 +1,8 @@
-package org.sadtech.bot.gitlab.app.service;
+package org.sadtech.bot.gitlab.app.service.parser;
 
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.app.config.property.CommentSchedulerProperty;
+import org.sadtech.bot.gitlab.app.service.ExecutorScanner;
 import org.sadtech.bot.gitlab.app.service.executor.DataScan;
 import org.sadtech.bot.gitlab.context.domain.entity.Comment;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
@@ -18,20 +19,17 @@ import org.sadtech.bot.gitlab.sdk.domain.Severity;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * <p>Поиск новых комментариев и задач.</p>
  * <p>К несчастью, у битбакета не очень удобный API, и у них таска это то же самое что и комментарий, только с флагом</p>
  */
-@Component
+//@Component
 public class CommentAndTaskParser {
 
     private final CommentService commentService;
@@ -164,51 +162,51 @@ public class CommentAndTaskParser {
     }
 
     public void scanOldComment() {
-        final List<Comment> comments = commentService.getAllBetweenDate(
-                LocalDateTime.now().minusDays(20), LocalDateTime.now()
-        );
-        for (Comment oldComment : comments) {
-            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
-                    oldComment.getUrlApi(),
-                    gitlabProperty.getToken(),
-                    CommentJson.class
-            );
-            if (optCommentJson.isPresent()) {
-                final CommentJson json = optCommentJson.get();
-                if (Severity.BLOCKER.equals(json.getSeverity())) {
-                    taskService.convert(oldComment);
-                } else {
-                    final Comment newComment = conversionService.convert(json, Comment.class);
-                    commentService.update(newComment);
-                }
-            } else {
-                commentService.deleteById(oldComment.getId());
-            }
-        }
+//        final List<Comment> comments = commentService.getAllBetweenDate(
+//                LocalDateTime.now().minusDays(20), LocalDateTime.now()
+//        );
+//        for (Comment oldComment : comments) {
+//            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
+//                    oldComment.getUrlApi(),
+//                    gitlabProperty.getToken(),
+//                    CommentJson.class
+//            );
+//            if (optCommentJson.isPresent()) {
+//                final CommentJson json = optCommentJson.get();
+//                if (Severity.BLOCKER.equals(json.getSeverity())) {
+//                    taskService.convert(oldComment);
+//                } else {
+//                    final Comment newComment = conversionService.convert(json, Comment.class);
+//                    commentService.update(newComment);
+//                }
+//            } else {
+//                commentService.deleteById(oldComment.getId());
+//            }
+//        }
     }
 
     public void scanOldTask() {
-        final List<Task> tasks = taskService.getAllBetweenDate(
-                LocalDateTime.now().minusDays(20), LocalDateTime.now()
-        );
-        for (Task oldTask : tasks) {
-            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
-                    oldTask.getUrlApi(),
-                    gitlabProperty.getToken(),
-                    CommentJson.class
-            );
-            if (optCommentJson.isPresent()) {
-                final CommentJson json = optCommentJson.get();
-                if (Severity.NORMAL.equals(json.getSeverity())) {
-                    commentService.convert(oldTask);
-                } else {
-                    final Task newTask = conversionService.convert(json, Task.class);
-                    taskService.update(newTask);
-                }
-            } else {
-                taskService.deleteById(oldTask.getId());
-            }
-        }
+//        final List<Task> tasks = taskService.getAllBetweenDate(
+//                LocalDateTime.now().minusDays(20), LocalDateTime.now()
+//        );
+//        for (Task oldTask : tasks) {
+//            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
+//                    oldTask.getUrlApi(),
+//                    gitlabProperty.getToken(),
+//                    CommentJson.class
+//            );
+//            if (optCommentJson.isPresent()) {
+//                final CommentJson json = optCommentJson.get();
+//                if (Severity.NORMAL.equals(json.getSeverity())) {
+//                    commentService.convert(oldTask);
+//                } else {
+//                    final Task newTask = conversionService.convert(json, Task.class);
+//                    taskService.update(newTask);
+//                }
+//            } else {
+//                taskService.deleteById(oldTask.getId());
+//            }
+//        }
     }
 
 }

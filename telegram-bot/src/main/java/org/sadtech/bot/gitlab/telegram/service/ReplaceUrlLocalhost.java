@@ -1,14 +1,13 @@
 package org.sadtech.bot.gitlab.telegram.service;
 
 import org.sadtech.bot.godfather.telegram.service.SendPreProcessing;
-import org.springframework.stereotype.Component;
 
 /**
  * // TODO: 18.09.2020 Добавить описание.
  *
  * @author upagge 18.09.2020
  */
-@Component
+//@Component
 public class ReplaceUrlLocalhost implements SendPreProcessing {
 
     @Override

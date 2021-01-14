@@ -4,35 +4,26 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
+import org.sadtech.haiti.context.domain.BasicEntity;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+//@Entity
 @Getter
 @Setter
-@Table(name = "task")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Task {
-
-    /**
-     * Идентификатор
-     */
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    private Long id;
+//@Table(name = "task")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+public class Task extends BasicEntity<Long> {
 
     /**
      * Описание задачи
@@ -73,4 +64,16 @@ public class Task {
     @Column(name = "comment_id")
     private Set<Long> answers = new HashSet<>();
 
+    @Override
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

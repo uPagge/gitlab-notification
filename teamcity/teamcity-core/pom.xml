@@ -33,6 +33,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.sadtech.haiti</groupId>
+            <artifactId>haiti-utils</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

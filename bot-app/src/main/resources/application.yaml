@@ -32,11 +32,11 @@ gitlab-bot:
     token: ${GITLAB_PERSONAL_TOKEN}
     username: ${GITLAB_USERNAME}
     full-name: ${GITLAB_FULLNAME}
-    url-pull-request-open: ${GITLAB_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
-    url-pull-request-close: ${GITLAB_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
-    url-pull-request-comment: ${GITLAB_URL}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
-    url-pull-request: ${GITLAB_URL}/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
-    url-users: ${GITLAB_URL}/rest/api/1.0/admin/users
+    url-project: ${GITLAB_URL}/api/v4/projects
+    url-pull-request-open: ${GITLAB_URL}/api/v4/projects/18/merge_requests?state=opened
+    url-pull-request-close: ${GITLAB_URL}
+    url-pull-request-comment: ${GITLAB_URL}
+    url-pull-request: ${GITLAB_URL}
   teamcity:
     token: ${TEAMCITY_ADMIN_TOKEN}
     project-url: ${TEAMCITY_URL}/app/rest/projects

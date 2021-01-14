@@ -5,7 +5,6 @@ import org.sadtech.bot.gitlab.context.domain.entity.Comment;
 import org.sadtech.bot.gitlab.context.repository.CommentRepository;
 import org.sadtech.bot.gitlab.data.jpa.CommentRepositoryJpa;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Set;
  *
  * @author upagge 08.09.2020
  */
-@Repository
+//@Repository
 public class CommentRepositoryImpl extends AbstractSimpleManagerRepository<Comment, Long> implements CommentRepository {
 
     private final CommentRepositoryJpa repositoryJpa;

@@ -3,7 +3,6 @@ package org.sadtech.bot.gitlab.telegram.unit;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.gitlab.context.domain.entity.NotifySetting;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
@@ -12,9 +11,7 @@ import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;
 import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -23,11 +20,10 @@ import java.util.stream.Collectors;
  *
  * @author upagge 20.09.2020
  */
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class NotifySettingUnit {
 
-    private final PersonService personService;
     private final NotifyService notifyService;
 
     @Bean
@@ -57,15 +53,16 @@ public class NotifySettingUnit {
         return AnswerProcessing.builder()
                 .processingData(
                         message -> {
-                            final Person person = personService.getByTelegramId(message.getPersonId())
-                                    .orElseThrow(() -> new NotFoundException("Не найдено"));
-                            final NotifySetting notifySetting = notifyService.getSetting(person.getLogin())
-                                    .orElseThrow(() -> new NotFoundException("Не найдено"));
-                            notifySetting.setStartReceiving(
-                                    LocalDateTime.now().plusMinutes(DisableMenu.from(message.getText()).getMinutes())
-                            );
-                            notifyService.saveSettings(notifySetting);
-                            return BoxAnswer.of("Настройки сохранены");
+//                            final Person person = personService.getByTelegramId(message.getPersonId())
+//                                    .orElseThrow(() -> new NotFoundException("Не найдено"));
+//                            final NotifySetting notifySetting = notifyService.getSetting(person.getLogin())
+//                                    .orElseThrow(() -> new NotFoundException("Не найдено"));
+//                            notifySetting.setStartReceiving(
+//                                    LocalDateTime.now().plusMinutes(DisableMenu.from(message.getText()).getMinutes())
+//                            );
+//                            notifyService.saveSettings(notifySetting);
+//                            return BoxAnswer.of("Настройки сохранены");
+                            return null;
                         }
                 )
                 .build();

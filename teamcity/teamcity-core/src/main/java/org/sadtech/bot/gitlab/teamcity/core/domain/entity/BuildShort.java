@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildState;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildStatus;
+import org.sadtech.haiti.context.domain.BasicEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,12 +24,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teamcity_build")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class BuildShort {
-
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    private Long id;
+public class BuildShort extends BasicEntity<Long> {
 
     @Column(name = "project_id")
     private String projectId;
@@ -56,4 +52,16 @@ public class BuildShort {
     @Column(name = "url")
     private String url;
 
+    @Override
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

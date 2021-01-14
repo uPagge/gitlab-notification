@@ -2,7 +2,6 @@ package org.sadtech.bot.gitlab.core.service.impl;
 
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.IdAndStatusPr;
-import org.sadtech.bot.gitlab.context.domain.PointType;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequestMini;
 import org.sadtech.bot.gitlab.context.domain.entity.Reviewer;
@@ -21,6 +20,7 @@ import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PullRequestsService;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
+import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
@@ -29,10 +29,10 @@ import org.sadtech.haiti.filter.FilterService;
 import org.sadtech.haiti.filter.criteria.CriteriaFilter;
 import org.sadtech.haiti.filter.criteria.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,29 +40,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+//@Service
 public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRequest, Long> implements PullRequestsService {
 
     protected final NotifyService notifyService;
     protected final PullRequestsRepository pullRequestsRepository;
-    protected final RatingService ratingService;
     protected final FilterService<PullRequest, PullRequestFilter> filterService;
 
-    protected final RatingProperty ratingProperty;
 
     protected PullRequestsServiceImpl(
             PullRequestsRepository pullRequestsRepository,
             NotifyService notifyService,
-            RatingService ratingService,
-            @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService,
-            RatingProperty ratingProperty
-    ) {
+            @Qualifier("pullRequestFilterService") FilterService<PullRequest, PullRequestFilter> pullRequestsFilterService
+            ) {
         super(pullRequestsRepository);
         this.notifyService = notifyService;
         this.pullRequestsRepository = pullRequestsRepository;
-        this.ratingService = ratingService;
         this.filterService = pullRequestsFilterService;
-        this.ratingProperty = ratingProperty;
     }
 
     @Override
@@ -74,8 +68,6 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         );
 
         final PullRequest newPullRequest = pullRequestsRepository.save(pullRequest);
-
-        addRatingCreate(newPullRequest.getAuthorLogin());
 
         notifyService.send(
                 NewPrNotify.builder()
@@ -94,12 +86,6 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         );
 
         return newPullRequest;
-    }
-
-    protected void addRatingCreate(@NonNull String login) {
-        if (ratingProperty.isEnabled()) {
-            ratingService.addRating(login, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
-        }
     }
 
     @Override
@@ -190,7 +176,6 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
         final PullRequestStatus oldStatus = oldPullRequest.getStatus();
         final PullRequestStatus newStatus = newPullRequest.getStatus();
         if (!oldStatus.equals(newStatus)) {
-            ratingStatus(oldPullRequest, newPullRequest);
             notifyService.send(
                     StatusPrNotify.builder()
                             .name(newPullRequest.getTitle())
@@ -203,23 +188,6 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                             .build()
             );
             oldPullRequest.setStatus(newStatus);
-        }
-    }
-
-    protected void ratingStatus(PullRequest oldPullRequest, PullRequest newPullRequest) {
-        if (ratingProperty.isEnabled()) {
-            final String authorLogin = oldPullRequest.getAuthorLogin();
-            switch (newPullRequest.getStatus()) {
-                case OPEN:
-                    ratingService.addRating(authorLogin, PointType.CREATE_PULL_REQUEST, PointType.CREATE_PULL_REQUEST.getPoints());
-                    break;
-                case MERGED:
-                    // TODO: 01.10.2020 Нужно продумать как расчитывать баллы при мерже.
-                    break;
-                case DECLINED:
-                    ratingService.addRating(authorLogin, PointType.DECLINE_PULL_REQUEST, PointType.DECLINE_PULL_REQUEST.getPoints());
-                    break;
-            }
         }
     }
 
@@ -352,6 +320,11 @@ public class PullRequestsServiceImpl extends AbstractSimpleManagerService<PullRe
                                 .matchPhrase("hyita", pullRequest.getRepositoryId())
                 )
         ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
+    }
+
+    @Override
+    public ExistsContainer<PullRequest, Long> existsById(@NonNull Collection<Long> collection) {
+        return null;
     }
 
 }

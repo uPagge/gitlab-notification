@@ -9,9 +9,10 @@ import org.sadtech.bot.gitlab.teamcity.core.repository.BuildShortRepository;
 import org.sadtech.bot.gitlab.teamcity.core.service.BuildShortService;
 import org.sadtech.bot.gitlab.teamcity.core.service.TeamcitySettingService;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildStatus;
+import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
-import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
  *
  * @author upagge 21.09.2020
  */
-@Service
+//@Service
 public class BuildShortServiceImpl extends AbstractSimpleManagerService<BuildShort, Long> implements BuildShortService {
 
     private final TeamcitySettingService teamcitySettingService;
@@ -74,6 +75,11 @@ public class BuildShortServiceImpl extends AbstractSimpleManagerService<BuildSho
     @Override
     public BuildShort update(@NonNull BuildShort buildShort) {
         return buildShortRepository.save(buildShort);
+    }
+
+    @Override
+    public ExistsContainer<BuildShort, Long> existsById(@NonNull Collection<Long> collection) {
+        return null;
     }
 
 }

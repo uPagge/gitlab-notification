@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.sadtech.bot.gitlab.context.domain.EntityType;
+import org.sadtech.haiti.context.domain.BasicEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,13 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teamcity_setting")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class TeamcitySetting {
-
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class TeamcitySetting extends BasicEntity<Long> {
 
     @Column(name = "recipient_id")
     private String recipientId;
@@ -51,4 +46,17 @@ public class TeamcitySetting {
     @Column(name = "failure")
     private boolean failure;
 
+    @Override
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }
