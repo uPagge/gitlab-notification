@@ -2,8 +2,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 
 import java.text.MessageFormat;
 import java.util.Set;
@@ -11,8 +11,8 @@ import java.util.Set;
 @Getter
 public class StatusPrNotify extends PrNotify {
 
-    private final PullRequestStatus oldStatus;
-    private final PullRequestStatus newStatus;
+    private final MergeRequestState oldStatus;
+    private final MergeRequestState newStatus;
 
     @Builder
     private StatusPrNotify(
@@ -21,8 +21,8 @@ public class StatusPrNotify extends PrNotify {
             String url,
             String projectKey,
             String repositorySlug,
-            PullRequestStatus oldStatus,
-            PullRequestStatus newStatus
+            MergeRequestState oldStatus,
+            MergeRequestState newStatus
     ) {
         super(recipients, projectKey, repositorySlug, name, url);
         this.oldStatus = oldStatus;

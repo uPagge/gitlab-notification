@@ -1,7 +1,7 @@
 package org.sadtech.bot.gitlab.telegram.service.unit.pullrequest;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.gitlab.context.service.PullRequestsService;
+import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.content.Message;
@@ -15,7 +15,7 @@ import org.sadtech.social.core.domain.content.Message;
 @RequiredArgsConstructor
 public class PullRequestNeedWorkProcessing implements ProcessingData<Message> {
 
-    private final PullRequestsService pullRequestsService;
+    private final MergeRequestsService mergeRequestsService;
 
     @Override
     public BoxAnswer processing(Message message) {

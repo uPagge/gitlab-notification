@@ -2,11 +2,10 @@ package org.sadtech.bot.gitlab.app.service.parser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.sadtech.bot.gitlab.context.service.PullRequestsService;
+import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
+import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.sdk.domain.MergeRequestJson;
-import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
-import org.sadtech.bot.vsc.context.service.PullRequestParser;
 import org.sadtech.haiti.utils.network.HttpHeader;
 import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.core.convert.ConversionService;
@@ -23,20 +22,18 @@ import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
 @Slf4j
 //@Service
 @RequiredArgsConstructor
-public class PullRequestBitbucketParser implements PullRequestParser {
+public class MergeRequestParserImpl {
 
-    private static final Set<PullRequestStatus> OLD_STATUSES = Stream.of(PullRequestStatus.MERGED, PullRequestStatus.OPEN, PullRequestStatus.DECLINED).collect(Collectors.toSet());
+    private static final Set<MergeRequestState> OLD_STATUSES = Stream.of(MergeRequestState.MERGED, MergeRequestState.OPENED, MergeRequestState.CLOSED).collect(Collectors.toSet());
 
     private final GitlabProperty gitlabProperty;
-    private final PullRequestsService pullRequestsService;
+    private final MergeRequestsService mergeRequestsService;
     private final ConversionService conversionService;
 
-    @Override
     public void parsingOldPullRequest() {
 //        processingOldPullRequests(gitlabProperty.getUrlPullRequestOpen(), gitlabProperty.getUrlPullRequestClose());
     }
 
-    @Override
     public void parsingNewPullRequest() {
         final List<MergeRequestJson> mergeRequestJsons = HttpParse.request(gitlabProperty.getUrlPullRequestOpen())
                 .header(HttpHeader.of(AUTHORIZATION, BEARER + gitlabProperty.getToken()))

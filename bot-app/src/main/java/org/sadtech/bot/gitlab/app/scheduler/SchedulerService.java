@@ -23,4 +23,9 @@ public class SchedulerService {
         projectParser.parseNewProject();
     }
 
+    @Scheduled(cron = "0 */1 * * * *")
+    public void newMergeRequest() {
+
+    }
+
 }

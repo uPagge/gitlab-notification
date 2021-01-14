@@ -5,12 +5,12 @@ import org.sadtech.bot.gitlab.app.config.property.CommentSchedulerProperty;
 import org.sadtech.bot.gitlab.app.service.ExecutorScanner;
 import org.sadtech.bot.gitlab.app.service.executor.DataScan;
 import org.sadtech.bot.gitlab.context.domain.entity.Comment;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequestMini;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.service.CommentService;
-import org.sadtech.bot.gitlab.context.service.PullRequestsService;
+import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.InitProperty;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class CommentAndTaskParser {
 
     private final CommentService commentService;
-    private final PullRequestsService pullRequestsService;
+    private final MergeRequestsService mergeRequestsService;
     private final ExecutorScanner executorScanner;
     private final TaskService taskService;
     private final ConversionService conversionService;
@@ -46,7 +46,7 @@ public class CommentAndTaskParser {
 
     public CommentAndTaskParser(
             CommentService commentService,
-            PullRequestsService pullRequestsService,
+            MergeRequestsService mergeRequestsService,
             ExecutorScanner executorScanner,
             TaskService taskService,
             ConversionService conversionService,
@@ -55,7 +55,7 @@ public class CommentAndTaskParser {
             InitProperty initProperty
     ) {
         this.commentService = commentService;
-        this.pullRequestsService = pullRequestsService;
+        this.mergeRequestsService = mergeRequestsService;
         this.executorScanner = executorScanner;
         this.taskService = taskService;
         this.conversionService = conversionService;
@@ -97,7 +97,7 @@ public class CommentAndTaskParser {
         List<DataScan> commentUrls = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             int page = 0;
-            Sheet<PullRequest> pullRequestPage = pullRequestsService.getAll(
+            Sheet<MergeRequest> pullRequestPage = mergeRequestsService.getAll(
                     PaginationImpl.of(page, commentSchedulerProperty.getCommentCount())
             );
             while (pullRequestPage.hasContent()) {
@@ -110,7 +110,7 @@ public class CommentAndTaskParser {
                                 )
                         )
                         .collect(Collectors.toList()));
-                pullRequestPage = pullRequestsService.getAll(
+                pullRequestPage = mergeRequestsService.getAll(
                         PaginationImpl.of(++page, commentSchedulerProperty.getCommentCount())
                 );
             }
@@ -125,7 +125,7 @@ public class CommentAndTaskParser {
                 .map(resultScan -> conversionService.convert(resultScan, Comment.class))
                 .peek(
                         comment -> {
-                            final PullRequestMini pullRequestMini = pullRequestsService.getMiniInfo(comment.getPullRequestId())
+                            final PullRequestMini pullRequestMini = mergeRequestsService.getMiniInfo(comment.getPullRequestId())
                                     .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
                             comment.setUrl(generateUrl(comment.getId(), pullRequestMini.getUrl()));
                             comment.setResponsible(pullRequestMini.getAuthorLogin());
@@ -140,7 +140,7 @@ public class CommentAndTaskParser {
                 .map(resultScan -> conversionService.convert(resultScan, Task.class))
                 .peek(
                         task -> {
-                            final PullRequestMini pullRequestMini = pullRequestsService.getMiniInfo(task.getPullRequestId())
+                            final PullRequestMini pullRequestMini = mergeRequestsService.getMiniInfo(task.getPullRequestId())
                                     .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
                             task.setResponsible(pullRequestMini.getAuthorLogin());
                             task.setUrl(generateUrl(task.getId(), pullRequestMini.getUrl()));
@@ -153,12 +153,13 @@ public class CommentAndTaskParser {
         return MessageFormat.format("{0}/overview?commentId={1}", pullRequestUrl, Long.toString(id));
     }
 
-    private String getCommentUrl(long commentId, PullRequest pullRequest) {
-        return gitlabProperty.getUrlPullRequestComment()
-                .replace("{projectKey}", pullRequest.getProjectKey())
-                .replace("{repositorySlug}", pullRequest.getRepositorySlug())
-                .replace("{pullRequestId}", pullRequest.getBitbucketId().toString())
-                .replace("{commentId}", String.valueOf(commentId));
+    private String getCommentUrl(long commentId, MergeRequest mergeRequest) {
+//        return gitlabProperty.getUrlPullRequestComment()
+//                .replace("{projectKey}", mergeRequest.getProjectKey())
+//                .replace("{repositorySlug}", mergeRequest.getRepositorySlug())
+//                .replace("{pullRequestId}", mergeRequest.getBitbucketId().toString())
+//                .replace("{commentId}", String.valueOf(commentId));
+        return null;
     }
 
     public void scanOldComment() {

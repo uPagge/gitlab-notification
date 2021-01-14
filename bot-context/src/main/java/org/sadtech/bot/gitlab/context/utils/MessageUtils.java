@@ -3,7 +3,7 @@ package org.sadtech.bot.gitlab.context.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +19,10 @@ public final class MessageUtils {
 
     private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
 
-    public static Optional<String> pullRequestForReview(@NonNull List<PullRequest> pullRequestsReviews) {
-        if (!pullRequestsReviews.isEmpty()) {
+    public static Optional<String> pullRequestForReview(@NonNull List<MergeRequest> mergeRequestsReviews) {
+        if (!mergeRequestsReviews.isEmpty()) {
             return Optional.of(
-                    pullRequestsReviews.stream()
+                    mergeRequestsReviews.stream()
                             .sorted(COMPARATOR)
                             .map(MessageUtils::generateStringItemPullRequestReview)
                             .collect(Collectors.joining("\n"))
@@ -31,10 +31,10 @@ public final class MessageUtils {
         return Optional.empty();
     }
 
-    public static Optional<String> pullRequestForNeedWork(@NonNull List<PullRequest> pullRequestNeedWork) {
-        if (!pullRequestNeedWork.isEmpty()) {
+    public static Optional<String> pullRequestForNeedWork(@NonNull List<MergeRequest> mergeRequestNeedWork) {
+        if (!mergeRequestNeedWork.isEmpty()) {
             return Optional.of(
-                    pullRequestNeedWork.stream()
+                    mergeRequestNeedWork.stream()
                             .map(MessageUtils::generateStringItemPullRequestNeedWork)
                             .collect(Collectors.joining("\n"))
             );
@@ -42,13 +42,13 @@ public final class MessageUtils {
         return Optional.empty();
     }
 
-    private static String generateStringItemPullRequestNeedWork(PullRequest pullRequest) {
-        return "-- " + link(pullRequest.getTitle(), pullRequest.getUrl());
+    private static String generateStringItemPullRequestNeedWork(MergeRequest mergeRequest) {
+        return "-- " + link(mergeRequest.getTitle(), mergeRequest.getWebUrl());
     }
 
-    private static String generateStringItemPullRequestReview(PullRequest pullRequest) {
-        return Smile.statusPr(pullRequest.getUpdateDate()) + " " +
-                link(pullRequest.getTitle(), pullRequest.getUrl());
+    private static String generateStringItemPullRequestReview(MergeRequest mergeRequest) {
+        return Smile.statusPr(mergeRequest.getUpdatedDate()) + " " +
+                link(mergeRequest.getTitle(), mergeRequest.getWebUrl());
     }
 
     @NonNull

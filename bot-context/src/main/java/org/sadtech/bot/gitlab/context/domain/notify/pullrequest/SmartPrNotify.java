@@ -38,7 +38,7 @@ public class SmartPrNotify extends PrNotify {
                         "{3}[{1}]({2})" +
                         "{3}" +
                         "{4} изменил свое решение на {5}\n\n",
-                Smile.SMART, title, url, Smile.HR, reviewerTriggered.getPersonLogin(), reviewerTriggered.getStatus().getValue(),
+                Smile.SMART, title, url, Smile.HR, reviewerTriggered.getPersonLogin(),
                 projectKey, repositorySlug
         );
     }

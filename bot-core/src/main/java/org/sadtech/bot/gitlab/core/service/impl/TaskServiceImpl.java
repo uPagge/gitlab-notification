@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.Answer;
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
 import org.sadtech.bot.gitlab.context.domain.entity.Comment;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.AnswerCommentNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.CommentNotify;
@@ -13,8 +13,8 @@ import org.sadtech.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.repository.TaskRepository;
 import org.sadtech.bot.gitlab.context.service.CommentService;
+import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
-import org.sadtech.bot.gitlab.context.service.PullRequestsService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
@@ -38,7 +38,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
 
     private final TaskRepository taskRepository;
 
-    private final PullRequestsService pullRequestsService;
+    private final MergeRequestsService mergeRequestsService;
     private final NotifyService notifyService;
     private final CommentService commentService;
 
@@ -46,14 +46,14 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
 
     public TaskServiceImpl(
             TaskRepository taskRepository,
-            PullRequestsService pullRequestsService,
+            MergeRequestsService mergeRequestsService,
             NotifyService notifyService,
             CommentService commentService,
             ConversionService conversionService
     ) {
         super(taskRepository);
         this.taskRepository = taskRepository;
-        this.pullRequestsService = pullRequestsService;
+        this.mergeRequestsService = mergeRequestsService;
         this.notifyService = notifyService;
         this.commentService = commentService;
         this.conversionService = conversionService;
@@ -168,7 +168,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     }
 
     private void notifyNewTask(Task task) {
-        final PullRequest pullRequest = pullRequestsService.getById(task.getPullRequestId())
+        final MergeRequest mergeRequest = mergeRequestsService.getById(task.getPullRequestId())
                 .orElseThrow(() -> new NotFoundException("ПР не найден"));
 
         notifyService.send(
@@ -176,7 +176,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                         .authorName(task.getAuthor())
                         .messageTask(task.getDescription())
                         .url(task.getUrl())
-                        .recipients(Collections.singleton(pullRequest.getAuthorLogin()))
+//                        .recipients(Collections.singleton(mergeRequest.getAuthor().getId()))
                         .build()
         );
     }

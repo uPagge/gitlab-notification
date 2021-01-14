@@ -3,12 +3,9 @@ package org.sadtech.bot.gitlab.context.domain.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -47,9 +44,9 @@ public class Reviewer {
     /**
      * Статус
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private ReviewerStatus status;
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "status")
+//    private ReviewerStatus status;
 
     @Column(name = "date_change")
     private LocalDateTime dateChange;
@@ -59,6 +56,6 @@ public class Reviewer {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH, optional = false)
     @JoinColumn(name = "pull_request_id")
-    private PullRequest pullRequest;
+    private MergeRequest mergeRequest;
 
 }

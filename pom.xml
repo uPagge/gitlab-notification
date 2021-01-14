@@ -15,7 +15,6 @@
         <module>bot-core</module>
         <module>bot-app</module>
         <module>teamcity</module>
-        <module>gitlab-core</module>
         <module>bot-data</module>
     </modules>
 
@@ -104,16 +103,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- абстракции -->
-            <dependency>
-                <groupId>org.sadtech.bot.vcs</groupId>
-                <artifactId>vcs-bot-context</artifactId>
-                <version>${sadtech.bot.vsc.context.version}</version>
-            </dependency>
-
-            <!-- /абстракции -->
             <!-- модули проекта -->
-
             <dependency>
                 <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>bot-core</artifactId>
