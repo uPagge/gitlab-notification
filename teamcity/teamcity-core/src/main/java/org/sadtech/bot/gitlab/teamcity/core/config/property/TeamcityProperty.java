@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "bitbucketbot.teamcity")
+@ConfigurationProperties(prefix = "gitlab-bot.teamcity")
 public class TeamcityProperty {
 
     private String token;

@@ -19,8 +19,6 @@ import org.sadtech.bot.gitlab.context.exception.UpdateException;
 import org.sadtech.bot.gitlab.context.repository.PullRequestsRepository;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PullRequestsService;
-import org.sadtech.bot.gitlab.context.service.RatingService;
-import org.sadtech.bot.gitlab.core.config.properties.RatingProperty;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;
 import org.sadtech.bot.vsc.context.domain.ReviewerStatus;
 import org.sadtech.haiti.context.page.Pagination;

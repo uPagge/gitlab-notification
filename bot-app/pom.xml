@@ -76,6 +76,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.sadtech.haiti</groupId>
+            <artifactId>haiti-utils</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
@@ -98,7 +103,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>bitbucketbot</finalName>
+                    <finalName>gitlab-notification</finalName>
                 </configuration>
             </plugin>
             <plugin>

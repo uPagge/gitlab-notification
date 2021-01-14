@@ -1,7 +1,43 @@
 server:
   port: 8018
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    driver-class-name: org.postgresql.Driver
+    password: ${DATASOURCE_PASSWORD}
+  liquibase:
+    change-log: classpath:liquibase/change-log.xml
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
 telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
-bitbucketbot:
+gitlab-bot:
   version: 2.15.3
+  scheduler:
+    comment:
+      settings:
+        no-comment-count: 20
+        comment-count: 100
+  gitlab:
+    token: ${GITLAB_PERSONAL_TOKEN}
+    username: ${GITLAB_USERNAME}
+    full-name: ${GITLAB_FULLNAME}
+    url-pull-request-open: ${GITLAB_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&state=OPEN
+    url-pull-request-close: ${GITLAB_URL}/rest/api/1.0/dashboard/pull-requests?limit=150&closedSince=86400
+    url-pull-request-comment: ${GITLAB_URL}/rest/api/1.0/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/comments/{commentId}
+    url-pull-request: ${GITLAB_URL}/projects/{projectKey}/repos/{repositorySlug}/pull-requests/{pullRequestId}/overview
+    url-users: ${GITLAB_URL}/rest/api/1.0/admin/users
+  teamcity:
+    token: ${TEAMCITY_ADMIN_TOKEN}
+    project-url: ${TEAMCITY_URL}/app/rest/projects
+    build-url: ${TEAMCITY_URL}/app/rest/builds/?locator=project:(id:{0}),branch:(default:any)

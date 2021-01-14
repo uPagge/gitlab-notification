@@ -1,8 +1,6 @@
 package org.sadtech.bot.gitlab.telegram.unit;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.gitlab.context.service.PersonService;
-import org.sadtech.bot.gitlab.telegram.service.unit.RatingTopProcessing;
 import org.sadtech.bot.gitlab.telegram.service.unit.TaskProcessing;
 import org.sadtech.bot.gitlab.telegram.utils.GeneratorKeyBoards;
 import org.sadtech.social.bot.domain.unit.AnswerCheck;

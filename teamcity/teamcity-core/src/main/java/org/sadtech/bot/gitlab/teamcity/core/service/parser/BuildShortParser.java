@@ -7,7 +7,6 @@ package org.sadtech.bot.gitlab.teamcity.core.service.parser;
  */
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.gitlab.core.utils.Utils;
 import org.sadtech.bot.gitlab.teamcity.core.config.property.TeamcityProperty;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.TeamcityProject;

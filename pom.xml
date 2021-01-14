@@ -15,7 +15,7 @@
         <module>bot-core</module>
         <module>bot-app</module>
         <module>teamcity</module>
-        <module>bitbucketbot-core</module>
+        <module>gitlab-core</module>
         <module>bot-data</module>
     </modules>
 
@@ -169,6 +169,12 @@
                 <groupId>org.sadtech.haiti.data</groupId>
                 <artifactId>haiti-database</artifactId>
                 <version>${haiti.database.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sadtech.haiti</groupId>
+                <artifactId>haiti-utils</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>

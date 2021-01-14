@@ -7,6 +7,6 @@ package org.sadtech.bot.gitlab.sdk.domain;
  */
 public enum PullRequestState {
 
-    OPEN, MERGED, DECLINED
+    OPENED, MERGED, DECLINED
 
 }

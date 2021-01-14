@@ -11,7 +11,6 @@ import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.repository.CommentRepository;
 import org.sadtech.bot.gitlab.context.service.CommentService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
-import org.sadtech.bot.gitlab.context.service.RatingService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.sadtech.haiti.core.util.Assert;

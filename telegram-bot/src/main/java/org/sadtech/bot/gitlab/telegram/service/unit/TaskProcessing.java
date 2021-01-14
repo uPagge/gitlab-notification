@@ -2,10 +2,8 @@ package org.sadtech.bot.gitlab.telegram.service.unit;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
-import org.sadtech.bot.gitlab.context.domain.entity.Person;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
-import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;

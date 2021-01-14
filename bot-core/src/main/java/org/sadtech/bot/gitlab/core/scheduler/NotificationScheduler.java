@@ -2,12 +2,10 @@ package org.sadtech.bot.gitlab.core.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.EntityType;
-import org.sadtech.bot.gitlab.context.domain.entity.Person;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
 import org.sadtech.bot.gitlab.context.domain.notify.GoodMorningNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.SimpleTextNotify;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
-import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.PullRequestsService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 import org.sadtech.bot.gitlab.core.config.properties.AppProperty;
@@ -31,7 +29,6 @@ public class NotificationScheduler {
             "mstruchkov", "emukhin", "imescheryakov", "kkeglev"
     ));
 
-    private final PersonService personService;
     private final PullRequestsService pullRequestsService;
 
     private final NotifyService notifyService;

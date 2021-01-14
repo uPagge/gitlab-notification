@@ -1,10 +1,8 @@
 package org.sadtech.bot.gitlab.telegram.service.unit.pullrequest;
 
 import lombok.RequiredArgsConstructor;
-import org.sadtech.bot.gitlab.context.domain.entity.Person;
 import org.sadtech.bot.gitlab.context.domain.entity.PullRequest;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
-import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.PullRequestsService;
 import org.sadtech.bot.gitlab.context.utils.MessageUtils;
 import org.sadtech.bot.vsc.context.domain.PullRequestStatus;

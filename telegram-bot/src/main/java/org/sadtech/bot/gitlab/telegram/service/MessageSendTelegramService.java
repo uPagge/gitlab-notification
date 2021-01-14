@@ -6,7 +6,6 @@ import org.sadtech.bot.gitlab.context.domain.notify.Notify;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.service.ChatService;
 import org.sadtech.bot.gitlab.context.service.MessageSendService;
-import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.service.sender.Sending;
 import org.springframework.stereotype.Service;
