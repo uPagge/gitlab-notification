@@ -25,7 +25,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teamcity_setting")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class TeamcitySetting extends BasicEntity<Long> {
+public class TeamcitySetting implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "recipient_id")
     private String recipientId;
@@ -46,17 +52,4 @@ public class TeamcitySetting extends BasicEntity<Long> {
     @Column(name = "failure")
     private boolean failure;
 
-    @Override
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

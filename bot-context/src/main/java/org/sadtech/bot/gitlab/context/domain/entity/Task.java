@@ -22,8 +22,13 @@ import java.util.Set;
 @Getter
 @Setter
 //@Table(name = "task")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-public class Task extends BasicEntity<Long> {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Task implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    private Long id;
 
     /**
      * Описание задачи
@@ -64,16 +69,4 @@ public class Task extends BasicEntity<Long> {
     @Column(name = "comment_id")
     private Set<Long> answers = new HashSet<>();
 
-    @Override
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

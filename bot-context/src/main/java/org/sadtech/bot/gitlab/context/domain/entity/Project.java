@@ -20,8 +20,12 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "project")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-public class Project extends BasicEntity<Long> {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Project implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -35,15 +39,4 @@ public class Project extends BasicEntity<Long> {
     @Column(name = "creator_id")
     private Integer creatorId;
 
-    @Id
-    @Column(name = "id")
-    @Override
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

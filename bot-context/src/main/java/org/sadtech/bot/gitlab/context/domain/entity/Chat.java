@@ -18,21 +18,14 @@ import javax.persistence.Id;
 //@Entity
 //@Table(name = "chat")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Chat extends BasicEntity<String> {
+public class Chat implements BasicEntity<String> {
+
+    @Id
+    @Column(name = "key")
+    @EqualsAndHashCode.Include
+    private String id;
 
     @Column(name = "telegram_id")
     private Long telegramId;
 
-    @Override
-    @Id
-    @Column(name = "key")
-    @EqualsAndHashCode.Include
-    public String getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
 }

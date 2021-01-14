@@ -24,7 +24,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teamcity_build")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class BuildShort extends BasicEntity<Long> {
+public class BuildShort implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Column(name = "project_id")
     private String projectId;
@@ -52,16 +57,4 @@ public class BuildShort extends BasicEntity<Long> {
     @Column(name = "url")
     private String url;
 
-    @Override
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

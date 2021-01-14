@@ -28,8 +28,14 @@ import java.util.List;
 @Setter
 //@Entity
 //@Table(name = "pull_request")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-public class PullRequest extends BasicEntity<Long> {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class PullRequest implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * Идентификатор на стороне битбакета
@@ -130,17 +136,4 @@ public class PullRequest extends BasicEntity<Long> {
         this.reviewers = reviewers;
     }
 
-    @Id
-    @Override
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

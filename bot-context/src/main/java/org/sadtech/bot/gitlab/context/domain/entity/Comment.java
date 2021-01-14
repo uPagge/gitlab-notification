@@ -18,8 +18,13 @@ import java.util.Set;
 @Setter
 //@Entity
 //@Table(name = "comment")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-public class Comment extends BasicEntity<Long> {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Comment implements BasicEntity<Long> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Column(name = "url_api")
     private String urlApi;
@@ -53,16 +58,4 @@ public class Comment extends BasicEntity<Long> {
     @Column(name = "child_id")
     private Set<Long> answers;
 
-    @Override
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    public Long getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(Long id) {
-        super.setId(id);
-    }
 }

@@ -20,7 +20,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "teamcity_project")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class TeamcityProject extends BasicEntity<String> {
+public class TeamcityProject implements BasicEntity<String> {
+
+    @Id
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -31,16 +36,4 @@ public class TeamcityProject extends BasicEntity<String> {
     @Column(name = "url")
     private String url;
 
-    @Override
-    @Id
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    public String getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
 }

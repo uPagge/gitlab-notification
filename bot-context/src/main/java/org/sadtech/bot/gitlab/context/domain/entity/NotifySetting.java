@@ -19,7 +19,12 @@ import java.time.LocalDateTime;
 //@Entity
 //@Table(name = "setting_notify")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class NotifySetting extends BasicEntity<String> {
+public class NotifySetting implements BasicEntity<String> {
+
+    @Id
+    @Column(name = "login")
+    @EqualsAndHashCode.Include
+    private String id;
 
     /**
      * Дата, после которой пользователю будут поступать уведомления.
@@ -27,16 +32,4 @@ public class NotifySetting extends BasicEntity<String> {
     @Column(name = "start_receiving")
     private LocalDateTime startReceiving;
 
-    @Override
-    @Id
-    @Column(name = "login")
-    @EqualsAndHashCode.Include
-    public String getId() {
-        return super.getId();
-    }
-
-    @Override
-    public void setId(String id) {
-        super.setId(id);
-    }
 }
