@@ -2,9 +2,6 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
-
-import java.util.Set;
 
 /**
  * // TODO: 20.09.2020 Добавить описание.
@@ -17,8 +14,7 @@ public class SimpleTextNotify extends Notify {
     private final String message;
 
     @Builder
-    private SimpleTextNotify(EntityType entityType, Set<String> recipients, String message) {
-        super(entityType, recipients);
+    private SimpleTextNotify(String message) {
         this.message = message;
     }
 

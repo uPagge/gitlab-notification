@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.IdAndStatusPr;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequestMini;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequestMini;
 import org.sadtech.bot.gitlab.context.domain.filter.PullRequestFilter;
 import org.sadtech.haiti.context.service.SimpleManagerService;
 import org.sadtech.haiti.filter.FilterService;
@@ -22,6 +22,6 @@ public interface MergeRequestsService extends SimpleManagerService<MergeRequest,
      */
     Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses);
 
-    Optional<PullRequestMini> getMiniInfo(@NonNull Long pullRequestId);
+    Optional<MergeRequestMini> getMiniInfo(@NonNull Long pullRequestId);
 
 }

@@ -19,7 +19,7 @@
 
     <changeSet id="2020-01-14-create-table-person" author="uPagge">
         <createTable tableName="person">
-            <column name="id">
+            <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="username" type="varchar(100)">
@@ -34,14 +34,15 @@
 
     <changeSet id="2020-01-14-create-merge-request" author="uPagge">
         <createTable tableName="merge_request">
-            <column name="id">
+            <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="two_id">
-                <constraints nullable="false" primaryKey="true"/>
+            <column name="two_id" type="int">
+                <constraints nullable="false"/>
             </column>
             <column name="project_id" type="int">
-                <constraints nullable="false" foreignKeyName="merge_request_project_id" references="project(id)"/>
+                <constraints nullable="false" foreignKeyName="merge_request_project_id" references="project(id)"
+                             deleteCascade="true"/>
             </column>
             <column name="title" type="varchar(200)">
                 <constraints nullable="false"/>
@@ -66,7 +67,28 @@
                 <constraints nullable="false" foreignKeyName="merge_request_author_id_person_id"
                              references="person(id)"/>
             </column>
+            <column name="assignee_id" type="int">
+                <constraints nullable="false" foreignKeyName="merge_request_assignee_id_person_id"
+                             references="person(id)"/>
+            </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="2020-01-15-create-table-labels" author="uPagge">
+        <createTable tableName="merge_request_label">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="merge_request_id" type="int">
+                <constraints nullable="false" foreignKeyName="merge_request_label_merge_request_id"
+                             references="merge_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="label" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="merge_request_label" columnNames="merge_request_id, label"/>
     </changeSet>
 
 </databaseChangeLog>

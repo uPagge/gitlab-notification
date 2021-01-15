@@ -5,29 +5,26 @@ import lombok.Getter;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 @Getter
 public class ConflictPrNotify extends PrNotify {
 
     @Builder
     private ConflictPrNotify(
-            Set<String> recipients,
             String name,
             String url,
-            String projectKey,
-            String repositorySlug
+            String projectKey
     ) {
-        super(recipients, projectKey, repositorySlug, name, url);
+        super(projectKey, name, url);
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Внимание конфликт в ПР | {4} | {5}*" +
+                "{0} *Внимание конфликт в ПР | {4}*" +
                         "{1}" +
                         "[{2}]({3})\n\n",
-                Smile.DANGEROUS, Smile.HR, title, url, projectKey, repositorySlug
+                Smile.DANGEROUS, Smile.HR, title, url, projectName
         );
     }
 

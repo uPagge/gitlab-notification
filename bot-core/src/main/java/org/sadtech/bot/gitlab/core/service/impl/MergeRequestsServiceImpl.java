@@ -3,62 +3,81 @@ package org.sadtech.bot.gitlab.core.service.impl;
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.IdAndStatusPr;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
+import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequestMini;
-import org.sadtech.bot.gitlab.context.domain.entity.Reviewer;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequestMini;
+import org.sadtech.bot.gitlab.context.domain.entity.Project;
 import org.sadtech.bot.gitlab.context.domain.filter.PullRequestFilter;
+import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.ConflictPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.NewPrNotify;
-import org.sadtech.bot.gitlab.context.repository.PullRequestsRepository;
+import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.StatusPrNotify;
+import org.sadtech.bot.gitlab.context.repository.MergeRequestRepository;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
-import org.sadtech.haiti.context.domain.ExistsContainer;
+import org.sadtech.bot.gitlab.context.service.PersonService;
+import org.sadtech.bot.gitlab.context.service.ProjectService;
+import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
-import org.sadtech.haiti.core.util.Assert;
 import org.sadtech.haiti.filter.FilterService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-//@Service
+@Service
 public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<MergeRequest, Long> implements MergeRequestsService {
 
-    protected final NotifyService notifyService;
-    protected final PullRequestsRepository pullRequestsRepository;
-    protected final FilterService<MergeRequest, PullRequestFilter> filterService;
+    private final NotifyService notifyService;
+    private final MergeRequestRepository mergeRequestRepository;
+    private final PersonService personService;
+    private final FilterService<MergeRequest, PullRequestFilter> filterService;
+    private final ProjectService projectService;
 
+    private final PersonInformation personInformation;
 
     protected MergeRequestsServiceImpl(
-            PullRequestsRepository pullRequestsRepository,
+            MergeRequestRepository mergeRequestRepository,
             NotifyService notifyService,
-            @Qualifier("pullRequestFilterService") FilterService<MergeRequest, PullRequestFilter> pullRequestsFilterService
+            PersonService personService,
+            @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, PullRequestFilter> filterService,
+            ProjectService projectService,
+            PersonInformation personInformation
     ) {
-        super(pullRequestsRepository);
+        super(mergeRequestRepository);
         this.notifyService = notifyService;
-        this.pullRequestsRepository = pullRequestsRepository;
-        this.filterService = pullRequestsFilterService;
+        this.mergeRequestRepository = mergeRequestRepository;
+        this.personService = personService;
+        this.filterService = filterService;
+        this.projectService = projectService;
+        this.personInformation = personInformation;
     }
 
     @Override
     public MergeRequest create(@NonNull MergeRequest mergeRequest) {
-        Assert.isNull(mergeRequest.getId(), "При создании идентификатор должен быть пустым");
+        personService.create(mergeRequest.getAuthor());
+        personService.create(mergeRequest.getAssignee());
 
+        final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
 
-        final MergeRequest newMergeRequest = pullRequestsRepository.save(mergeRequest);
-
-        notifyService.send(
-                NewPrNotify.builder()
-                        .author(newMergeRequest.getAuthor().getName())
-                        .description(newMergeRequest.getDescription())
-                        .title(newMergeRequest.getTitle())
-                        .url(newMergeRequest.getWebUrl())
-                        .build()
-        );
-
+        if (!personInformation.getId().equals(newMergeRequest.getAuthor().getId())) {
+            final String projectName = projectService.getById(newMergeRequest.getProjectId())
+                    .orElseThrow(() -> new NotFoundException("Проект не найден"))
+                    .getName();
+            notifyService.send(
+                    NewPrNotify.builder()
+                            .projectName(projectName)
+                            .labels(newMergeRequest.getLabels())
+                            .author(newMergeRequest.getAuthor().getName())
+                            .description(newMergeRequest.getDescription())
+                            .title(newMergeRequest.getTitle())
+                            .url(newMergeRequest.getWebUrl())
+                            .build()
+            );
+        }
         return newMergeRequest;
     }
 
@@ -66,16 +85,14 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     public MergeRequest update(@NonNull MergeRequest mergeRequest) {
         final MergeRequest oldMergeRequest = findAndFillId(mergeRequest);
 
-        forgottenNotification(oldMergeRequest);
+//        forgottenNotification(oldMergeRequest);
 
-        oldMergeRequest.setTitle(mergeRequest.getTitle());
-        oldMergeRequest.setDescription(mergeRequest.getDescription());
-        updateReviewers(oldMergeRequest, mergeRequest);
-        updateBitbucketVersion(oldMergeRequest, mergeRequest);
-        updateStatus(oldMergeRequest, mergeRequest);
-        updateConflict(oldMergeRequest, mergeRequest);
+        final Project project = projectService.getById(mergeRequest.getProjectId())
+                .orElseThrow(() -> new NotFoundException("Проект не найден"));
+        notifyStatus(oldMergeRequest, mergeRequest, project);
+        notifyConflict(oldMergeRequest, mergeRequest, project);
 
-        return pullRequestsRepository.save(oldMergeRequest);
+        return mergeRequestRepository.save(mergeRequest);
     }
 
     protected void forgottenNotification(MergeRequest mergeRequest) {
@@ -103,138 +120,39 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 //        }
     }
 
-    protected void updateBitbucketVersion(MergeRequest oldMergeRequest, MergeRequest mergeRequest) {
-//        if (
-//                !oldMergeRequest.getBitbucketVersion().equals(mergeRequest.getBitbucketVersion())
-//        ) {
-//            oldMergeRequest.setBitbucketVersion(mergeRequest.getBitbucketVersion());
-//            if (PullRequestStatus.OPEN.equals(mergeRequest.getStatus())) {
-//                notifyService.send(
-//                        UpdatePrNotify.builder()
-//                                .author(oldMergeRequest.getAuthorLogin())
-//                                .name(mergeRequest.getTitle())
-//                                .recipients(
-//                                        mergeRequest.getReviewers().stream()
-//                                                .map(Reviewer::getPersonLogin)
-//                                                .collect(Collectors.toSet())
-//                                )
-//                                .url(oldMergeRequest.getUrl())
-//                                .projectKey(oldMergeRequest.getProjectKey())
-//                                .repositorySlug(oldMergeRequest.getRepositorySlug())
-//                                .build()
-//                );
-//            }
-//        }
+    protected void notifyConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+        if (
+                !oldMergeRequest.isConflict()
+                        && mergeRequest.isConflict()
+                        && oldMergeRequest.getAuthor().getId().equals(personInformation.getId())
+        ) {
+            notifyService.send(
+                    ConflictPrNotify.builder()
+                            .name(mergeRequest.getTitle())
+                            .url(mergeRequest.getWebUrl())
+                            .projectKey(project.getName())
+                            .build()
+            );
+        }
     }
 
-    protected void updateConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest) {
-//        if (!oldMergeRequest.isConflict() && mergeRequest.isConflict()) {
-//            notifyService.send(
-//                    ConflictPrNotify.builder()
-//                            .name(mergeRequest.getTitle())
-//                            .url(mergeRequest.getUrl())
-//                            .projectKey(mergeRequest.getProjectKey())
-//                            .repositorySlug(mergeRequest.getRepositorySlug())
-//                            .recipients(Collections.singleton(mergeRequest.getAuthorLogin()))
-//                            .build()
-//            );
-//        }
-//        oldMergeRequest.setConflict(mergeRequest.isConflict());
-    }
-
-    protected void updateStatus(MergeRequest oldMergeRequest, MergeRequest newMergeRequest) {
-//        final PullRequestStatus oldStatus = oldMergeRequest.getStatus();
-//        final PullRequestStatus newStatus = newMergeRequest.getStatus();
-//        if (!oldStatus.equals(newStatus)) {
-//            notifyService.send(
-//                    StatusPrNotify.builder()
-//                            .name(newMergeRequest.getTitle())
-//                            .url(oldMergeRequest.getUrl())
-//                            .projectKey(oldMergeRequest.getProjectKey())
-//                            .repositorySlug(oldMergeRequest.getRepositorySlug())
-//                            .newStatus(newStatus)
-//                            .oldStatus(oldStatus)
-//                            .recipients(Collections.singleton(oldMergeRequest.getAuthorLogin()))
-//                            .build()
-//            );
-//            oldMergeRequest.setStatus(newStatus);
-//        }
-    }
-
-    protected void updateReviewers(MergeRequest oldMergeRequest, MergeRequest newMergeRequest) {
-//        final Map<String, Reviewer> oldReviewers = oldMergeRequest.getReviewers().stream()
-//                .collect(Collectors.toMap(Reviewer::getPersonLogin, reviewer -> reviewer));
-//        final Map<String, Reviewer> newReviewers = newMergeRequest.getReviewers().stream()
-//                .collect(Collectors.toMap(Reviewer::getPersonLogin, reviewer -> reviewer));
-//        final List<ReviewerChange> reviewerChanges = new ArrayList<>();
-//        for (Reviewer newReviewer : newReviewers.values()) {
-//            if (oldReviewers.containsKey(newReviewer.getPersonLogin())) {
-//                final Reviewer oldReviewer = oldReviewers.get(newReviewer.getPersonLogin());
-//                final ReviewerStatus oldStatus = oldReviewer.getStatus();
-//                final ReviewerStatus newStatus = newReviewer.getStatus();
-//                if (!oldStatus.equals(newStatus)) {
-//                    reviewerChanges.add(ReviewerChange.ofOld(oldReviewer.getPersonLogin(), oldStatus, newStatus));
-//                    oldReviewer.setStatus(newStatus);
-//                    oldReviewer.setDateChange(LocalDateTime.now());
-//                    smartNotifyAfterReviewerDecision(newReviewer, oldMergeRequest);
-//                }
-//            } else {
-//                reviewerChanges.add(ReviewerChange.ofNew(newReviewer.getPersonLogin(), newReviewer.getStatus()));
-//                newReviewer.setMergeRequest(oldMergeRequest);
-//                newReviewer.setDateChange(LocalDateTime.now());
-//                oldMergeRequest.getReviewers().add(newReviewer);
-//            }
-//        }
-//        final Set<String> oldIds = oldReviewers.keySet();
-//        oldIds.removeAll(newReviewers.keySet());
-//        reviewerChanges.addAll(
-//                oldReviewers.entrySet().stream()
-//                        .filter(e -> oldIds.contains(e.getKey()))
-//                        .map(e -> ReviewerChange.ofDeleted(e.getValue().getPersonLogin()))
-//                        .collect(Collectors.toList())
-//        );
-//        oldMergeRequest.getReviewers()
-//                .removeIf(reviewer -> oldIds.contains(reviewer.getPersonLogin()));
-//        if (!reviewerChanges.isEmpty()) {
-//            notifyService.send(
-//                    ReviewersPrNotify.builder()
-//                            .title(newMergeRequest.getTitle())
-//                            .url(newMergeRequest.getUrl())
-//                            .projectKey(newMergeRequest.getProjectKey())
-//                            .repositorySlug(newMergeRequest.getRepositorySlug())
-//                            .recipients(Collections.singleton(newMergeRequest.getAuthorLogin()))
-//                            .reviewerChanges(reviewerChanges)
-//                            .build()
-//            );
-//        }
-    }
-
-    /**
-     * Умное уведомление ревьюверов, после того, как кто-то изменил свое решение.
-     */
-    protected void smartNotifyAfterReviewerDecision(Reviewer newReviewer, MergeRequest oldMergeRequest) {
-//        final ReviewerStatus newStatus = newReviewer.getStatus();
-//        if (!ReviewerStatus.NEEDS_WORK.equals(newStatus) && enoughTimHasPassedSinceUpdatePr(oldMergeRequest.getUpdateDate())) {
-//            final List<Reviewer> smartReviewers = oldMergeRequest.getReviewers().stream()
-//                    .filter(reviewer -> LocalDateTime.now().isAfter(reviewer.getDateChange().plusHours(2L)))
-//                    .collect(Collectors.toList());
-//            if (!smartReviewers.isEmpty()) {
-//                notifyService.send(
-//                        SmartPrNotify.builder()
-//                                .reviewerTriggered(newReviewer)
-//                                .title(oldMergeRequest.getTitle())
-//                                .url(oldMergeRequest.getUrl())
-//                                .projectKey(oldMergeRequest.getProjectKey())
-//                                .repositorySlug(oldMergeRequest.getRepositorySlug())
-//                                .recipients(
-//                                        smartReviewers.stream()
-//                                                .map(Reviewer::getPersonLogin)
-//                                                .collect(Collectors.toSet())
-//                                )
-//                                .build()
-//                );
-//            }
-//        }
+    protected void notifyStatus(MergeRequest oldMergeRequest, MergeRequest newMergeRequest, Project project) {
+        final MergeRequestState oldStatus = oldMergeRequest.getState();
+        final MergeRequestState newStatus = newMergeRequest.getState();
+        if (
+                !oldStatus.equals(newStatus)
+                        && oldMergeRequest.getAuthor().getId().equals(personInformation.getId())
+        ) {
+            notifyService.send(
+                    StatusPrNotify.builder()
+                            .name(newMergeRequest.getTitle())
+                            .url(oldMergeRequest.getWebUrl())
+                            .projectName(project.getName())
+                            .newStatus(newStatus)
+                            .oldStatus(oldStatus)
+                            .build()
+            );
+        }
     }
 
     protected boolean enoughTimHasPassedSinceUpdatePr(LocalDateTime updateDate) {
@@ -247,8 +165,8 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     }
 
     @Override
-    public Optional<PullRequestMini> getMiniInfo(@NonNull Long pullRequestId) {
-        return pullRequestsRepository.findMiniInfoById(pullRequestId);
+    public Optional<MergeRequestMini> getMiniInfo(@NonNull Long pullRequestId) {
+        return mergeRequestRepository.findMiniInfoById(pullRequestId);
     }
 
     @Override
@@ -279,11 +197,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 //                                .matchPhrase("hyita", mergeRequest.getRepositoryId())
 //                )
 //        ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
-        return null;
-    }
-
-    @Override
-    public ExistsContainer<MergeRequest, Long> existsById(@NonNull Collection<Long> collection) {
         return null;
     }
 

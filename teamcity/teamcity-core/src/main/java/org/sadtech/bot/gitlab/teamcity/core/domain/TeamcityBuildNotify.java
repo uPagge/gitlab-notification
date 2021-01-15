@@ -2,14 +2,12 @@ package org.sadtech.bot.gitlab.teamcity.core.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildStatus;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 /**
  * // TODO: 21.09.2020 Добавить описание.
@@ -22,8 +20,7 @@ public class TeamcityBuildNotify extends Notify {
     private final BuildShort buildShort;
 
     @Builder
-    private TeamcityBuildNotify(EntityType entityType, Set<String> recipients, BuildShort buildShort) {
-        super(entityType, recipients);
+    private TeamcityBuildNotify(BuildShort buildShort) {
         this.buildShort = buildShort;
     }
 

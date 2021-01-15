@@ -13,7 +13,6 @@ import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -54,8 +53,6 @@ public class BuildShortServiceImpl extends AbstractSimpleManagerService<BuildSho
         if (isStatusBuild(teamcitySetting, buildShort.getStatus()) && isTypeBuild(teamcitySetting, buildShort.getBuildTypeId())) {
             notifyService.send(
                     TeamcityBuildNotify.builder()
-                            .entityType(teamcitySetting.getRecipientType())
-                            .recipients(Collections.singleton(teamcitySetting.getRecipientId()))
                             .buildShort(buildShort)
                             .build()
             );

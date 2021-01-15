@@ -28,15 +28,16 @@ gitlab-bot:
       settings:
         no-comment-count: 20
         comment-count: 100
-  gitlab:
+  person:
+    telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
-    username: ${GITLAB_USERNAME}
-    full-name: ${GITLAB_FULLNAME}
+  gitlab:
     url-project: ${GITLAB_URL}/api/v4/projects
     url-pull-request-open: ${GITLAB_URL}/api/v4/projects/{0}/merge_requests?state=opened
     url-pull-request-close: ${GITLAB_URL}
     url-pull-request-comment: ${GITLAB_URL}
     url-pull-request: ${GITLAB_URL}
+    user-url: ${GITLAB_URL}/api/v4/user
   teamcity:
     token: ${TEAMCITY_ADMIN_TOKEN}
     project-url: ${TEAMCITY_URL}/app/rest/projects

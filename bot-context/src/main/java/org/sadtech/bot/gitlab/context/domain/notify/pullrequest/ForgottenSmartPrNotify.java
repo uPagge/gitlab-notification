@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 /**
  * // TODO: 11.10.2020 Добавить описание.
@@ -17,21 +16,20 @@ public class ForgottenSmartPrNotify extends PrNotify {
 
     @Builder
     protected ForgottenSmartPrNotify(
-            Set<String> recipients,
             String title,
             String url,
-            String projectKey,
+            String projectName,
             String repositorySlug
     ) {
-        super(recipients, projectKey, repositorySlug, title, url);
+        super(projectName, title, url);
     }
 
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Напоминание о просмотре PullRequest  | {4} | {5}*" +
+                "{0} *Напоминание о просмотре PullRequest  | {4}*" +
                         "{3}[{1}]({2})",
-                Smile.SMART, title, url, Smile.HR, projectKey, repositorySlug
+                Smile.SMART, title, url, Smile.HR, projectName
         );
     }
 

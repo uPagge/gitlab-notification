@@ -23,7 +23,6 @@ import org.springframework.core.convert.ConversionService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +94,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                                     .messageTask(task.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .recipients(Collections.singleton(oldTask.getResponsible()))
                                     .build()
                     );
                     break;
@@ -105,7 +103,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                                     .messageTask(oldTask.getDescription())
                                     .authorName(oldTask.getAuthor())
                                     .url(oldTask.getUrl())
-                                    .recipients(Collections.singleton(oldTask.getAuthor()))
                                     .build()
                     );
                     break;
@@ -129,7 +126,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             if (!newAnswers.isEmpty()) {
                 notifyService.send(
                         AnswerCommentNotify.builder()
-                                .recipients(Collections.singleton(oldTask.getAuthor()))
                                 .url(oldTask.getUrl())
                                 .youMessage(oldTask.getDescription())
                                 .answers(
@@ -192,7 +188,6 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
                 CommentNotify.builder()
                         .authorName(task.getAuthor())
                         .url(task.getUrl())
-                        .recipients(recipientsLogins)
                         .message(task.getDescription())
                         .build()
         );

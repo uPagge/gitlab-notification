@@ -16,12 +16,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("gitlab-bot.gitlab")
 public class GitlabProperty {
 
-    private String username;
-
-    private String fullName;
-
-    private String token;
-
     /**
      * Адрес, по которому можно получить открытые ПР
      */
@@ -43,5 +37,7 @@ public class GitlabProperty {
     private String urlPullRequest;
 
     private String urlProject;
+
+    private String userUrl;
 
 }

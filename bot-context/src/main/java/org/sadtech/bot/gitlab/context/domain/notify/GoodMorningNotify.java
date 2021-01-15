@@ -2,14 +2,12 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.utils.MessageUtils;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 import org.sadtech.bot.gitlab.context.utils.UpdateDataComparator;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,11 +28,9 @@ public class GoodMorningNotify extends Notify {
 
     @Builder
     protected GoodMorningNotify(
-            Set<String> recipients,
             List<MergeRequest> mergeRequestsReviews,
             List<MergeRequest> mergeRequestsNeedWork,
             String personName, String version) {
-        super(EntityType.PERSON, recipients);
         this.mergeRequestsReviews = mergeRequestsReviews;
         this.mergeRequestsNeedWork = mergeRequestsNeedWork;
         this.personName = personName;

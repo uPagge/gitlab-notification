@@ -1,5 +1,10 @@
 package org.sadtech.bot.gitlab.app.config;
 
+import org.sadtech.bot.gitlab.context.domain.PersonInformation;
+import org.sadtech.bot.gitlab.context.exception.NotFoundException;
+import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
+import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
+import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -12,6 +17,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.sadtech.haiti.utils.network.HttpParse.ACCEPT;
+import static org.sadtech.haiti.utils.network.HttpParse.AUTHORIZATION;
+import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
 
 /**
  * Общий файл настройки всего приложения.
@@ -42,6 +51,20 @@ public class AppConfig {
         final DefaultConversionService defaultConversionService = new DefaultConversionService();
         Arrays.stream(converters).forEach(defaultConversionService::addConverter);
         return defaultConversionService;
+    }
+
+    @Bean
+    public PersonInformation personInformation(
+            PersonProperty personProperty,
+            GitlabProperty gitlabProperty
+    ) {
+        final PersonInformation personInformation = HttpParse.request(gitlabProperty.getUserUrl())
+                .header(ACCEPT)
+                .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                .execute(PersonInformation.class)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        personInformation.setTelegramId(personProperty.getTelegramId());
+        return personInformation;
     }
 
 }

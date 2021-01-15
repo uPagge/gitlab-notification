@@ -6,16 +6,19 @@ import lombok.Setter;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.haiti.context.domain.BasicEntity;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Сущность ПуллРеквест.
@@ -32,7 +35,6 @@ public class MergeRequest implements BasicEntity<Long> {
     @Id
     @Column(name = "id")
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "two_id")
@@ -57,14 +59,23 @@ public class MergeRequest implements BasicEntity<Long> {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-    @ManyToOne(optional = false)
-    @Column(name = "author_id")
-    private Person author;
-
     @Column(name = "web_url")
     private String webUrl;
 
     @Column(name = "conflict")
-    private String conflicts;
+    private boolean conflict;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Person author;
+
+    @ManyToOne
+    @JoinColumn(name = "assignee_id")
+    private Person assignee;
+
+    @ElementCollection
+    @CollectionTable(name = "merge_request_label", joinColumns = @JoinColumn(name = "merge_request_id"))
+    @Column(name = "label")
+    private Set<String> labels = new HashSet<>();
 
 }

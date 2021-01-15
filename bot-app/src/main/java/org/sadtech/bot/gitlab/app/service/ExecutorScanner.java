@@ -7,6 +7,7 @@ import org.sadtech.bot.gitlab.app.service.executor.DataScan;
 import org.sadtech.bot.gitlab.app.service.executor.Executor;
 import org.sadtech.bot.gitlab.app.service.executor.Seeker;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
+import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.CommentJson;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,13 @@ public class ExecutorScanner implements Executor<DataScan, CommentJson> {
     private final ExecutorService executorService;
     private List<Future<Optional<CommentJson>>> resultList = new ArrayList<>();
     private final GitlabProperty gitlabProperty;
+    private final PersonProperty personProperty;
 
     @Override
     public boolean registration(@NonNull List<DataScan> dataScans) {
         resultList.addAll(
                 dataScans.stream()
-                        .map(dataScan -> new Seeker(dataScan, gitlabProperty.getToken()))
+                        .map(dataScan -> new Seeker(dataScan, personProperty.getToken()))
                         .map(executorService::submit)
                         .collect(Collectors.toList())
         );

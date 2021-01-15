@@ -2,10 +2,13 @@ package org.sadtech.bot.gitlab.sdk.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
-import org.sadtech.bot.gitlab.sdk.utils.LocalDateTimeFromEpochDeserializer;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * TODO: Добавить описание класса.
@@ -24,22 +27,27 @@ public class MergeRequestJson {
     private Long projectId;
     private String title;
     private String description;
-    private PullRequestState state;
+    private MergeRequestStateJson state;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonProperty("created_at")
-    @JsonDeserialize(using = LocalDateTimeFromEpochDeserializer.class)
     private LocalDateTime createdDate;
 
     @JsonProperty("updated_at")
-    @JsonDeserialize(using = LocalDateTimeFromEpochDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime updatedDate;
 
-    private AuthorJson author;
+    private PersonJson author;
+    private PersonJson assignee;
 
     @JsonProperty("web_url")
     private String webUrl;
 
     @JsonProperty("has_conflicts")
-    private String conflicts;
+    private boolean conflicts;
+
+    private Set<String> labels;
 
 }

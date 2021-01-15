@@ -3,13 +3,11 @@ package org.sadtech.bot.gitlab.context.domain.notify.comment;
 import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.Answer;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -21,12 +19,10 @@ public class AnswerCommentNotify extends Notify {
 
     @Builder
     protected AnswerCommentNotify(
-            Set<String> recipients,
             String youMessage,
             String url,
             List<Answer> answers
     ) {
-        super(EntityType.PERSON, recipients);
         this.youMessage = youMessage;
         this.url = url;
         this.answers = answers;

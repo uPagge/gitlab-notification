@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 /**
  * // TODO: 10.09.2020 Добавить описание.
@@ -17,12 +16,11 @@ public class TaskNewNotify extends TaskNotify {
 
     @Builder
     protected TaskNewNotify(
-            Set<String> recipients,
             String authorName,
             String url,
             String messageTask
     ) {
-        super(recipients, authorName, url, messageTask);
+        super(authorName, url, messageTask);
     }
 
     @Override

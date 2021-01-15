@@ -6,7 +6,6 @@ import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 @Getter
 public class StatusPrNotify extends PrNotify {
@@ -16,15 +15,13 @@ public class StatusPrNotify extends PrNotify {
 
     @Builder
     private StatusPrNotify(
-            Set<String> recipients,
             String name,
             String url,
-            String projectKey,
-            String repositorySlug,
+            String projectName,
             MergeRequestState oldStatus,
             MergeRequestState newStatus
     ) {
-        super(recipients, projectKey, repositorySlug, name, url);
+        super(projectName, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }
@@ -32,10 +29,10 @@ public class StatusPrNotify extends PrNotify {
     @Override
     public String generateMessage() {
         return MessageFormat.format(
-                "{0} *Изменился статус PullRequest | {7} | {8}*{1}" +
+                "{0} *Изменился статус PullRequest | {7}*{1}" +
                         "[{2}]({3}){1}" +
                         "{4} {5} {6}\n\n",
-                Smile.PEN, Smile.HR, title, url, oldStatus.name(), Smile.ARROW, newStatus.name(), projectKey, repositorySlug
+                Smile.PEN, Smile.HR, title, url, oldStatus.name(), Smile.ARROW, newStatus.name(), projectName
         );
     }
 

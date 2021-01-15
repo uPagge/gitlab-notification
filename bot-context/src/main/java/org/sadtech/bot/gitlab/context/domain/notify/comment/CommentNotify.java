@@ -2,12 +2,10 @@ package org.sadtech.bot.gitlab.context.domain.notify.comment;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
-import java.util.Set;
 
 @Getter
 public class CommentNotify extends Notify {
@@ -18,12 +16,10 @@ public class CommentNotify extends Notify {
 
     @Builder
     private CommentNotify(
-            Set<String> recipients,
             String url,
             String authorName,
             String message
     ) {
-        super(EntityType.PERSON, recipients);
         this.authorName = authorName;
         this.message = message;
         this.url = url;

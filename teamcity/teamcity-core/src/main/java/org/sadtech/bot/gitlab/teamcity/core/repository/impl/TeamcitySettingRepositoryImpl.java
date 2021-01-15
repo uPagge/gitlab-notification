@@ -5,7 +5,6 @@ import org.sadtech.bot.gitlab.teamcity.core.domain.entity.TeamcitySetting;
 import org.sadtech.bot.gitlab.teamcity.core.repository.TeamcitySettingRepository;
 import org.sadtech.bot.gitlab.teamcity.core.repository.jpa.TeamcitySettingJpaRepository;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  *
  * @author upagge 21.09.2020
  */
-@Repository
+//@Repository
 public class TeamcitySettingRepositoryImpl extends AbstractSimpleManagerRepository<TeamcitySetting, Long> implements TeamcitySettingRepository {
 
     private final TeamcitySettingJpaRepository jpaRepository;

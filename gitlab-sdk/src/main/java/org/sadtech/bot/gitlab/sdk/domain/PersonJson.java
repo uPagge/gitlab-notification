@@ -9,11 +9,11 @@ import lombok.Data;
  * @author upagge [31.01.2020]
  */
 @Data
-public class AuthorJson {
+public class PersonJson {
 
     private Long id;
     private String name;
-    private String userName;
+    private String username;
 
     @JsonProperty("web_url")
     private String webUrl;

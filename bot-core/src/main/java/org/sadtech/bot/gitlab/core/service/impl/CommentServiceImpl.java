@@ -19,7 +19,6 @@ import org.springframework.core.convert.ConversionService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +80,6 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
                 CommentNotify.builder()
                         .authorName(comment.getAuthor())
                         .url(comment.getUrl())
-                        .recipients(recipientsLogins)
                         .message(comment.getMessage())
                         .build()
         );
@@ -131,7 +129,6 @@ public class CommentServiceImpl extends AbstractSimpleManagerService<Comment, Lo
             if (!newAnswers.isEmpty()) {
                 notifyService.send(
                         AnswerCommentNotify.builder()
-                                .recipients(Collections.singleton(newComment.getAuthor()))
                                 .url(oldComment.getUrl())
                                 .youMessage(newComment.getMessage())
                                 .answers(

@@ -6,7 +6,7 @@ import org.sadtech.bot.gitlab.app.service.ExecutorScanner;
 import org.sadtech.bot.gitlab.app.service.executor.DataScan;
 import org.sadtech.bot.gitlab.context.domain.entity.Comment;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.PullRequestMini;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequestMini;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.service.CommentService;
@@ -125,10 +125,10 @@ public class CommentAndTaskParser {
                 .map(resultScan -> conversionService.convert(resultScan, Comment.class))
                 .peek(
                         comment -> {
-                            final PullRequestMini pullRequestMini = mergeRequestsService.getMiniInfo(comment.getPullRequestId())
+                            final MergeRequestMini mergeRequestMini = mergeRequestsService.getMiniInfo(comment.getPullRequestId())
                                     .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
-                            comment.setUrl(generateUrl(comment.getId(), pullRequestMini.getUrl()));
-                            comment.setResponsible(pullRequestMini.getAuthorLogin());
+                            comment.setUrl(generateUrl(comment.getId(), mergeRequestMini.getWebUrl()));
+//                            comment.setResponsible(mergeRequestMini.getAuthor());
                         }
                 )
                 .collect(Collectors.toList());
@@ -140,10 +140,10 @@ public class CommentAndTaskParser {
                 .map(resultScan -> conversionService.convert(resultScan, Task.class))
                 .peek(
                         task -> {
-                            final PullRequestMini pullRequestMini = mergeRequestsService.getMiniInfo(task.getPullRequestId())
+                            final MergeRequestMini mergeRequestMini = mergeRequestsService.getMiniInfo(task.getPullRequestId())
                                     .orElseThrow(() -> new NotFoundException("Автор ПР не найден"));
-                            task.setResponsible(pullRequestMini.getAuthorLogin());
-                            task.setUrl(generateUrl(task.getId(), pullRequestMini.getUrl()));
+//                            task.setResponsible(mergeRequestMini.getAuthorLogin());
+                            task.setUrl(generateUrl(task.getId(), mergeRequestMini.getWebUrl()));
                         }
                 )
                 .collect(Collectors.toList());

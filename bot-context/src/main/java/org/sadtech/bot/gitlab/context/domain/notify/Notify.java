@@ -3,7 +3,6 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.sadtech.bot.gitlab.context.domain.EntityType;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,14 +15,6 @@ public abstract class Notify {
     public static final Set<Character> FORBIDDEN_SYMBOLS = Stream.of(
             '\\', '+', '`', '[', ']', '\"', '~', '*', '#', '=', '_', '>', '<'
     ).collect(Collectors.toSet());
-
-    protected EntityType entityType;
-    protected Set<String> recipients;
-
-    protected Notify(EntityType entityType, Set<String> recipients) {
-        this.entityType = entityType;
-        this.recipients = recipients;
-    }
 
     public abstract String generateMessage();
 
