@@ -37,6 +37,9 @@ public class Project implements BasicEntity<Long> {
     private LocalDateTime createdDate;
 
     @Column(name = "creator_id")
-    private Integer creatorId;
+    private Long creatorId;
+
+    @Column(name = "web_url")
+    private String webUrl;
 
 }

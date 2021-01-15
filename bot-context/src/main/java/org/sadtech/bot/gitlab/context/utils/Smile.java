@@ -41,6 +41,7 @@ public enum Smile {
     BUILD("♻️"),
     SMART("\uD83E\uDDE0"),
     SADLY("\uD83D\uDE14"),
+    TREE("\uD83C\uDF33"),
     TOP("\uD83D\uDD1D");
 
     @Getter

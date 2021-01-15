@@ -12,8 +12,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="varchar(1000)"/>
-            <column name="created_date" type="datetime"/>
-            <column name="creator_id" type="int"/>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="web_url" type="varchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -27,7 +34,7 @@
             </column>
             <column name="name" type="varchar(100)"/>
             <column name="web_url" type="varchar(300)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
     </changeSet>
@@ -58,7 +65,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="web_url" type="varchar(300)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="conflict" type="boolean">
                 <constraints nullable="false"/>
@@ -70,6 +77,12 @@
             <column name="assignee_id" type="int">
                 <constraints nullable="false" foreignKeyName="merge_request_assignee_id_person_id"
                              references="person(id)"/>
+            </column>
+            <column name="source_branch" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_branch" type="varchar(100)">
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

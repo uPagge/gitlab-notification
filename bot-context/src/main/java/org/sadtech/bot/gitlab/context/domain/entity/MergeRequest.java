@@ -73,6 +73,12 @@ public class MergeRequest implements BasicEntity<Long> {
     @JoinColumn(name = "assignee_id")
     private Person assignee;
 
+    @Column(name = "target_branch")
+    private String targetBranch;
+
+    @Column(name = "source_branch")
+    private String sourceBranch;
+
     @ElementCollection
     @CollectionTable(name = "merge_request_label", joinColumns = @JoinColumn(name = "merge_request_id"))
     @Column(name = "label")

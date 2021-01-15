@@ -75,6 +75,8 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
                             .description(newMergeRequest.getDescription())
                             .title(newMergeRequest.getTitle())
                             .url(newMergeRequest.getWebUrl())
+                            .targetBranch(newMergeRequest.getTargetBranch())
+                            .sourceBranch(newMergeRequest.getSourceBranch())
                             .build()
             );
         }

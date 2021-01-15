@@ -26,7 +26,10 @@ public class ProjectJson {
     @JsonProperty("created_at")
     private LocalDateTime createdDate;
 
+    @JsonProperty("web_url")
+    private String webUrl;
+
     @JsonProperty("creator_id")
-    private Integer creatorId;
+    private Long creatorId;
 
 }

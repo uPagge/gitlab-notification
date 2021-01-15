@@ -48,6 +48,12 @@ public class MergeRequestJson {
     @JsonProperty("has_conflicts")
     private boolean conflicts;
 
+    @JsonProperty("target_branch")
+    private String targetBranch;
+
+    @JsonProperty("source_branch")
+    private String sourceBranch;
+
     private Set<String> labels;
 
 }

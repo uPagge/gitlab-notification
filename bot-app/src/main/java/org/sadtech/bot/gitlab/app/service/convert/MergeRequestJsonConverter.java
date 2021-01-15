@@ -1,11 +1,10 @@
 package org.sadtech.bot.gitlab.app.service.convert;
 
+import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.Person;
 import org.sadtech.bot.gitlab.sdk.domain.MergeRequestJson;
 import org.sadtech.bot.gitlab.sdk.domain.MergeRequestStateJson;
-import org.sadtech.bot.gitlab.sdk.domain.PersonJson;
 import org.sadtech.haiti.context.exception.ConvertException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,10 @@ import org.springframework.stereotype.Component;
  * @author upagge 15.01.2021
  */
 @Component
+@RequiredArgsConstructor
 public class MergeRequestJsonConverter implements Converter<MergeRequestJson, MergeRequest> {
+
+    private final PersonJsonConverter convertPerson;
 
     @Override
     public MergeRequest convert(MergeRequestJson source) {
@@ -32,18 +34,11 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
         mergeRequest.setProjectId(source.getProjectId());
         mergeRequest.setWebUrl(source.getWebUrl());
         mergeRequest.setLabels(source.getLabels());
-        mergeRequest.setAssignee(convertPerson(source.getAssignee()));
-        mergeRequest.setAuthor(convertPerson(source.getAssignee()));
+        mergeRequest.setAssignee(convertPerson.convert(source.getAssignee()));
+        mergeRequest.setAuthor(convertPerson.convert(source.getAssignee()));
+        mergeRequest.setSourceBranch(source.getSourceBranch());
+        mergeRequest.setTargetBranch(source.getTargetBranch());
         return mergeRequest;
-    }
-
-    private Person convertPerson(PersonJson personJson) {
-        final Person person = new Person();
-        person.setId(personJson.getId());
-        person.setName(personJson.getName());
-        person.setUserName(personJson.getUsername());
-        person.setWebUrl(personJson.getWebUrl());
-        return person;
     }
 
     private MergeRequestState convertState(MergeRequestStateJson state) {

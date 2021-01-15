@@ -40,4 +40,6 @@ public class GitlabProperty {
 
     private String userUrl;
 
+    private String usersUrl;
+
 }

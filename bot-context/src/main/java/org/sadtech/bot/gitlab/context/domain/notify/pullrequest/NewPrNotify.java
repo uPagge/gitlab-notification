@@ -13,6 +13,8 @@ public class NewPrNotify extends PrNotify {
 
     private final String description;
     private final String author;
+    private final String targetBranch;
+    private final String sourceBranch;
     private final Set<String> labels;
 
     @Builder
@@ -22,10 +24,15 @@ public class NewPrNotify extends PrNotify {
             String description,
             String author,
             String projectName,
-            Set<String> labels) {
+            String targetBranch,
+            String sourceBranch,
+            Set<String> labels
+    ) {
         super(projectName, title, url);
         this.description = description;
         this.author = author;
+        this.targetBranch = targetBranch;
+        this.sourceBranch = sourceBranch;
         this.labels = labels;
     }
 
@@ -41,10 +48,10 @@ public class NewPrNotify extends PrNotify {
                 "{0} *Новый PullRequest | {1}*{2}" +
                         "[{3}]({4})" +
                         "{5}" +
-                        "{2}{7}: {8}\n\n",
+                        "{2}{9}: {10} {12} {11}\n{7}: {8}",
                 Smile.FUN, projectName, Smile.HR, title, url, labelText,
                 (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : "",
-                Smile.AUTHOR, author
+                Smile.AUTHOR, author, Smile.TREE, sourceBranch, targetBranch, Smile.ARROW
         );
     }
 
