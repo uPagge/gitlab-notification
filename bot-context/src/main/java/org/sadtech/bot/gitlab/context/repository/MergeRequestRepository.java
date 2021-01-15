@@ -13,7 +13,7 @@ import java.util.Set;
 
 public interface MergeRequestRepository extends SimpleManagerRepository<MergeRequest, Long>, FilterOperation<MergeRequest> {
 
-    Set<IdAndStatusPr> findAllIdByStatusIn(Set<MergeRequestState> statuses);
+    Set<IdAndStatusPr> findAllIdByStateIn(Set<MergeRequestState> states);
 
     Optional<MergeRequestMini> findMiniInfoById(@NonNull Long id);
 

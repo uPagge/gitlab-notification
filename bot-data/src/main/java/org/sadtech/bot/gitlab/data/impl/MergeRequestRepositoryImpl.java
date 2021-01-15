@@ -27,7 +27,7 @@ public class MergeRequestRepositoryImpl extends FilterManagerRepository<MergeReq
     }
 
     @Override
-    public Set<IdAndStatusPr> findAllIdByStatusIn(Set<MergeRequestState> statuses) {
+    public Set<IdAndStatusPr> findAllIdByStateIn(Set<MergeRequestState> statuses) {
         return repositoryJpa.findAllIdByStateIn(statuses);
     }
 

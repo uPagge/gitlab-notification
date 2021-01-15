@@ -21,8 +21,8 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
 
     void deleteAllByIdIn(Collection<Long> id);
 
-    @Query("SELECT new org.sadtech.bot.gitlab.context.domain.IdAndStatusPr(p.id, p.state) FROM MergeRequest p WHERE p.state IN :statuses")
-    Set<IdAndStatusPr> findAllIdByStateIn(@Param("statuses") Set<MergeRequestState> statuses);
+    @Query("SELECT new org.sadtech.bot.gitlab.context.domain.IdAndStatusPr(p.id, p.twoId, p.projectId, p.state) FROM MergeRequest p WHERE p.state IN :states")
+    Set<IdAndStatusPr> findAllIdByStateIn(@Param("states") Set<MergeRequestState> states);
 
     @Query("SELECT p.id from MergeRequest p")
     Set<Long> findAllIds();

@@ -85,7 +85,8 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public MergeRequest update(@NonNull MergeRequest mergeRequest) {
-        final MergeRequest oldMergeRequest = findAndFillId(mergeRequest);
+        final MergeRequest oldMergeRequest = mergeRequestRepository.findById(mergeRequest.getId())
+                .orElseThrow(() -> new NotFoundException("МержРеквест не найден"));
 
 //        forgottenNotification(oldMergeRequest);
 
@@ -163,7 +164,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses) {
-        return null;
+        return mergeRequestRepository.findAllIdByStateIn(statuses);
     }
 
     @Override
@@ -189,17 +190,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     @Override
     public long count(@NonNull PullRequestFilter pullRequestFilter) {
         return filterService.count(pullRequestFilter);
-    }
-
-    protected MergeRequest findAndFillId(@NonNull MergeRequest mergeRequest) {
-//        return pullRequestsRepository.findFirst(
-//                CriteriaFilter.create().and(
-//                        CriteriaQuery.create()
-//                                .matchPhrase("hyita", mergeRequest.getBitbucketId())
-//                                .matchPhrase("hyita", mergeRequest.getRepositoryId())
-//                )
-//        ).orElseThrow(() -> new UpdateException("ПР с таким id не существует"));
-        return null;
     }
 
 }

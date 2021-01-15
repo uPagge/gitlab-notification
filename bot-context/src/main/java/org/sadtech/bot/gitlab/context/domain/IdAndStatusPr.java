@@ -10,6 +10,8 @@ import lombok.Setter;
 public class IdAndStatusPr {
 
     private Long id;
+    private Long twoId;
+    private Long projectId;
     private MergeRequestState status;
 
 }

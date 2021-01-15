@@ -30,4 +30,9 @@ public class SchedulerService {
         mergeRequestParser.parsingNewMergeRequest();
     }
 
+    @Scheduled(cron = "*/30 * * * * *")
+    public void oldMergeRequest() {
+        mergeRequestParser.parsingOldMergeRequest();
+    }
+
 }
