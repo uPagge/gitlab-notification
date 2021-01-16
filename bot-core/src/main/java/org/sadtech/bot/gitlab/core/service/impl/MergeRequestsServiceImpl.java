@@ -12,6 +12,7 @@ import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.ConflictPrNotify
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.NewPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.StatusPrNotify;
 import org.sadtech.bot.gitlab.context.repository.MergeRequestRepository;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PersonService;
@@ -36,6 +37,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     private final PersonService personService;
     private final FilterService<MergeRequest, PullRequestFilter> filterService;
     private final ProjectService projectService;
+    private final AppSettingService settingService;
 
     private final PersonInformation personInformation;
 
@@ -45,6 +47,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             PersonService personService,
             @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, PullRequestFilter> filterService,
             ProjectService projectService,
+            AppSettingService settingService,
             PersonInformation personInformation
     ) {
         super(mergeRequestRepository);
@@ -53,6 +56,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         this.personService = personService;
         this.filterService = filterService;
         this.projectService = projectService;
+        this.settingService = settingService;
         this.personInformation = personInformation;
     }
 
@@ -63,6 +67,14 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
         final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
 
+        if (!settingService.isFirstStart()) {
+            notifyNewPr(newMergeRequest);
+        }
+
+        return newMergeRequest;
+    }
+
+    private void notifyNewPr(MergeRequest newMergeRequest) {
         if (!personInformation.getId().equals(newMergeRequest.getAuthor().getId())) {
             final String projectName = projectService.getById(newMergeRequest.getProjectId())
                     .orElseThrow(() -> new NotFoundException("Проект не найден"))
@@ -80,7 +92,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
                             .build()
             );
         }
-        return newMergeRequest;
     }
 
     @Override

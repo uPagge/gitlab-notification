@@ -91,7 +91,7 @@
         <haiti.context.version>0.0.2-SNAPSHOT</haiti.context.version>
         <haiti.database.version>0.0.3-SNAPSHOT</haiti.database.version>
         <haiti.filter.criteria.version>0.0.2-RELEASE</haiti.filter.criteria.version>
-        <sadtech.bot.telegram.core.version>0.0.1-RELEASE</sadtech.bot.telegram.core.version>
+        <sadtech.bot.telegram.core.version>0.0.2-SNAPSHOT</sadtech.bot.telegram.core.version>
         <sadtech.bot.vsc.context.version>0.0.1-RELEASE</sadtech.bot.vsc.context.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>

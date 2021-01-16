@@ -2,8 +2,8 @@ package org.sadtech.bot.gitlab.telegram.service.unit.pullrequest;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
-import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;
+import org.sadtech.social.core.domain.ProcessingData;
 import org.sadtech.social.core.domain.content.Message;
 
 /**

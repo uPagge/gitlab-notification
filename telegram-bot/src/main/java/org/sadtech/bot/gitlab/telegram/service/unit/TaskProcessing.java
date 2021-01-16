@@ -3,8 +3,8 @@ package org.sadtech.bot.gitlab.telegram.service.unit;
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.service.TaskService;
-import org.sadtech.social.bot.service.usercode.ProcessingData;
 import org.sadtech.social.core.domain.BoxAnswer;
+import org.sadtech.social.core.domain.ProcessingData;
 import org.sadtech.social.core.domain.content.Message;
 
 import java.text.MessageFormat;

@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -43,11 +44,13 @@ public class AppSettingServiceImpl implements AppSettingService {
 
     @Override
     public String getMessage(@NonNull String label) {
-        return messageSource.getMessage(
-                label, null, appSettingRepository.findById(KEY)
-                        .orElseThrow(() -> EXCEPTION)
-                        .getAppLocale().getValue()
+        final Locale value = appSettingRepository.findById(KEY)
+                .orElseThrow(() -> EXCEPTION)
+                .getAppLocale().getValue();
+        final String message = messageSource.getMessage(
+                label, null, value
         );
+        return message;
     }
 
     @Override

@@ -40,7 +40,7 @@ public class UnitConfig {
             AnswerProcessing checkLanguage
     ) {
         return AnswerText.builder()
-                .boxAnswer(
+                .boxAnswer(message ->
                         BoxAnswer.builder()
                                 .message("Hi :)\n\nLet's choose a language for.")
                                 .keyBoard(KeyBoards.verticalDuoMenuString("Русский", "English"))
@@ -76,7 +76,7 @@ public class UnitConfig {
             AppSettingService settingService
     ) {
         return AnswerText.builder()
-                .boxAnswer(
+                .boxAnswer(message ->
                         BoxAnswer.builder()
                                 .message(settingService.getMessage("ui.monitor_private_projects"))
                                 .keyBoard(KeyBoards.verticalDuoMenuString(
@@ -92,26 +92,94 @@ public class UnitConfig {
     @Bean
     public AnswerCheck checkParserPrivateProject(
             AppSettingService appSettingService,
-            AnswerProcessing parserPrivateProject
+            AnswerProcessing parserPrivateProject,
+            AnswerText textParseOwnerProject
     ) {
         return AnswerCheck.builder()
                 .check(
                         message -> appSettingService.getMessage("main.yes").equalsIgnoreCase(message.getText())
                 )
                 .unitTrue(parserPrivateProject)
+                .unitFalse(textParseOwnerProject)
                 .build();
     }
 
     @Bean
     public AnswerProcessing parserPrivateProject(
             ProjectParser projectParser,
-            AppSettingService settingService
+            AppSettingService settingService,
+            AnswerText textParseOwnerProject
     ) {
         return AnswerProcessing.builder()
                 .processingData(message -> {
                     projectParser.parseAllPrivateProject();
                     return BoxAnswer.of(settingService.getMessage("ui.monitor_project_private_success"));
                 })
+                .nextUnit(textParseOwnerProject)
+                .build();
+    }
+
+    @Bean
+    public AnswerText textParseOwnerProject(
+            AppSettingService settingService,
+            AnswerCheck checkParseOwnerProject
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(message ->
+                        BoxAnswer.builder()
+                                .message(settingService.getMessage("ui.monitor_owner_projects"))
+                                .keyBoard(KeyBoards.verticalDuoMenuString(
+                                        settingService.getMessage("main.yes"), settingService.getMessage("main.no")
+                                ))
+                                .build()
+                )
+                .activeType(UnitActiveType.AFTER)
+                .nextUnit(checkParseOwnerProject)
+                .build();
+    }
+
+    @Bean
+    public AnswerCheck checkParseOwnerProject(
+            AppSettingService appSettingService,
+            AnswerProcessing parseOwnerProject,
+            AnswerProcessing endSetting
+    ) {
+        return AnswerCheck.builder()
+                .check(
+                        message -> appSettingService.getMessage("main.yes").equalsIgnoreCase(message.getText())
+                )
+                .unitTrue(parseOwnerProject)
+                .unitFalse(endSetting)
+                .build();
+    }
+
+    @Bean
+    public AnswerProcessing parseOwnerProject(
+            ProjectParser projectParser,
+            AppSettingService settingService,
+            AnswerProcessing endSetting
+    ) {
+        return AnswerProcessing.builder()
+                .processingData(message -> {
+                    projectParser.parseAllProjectOwner();
+                    return BoxAnswer.of(settingService.getMessage("ui.monitor_project_private_success"));
+                })
+                .nextUnit(endSetting)
+                .build();
+    }
+
+    @Bean
+    public AnswerProcessing endSetting(
+            AppSettingService settingService
+    ) {
+        return AnswerProcessing.builder()
+                .processingData(
+                        message -> {
+                            settingService.disableFirstStart();
+                            return BoxAnswer.of(settingService.getMessage("ui.setup_finished"));
+                        }
+                )
+                .activeType(UnitActiveType.AFTER)
                 .build();
     }
 

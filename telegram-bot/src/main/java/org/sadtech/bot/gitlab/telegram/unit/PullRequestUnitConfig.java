@@ -23,7 +23,7 @@ public class PullRequestUnitConfig {
             AnswerProcessing<Message> needWorkPullRequest
     ) {
         return AnswerText.builder()
-                .boxAnswer(
+                .boxAnswer(message ->
                         BoxAnswer.builder()
                                 .message("Эта вкладка для работы с Pull Request")
                                 .keyBoard(
