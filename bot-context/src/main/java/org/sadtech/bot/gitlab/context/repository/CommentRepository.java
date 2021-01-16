@@ -1,7 +1,7 @@
 package org.sadtech.bot.gitlab.context.repository;
 
 import lombok.NonNull;
-import org.sadtech.bot.gitlab.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.haiti.context.repository.SimpleManagerRepository;
 
 import java.time.LocalDateTime;
@@ -14,13 +14,13 @@ import java.util.Set;
  *
  * @author upagge 08.09.2020
  */
-public interface CommentRepository extends SimpleManagerRepository<Comment, Long> {
+public interface CommentRepository extends SimpleManagerRepository<Note, Long> {
 
-    Optional<Comment> findFirstByOrderByIdDesc();
+    Optional<Note> findFirstByOrderByIdDesc();
 
-    List<Comment> findByCreateDateBetween(@NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
+    List<Note> findByCreateDateBetween(@NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
 
-    List<Comment> findAllById(@NonNull Set<Long> ids);
+    List<Note> findAllById(@NonNull Set<Long> ids);
 
     Set<Long> existsById(Set<Long> ids);
 

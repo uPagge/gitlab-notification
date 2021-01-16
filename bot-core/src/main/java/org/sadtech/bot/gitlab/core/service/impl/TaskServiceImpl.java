@@ -1,19 +1,17 @@
 package org.sadtech.bot.gitlab.core.service.impl;
 
 import lombok.NonNull;
-import org.sadtech.bot.gitlab.context.domain.Answer;
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
-import org.sadtech.bot.gitlab.context.domain.entity.Comment;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
-import org.sadtech.bot.gitlab.context.domain.notify.comment.AnswerCommentNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.CommentNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.repository.TaskRepository;
-import org.sadtech.bot.gitlab.context.service.CommentService;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
+import org.sadtech.bot.gitlab.context.service.NoteService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.haiti.context.domain.ExistsContainer;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 //@Service
 public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> implements TaskService {
@@ -39,7 +36,7 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
 
     private final MergeRequestsService mergeRequestsService;
     private final NotifyService notifyService;
-    private final CommentService commentService;
+    private final NoteService noteService;
 
     private final ConversionService conversionService;
 
@@ -47,14 +44,14 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
             TaskRepository taskRepository,
             MergeRequestsService mergeRequestsService,
             NotifyService notifyService,
-            CommentService commentService,
+            NoteService noteService,
             ConversionService conversionService
     ) {
         super(taskRepository);
         this.taskRepository = taskRepository;
         this.mergeRequestsService = mergeRequestsService;
         this.notifyService = notifyService;
-        this.commentService = commentService;
+        this.noteService = noteService;
         this.conversionService = conversionService;
     }
 
@@ -114,29 +111,29 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     }
 
     private void updateAnswer(Task oldTask, Task task) {
-        final Set<Long> oldAnswerIds = oldTask.getAnswers();
-        final Set<Long> newAnswerIds = task.getAnswers();
-        if (!oldAnswerIds.equals(newAnswerIds)) {
-            final Set<Long> existsNewAnswersIds = commentService.existsById(newAnswerIds);
-            final List<Comment> newAnswers = commentService.getAllById(existsNewAnswersIds).stream()
-                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
-                    .collect(Collectors.toList());
-            oldTask.getAnswers().clear();
-            oldTask.setAnswers(existsNewAnswersIds);
-            if (!newAnswers.isEmpty()) {
-                notifyService.send(
-                        AnswerCommentNotify.builder()
-                                .url(oldTask.getUrl())
-                                .youMessage(oldTask.getDescription())
-                                .answers(
-                                        newAnswers.stream()
-                                                .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
-                                                .collect(Collectors.toList())
-                                )
-                                .build()
-                );
-            }
-        }
+//        final Set<Long> oldAnswerIds = oldTask.getAnswers();
+//        final Set<Long> newAnswerIds = task.getAnswers();
+//        if (!oldAnswerIds.equals(newAnswerIds)) {
+//            final Set<Long> existsNewAnswersIds = noteService.existsById(newAnswerIds);
+//            final List<Note> newAnswers = noteService.getAllById(existsNewAnswersIds).stream()
+//                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
+//                    .collect(Collectors.toList());
+//            oldTask.getAnswers().clear();
+//            oldTask.setAnswers(existsNewAnswersIds);
+//            if (!newAnswers.isEmpty()) {
+//                notifyService.send(
+//                        AnswerCommentNotify.builder()
+//                                .url(oldTask.getUrl())
+//                                .youMessage(oldTask.getDescription())
+//                                .answers(
+//                                        newAnswers.stream()
+//                                                .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
+//                                                .collect(Collectors.toList())
+//                                )
+//                                .build()
+//                );
+//            }
+//        }
     }
 
     @Override
@@ -145,9 +142,9 @@ public class TaskServiceImpl extends AbstractSimpleManagerService<Task, Long> im
     }
 
     @Override
-    public Task convert(@NonNull Comment comment) {
-        commentService.deleteById(comment.getId());
-        final Task task = conversionService.convert(comment, Task.class);
+    public Task convert(@NonNull Note note) {
+        noteService.deleteById(note.getId());
+        final Task task = conversionService.convert(note, Task.class);
         final Task newTask = taskRepository.save(task);
         notifyNewTask(newTask);
         return newTask;

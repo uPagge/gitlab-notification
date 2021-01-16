@@ -3,6 +3,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+    <changeSet id="2020-01-16-create-table-app-setting" author="uPagge">
+        <createTable tableName="app_setting">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="language" type="varchar(10)"/>
+            <column name="first_start" type="boolean"/>
+        </createTable>
+    </changeSet>
+
     <changeSet id="2020-01-14-create-table-project" author="uPagge">
         <createTable tableName="project">
             <column name="id" type="int">
@@ -102,6 +112,37 @@
         </createTable>
 
         <addUniqueConstraint tableName="merge_request_label" columnNames="merge_request_id, label"/>
+    </changeSet>
+
+    <changeSet id="2020-01-16-create-table-note" author="uPagge">
+        <createTable tableName="note">
+            <column name="id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="type" type="varchar(100)"/>
+            <column name="body" type="varchar(3000)"/>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="int">
+                <constraints nullable="false" foreignKeyName="merge_request_author_id_person_id"
+                             references="person(id)"/>
+            </column>
+            <column name="system" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="noteable_id" type="int"/>
+            <column name="noteable_type" type="varchar(100)"/>
+            <column name="resolvable" type="boolean"/>
+            <column name="resolved" type="boolean"/>
+            <column name="resolved_id" type="int">
+                <constraints foreignKeyName="note_resolved_by_person_id" references="person(id)"/>
+            </column>
+            <column name="noteable_iid" type="int"/>
+        </createTable>
     </changeSet>
 
 </databaseChangeLog>

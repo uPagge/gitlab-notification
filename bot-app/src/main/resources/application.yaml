@@ -32,10 +32,10 @@ gitlab-bot:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
   gitlab:
-    url-project: ${GITLAB_URL}/api/v4/projects
+    url-project: ${GITLAB_URL}/api/v4/projects?page={0}&per_page=100
     url-pull-request-open: ${GITLAB_URL}/api/v4/projects/{0}/merge_requests?state=opened
     url-pull-request-close: ${GITLAB_URL}
-    url-pull-request-comment: ${GITLAB_URL}
+    url-pull-request-comment: ${GITLAB_URL}/api/v4/projects/19/merge_requests/8/notes
     url-pull-request: ${GITLAB_URL}/api/v4/projects/{0}/merge_requests/{1}
     user-url: ${GITLAB_URL}/api/v4/user
     users-url: ${GITLAB_URL}/api/v4/users

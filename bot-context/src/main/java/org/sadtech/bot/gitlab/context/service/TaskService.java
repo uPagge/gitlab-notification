@@ -2,7 +2,7 @@ package org.sadtech.bot.gitlab.context.service;
 
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.TaskStatus;
-import org.sadtech.bot.gitlab.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.haiti.context.service.SimpleManagerService;
 
@@ -13,7 +13,7 @@ public interface TaskService extends SimpleManagerService<Task, Long> {
 
     Long getLastTaskId();
 
-    Task convert(@NonNull Comment comment);
+    Task convert(@NonNull Note note);
 
     List<Task> getAllBetweenDate(@NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
 

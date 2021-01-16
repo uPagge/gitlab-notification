@@ -1,7 +1,7 @@
 package org.sadtech.bot.gitlab.data.jpa;
 
 import lombok.NonNull;
-import org.sadtech.bot.gitlab.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -11,13 +11,13 @@ import java.util.Optional;
 import java.util.Set;
 
 @NoRepositoryBean
-public interface CommentRepositoryJpa extends JpaRepository<Comment, Long> {
+public interface CommentRepositoryJpa extends JpaRepository<Note, Long> {
 
-    Optional<Comment> findFirstByOrderByIdDesc();
+    Optional<Note> findFirstByOrderByIdDesc();
 
-    List<Comment> findByCreateDateBetween(@NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
+    List<Note> findByCreateDateBetween(@NonNull LocalDateTime dateFrom, @NonNull LocalDateTime dateTo);
 
-//    @Query("SELECT c.id FROM Comment c WHERE c.id IN :ids")
+    //    @Query("SELECT c.id FROM Comment c WHERE c.id IN :ids")
     Set<Long> existsAllById(@NonNull Set<Long> ids);
 
 }

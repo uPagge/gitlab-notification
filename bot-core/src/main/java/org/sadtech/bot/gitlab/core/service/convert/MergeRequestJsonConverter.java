@@ -1,4 +1,4 @@
-package org.sadtech.bot.gitlab.app.service.convert;
+package org.sadtech.bot.gitlab.core.service.convert;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;

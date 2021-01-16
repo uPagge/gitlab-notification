@@ -1,7 +1,7 @@
 package org.sadtech.bot.gitlab.data.impl;
 
 import lombok.NonNull;
-import org.sadtech.bot.gitlab.context.domain.entity.Comment;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.repository.CommentRepository;
 import org.sadtech.bot.gitlab.data.jpa.CommentRepositoryJpa;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
@@ -17,7 +17,7 @@ import java.util.Set;
  * @author upagge 08.09.2020
  */
 //@Repository
-public class CommentRepositoryImpl extends AbstractSimpleManagerRepository<Comment, Long> implements CommentRepository {
+public class CommentRepositoryImpl extends AbstractSimpleManagerRepository<Note, Long> implements CommentRepository {
 
     private final CommentRepositoryJpa repositoryJpa;
 
@@ -27,17 +27,17 @@ public class CommentRepositoryImpl extends AbstractSimpleManagerRepository<Comme
     }
 
     @Override
-    public Optional<Comment> findFirstByOrderByIdDesc() {
+    public Optional<Note> findFirstByOrderByIdDesc() {
         return repositoryJpa.findFirstByOrderByIdDesc();
     }
 
     @Override
-    public List<Comment> findByCreateDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
+    public List<Note> findByCreateDateBetween(LocalDateTime dateFrom, LocalDateTime dateTo) {
         return repositoryJpa.findByCreateDateBetween(dateFrom, dateTo);
     }
 
     @Override
-    public List<Comment> findAllById(@NonNull Set<Long> ids) {
+    public List<Note> findAllById(@NonNull Set<Long> ids) {
         return repositoryJpa.findAllById(ids);
     }
 

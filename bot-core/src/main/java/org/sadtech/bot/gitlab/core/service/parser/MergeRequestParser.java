@@ -1,4 +1,4 @@
-package org.sadtech.bot.gitlab.app.service.parser;
+package org.sadtech.bot.gitlab.core.service.parser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

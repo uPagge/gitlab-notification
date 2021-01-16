@@ -8,7 +8,7 @@ import org.sadtech.bot.godfather.telegram.listen.EventDistributor;
 import org.sadtech.bot.godfather.telegram.listen.EventDistributorImpl;
 import org.sadtech.bot.godfather.telegram.listen.TelegramConnect;
 import org.sadtech.bot.godfather.telegram.listen.TelegramSender;
-import org.sadtech.social.bot.domain.unit.AnswerText;
+import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.core.domain.content.Mail;
 import org.sadtech.social.core.repository.impl.local.MailRepositoryList;
 import org.sadtech.social.core.service.MailService;
@@ -45,10 +45,11 @@ public class TelegramBotConfig {
     public MessageAutoresponderTelegram messageAutoresponderTelegram(
             Sending sending,
             MessageService<Mail> messageService,
-            UnitPointerRepository unitPointerRepository
+            UnitPointerRepository unitPointerRepository,
+            AnswerCheck checkFirstStart
     ) {
         return new MessageAutoresponderTelegram(
-                Collections.singleton(AnswerText.of("TEST")),
+                Collections.singleton(checkFirstStart),
                 sending,
                 messageService,
                 unitPointerRepository
