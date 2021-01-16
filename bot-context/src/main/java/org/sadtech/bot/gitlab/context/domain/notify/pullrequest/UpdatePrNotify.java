@@ -2,9 +2,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 @Getter
 public class UpdatePrNotify extends PrNotify {
@@ -23,13 +22,10 @@ public class UpdatePrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Обновление PullRequest | {6}*{3}" +
-                        "[{1}]({2})" +
-                        "{3}" +
-                        "{4}: {5}\n\n",
-                Smile.UPDATE, title, url, Smile.HR, Smile.AUTHOR, author, projectName
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.pr.update",
+                Smile.UPDATE.getValue(), title, url, Smile.HR.getValue(), Smile.AUTHOR.getValue(), author, projectName
         );
     }
 

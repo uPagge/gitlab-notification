@@ -65,40 +65,48 @@ public class MergeRequestParser {
     public void parsingNewMergeRequest() {
 
         int page = 0;
-
         Sheet<Project> projectSheet = projectService.getAll(PaginationImpl.of(page, COUNT));
+
         while (projectSheet.hasContent()) {
             final List<Project> projects = projectSheet.getContent();
 
             for (Project project : projects) {
-                final List<MergeRequestJson> mergeRequestJsons = HttpParse.request(
-                        MessageFormat.format(gitlabProperty.getUrlPullRequestOpen(), project.getId())
-                )
-                        .header(HttpHeader.of(AUTHORIZATION, BEARER + personProperty.getToken()))
-                        .header(ACCEPT)
-                        .executeList(MergeRequestJson.class);
-
-                if (!mergeRequestJsons.isEmpty()) {
-
-                    final Set<Long> jsonIds = mergeRequestJsons.stream()
-                            .map(MergeRequestJson::getId)
-                            .collect(Collectors.toSet());
-
-                    final ExistsContainer<MergeRequest, Long> existsContainer = mergeRequestsService.existsById(jsonIds);
-                    if (!existsContainer.isAllFound()) {
-                        final List<MergeRequest> newMergeRequests = mergeRequestJsons.stream()
-                                .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
-                                .map(json -> conversionService.convert(json, MergeRequest.class))
-                                .collect(Collectors.toList());
-                        mergeRequestsService.createAll(newMergeRequests);
-                    }
-                }
+                projectProcessing(project);
             }
 
             projectSheet = projectService.getAll(PaginationImpl.of(++page, COUNT));
         }
 
+    }
 
+    private void projectProcessing(Project project) {
+        int page = 1;
+        List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons(project, page);
+
+        while (!mergeRequestJsons.isEmpty()) {
+
+            final Set<Long> jsonIds = mergeRequestJsons.stream()
+                    .map(MergeRequestJson::getId)
+                    .collect(Collectors.toSet());
+
+            final ExistsContainer<MergeRequest, Long> existsContainer = mergeRequestsService.existsById(jsonIds);
+            if (!existsContainer.isAllFound()) {
+                final List<MergeRequest> newMergeRequests = mergeRequestJsons.stream()
+                        .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                        .map(json -> conversionService.convert(json, MergeRequest.class))
+                        .collect(Collectors.toList());
+                mergeRequestsService.createAll(newMergeRequests);
+            }
+
+            mergeRequestJsons = getMergeRequestJsons(project, page++);
+        }
+    }
+
+    private List<MergeRequestJson> getMergeRequestJsons(Project project, int page) {
+        return HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestOpen(), project.getId(), page))
+                .header(HttpHeader.of(AUTHORIZATION, BEARER + personProperty.getToken()))
+                .header(ACCEPT)
+                .executeList(MergeRequestJson.class);
     }
 
 }

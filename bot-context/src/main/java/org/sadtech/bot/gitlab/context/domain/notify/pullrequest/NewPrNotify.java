@@ -2,9 +2,9 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
-import java.text.MessageFormat;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,21 +37,28 @@ public class NewPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
+    public String generateMessage(AppSettingService settingService) {
         String labelText = labels.stream()
                 .map(label -> "#" + label)
                 .collect(Collectors.joining(" "));
         if (!labelText.isEmpty()) {
             labelText = "\n\n" + labelText;
         }
-        return MessageFormat.format(
-                "{0} *Новый PullRequest | {1}*{2}" +
-                        "[{3}]({4})" +
-                        "{5}" +
-                        "{2}{9}: {10} {12} {11}\n{7}: {8}",
-                Smile.FUN, projectName, Smile.HR, title, url, labelText,
+        return settingService.getMessage(
+                "notify.pr.new",
+                Smile.FUN.getValue(),
+                projectName,
+                Smile.HR.getValue(),
+                title,
+                url,
+                labelText,
                 (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : "",
-                Smile.AUTHOR, author, Smile.TREE, sourceBranch, targetBranch, Smile.ARROW
+                Smile.AUTHOR.getValue(),
+                author,
+                Smile.TREE.getValue(),
+                sourceBranch,
+                targetBranch,
+                Smile.ARROW.getValue()
         );
     }
 

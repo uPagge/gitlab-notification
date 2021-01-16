@@ -3,9 +3,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.comment;
 import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 @Getter
 public class CommentNotify extends Notify {
@@ -26,11 +25,10 @@ public class CommentNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Новое упоминание* | [ПР]({1}){2}" +
-                        "*{3}*: {4}",
-                Smile.COMMENT, url, Smile.HR, authorName, escapeMarkdown(message)
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.comment.bell",
+                Smile.COMMENT.getValue(), url, Smile.HR.getValue(), authorName, escapeMarkdown(message)
         );
     }
 

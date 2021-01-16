@@ -2,9 +2,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.task;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 /**
  * // TODO: 10.09.2020 Добавить описание.
@@ -24,11 +23,10 @@ public class TaskNewNotify extends TaskNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Назначена новая* [задача]({1}){2}" +
-                        "*{3}*: {4}",
-                Smile.TASK, url, Smile.HR, authorName, escapeMarkdown(messageTask)
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.task.new",
+                Smile.TASK.getValue(), url, Smile.HR.getValue(), authorName, escapeMarkdown(messageTask)
         );
     }
 

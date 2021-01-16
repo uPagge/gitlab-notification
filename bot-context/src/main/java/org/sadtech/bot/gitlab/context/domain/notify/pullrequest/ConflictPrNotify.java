@@ -2,9 +2,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 @Getter
 public class ConflictPrNotify extends PrNotify {
@@ -19,12 +18,10 @@ public class ConflictPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Внимание конфликт в ПР | {4}*" +
-                        "{1}" +
-                        "[{2}]({3})\n\n",
-                Smile.DANGEROUS, Smile.HR, title, url, projectName
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.pr.conflict",
+                Smile.DANGEROUS.getValue(), Smile.HR.getValue(), title, url, projectName
         );
     }
 

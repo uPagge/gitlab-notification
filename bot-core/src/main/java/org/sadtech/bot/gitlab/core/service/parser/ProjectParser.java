@@ -57,7 +57,7 @@ public class ProjectParser {
     }
 
     private void parseProjects(String param) {
-        int page = 0;
+        int page = 1;
         List<ProjectJson> projectJsons = getProjectJsons(page, param);
 
         while (!projectJsons.isEmpty()) {

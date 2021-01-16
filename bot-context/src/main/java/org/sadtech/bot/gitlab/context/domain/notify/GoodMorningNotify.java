@@ -3,6 +3,7 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.MessageUtils;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 import org.sadtech.bot.gitlab.context.utils.UpdateDataComparator;
@@ -38,7 +39,7 @@ public class GoodMorningNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
+    public String generateMessage(AppSettingService settingService) {
         StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
         if (!mergeRequestsReviews.isEmpty()) {
             message.append("Необходимо проверить ").append(mergeRequestsReviews.size()).append(" ПР:").append(Smile.BR);

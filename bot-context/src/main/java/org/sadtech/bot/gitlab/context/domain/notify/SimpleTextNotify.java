@@ -2,6 +2,7 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 
 /**
  * // TODO: 20.09.2020 Добавить описание.
@@ -19,7 +20,7 @@ public class SimpleTextNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
+    public String generateMessage(AppSettingService appSettingService) {
         return message;
     }
 

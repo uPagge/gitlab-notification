@@ -3,6 +3,7 @@ package org.sadtech.bot.gitlab.teamcity.core.domain;
 import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 import org.sadtech.bot.gitlab.teamcity.core.domain.entity.BuildShort;
 import org.sadtech.bot.gitlab.teamcity.sdk.BuildStatus;
@@ -25,7 +26,7 @@ public class TeamcityBuildNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
+    public String generateMessage(AppSettingService appSettingService) {
         return MessageFormat.format(
                 "{0} *Сборка* | {1,number,#}:{2,number,#} | {3}" +
                         "{4} [{5}]({6}) {4}" +

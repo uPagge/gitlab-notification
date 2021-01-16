@@ -1,9 +1,8 @@
 package org.sadtech.bot.gitlab.context.domain.notify;
 
 import lombok.Builder;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 /**
  * // TODO: 15.01.2021 Добавить описание.
@@ -26,15 +25,12 @@ public class NewProjectNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Новый Проект*{1}" +
-                        "[{2}]({3}){1}" +
-                        "{4}" +
-                        "{5}: {6}\n\n",
-                Smile.FUN, Smile.HR, projectName, projectUrl,
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.project.new",
+                Smile.FUN.getValue(), Smile.HR.getValue(), projectName, projectUrl,
                 (projectDescription != null && !"".equals(projectDescription)) ? escapeMarkdown(projectDescription) + Smile.HR : "",
-                Smile.AUTHOR, authorName
+                Smile.AUTHOR.getValue(), authorName
         );
     }
 

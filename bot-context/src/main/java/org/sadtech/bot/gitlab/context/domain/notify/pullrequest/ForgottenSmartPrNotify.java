@@ -2,9 +2,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 /**
  * // TODO: 11.10.2020 Добавить описание.
@@ -25,11 +24,10 @@ public class ForgottenSmartPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Напоминание о просмотре PullRequest  | {4}*" +
-                        "{3}[{1}]({2})",
-                Smile.SMART, title, url, Smile.HR, projectName
+    public String generateMessage(AppSettingService appSettingService) {
+        return appSettingService.getMessage(
+                "notify.pr.forgotten",
+                Smile.SMART.getValue(), title, url, Smile.HR.getValue(), projectName
         );
     }
 

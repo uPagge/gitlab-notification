@@ -7,8 +7,6 @@ import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.ProcessingData;
 import org.sadtech.social.core.domain.content.Message;
 
-import java.text.MessageFormat;
-
 /**
  * // TODO: 17.09.2020 Добавить описание.
  *
@@ -42,10 +40,11 @@ public class TaskProcessing implements ProcessingData<Message> {
     }
 
     private String createTaskString(Task task) {
-        return MessageFormat.format(
-                "- [{0}]({1})",
-                task.getDescription(), task.getUrl()
-        );
+//        return MessageFormat.format(
+//                "- [{0}]({1})",
+//                task.getDescription(), task.getUrl()
+//        );
+        return null;
     }
 
 }

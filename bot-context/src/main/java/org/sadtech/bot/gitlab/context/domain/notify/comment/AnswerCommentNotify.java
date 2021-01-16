@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.Answer;
 import org.sadtech.bot.gitlab.context.domain.notify.Notify;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
@@ -29,7 +30,7 @@ public class AnswerCommentNotify extends Notify {
     }
 
     @Override
-    public String generateMessage() {
+    public String generateMessage(AppSettingService settingService) {
         final String answerText = answers.stream()
                 .map(answer -> answer.getAuthorName() + ": " + answer.getMessage().substring(0, Math.min(answer.getMessage().length(), 500)))
                 .collect(Collectors.joining("\n\n"));

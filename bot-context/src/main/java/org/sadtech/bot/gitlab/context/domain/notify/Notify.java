@@ -3,6 +3,7 @@ package org.sadtech.bot.gitlab.context.domain.notify;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,11 +13,11 @@ import java.util.stream.Stream;
 @Setter
 public abstract class Notify {
 
-    public static final Set<Character> FORBIDDEN_SYMBOLS = Stream.of(
+    protected static final Set<Character> FORBIDDEN_SYMBOLS = Stream.of(
             '\\', '+', '`', '[', ']', '\"', '~', '*', '#', '=', '_', '>', '<'
     ).collect(Collectors.toSet());
 
-    public abstract String generateMessage();
+    public abstract String generateMessage(AppSettingService appSettingService);
 
     public static String escapeMarkdown(@NonNull String s) {
         StringBuilder sb = new StringBuilder();

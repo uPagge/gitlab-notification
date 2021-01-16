@@ -3,9 +3,8 @@ package org.sadtech.bot.gitlab.context.domain.notify.pullrequest;
 import lombok.Builder;
 import lombok.Getter;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
+import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.utils.Smile;
-
-import java.text.MessageFormat;
 
 @Getter
 public class StatusPrNotify extends PrNotify {
@@ -27,12 +26,10 @@ public class StatusPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Изменился статус PullRequest | {7}*{1}" +
-                        "[{2}]({3}){1}" +
-                        "{4} {5} {6}\n\n",
-                Smile.PEN, Smile.HR, title, url, oldStatus.name(), Smile.ARROW, newStatus.name(), projectName
+    public String generateMessage(AppSettingService settingService) {
+        return settingService.getMessage(
+                "notify.pr.state",
+                Smile.PEN.getValue(), Smile.HR.getValue(), title, url, oldStatus.name(), Smile.ARROW.getValue(), newStatus.name(), projectName
         );
     }
 

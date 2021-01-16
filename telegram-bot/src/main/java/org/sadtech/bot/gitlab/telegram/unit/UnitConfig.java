@@ -25,12 +25,14 @@ public class UnitConfig {
     @Bean
     public AnswerCheck checkFirstStart(
             AppSettingService settingService,
-            AnswerText textCheckLanguage
+            AnswerText textCheckLanguage,
+            AnswerText menu
     ) {
         return AnswerCheck.builder()
                 .check(
                         message -> settingService.isFirstStart()
                 )
+                .unitFalse(menu)
                 .unitTrue(textCheckLanguage)
                 .build();
     }

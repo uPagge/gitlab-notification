@@ -67,9 +67,9 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
         final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
 
-        if (!settingService.isFirstStart()) {
+//        if (!settingService.isFirstStart()) {
             notifyNewPr(newMergeRequest);
-        }
+//        }
 
         return newMergeRequest;
     }

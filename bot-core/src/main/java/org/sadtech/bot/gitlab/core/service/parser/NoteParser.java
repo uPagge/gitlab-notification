@@ -15,6 +15,7 @@ import org.springframework.core.convert.ConversionService;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.sadtech.haiti.utils.network.HttpParse.ACCEPT;
 import static org.sadtech.haiti.utils.network.HttpParse.AUTHORIZATION;
@@ -62,7 +63,10 @@ public class NoteParser {
                 final List<NoteJson> noteJsons = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestComment(), mergeRequest.getProjectId(), mergeRequest.getTwoId()))
                         .header(ACCEPT)
                         .header(AUTHORIZATION, BEARER + personProperty.getToken())
-                        .executeList(NoteJson.class);
+                        .executeList(NoteJson.class)
+                        .stream()
+                        .filter(noteJson -> !noteJson.isSystem())
+                        .collect(Collectors.toList());
 
             }
 
