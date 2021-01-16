@@ -19,6 +19,4 @@ public interface NoteService extends SimpleManagerService<Note, Long> {
 
     Note convert(@NonNull Task task);
 
-    Set<Long> existsById(@NonNull Set<Long> ids);
-
 }

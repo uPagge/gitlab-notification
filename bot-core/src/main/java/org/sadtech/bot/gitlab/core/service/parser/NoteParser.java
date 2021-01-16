@@ -2,19 +2,24 @@ package org.sadtech.bot.gitlab.core.service.parser;
 
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
+import org.sadtech.bot.gitlab.context.service.NoteService;
 import org.sadtech.bot.gitlab.context.service.ProjectService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.InitProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.NoteJson;
+import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
 import org.sadtech.haiti.utils.network.HttpParse;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.sadtech.haiti.utils.network.HttpParse.ACCEPT;
@@ -25,7 +30,7 @@ import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
  * <p>Поиск новых комментариев и задач.</p>
  * <p>К несчастью, у битбакета не очень удобный API, и у них таска это то же самое что и комментарий, только с флагом</p>
  */
-//@Component
+@Component
 public class NoteParser {
 
     public static final int COUNT = 100;
@@ -37,23 +42,27 @@ public class NoteParser {
     private final GitlabProperty gitlabProperty;
     private final InitProperty initProperty;
     private final PersonProperty personProperty;
+    private final NoteService noteService;
 
     public NoteParser(
             ProjectService projectService, MergeRequestsService mergeRequestsService,
             ConversionService conversionService,
             GitlabProperty gitlabProperty,
             InitProperty initProperty,
-            PersonProperty personProperty) {
+            PersonProperty personProperty,
+            NoteService noteService
+    ) {
         this.projectService = projectService;
         this.mergeRequestsService = mergeRequestsService;
         this.conversionService = conversionService;
         this.gitlabProperty = gitlabProperty;
         this.initProperty = initProperty;
         this.personProperty = personProperty;
+        this.noteService = noteService;
     }
 
     public void scanNewCommentAndTask() {
-        int page = 0;
+        int page = 1;
         Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PaginationImpl.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
@@ -68,9 +77,34 @@ public class NoteParser {
                         .filter(noteJson -> !noteJson.isSystem())
                         .collect(Collectors.toList());
 
+                createNewComment(noteJsons);
+                createNewTask(noteJsons);
+
             }
 
             mergeRequestSheet = mergeRequestsService.getAll(PaginationImpl.of(++page, COUNT));
+        }
+
+    }
+
+    private void createNewComment(List<NoteJson> noteJsons) {
+        final List<NoteJson> newJsons = noteJsons.stream()
+                .filter(json -> json.getType() == null)
+                .collect(Collectors.toList());
+
+        final Set<Long> jsonIds = newJsons.stream()
+                .map(NoteJson::getId)
+                .collect(Collectors.toSet());
+
+        final ExistsContainer<Note, Long> existsContainer = noteService.existsById(jsonIds);
+
+        if (!existsContainer.isAllFound()) {
+            final List<Note> newNotes = newJsons.stream()
+                    .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                    .map(json -> conversionService.convert(json, Note.class))
+                    .collect(Collectors.toList());
+
+            noteService.createAll(newNotes);
         }
 
     }

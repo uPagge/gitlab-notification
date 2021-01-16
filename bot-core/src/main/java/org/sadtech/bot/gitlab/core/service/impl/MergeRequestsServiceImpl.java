@@ -11,8 +11,8 @@ import org.sadtech.bot.gitlab.context.domain.filter.PullRequestFilter;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.ConflictPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.NewPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.StatusPrNotify;
+import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.UpdatePrNotify;
 import org.sadtech.bot.gitlab.context.repository.MergeRequestRepository;
-import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PersonService;
@@ -37,7 +37,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     private final PersonService personService;
     private final FilterService<MergeRequest, PullRequestFilter> filterService;
     private final ProjectService projectService;
-    private final AppSettingService settingService;
 
     private final PersonInformation personInformation;
 
@@ -47,7 +46,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             PersonService personService,
             @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, PullRequestFilter> filterService,
             ProjectService projectService,
-            AppSettingService settingService,
             PersonInformation personInformation
     ) {
         super(mergeRequestRepository);
@@ -56,7 +54,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         this.personService = personService;
         this.filterService = filterService;
         this.projectService = projectService;
-        this.settingService = settingService;
         this.personInformation = personInformation;
     }
 
@@ -68,7 +65,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
 
 //        if (!settingService.isFirstStart()) {
-            notifyNewPr(newMergeRequest);
+        notifyNewPr(newMergeRequest);
 //        }
 
         return newMergeRequest;
@@ -101,12 +98,30 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
 //        forgottenNotification(oldMergeRequest);
 
-        final Project project = projectService.getById(mergeRequest.getProjectId())
-                .orElseThrow(() -> new NotFoundException("Проект не найден"));
-        notifyStatus(oldMergeRequest, mergeRequest, project);
-        notifyConflict(oldMergeRequest, mergeRequest, project);
+        if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())) {
+            final Project project = projectService.getById(mergeRequest.getProjectId())
+                    .orElseThrow(() -> new NotFoundException("Проект не найден"));
 
-        return mergeRequestRepository.save(mergeRequest);
+            notifyStatus(oldMergeRequest, mergeRequest, project);
+            notifyConflict(oldMergeRequest, mergeRequest, project);
+            notifyUpdate(oldMergeRequest, mergeRequest, project);
+
+            return mergeRequestRepository.save(mergeRequest);
+        }
+        return oldMergeRequest;
+    }
+
+    private void notifyUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+        if (!personInformation.getId().equals(mergeRequest.getAuthor().getId())) {
+            notifyService.send(
+                    UpdatePrNotify.builder()
+                            .author(oldMergeRequest.getAuthor().getName())
+                            .name(oldMergeRequest.getTitle())
+                            .projectKey(project.getName())
+                            .url(oldMergeRequest.getWebUrl())
+                            .build()
+            );
+        }
     }
 
     protected void forgottenNotification(MergeRequest mergeRequest) {

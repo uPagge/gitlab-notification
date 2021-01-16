@@ -13,6 +13,7 @@ import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -22,7 +23,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//@Service
+@Service
 public class NoteServiceImpl extends AbstractSimpleManagerService<Note, Long> implements NoteService {
 
     private static final Pattern PATTERN = Pattern.compile("@[\\w]+");
