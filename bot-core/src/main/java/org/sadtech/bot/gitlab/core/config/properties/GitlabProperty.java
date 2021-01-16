@@ -42,4 +42,6 @@ public class GitlabProperty {
 
     private String usersUrl;
 
+    private String urlMergeRequestAdd;
+
 }

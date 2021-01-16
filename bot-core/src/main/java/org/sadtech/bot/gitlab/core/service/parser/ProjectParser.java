@@ -115,4 +115,16 @@ public class ProjectParser {
                 .executeList(ProjectJson.class);
     }
 
+    public void parseByUrl(String projectUrl) {
+        final Project project = HttpParse.request(projectUrl)
+                .header(ACCEPT)
+                .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                .execute(ProjectJson.class)
+                .map(json -> conversionService.convert(json, Project.class))
+                .orElseThrow(() -> new ConvertException("Ошибка получения проекта"));
+        if (!projectService.existsById(project.getId())) {
+            projectService.create(project);
+        }
+    }
+
 }

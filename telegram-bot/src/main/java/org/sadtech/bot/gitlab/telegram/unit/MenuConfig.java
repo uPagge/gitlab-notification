@@ -1,7 +1,8 @@
 package org.sadtech.bot.gitlab.telegram.unit;
 
-import org.sadtech.bot.gitlab.context.domain.AppLocale;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
+import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
+import org.sadtech.bot.gitlab.core.service.parser.ProjectParser;
 import org.sadtech.social.bot.domain.unit.AnswerText;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.keyboard.KeyBoard;
@@ -10,6 +11,11 @@ import org.sadtech.social.core.domain.keyboard.button.KeyBoardButtonText;
 import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -22,12 +28,12 @@ public class MenuConfig {
     @Bean
     public AnswerText menu(
             AppSettingService settingService,
-            AnswerText settings
+            AnswerText settings,
+            AnswerText textAddNewProject
     ) {
         return AnswerText.builder()
                 .boxAnswer(message ->
                         {
-
                             final KeyBoardButtonText newMr = KeyBoardButtonText.builder().label(settingService.getMessage("ui.menu.add_mr")).build();
                             final KeyBoardButtonText tasks = KeyBoardButtonText.builder().label(settingService.getMessage("ui.menu.task")).build();
                             final KeyBoardButtonText pr = KeyBoardButtonText.builder().label(settingService.getMessage("ui.menu.mr")).build();
@@ -59,6 +65,36 @@ public class MenuConfig {
                         }
                 )
                 .nextUnit(settings)
+                .nextUnit(textAddNewProject)
+                .build();
+    }
+
+    @Bean
+    public AnswerText textAddNewProject(
+            AppSettingService settingService,
+            AnswerText addNewProject
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(BoxAnswer.processing(settingService.getMessage("ui.menu.add_mr.text")))
+                .phrase(settingService.getMessage("ui.menu.add_mr"))
+                .nextUnit(addNewProject)
+                .build();
+    }
+
+    @Bean
+    public AnswerText addNewProject(
+            AppSettingService settingService,
+            ProjectParser projectParser,
+            GitlabProperty gitlabProperty
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(message -> {
+                    final List<String> urlList = Arrays.stream(message.getText().split("/")).collect(Collectors.toList());
+                    int lastElement = urlList.size() - 1;
+                    final String projectUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequestAdd(), urlList.get(lastElement - 1), urlList.get(lastElement));
+                    projectParser.parseByUrl(projectUrl);
+                    return BoxAnswer.of(settingService.getMessage("menu.add_project_success"));
+                })
                 .build();
     }
 
@@ -75,39 +111,6 @@ public class MenuConfig {
                                 .build())
                 .phrase(settingService.getMessage("ui.menu.setting"))
                 .nextUnit(settingsLanguage)
-                .build();
-    }
-
-    @Bean
-    public AnswerText settingsLanguage(
-            AppSettingService settingService,
-            AnswerText setLanguage
-    ) {
-        return AnswerText.builder()
-                .boxAnswer(message ->
-                        BoxAnswer.builder()
-                                .message(settingService.getMessage("ui.menu.setting.language.text"))
-                                .keyBoard(KeyBoards.verticalDuoMenuString("Русский", "English"))
-                                .build())
-                .nextUnit(setLanguage)
-                .phrase(settingService.getMessage("ui.menu.setting.language"))
-                .build();
-    }
-
-    @Bean
-    public AnswerText setLanguage(
-            AppSettingService settingService
-    ) {
-        return AnswerText.builder()
-                .boxAnswer(
-                        message -> {
-                            final AppLocale appLocale = AppLocale.of(message.getText());
-                            settingService.setLocale(appLocale);
-                            return BoxAnswer.of(
-                                    settingService.getMessage("ui.lang_changed")
-                            );
-                        }
-                )
                 .build();
     }
 
