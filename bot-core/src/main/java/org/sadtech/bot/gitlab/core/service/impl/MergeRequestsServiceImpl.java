@@ -62,6 +62,8 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         personService.create(mergeRequest.getAuthor());
         personService.create(mergeRequest.getAssignee());
 
+        mergeRequest.setNotification(true);
+
         final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
 
 //        if (!settingService.isFirstStart()) {
@@ -98,13 +100,19 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
 //        forgottenNotification(oldMergeRequest);
 
+        if (mergeRequest.getNotification() == null) {
+            mergeRequest.setNotification(oldMergeRequest.getNotification());
+        }
+
         if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())) {
             final Project project = projectService.getById(mergeRequest.getProjectId())
                     .orElseThrow(() -> new NotFoundException("Проект не найден"));
 
-            notifyStatus(oldMergeRequest, mergeRequest, project);
-            notifyConflict(oldMergeRequest, mergeRequest, project);
-            notifyUpdate(oldMergeRequest, mergeRequest, project);
+            if (Boolean.TRUE.equals(oldMergeRequest.getNotification())) {
+                notifyStatus(oldMergeRequest, mergeRequest, project);
+                notifyConflict(oldMergeRequest, mergeRequest, project);
+                notifyUpdate(oldMergeRequest, mergeRequest, project);
+            }
 
             return mergeRequestRepository.save(mergeRequest);
         }

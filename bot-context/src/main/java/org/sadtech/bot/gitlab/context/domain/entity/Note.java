@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 @Table(name = "note")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
-@DiscriminatorValue("null")
+@DiscriminatorColumn(name = "resolvable")
+@DiscriminatorValue("false")
 public class Note implements BasicEntity<Long> {
 
     @Id
@@ -56,17 +56,10 @@ public class Note implements BasicEntity<Long> {
     @Column(name = "noteable_type")
     private String noteableType;
 
-    @Column(name = "resolveable")
-    private Boolean resolveable;
-
-    @Column(name = "resolved")
-    private Boolean resolved;
-
-    @ManyToOne
-    @JoinColumn(name = "resolved_id")
-    private Person resolvedBy;
-
     @Column(name = "noteable_iid")
     private Long noteableIid;
+
+    @Column(name = "web_url")
+    private String webUrl;
 
 }

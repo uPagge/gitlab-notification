@@ -3,11 +3,11 @@ package org.sadtech.bot.gitlab.core.service.parser;
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
+import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NoteService;
-import org.sadtech.bot.gitlab.context.service.ProjectService;
+import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
-import org.sadtech.bot.gitlab.core.config.properties.InitProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.NoteJson;
 import org.sadtech.haiti.context.domain.ExistsContainer;
@@ -35,50 +35,40 @@ public class NoteParser {
 
     public static final int COUNT = 100;
 
-    private final ProjectService projectService;
     private final MergeRequestsService mergeRequestsService;
     private final ConversionService conversionService;
 
     private final GitlabProperty gitlabProperty;
-    private final InitProperty initProperty;
     private final PersonProperty personProperty;
     private final NoteService noteService;
+    private final TaskService taskService;
 
     public NoteParser(
-            ProjectService projectService, MergeRequestsService mergeRequestsService,
+            MergeRequestsService mergeRequestsService,
             ConversionService conversionService,
             GitlabProperty gitlabProperty,
-            InitProperty initProperty,
             PersonProperty personProperty,
-            NoteService noteService
+            NoteService noteService,
+            TaskService taskService
     ) {
-        this.projectService = projectService;
         this.mergeRequestsService = mergeRequestsService;
         this.conversionService = conversionService;
         this.gitlabProperty = gitlabProperty;
-        this.initProperty = initProperty;
         this.personProperty = personProperty;
         this.noteService = noteService;
+        this.taskService = taskService;
     }
 
     public void scanNewCommentAndTask() {
-        int page = 1;
+        int page = 0;
         Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PaginationImpl.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
 
             final List<MergeRequest> mergeRequests = mergeRequestSheet.getContent();
             for (MergeRequest mergeRequest : mergeRequests) {
-                final List<NoteJson> noteJsons = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestComment(), mergeRequest.getProjectId(), mergeRequest.getTwoId()))
-                        .header(ACCEPT)
-                        .header(AUTHORIZATION, BEARER + personProperty.getToken())
-                        .executeList(NoteJson.class)
-                        .stream()
-                        .filter(noteJson -> !noteJson.isSystem())
-                        .collect(Collectors.toList());
 
-                createNewComment(noteJsons);
-                createNewTask(noteJsons);
+                processingMergeRequest(mergeRequest);
 
             }
 
@@ -87,7 +77,56 @@ public class NoteParser {
 
     }
 
-    private void createNewComment(List<NoteJson> noteJsons) {
+    private void processingMergeRequest(MergeRequest mergeRequest) {
+        int page = 1;
+        List<NoteJson> noteJsons = getNoteJson(mergeRequest, page);
+
+        while (!noteJsons.isEmpty()) {
+
+            createNewComment(noteJsons, mergeRequest);
+            createNewTask(noteJsons, mergeRequest);
+
+            noteJsons = getNoteJson(mergeRequest, ++page);
+        }
+    }
+
+    private List<NoteJson> getNoteJson(MergeRequest mergeRequest, int page) {
+        return HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestComment(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page))
+                .header(ACCEPT)
+                .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                .executeList(NoteJson.class)
+                .stream()
+                .filter(noteJson -> !noteJson.isSystem())
+                .collect(Collectors.toList());
+    }
+
+    private void createNewTask(List<NoteJson> noteJsons, MergeRequest mergeRequest) {
+        final List<NoteJson> newJsons = noteJsons.stream()
+                .filter(json -> json.getType() != null)
+                .collect(Collectors.toList());
+
+        final Set<Long> jsonIds = newJsons.stream()
+                .map(NoteJson::getId)
+                .collect(Collectors.toSet());
+
+        final ExistsContainer<Task, Long> existsContainer = taskService.existsById(jsonIds);
+
+        if (!existsContainer.isAllFound()) {
+            final List<Task> newNotes = newJsons.stream()
+                    .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                    .map(json -> conversionService.convert(json, Task.class))
+                    .peek(task -> {
+                                task.setWebUrl(MessageFormat.format(gitlabProperty.getUrlNote(), mergeRequest.getWebUrl(), task.getId()));
+                                task.setResponsible(mergeRequest.getAuthor());
+                            }
+                    )
+                    .collect(Collectors.toList());
+
+            taskService.createAll(newNotes);
+        }
+    }
+
+    private void createNewComment(List<NoteJson> noteJsons, MergeRequest mergeRequest) {
         final List<NoteJson> newJsons = noteJsons.stream()
                 .filter(json -> json.getType() == null)
                 .collect(Collectors.toList());
@@ -102,6 +141,9 @@ public class NoteParser {
             final List<Note> newNotes = newJsons.stream()
                     .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Note.class))
+                    .peek(note -> note.setWebUrl(
+                            MessageFormat.format(gitlabProperty.getUrlNote(), mergeRequest.getWebUrl(), note.getId()))
+                    )
                     .collect(Collectors.toList());
 
             noteService.createAll(newNotes);

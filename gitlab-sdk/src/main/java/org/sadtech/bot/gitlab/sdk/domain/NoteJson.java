@@ -1,6 +1,10 @@
 package org.sadtech.bot.gitlab.sdk.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,9 +16,13 @@ public class NoteJson {
     private String type;
     private String body;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonProperty("created_at")
     private LocalDateTime created;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonProperty("updated_at")
     private LocalDateTime updated;
 
@@ -27,7 +35,7 @@ public class NoteJson {
     @JsonProperty("noteable_type")
     private String noteableType;
 
-    private Boolean resolveable;
+    private Boolean resolvable;
 
     private Boolean resolved;
 

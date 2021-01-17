@@ -44,4 +44,6 @@ public class GitlabProperty {
 
     private String urlMergeRequestAdd;
 
+    private String urlNote;
+
 }

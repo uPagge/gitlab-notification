@@ -94,6 +94,9 @@
             <column name="target_branch" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
+            <column name="notification" type="boolean">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -136,13 +139,31 @@
             </column>
             <column name="noteable_id" type="int"/>
             <column name="noteable_type" type="varchar(100)"/>
-            <column name="resolvable" type="boolean"/>
+            <column name="resolvable" type="varchar(6)"/>
             <column name="resolved" type="boolean"/>
             <column name="resolved_id" type="int">
                 <constraints foreignKeyName="note_resolved_by_person_id" references="person(id)"/>
             </column>
             <column name="noteable_iid" type="int"/>
+            <column name="web_url" type="varchar(300)"/>
+            <column name="responsible_id" type="integer">
+                <constraints foreignKeyName="note_responsible_id_person_id" references="person(id)"/>
+            </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="2020-01-17-create-link-note" author="uPagge">
+        <createTable tableName="merge_request_notes">
+            <column name="merge_request_id" type="int">
+                <constraints nullable="false" foreignKeyName="merge_request_notes_merge_request_id"
+                             references="note(id)" deleteCascade="true"/>
+            </column>
+            <column name="notes_id" type="int">
+                <constraints nullable="false" foreignKeyName="merge_request_notes_note_id" references="note(id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="merge_request_notes" columnNames="merge_request_id, notes_id"/>
     </changeSet>
 
 </databaseChangeLog>
