@@ -48,4 +48,8 @@ public class GitlabProperty {
 
     private String urlNoteApi;
 
+    private String urlPipelines;
+
+    private String urlPipeline;
+
 }

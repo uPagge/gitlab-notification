@@ -167,4 +167,26 @@
         <addPrimaryKey tableName="merge_request_notes" columnNames="merge_request_id, notes_id"/>
     </changeSet>
 
+    <changeSet id="2020-01-17-create-table-pipelines" author="uPagge">
+        <createTable tableName="pipeline">
+            <column name="id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ref" type="varchar(300)"/>
+            <column name="project_id" type="int">
+                <constraints foreignKeyName="pipelines_project_id" references="project(id)"/>
+            </column>
+            <column name="status" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="datetime"/>
+            <column name="web_url" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sadtech.bot.gitlab.core.service.parser.MergeRequestParser;
 import org.sadtech.bot.gitlab.core.service.parser.NoteParser;
+import org.sadtech.bot.gitlab.core.service.parser.PipelineParser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SchedulerService {
 
+    private final PipelineParser pipelineParser;
     private final MergeRequestParser mergeRequestParser;
     private final NoteParser noteParser;
 
@@ -38,6 +40,16 @@ public class SchedulerService {
     @Scheduled(cron = "*/30 * * * * *")
     public void oldTaskParser() {
         noteParser.scanOldTask();
+    }
+
+    @Scheduled(cron = "*/30 * * * * *")
+    public void newPipeline() {
+        pipelineParser.scanNewPipeline();
+    }
+
+    @Scheduled(cron = "*/30 * * * * *")
+    public void oldPipeline() {
+        pipelineParser.scanOldPipeline();
     }
 
 }
