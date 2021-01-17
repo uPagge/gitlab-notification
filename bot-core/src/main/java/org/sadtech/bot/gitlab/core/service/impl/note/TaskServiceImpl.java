@@ -9,6 +9,8 @@ import org.sadtech.bot.gitlab.context.repository.TaskRepository;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.haiti.context.exception.NotFoundException;
+import org.sadtech.haiti.context.page.Pagination;
+import org.sadtech.haiti.context.page.Sheet;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,14 +43,15 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
         final Task oldTask = taskRepository.findById(task.getId())
                 .orElseThrow(() -> new NotFoundException("Задача не найдена"));
 
-        if (oldTask.getUpdated().equals(task.getUpdated())) {
+        if (!oldTask.getUpdated().equals(task.getUpdated())) {
 
+            task.setMergeRequest(oldTask.getMergeRequest());
             task.setWebUrl(oldTask.getWebUrl());
             task.setResponsible(oldTask.getResponsible());
 
             notifyUpdateStatus(oldTask, task);
 
-            return taskRepository.save(oldTask);
+            return taskRepository.save(task);
         }
         return oldTask;
     }
@@ -56,8 +59,6 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
     private void notifyUpdateStatus(Task oldTask, Task task) {
         if (
                 personInformation.getId().equals(oldTask.getAuthor().getId())
-                        && !personInformation.getId().equals(oldTask.getResolvedBy().getId())
-
         ) {
             final boolean oldStatus = oldTask.getResolved();
             final boolean newStatus = task.getResolved();
@@ -84,6 +85,11 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
                             .build()
             );
         }
+    }
+
+    @Override
+    public Sheet<Task> getAllByResolved(boolean resolved, @NonNull Pagination pagination) {
+        return taskRepository.findAllByResolved(resolved, pagination);
     }
 
 }

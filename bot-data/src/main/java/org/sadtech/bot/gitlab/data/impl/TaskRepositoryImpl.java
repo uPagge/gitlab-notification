@@ -1,9 +1,13 @@
 package org.sadtech.bot.gitlab.data.impl;
 
+import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.repository.TaskRepository;
 import org.sadtech.bot.gitlab.data.jpa.TaskRepositoryJpa;
+import org.sadtech.haiti.context.page.Pagination;
+import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
+import org.sadtech.haiti.database.util.Converter;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,4 +20,10 @@ public class TaskRepositoryImpl extends AbstractSimpleManagerRepository<Task, Lo
         this.taskRepositoryJpa = taskRepositoryJpa;
     }
 
+    @Override
+    public Sheet<Task> findAllByResolved(boolean resolved, @NonNull Pagination pagination) {
+        return Converter.page(
+                taskRepositoryJpa.findAllByResolved(resolved, Converter.pagination(pagination))
+        );
+    }
 }

@@ -156,10 +156,11 @@
         <createTable tableName="merge_request_notes">
             <column name="merge_request_id" type="int">
                 <constraints nullable="false" foreignKeyName="merge_request_notes_merge_request_id"
-                             references="note(id)" deleteCascade="true"/>
+                             references="merge_request(id)" deleteCascade="true"/>
             </column>
             <column name="notes_id" type="int">
-                <constraints nullable="false" foreignKeyName="merge_request_notes_note_id" references="note(id)"/>
+                <constraints nullable="false" foreignKeyName="merge_request_notes_note_id" references="note(id)"
+                             deleteCascade="true"/>
             </column>
         </createTable>
 

@@ -35,4 +35,9 @@ public class SchedulerService {
         noteParser.scanNewCommentAndTask();
     }
 
+    @Scheduled(cron = "*/30 * * * * *")
+    public void oldTaskParser() {
+        noteParser.scanOldTask();
+    }
+
 }

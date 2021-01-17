@@ -37,7 +37,7 @@ public class NoteServiceImpl extends AbstractNoteService<Note> implements NoteSe
 
         if (!oldNote.getUpdated().equals(note.getUpdated())) {
             note.setWebUrl(oldNote.getWebUrl());
-            return noteRepository.save(oldNote);
+            return noteRepository.save(note);
         }
 //        updateAnswer(oldNote, note);
 
@@ -68,6 +68,11 @@ public class NoteServiceImpl extends AbstractNoteService<Note> implements NoteSe
 //                );
 //            }
 //        }
+    }
+
+    @Override
+    public void link(@NonNull Long noteId, @NonNull Long mergeRequestId) {
+        noteRepository.link(noteId, mergeRequestId);
     }
 
 }

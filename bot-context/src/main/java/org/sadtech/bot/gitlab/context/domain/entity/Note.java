@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -61,5 +62,13 @@ public class Note implements BasicEntity<Long> {
 
     @Column(name = "web_url")
     private String webUrl;
+
+    @ManyToOne
+    @JoinTable(
+            name = "merge_request_notes",
+            joinColumns = @JoinColumn(name = "notes_id"),
+            inverseJoinColumns = @JoinColumn(name = "merge_request_id")
+    )
+    private MergeRequest mergeRequest;
 
 }

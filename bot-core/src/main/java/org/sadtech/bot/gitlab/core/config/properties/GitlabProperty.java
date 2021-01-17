@@ -46,4 +46,6 @@ public class GitlabProperty {
 
     private String urlNote;
 
+    private String urlNoteApi;
+
 }

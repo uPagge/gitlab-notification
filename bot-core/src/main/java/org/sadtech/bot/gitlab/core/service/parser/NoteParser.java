@@ -1,6 +1,5 @@
 package org.sadtech.bot.gitlab.core.service.parser;
 
-import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.domain.entity.Task;
@@ -11,6 +10,7 @@ import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.NoteJson;
 import org.sadtech.haiti.context.domain.ExistsContainer;
+import org.sadtech.haiti.context.exception.ConvertException;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
 import org.sadtech.haiti.utils.network.HttpParse;
@@ -122,7 +122,8 @@ public class NoteParser {
                     )
                     .collect(Collectors.toList());
 
-            taskService.createAll(newNotes);
+            final List<Task> newTasks = taskService.createAll(newNotes);
+            newTasks.forEach(task -> noteService.link(task.getId(), mergeRequest.getId()));
         }
     }
 
@@ -138,7 +139,7 @@ public class NoteParser {
         final ExistsContainer<Note, Long> existsContainer = noteService.existsById(jsonIds);
 
         if (!existsContainer.isAllFound()) {
-            final List<Note> newNotes = newJsons.stream()
+            final List<Note> notes = newJsons.stream()
                     .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Note.class))
                     .peek(note -> note.setWebUrl(
@@ -146,7 +147,36 @@ public class NoteParser {
                     )
                     .collect(Collectors.toList());
 
-            noteService.createAll(newNotes);
+            final List<Note> newNotes = noteService.createAll(notes);
+            newNotes.forEach(note -> noteService.link(note.getId(), mergeRequest.getId()));
+        }
+
+    }
+
+    public void scanOldTask() {
+        int page = 0;
+        Sheet<Task> taskSheet = taskService.getAllByResolved(false, PaginationImpl.of(page, COUNT));
+
+        while (taskSheet.hasContent()) {
+            final List<Task> tasks = taskSheet.getContent();
+
+            for (Task task : tasks) {
+                final MergeRequest mergeRequest = task.getMergeRequest();
+                final Task newTask = HttpParse.request(MessageFormat.format(
+                        gitlabProperty.getUrlNoteApi(),
+                        mergeRequest.getProjectId(),
+                        mergeRequest.getTwoId(),
+                        task.getId())
+                )
+                        .header(ACCEPT)
+                        .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                        .execute(NoteJson.class)
+                        .map(json -> conversionService.convert(json, Task.class))
+                        .orElseThrow(() -> new ConvertException("Ошибка обработки задачи"));
+                taskService.update(newTask);
+            }
+
+            taskSheet = taskService.getAllByResolved(false, PaginationImpl.of(++page, COUNT));
         }
 
     }
@@ -206,66 +236,5 @@ public class NoteParser {
 //                )
 //                .collect(Collectors.toList());
 //    }
-
-    private String generateUrl(@NonNull Long id, @NonNull String pullRequestUrl) {
-        return MessageFormat.format("{0}/overview?commentId={1}", pullRequestUrl, Long.toString(id));
-    }
-
-    private String getCommentUrl(long commentId, MergeRequest mergeRequest) {
-//        return gitlabProperty.getUrlPullRequestComment()
-//                .replace("{projectKey}", mergeRequest.getProjectKey())
-//                .replace("{repositorySlug}", mergeRequest.getRepositorySlug())
-//                .replace("{pullRequestId}", mergeRequest.getBitbucketId().toString())
-//                .replace("{commentId}", String.valueOf(commentId));
-        return null;
-    }
-
-    public void scanOldComment() {
-//        final List<Comment> comments = commentService.getAllBetweenDate(
-//                LocalDateTime.now().minusDays(20), LocalDateTime.now()
-//        );
-//        for (Comment oldComment : comments) {
-//            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
-//                    oldComment.getUrlApi(),
-//                    gitlabProperty.getToken(),
-//                    CommentJson.class
-//            );
-//            if (optCommentJson.isPresent()) {
-//                final CommentJson json = optCommentJson.get();
-//                if (Severity.BLOCKER.equals(json.getSeverity())) {
-//                    taskService.convert(oldComment);
-//                } else {
-//                    final Comment newComment = conversionService.convert(json, Comment.class);
-//                    commentService.update(newComment);
-//                }
-//            } else {
-//                commentService.deleteById(oldComment.getId());
-//            }
-//        }
-    }
-
-    public void scanOldTask() {
-//        final List<Task> tasks = taskService.getAllBetweenDate(
-//                LocalDateTime.now().minusDays(20), LocalDateTime.now()
-//        );
-//        for (Task oldTask : tasks) {
-//            final Optional<CommentJson> optCommentJson = Utils.urlToJson(
-//                    oldTask.getUrlApi(),
-//                    gitlabProperty.getToken(),
-//                    CommentJson.class
-//            );
-//            if (optCommentJson.isPresent()) {
-//                final CommentJson json = optCommentJson.get();
-//                if (Severity.NORMAL.equals(json.getSeverity())) {
-//                    commentService.convert(oldTask);
-//                } else {
-//                    final Task newTask = conversionService.convert(json, Task.class);
-//                    taskService.update(newTask);
-//                }
-//            } else {
-//                taskService.deleteById(oldTask.getId());
-//            }
-//        }
-    }
 
 }

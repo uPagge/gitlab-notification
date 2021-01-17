@@ -1,5 +1,6 @@
 package org.sadtech.bot.gitlab.data.impl;
 
+import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.repository.NoteRepository;
 import org.sadtech.bot.gitlab.data.jpa.CommentRepositoryJpa;
@@ -19,6 +20,11 @@ public class NoteRepositoryImpl extends AbstractSimpleManagerRepository<Note, Lo
     public NoteRepositoryImpl(CommentRepositoryJpa repositoryJpa) {
         super(repositoryJpa);
         this.repositoryJpa = repositoryJpa;
+    }
+
+    @Override
+    public void link(@NonNull Long noteId, @NonNull Long mergeRequestId) {
+        repositoryJpa.link(noteId, mergeRequestId);
     }
 
 }

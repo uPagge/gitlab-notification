@@ -12,17 +12,12 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -92,8 +87,8 @@ public class MergeRequest implements BasicEntity<Long> {
     @Column(name = "label")
     private Set<String> labels = new HashSet<>();
 
-    @JoinTable
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Note> notes = new ArrayList<>();
+//    @JoinTable
+//    @OneToMany(fetch = FetchType.LAZY)
+//    private List<Note> notes = new ArrayList<>();
 
 }
