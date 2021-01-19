@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "bitbucketbot")
+@ConfigurationProperties(prefix = "gitlab-bot")
 public class AppProperty {
 
     private String version;

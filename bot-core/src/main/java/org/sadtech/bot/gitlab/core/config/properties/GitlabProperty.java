@@ -52,4 +52,6 @@ public class GitlabProperty {
 
     private String urlPipeline;
 
+    private String urlCommit;
+
 }

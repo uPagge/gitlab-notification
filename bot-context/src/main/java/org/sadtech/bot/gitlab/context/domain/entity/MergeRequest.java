@@ -87,6 +87,9 @@ public class MergeRequest implements BasicEntity<Long> {
     @Column(name = "label")
     private Set<String> labels = new HashSet<>();
 
+    @Column(name = "date_last_commit")
+    private LocalDateTime dateLastCommit;
+
 //    @JoinTable
 //    @OneToMany(fetch = FetchType.LAZY)
 //    private List<Note> notes = new ArrayList<>();

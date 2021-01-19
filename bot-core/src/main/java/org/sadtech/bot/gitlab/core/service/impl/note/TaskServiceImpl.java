@@ -7,11 +7,14 @@ import org.sadtech.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import org.sadtech.bot.gitlab.context.repository.TaskRepository;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
+import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskService {
@@ -19,23 +22,37 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
     private final TaskRepository taskRepository;
     private final NotifyService notifyService;
     private final PersonInformation personInformation;
+    private final PersonService personService;
 
     public TaskServiceImpl(
             TaskRepository taskRepository,
             NotifyService notifyService,
-            PersonInformation personInformation) {
+            PersonInformation personInformation,
+            PersonService personService
+    ) {
         super(taskRepository, notifyService, personInformation);
         this.taskRepository = taskRepository;
         this.notifyService = notifyService;
         this.personInformation = personInformation;
+        this.personService = personService;
     }
 
     @Override
     public Task create(@NonNull Task task) {
+        createPerson(task);
+
         final Task newTask = taskRepository.save(task);
         notifyNewTask(task);
         notificationPersonal(task);
         return newTask;
+    }
+
+    private void createPerson(@NonNull Task task) {
+        personService.create(task.getAuthor());
+        if (task.getResolvedBy() != null) {
+            personService.create(task.getResolvedBy());
+        }
+        personService.create(task.getResponsible());
     }
 
     @Override
@@ -90,6 +107,11 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
     @Override
     public Sheet<Task> getAllByResolved(boolean resolved, @NonNull Pagination pagination) {
         return taskRepository.findAllByResolved(resolved, pagination);
+    }
+
+    @Override
+    public List<Task> getAllPersonTask(@NonNull Long userId, boolean resolved) {
+        return taskRepository.findAllByResponsibleIdAndResolved(userId, resolved);
     }
 
 }

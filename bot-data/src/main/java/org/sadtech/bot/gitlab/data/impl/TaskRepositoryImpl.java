@@ -10,6 +10,8 @@ import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerReposi
 import org.sadtech.haiti.database.util.Converter;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class TaskRepositoryImpl extends AbstractSimpleManagerRepository<Task, Long> implements TaskRepository {
 
@@ -25,5 +27,10 @@ public class TaskRepositoryImpl extends AbstractSimpleManagerRepository<Task, Lo
         return Converter.page(
                 taskRepositoryJpa.findAllByResolved(resolved, Converter.pagination(pagination))
         );
+    }
+
+    @Override
+    public List<Task> findAllByResponsibleIdAndResolved(@NonNull Long userId, boolean resolved) {
+        return taskRepositoryJpa.findAllByResponsibleIdAndResolved(userId, resolved);
     }
 }

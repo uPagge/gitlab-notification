@@ -22,12 +22,7 @@ telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
 gitlab-bot:
-  version: 2.15.3
-  scheduler:
-    comment:
-      settings:
-        no-comment-count: 20
-        comment-count: 100
+  version: 0.0.2 Beta
   person:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
@@ -35,15 +30,16 @@ gitlab-bot:
     url-project: ${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100
     url-pull-request-open: ${GITLAB_URL}/api/v4/projects/{0, number, integer}/merge_requests?state=opened&page={1, number, integer}&per_page=100
     url-pull-request-close: ${GITLAB_URL}
-    url-pull-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,integer}/merge_requests/{1,number,integer}/notes?&page={2, number, integer}&per_page=100"
+    url-pull-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,integer}/merge_requests/{1,number,integer}/notes?&page={2,number,integer}&per_page=100"
     url-pull-request: ${GITLAB_URL}/api/v4/projects/{0, number, integer}/merge_requests/{1, number, integer}?page={2, number, integer}&per_page=100
     url-merge-request-add: ${GITLAB_URL}/api/v4/projects/{0}%2F{1}
     user-url: ${GITLAB_URL}/api/v4/user
     users-url: ${GITLAB_URL}/api/v4/users
     url-note: "{0}#note_{1,number,#}"
     url-note-api: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes/{2,number,#}"
-    url-pipelines: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines?&page={1,number,integer}&per_page=100"
-    url-pipeline: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,integer}"
+    url-pipelines: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines?&page={1,number,#}&per_page=100"
+    url-pipeline: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,#}"
+    url-commit: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/commits?&page=1&per_page=1"
   teamcity:
     token: ${TEAMCITY_ADMIN_TOKEN}
     project-url: ${TEAMCITY_URL}/app/rest/projects

@@ -10,6 +10,7 @@ import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.ProjectService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
+import org.sadtech.bot.gitlab.sdk.domain.CommitJson;
 import org.sadtech.bot.gitlab.sdk.domain.MergeRequestJson;
 import org.sadtech.haiti.context.domain.ExistsContainer;
 import org.sadtech.haiti.context.exception.NotFoundException;
@@ -55,7 +56,11 @@ public class MergeRequestParser {
                     .header(ACCEPT)
                     .header(AUTHORIZATION, BEARER + personProperty.getToken())
                     .execute(MergeRequestJson.class)
-                    .map(json -> conversionService.convert(json, MergeRequest.class))
+                    .map(json -> {
+                        final MergeRequest newMergeRequest = conversionService.convert(json, MergeRequest.class);
+                        parsingCommits(newMergeRequest);
+                        return newMergeRequest;
+                    })
                     .orElseThrow(() -> new NotFoundException("МержРеквест не найден, возможно удален"));
             mergeRequestsService.update(mergeRequest);
         }
@@ -93,13 +98,28 @@ public class MergeRequestParser {
             if (!existsContainer.isAllFound()) {
                 final List<MergeRequest> newMergeRequests = mergeRequestJsons.stream()
                         .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
-                        .map(json -> conversionService.convert(json, MergeRequest.class))
+                        .map(json -> {
+                            final MergeRequest mergeRequest = conversionService.convert(json, MergeRequest.class);
+                            parsingCommits(mergeRequest);
+                            return mergeRequest;
+                        })
                         .collect(Collectors.toList());
+
                 mergeRequestsService.createAll(newMergeRequests);
             }
 
             mergeRequestJsons = getMergeRequestJsons(project, page++);
         }
+    }
+
+    private void parsingCommits(MergeRequest mergeRequest) {
+        final List<CommitJson> commitJson = HttpParse.request(
+                MessageFormat.format(gitlabProperty.getUrlCommit(), mergeRequest.getProjectId(), mergeRequest.getTwoId())
+        )
+                .header(ACCEPT)
+                .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                .executeList(CommitJson.class);
+        mergeRequest.setDateLastCommit(commitJson.get(0).getCreatedDate());
     }
 
     private List<MergeRequestJson> getMergeRequestJsons(Project project, int page) {

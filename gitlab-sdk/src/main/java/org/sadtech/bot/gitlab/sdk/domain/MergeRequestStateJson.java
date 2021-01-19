@@ -15,7 +15,7 @@ public enum MergeRequestStateJson {
     CLOSED,
     @JsonProperty("locked")
     LOCKED,
-    @JsonProperty("merger")
+    @JsonProperty("merged")
     MERGED
 
 }

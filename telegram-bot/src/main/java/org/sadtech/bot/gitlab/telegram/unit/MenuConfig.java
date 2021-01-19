@@ -1,6 +1,9 @@
 package org.sadtech.bot.gitlab.telegram.unit;
 
+import org.sadtech.bot.gitlab.context.domain.PersonInformation;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
+import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.service.parser.ProjectParser;
 import org.sadtech.social.bot.domain.unit.AnswerText;
@@ -29,7 +32,8 @@ public class MenuConfig {
     public AnswerText menu(
             AppSettingService settingService,
             AnswerText settings,
-            AnswerText textAddNewProject
+            AnswerText textAddNewProject,
+            AnswerText getTasks
     ) {
         return AnswerText.builder()
                 .boxAnswer(message ->
@@ -66,6 +70,7 @@ public class MenuConfig {
                 )
                 .nextUnit(settings)
                 .nextUnit(textAddNewProject)
+                .nextUnit(getTasks)
                 .build();
     }
 
@@ -111,6 +116,26 @@ public class MenuConfig {
                                 .build())
                 .phrase(settingService.getMessage("ui.menu.setting"))
                 .nextUnit(settingsLanguage)
+                .build();
+    }
+
+    @Bean
+    public AnswerText getTasks(
+            TaskService taskService,
+            AppSettingService settingService,
+            PersonInformation personInformation
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(message ->
+                {
+                    final Long userId = personInformation.getId();
+                    final String text = taskService.getAllPersonTask(userId, false).stream()
+//                            .collect(Collectors.groupingBy())
+                            .map(Note::getBody)
+                            .collect(Collectors.joining("\n"));
+                    return BoxAnswer.of(text);
+                })
+                .phrase(settingService.getMessage("ui.menu.task"))
                 .build();
     }
 

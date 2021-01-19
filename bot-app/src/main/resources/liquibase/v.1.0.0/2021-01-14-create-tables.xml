@@ -189,4 +189,10 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2020-01-19-create-table-commit" author="uPagge">
+        <addColumn tableName="merge_request">
+            <column name="date_last_commit" type="datetime"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

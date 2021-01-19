@@ -7,24 +7,29 @@ import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.repository.NoteRepository;
 import org.sadtech.bot.gitlab.context.service.NoteService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
+import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NoteServiceImpl extends AbstractNoteService<Note> implements NoteService {
 
     private final NoteRepository noteRepository;
+    private final PersonService personService;
 
     public NoteServiceImpl(
             NoteRepository noteRepository,
             NotifyService notifyService,
-            PersonInformation personInformation
-    ) {
+            PersonInformation personInformation,
+            PersonService personService) {
         super(noteRepository, notifyService, personInformation);
         this.noteRepository = noteRepository;
+        this.personService = personService;
     }
 
     @Override
     public Note create(@NonNull Note note) {
+        personService.create(note.getAuthor());
+
         final Note newNote = noteRepository.save(note);
         notificationPersonal(note);
         return newNote;
