@@ -35,7 +35,7 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
         mergeRequest.setWebUrl(source.getWebUrl());
         mergeRequest.setLabels(source.getLabels());
         mergeRequest.setAssignee(convertPerson.convert(source.getAssignee()));
-        mergeRequest.setAuthor(convertPerson.convert(source.getAssignee()));
+        mergeRequest.setAuthor(convertPerson.convert(source.getAuthor()));
         mergeRequest.setSourceBranch(source.getSourceBranch());
         mergeRequest.setTargetBranch(source.getTargetBranch());
         return mergeRequest;
