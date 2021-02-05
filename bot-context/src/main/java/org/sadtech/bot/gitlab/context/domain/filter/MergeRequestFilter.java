@@ -6,15 +6,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
+
+import java.util.Set;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PullRequestFilter {
+public class MergeRequestFilter {
 
-    private Long bitbucketId;
-    private Long bitbucketRepositoryId;
+    private Long assignee;
+    private Set<MergeRequestState> states;
 
 }

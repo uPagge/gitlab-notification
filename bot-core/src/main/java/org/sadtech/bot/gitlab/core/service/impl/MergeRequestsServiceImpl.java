@@ -5,9 +5,8 @@ import org.sadtech.bot.gitlab.context.domain.IdAndStatusPr;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.MergeRequestMini;
 import org.sadtech.bot.gitlab.context.domain.entity.Project;
-import org.sadtech.bot.gitlab.context.domain.filter.PullRequestFilter;
+import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.ConflictPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.NewPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.StatusPrNotify;
@@ -25,7 +24,7 @@ import org.sadtech.haiti.filter.FilterService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     private final NotifyService notifyService;
     private final MergeRequestRepository mergeRequestRepository;
     private final PersonService personService;
-    private final FilterService<MergeRequest, PullRequestFilter> filterService;
+    private final FilterService<MergeRequest, MergeRequestFilter> filterService;
     private final ProjectService projectService;
 
     private final PersonInformation personInformation;
@@ -44,7 +43,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             MergeRequestRepository mergeRequestRepository,
             NotifyService notifyService,
             PersonService personService,
-            @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, PullRequestFilter> filterService,
+            @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, MergeRequestFilter> filterService,
             ProjectService projectService,
             PersonInformation personInformation
     ) {
@@ -197,38 +196,34 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         }
     }
 
-    protected boolean enoughTimHasPassedSinceUpdatePr(LocalDateTime updateDate) {
-        return LocalDateTime.now().isAfter(updateDate.plusHours(4L));
-    }
-
     @Override
     public Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses) {
         return mergeRequestRepository.findAllIdByStateIn(statuses);
     }
 
     @Override
-    public Optional<MergeRequestMini> getMiniInfo(@NonNull Long pullRequestId) {
-        return mergeRequestRepository.findMiniInfoById(pullRequestId);
+    public List<MergeRequest> getAllByAssignee(@NonNull Long userId) {
+        return mergeRequestRepository.findAllByAssignee(userId);
     }
 
     @Override
-    public Sheet<MergeRequest> getAll(@NonNull PullRequestFilter filter, Pagination pagination) {
+    public Sheet<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pagination pagination) {
         return filterService.getAll(filter, pagination);
     }
 
     @Override
-    public Optional<MergeRequest> getFirst(@NonNull PullRequestFilter pullRequestFilter) {
-        return filterService.getFirst(pullRequestFilter);
+    public Optional<MergeRequest> getFirst(@NonNull MergeRequestFilter mergeRequestFilter) {
+        return filterService.getFirst(mergeRequestFilter);
     }
 
     @Override
-    public boolean exists(@NonNull PullRequestFilter filter) {
+    public boolean exists(@NonNull MergeRequestFilter filter) {
         return filterService.exists(filter);
     }
 
     @Override
-    public long count(@NonNull PullRequestFilter pullRequestFilter) {
-        return filterService.count(pullRequestFilter);
+    public long count(@NonNull MergeRequestFilter mergeRequestFilter) {
+        return filterService.count(mergeRequestFilter);
     }
 
 }

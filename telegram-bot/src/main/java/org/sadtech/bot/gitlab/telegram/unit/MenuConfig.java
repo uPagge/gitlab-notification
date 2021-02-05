@@ -1,10 +1,17 @@
 package org.sadtech.bot.gitlab.telegram.unit;
 
+import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
+import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
+import org.sadtech.bot.gitlab.context.domain.entity.Task;
+import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
+import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.service.parser.ProjectParser;
+import org.sadtech.haiti.context.page.Sheet;
+import org.sadtech.haiti.core.page.PaginationImpl;
 import org.sadtech.social.bot.domain.unit.AnswerText;
 import org.sadtech.social.core.domain.BoxAnswer;
 import org.sadtech.social.core.domain.keyboard.KeyBoard;
@@ -16,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +40,8 @@ public class MenuConfig {
             AppSettingService settingService,
             AnswerText settings,
             AnswerText textAddNewProject,
-            AnswerText getTasks
+            AnswerText getTasks,
+            AnswerText getAssigneeMergeRequest
     ) {
         return AnswerText.builder()
                 .boxAnswer(message ->
@@ -70,6 +79,7 @@ public class MenuConfig {
                 .nextUnit(settings)
                 .nextUnit(textAddNewProject)
                 .nextUnit(getTasks)
+                .nextUnit(getAssigneeMergeRequest)
                 .build();
     }
 
@@ -129,13 +139,54 @@ public class MenuConfig {
                 {
                     final Long userId = personInformation.getId();
                     final String text = taskService.getAllPersonTask(userId, false).stream()
-//                            .collect(Collectors.groupingBy())
-                            .map(note -> MessageFormat.format("[{0}]({1})", note.getBody(), note.getWebUrl()))
-                            .collect(Collectors.joining("\n"));
-                    return BoxAnswer.of(text);
+                            .collect(Collectors.groupingBy(Task::getMergeRequest))
+                            .entrySet()
+                            .stream()
+                            .map(node -> {
+                                final String mrTitle = node.getKey().getTitle();
+                                final String mrUrl = node.getKey().getWebUrl();
+
+                                final String taskText = node.getValue().stream()
+                                        .map(task -> MessageFormat.format("[{0}]({1})", task.getBody(), task.getWebUrl()))
+                                        .collect(Collectors.joining("\n"));
+
+                                return MessageFormat.format("- [{0}]({1}):\n{2}", mrTitle, mrUrl, taskText);
+                            })
+                            .collect(Collectors.joining("\n\n"));
+                    return BoxAnswer.of("".equals(text) ? settingService.getMessage("ui.answer.no_task") : text);
                 })
                 .phrase(settingService.getMessage("ui.menu.task"))
                 .build();
+    }
+
+    @Bean
+    public AnswerText getAssigneeMergeRequest(
+            MergeRequestsService mergeRequestsService,
+            PersonInformation personInformation,
+            AppSettingService settingService
+    ) {
+        return AnswerText.builder()
+                .boxAnswer(message -> {
+                    final Long userId = personInformation.getId();
+                    final Sheet<MergeRequest> sheet = mergeRequestsService.getAll(getAssigneeFilter(userId), PaginationImpl.of(0, 20));
+                    if (sheet.hasContent()) {
+                        final List<MergeRequest> mergeRequests = sheet.getContent();
+                        final String text = mergeRequests.stream()
+                                .map(mergeRequest -> MessageFormat.format("[{0}]({1})", mergeRequest.getTitle(), mergeRequest.getWebUrl()))
+                                .collect(Collectors.joining("\n"));
+                        return BoxAnswer.of(text);
+                    }
+                    return BoxAnswer.of(settingService.getMessage("ui.answer.no_mr"));
+                })
+                .phrase(settingService.getMessage("ui.menu.mr"))
+                .build();
+    }
+
+    private MergeRequestFilter getAssigneeFilter(Long userId) {
+        final MergeRequestFilter mergeRequestFilter = new MergeRequestFilter();
+        mergeRequestFilter.setAssignee(userId);
+        mergeRequestFilter.setStates(Collections.singleton(MergeRequestState.OPENED));
+        return mergeRequestFilter;
     }
 
 }

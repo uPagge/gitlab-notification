@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryImplementati
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,5 +30,7 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
 
     @Query("SELECT p.author.id from MergeRequest p WHERE p.id = :id")
     Optional<String> findAuthorById(@Param("id") Long id);
+
+    List<MergeRequest> findAllByAssigneeId(Long userId);
 
 }
