@@ -73,21 +73,25 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     private void notifyNewPr(MergeRequest newMergeRequest) {
         if (!personInformation.getId().equals(newMergeRequest.getAuthor().getId())) {
+
             final String projectName = projectService.getById(newMergeRequest.getProjectId())
                     .orElseThrow(() -> new NotFoundException("Проект не найден"))
                     .getName();
-            notifyService.send(
-                    NewPrNotify.builder()
-                            .projectName(projectName)
-                            .labels(newMergeRequest.getLabels())
-                            .author(newMergeRequest.getAuthor().getName())
-                            .description(newMergeRequest.getDescription())
-                            .title(newMergeRequest.getTitle())
-                            .url(newMergeRequest.getWebUrl())
-                            .targetBranch(newMergeRequest.getTargetBranch())
-                            .sourceBranch(newMergeRequest.getSourceBranch())
-                            .build()
-            );
+            if (!newMergeRequest.isConflict()) {
+                notifyService.send(
+                        NewPrNotify.builder()
+                                .projectName(projectName)
+                                .labels(newMergeRequest.getLabels())
+                                .author(newMergeRequest.getAuthor().getName())
+                                .description(newMergeRequest.getDescription())
+                                .title(newMergeRequest.getTitle())
+                                .url(newMergeRequest.getWebUrl())
+                                .targetBranch(newMergeRequest.getTargetBranch())
+                                .sourceBranch(newMergeRequest.getSourceBranch())
+                                .build()
+                );
+            }
+
         }
     }
 
@@ -102,10 +106,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             mergeRequest.setNotification(oldMergeRequest.getNotification());
         }
 
-        if (
-                !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())
-                        && !personInformation.getId().equals(oldMergeRequest.getAuthor().getId())
-        ) {
+        if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())) {
             final Project project = projectService.getById(mergeRequest.getProjectId())
                     .orElseThrow(() -> new NotFoundException("Проект не найден"));
 
@@ -165,7 +166,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         if (
                 !oldMergeRequest.isConflict()
                         && mergeRequest.isConflict()
-                        && oldMergeRequest.getAuthor().getId().equals(personInformation.getId())
+                        && personInformation.getId().equals(oldMergeRequest.getAuthor().getId())
         ) {
             notifyService.send(
                     ConflictPrNotify.builder()

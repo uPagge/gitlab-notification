@@ -14,7 +14,6 @@
         <module>gitlab-sdk</module>
         <module>bot-core</module>
         <module>bot-app</module>
-        <module>teamcity</module>
         <module>bot-data</module>
     </modules>
 
@@ -79,9 +78,6 @@
 
         <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
         <gitlab.app.version>1.0.0-SNAPSHOT</gitlab.app.version>
-        <gitlab.teamcity.version>3.0.1-RELEASE</gitlab.teamcity.version>
-        <gitlab.teamcity.core.version>3.0.1-RELEASE</gitlab.teamcity.core.version>
-        <gitlab.teamcity.sdk.version>3.0.1-RELEASE</gitlab.teamcity.sdk.version>
         <gitlab.sdk.version>3.0.1-RELEASE</gitlab.sdk.version>
         <gitlab.context.version>3.0.1-RELEASE</gitlab.context.version>
         <gitlab.data.version>3.0.1-RELEASE</gitlab.data.version>
@@ -124,12 +120,6 @@
 
             <dependency>
                 <groupId>org.sadtech.bot.gitlab</groupId>
-                <artifactId>teamcity-sdk</artifactId>
-                <version>${gitlab.teamcity.sdk.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>bot-context</artifactId>
                 <version>${gitlab.context.version}</version>
             </dependency>
@@ -138,12 +128,6 @@
                 <groupId>org.sadtech.bot.gitlab</groupId>
                 <artifactId>gitlab-sdk</artifactId>
                 <version>${gitlab.sdk.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
-                <artifactId>teamcity-core</artifactId>
-                <version>${gitlab.teamcity.core.version}</version>
             </dependency>
 
             <dependency>

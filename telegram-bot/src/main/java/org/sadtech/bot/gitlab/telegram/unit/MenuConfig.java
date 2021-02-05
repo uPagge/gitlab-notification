@@ -1,7 +1,6 @@
 package org.sadtech.bot.gitlab.telegram.unit;
 
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
-import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
 import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
@@ -131,7 +130,7 @@ public class MenuConfig {
                     final Long userId = personInformation.getId();
                     final String text = taskService.getAllPersonTask(userId, false).stream()
 //                            .collect(Collectors.groupingBy())
-                            .map(Note::getBody)
+                            .map(note -> MessageFormat.format("[{0}]({1})", note.getBody(), note.getWebUrl()))
                             .collect(Collectors.joining("\n"));
                     return BoxAnswer.of(text);
                 })

@@ -60,17 +60,14 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
         final Task oldTask = taskRepository.findById(task.getId())
                 .orElseThrow(() -> new NotFoundException("Задача не найдена"));
 
-        if (!oldTask.getUpdated().equals(task.getUpdated())) {
+        task.setMergeRequest(oldTask.getMergeRequest());
+        task.setWebUrl(oldTask.getWebUrl());
+        task.setResponsible(oldTask.getResponsible());
 
-            task.setMergeRequest(oldTask.getMergeRequest());
-            task.setWebUrl(oldTask.getWebUrl());
-            task.setResponsible(oldTask.getResponsible());
+        notifyUpdateStatus(oldTask, task);
 
-            notifyUpdateStatus(oldTask, task);
+        return taskRepository.save(task);
 
-            return taskRepository.save(task);
-        }
-        return oldTask;
     }
 
     private void notifyUpdateStatus(Task oldTask, Task task) {

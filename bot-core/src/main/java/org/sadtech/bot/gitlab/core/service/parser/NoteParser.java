@@ -172,7 +172,7 @@ public class NoteParser {
                         .header(AUTHORIZATION, BEARER + personProperty.getToken())
                         .execute(NoteJson.class)
                         .map(json -> conversionService.convert(json, Task.class))
-                        .orElseThrow(() -> new ConvertException("Ошибка обработки задачи"));
+                        .orElseThrow(() -> new ConvertException("Ошибка обработки задачи id: " + task.getId()));
                 taskService.update(newTask);
             }
 

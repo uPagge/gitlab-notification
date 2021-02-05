@@ -19,11 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
-            <artifactId>teamcity-core</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.sadtech.bot.godfather</groupId>
             <artifactId>telegram-bot</artifactId>
         </dependency>

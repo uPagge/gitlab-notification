@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = {"org.sadtech.bot.gitlab.data.jpa", "org.sadtech.bot.gitlab.teamcity.core.repository.jpa"})
+@EnableJpaRepositories(basePackages = {"org.sadtech.bot.gitlab.data.jpa"})
 @SpringBootApplication(scanBasePackages = "org.sadtech.bot.gitlab")
-@EntityScan(basePackages = {"org.sadtech.bot.gitlab.context.domain.entity", "org.sadtech.bot.gitlab.teamcity.core.domain.entity"})
+@EntityScan(basePackages = {"org.sadtech.bot.gitlab.context.domain.entity"})
 public class BitbucketbotApplication {
 
     public static void main(String[] args) {
