@@ -122,6 +122,14 @@ public class NoteParser {
                     )
                     .collect(Collectors.toList());
 
+            final Set<Long> newNoteIds = newNotes.stream().map(Task::getId).collect(Collectors.toSet());
+
+            final ExistsContainer<Note, Long> existsNoteContainer = noteService.existsById(newNoteIds);
+
+            if (existsContainer.getContainer() != null && !existsContainer.getContainer().isEmpty()) {
+                noteService.deleteAllById(existsNoteContainer.getContainer().stream().map(Note::getId).collect(Collectors.toSet()));
+            }
+
             final List<Task> newTasks = taskService.createAll(newNotes);
             newTasks.forEach(task -> noteService.link(task.getId(), mergeRequest.getId()));
         }

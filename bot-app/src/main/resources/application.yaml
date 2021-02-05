@@ -22,7 +22,7 @@ telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
 gitlab-bot:
-  version: 0.0.3 Beta
+  version: 0.0.4 Beta
   person:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
