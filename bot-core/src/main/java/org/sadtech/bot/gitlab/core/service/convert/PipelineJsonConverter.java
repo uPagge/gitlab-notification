@@ -1,5 +1,6 @@
 package org.sadtech.bot.gitlab.core.service.convert;
 
+import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.PipelineStatus;
 import org.sadtech.bot.gitlab.context.domain.entity.Pipeline;
 import org.sadtech.bot.gitlab.sdk.domain.PipelineJson;
@@ -25,7 +26,10 @@ import static org.sadtech.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_R
  * @author upagge 17.01.2021
  */
 @Component
+@RequiredArgsConstructor
 public class PipelineJsonConverter implements Converter<PipelineJson, Pipeline> {
+
+    private final PersonJsonConverter convertPerson;
 
     @Override
     public Pipeline convert(PipelineJson source) {
@@ -36,6 +40,7 @@ public class PipelineJsonConverter implements Converter<PipelineJson, Pipeline> 
         pipeline.setRef(source.getRef());
         pipeline.setWebUrl(source.getWebUrl());
         pipeline.setStatus(convertStatus(source.getStatus()));
+        pipeline.setPerson(convertPerson.convert(source.getUser()));
         return pipeline;
     }
 

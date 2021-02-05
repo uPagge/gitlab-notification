@@ -33,6 +33,8 @@ public class PipelineJson {
 
     private String ref;
 
+    private PersonJson user;
+
     @JsonProperty("web_url")
     private String webUrl;
 

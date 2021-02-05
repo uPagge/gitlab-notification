@@ -1,11 +1,13 @@
 package org.sadtech.bot.gitlab.core.service.impl;
 
 import lombok.NonNull;
+import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.PipelineStatus;
 import org.sadtech.bot.gitlab.context.domain.entity.Pipeline;
 import org.sadtech.bot.gitlab.context.domain.notify.pipeline.PipelineNotify;
 import org.sadtech.bot.gitlab.context.repository.PipelineRepository;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
+import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.PipelineService;
 import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.haiti.context.page.Pagination;
@@ -36,18 +38,28 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
 
     private final NotifyService notifyService;
     private final PipelineRepository repository;
+    private final PersonService personService;
 
-    public PipelineServiceImpl(NotifyService notifyService, PipelineRepository repository) {
+    private final PersonInformation personInformation;
+
+    public PipelineServiceImpl(NotifyService notifyService, PipelineRepository repository, PersonService personService, PersonInformation personInformation) {
         super(repository);
         this.notifyService = notifyService;
         this.repository = repository;
+        this.personService = personService;
+        this.personInformation = personInformation;
     }
 
     @Override
     public Pipeline create(@NonNull Pipeline pipeline) {
+        personService.create(pipeline.getPerson());
         final Pipeline newPipeline = repository.save(pipeline);
 
-        if (notificationStatus.contains(pipeline.getStatus())) {
+        if (
+                notificationStatus.contains(pipeline.getStatus())
+                        && pipeline.getPerson() != null
+                        && personInformation.getId().equals(pipeline.getPerson().getId())
+        ) {
             notifyService.send(
                     PipelineNotify.builder()
                             .newStatus(pipeline.getStatus().name())
@@ -70,7 +82,11 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             pipeline.setProject(oldPipeline.getProject());
 
-            if (notificationStatus.contains(pipeline.getStatus())) {
+            if (
+                    notificationStatus.contains(pipeline.getStatus())
+                            && pipeline.getPerson() != null
+                            && personInformation.getId().equals(pipeline.getPerson().getId())
+            ) {
                 notifyService.send(
                         PipelineNotify.builder()
                                 .pipelineId(pipeline.getId())

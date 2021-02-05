@@ -54,4 +54,8 @@ public class Pipeline implements BasicEntity<Long> {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @ManyToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+
 }

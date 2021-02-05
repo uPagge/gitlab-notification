@@ -18,6 +18,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,14 +83,25 @@ public class PipelineParser {
             final ExistsContainer<Pipeline, Long> existsContainer = pipelineService.existsById(jsonIds);
 
             if (!existsContainer.isAllFound()) {
-                final List<Pipeline> newPipelines = pipelineJsons.stream()
-                        .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
-                        .map(json -> conversionService.convert(json, Pipeline.class))
-                        .peek(
-                                pipeline -> pipeline.setProject(project)
-                        ).collect(Collectors.toList());
 
-                pipelineService.createAll(newPipelines);
+                final Collection<Long> idsNotFound = existsContainer.getIdNoFound();
+
+                for (Long newId : idsNotFound) {
+                    final Pipeline newPipeline = HttpParse.request(
+                            MessageFormat.format(gitlabProperty.getUrlPipeline(), project.getId(), newId)
+                    )
+                            .header(ACCEPT)
+                            .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                            .execute(PipelineJson.class)
+                            .map(json -> {
+                                final Pipeline pipeline = conversionService.convert(json, Pipeline.class);
+                                pipeline.setProject(project);
+                                return pipeline;
+                            })
+                            .orElseThrow(() -> new ConvertException("Ошибка обновления Pipelines"));
+                    pipelineService.create(newPipeline);
+                }
+
             }
 
             pipelineJsons = getPipelineJsons(project.getId(), ++page);
