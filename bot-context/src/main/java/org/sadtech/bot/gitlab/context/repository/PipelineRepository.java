@@ -6,6 +6,7 @@ import org.sadtech.bot.gitlab.context.domain.entity.Pipeline;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.context.repository.SimpleManagerRepository;
+import org.sadtech.haiti.filter.FilterOperation;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import java.util.Set;
  *
  * @author upagge 17.01.2021
  */
-public interface PipelineRepository extends SimpleManagerRepository<Pipeline, Long> {
+public interface PipelineRepository extends SimpleManagerRepository<Pipeline, Long>, FilterOperation<Pipeline> {
 
     Sheet<Pipeline> findAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pagination pagination);
 }

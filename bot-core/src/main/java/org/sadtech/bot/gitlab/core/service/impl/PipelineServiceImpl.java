@@ -4,17 +4,20 @@ import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.PipelineStatus;
 import org.sadtech.bot.gitlab.context.domain.entity.Pipeline;
+import org.sadtech.bot.gitlab.context.domain.filter.PipelineFilter;
 import org.sadtech.bot.gitlab.context.domain.notify.pipeline.PipelineNotify;
 import org.sadtech.bot.gitlab.context.repository.PipelineRepository;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.context.service.PipelineService;
+import org.sadtech.bot.gitlab.core.service.impl.filter.PipelineFilterService;
 import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,14 +42,16 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     private final NotifyService notifyService;
     private final PipelineRepository repository;
     private final PersonService personService;
+    private final PipelineFilterService pipelineFilterService;
 
     private final PersonInformation personInformation;
 
-    public PipelineServiceImpl(NotifyService notifyService, PipelineRepository repository, PersonService personService, PersonInformation personInformation) {
+    public PipelineServiceImpl(NotifyService notifyService, PipelineRepository repository, PersonService personService, PipelineFilterService pipelineFilterService, PersonInformation personInformation) {
         super(repository);
         this.notifyService = notifyService;
         this.repository = repository;
         this.personService = personService;
+        this.pipelineFilterService = pipelineFilterService;
         this.personInformation = personInformation;
     }
 
@@ -109,5 +114,25 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     @Override
     public Sheet<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pagination pagination) {
         return repository.findAllByStatuses(statuses, pagination);
+    }
+
+    @Override
+    public Sheet<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pagination pagination) {
+        return pipelineFilterService.getAll(filter, pagination);
+    }
+
+    @Override
+    public Optional<Pipeline> getFirst(@NonNull PipelineFilter filter) {
+        return pipelineFilterService.getFirst(filter);
+    }
+
+    @Override
+    public boolean exists(@NonNull PipelineFilter filter) {
+        return pipelineFilterService.exists(filter);
+    }
+
+    @Override
+    public long count(@NonNull PipelineFilter filter) {
+        return pipelineFilterService.count(filter);
     }
 }

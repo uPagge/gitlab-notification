@@ -90,7 +90,9 @@ public class TaskServiceImpl extends AbstractNoteService<Task> implements TaskSe
 
     private void notifyNewTask(Task task) {
         if (personInformation.getId().equals(task.getResponsible().getId())
-                && !personInformation.getId().equals(task.getAuthor().getId())) {
+                && !personInformation.getId().equals(task.getAuthor().getId())
+                && task.getResolved() != null && !task.getResolved()
+        ) {
             notifyService.send(
                     TaskNewNotify.builder()
                             .authorName(task.getAuthor().getName())

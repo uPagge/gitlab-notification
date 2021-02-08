@@ -24,7 +24,6 @@ import org.sadtech.haiti.filter.FilterService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -96,10 +95,11 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public MergeRequest update(@NonNull MergeRequest mergeRequest) {
+        personService.create(mergeRequest.getAuthor());
+        personService.create(mergeRequest.getAssignee());
+
         final MergeRequest oldMergeRequest = mergeRequestRepository.findById(mergeRequest.getId())
                 .orElseThrow(() -> new NotFoundException("МержРеквест не найден"));
-
-//        forgottenNotification(oldMergeRequest);
 
         if (mergeRequest.getNotification() == null) {
             mergeRequest.setNotification(oldMergeRequest.getNotification());
@@ -134,31 +134,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
                             .build()
             );
         }
-    }
-
-    protected void forgottenNotification(MergeRequest mergeRequest) {
-//        if (LocalDateTime.now().isAfter(mergeRequest.getUpdateDate().plusHours(2L))) {
-//            final Set<String> smartReviewers = mergeRequest.getReviewers().stream()
-//                    .filter(
-//                            reviewer -> ReviewerStatus.NEEDS_WORK.equals(reviewer.getStatus())
-//                                    && LocalDateTime.now().isAfter(reviewer.getDateChange().plusHours(2L))
-//                                    && reviewer.getDateSmartNotify() == null
-//                    )
-//                    .peek(reviewer -> reviewer.setDateSmartNotify(LocalDateTime.now()))
-//                    .map(Reviewer::getPersonLogin)
-//                    .collect(Collectors.toSet());
-//            if (!smartReviewers.isEmpty()) {
-//                notifyService.send(
-//                        ForgottenSmartPrNotify.builder()
-//                                .projectKey(mergeRequest.getProjectKey())
-//                                .repositorySlug(mergeRequest.getRepositorySlug())
-//                                .recipients(smartReviewers)
-//                                .title(mergeRequest.getTitle())
-//                                .url(mergeRequest.getUrl())
-//                                .build()
-//                );
-//            }
-//        }
     }
 
     protected void notifyConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
@@ -199,11 +174,6 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     @Override
     public Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses) {
         return mergeRequestRepository.findAllIdByStateIn(statuses);
-    }
-
-    @Override
-    public List<MergeRequest> getAllByAssignee(@NonNull Long userId) {
-        return mergeRequestRepository.findAllByAssignee(userId);
     }
 
     @Override

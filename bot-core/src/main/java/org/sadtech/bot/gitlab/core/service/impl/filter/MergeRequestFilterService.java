@@ -22,15 +22,18 @@ public class MergeRequestFilterService extends AbstractFilterService<MergeReques
     @Override
     protected Filter createFilter(@NonNull MergeRequestFilter filter) {
         return CriteriaFilter.<MergeRequest>create()
-                .and(
-                        convertFilter(filter)
-                );
+                .and(convertFilter(filter))
+                .or(convertFilterOr(filter));
+    }
+
+    private FilterQuery convertFilterOr(MergeRequestFilter filter) {
+        return CriteriaQuery.<MergeRequest>create()
+                .matchPhrase(MergeRequest_.STATE, filter.getStates());
     }
 
     private FilterQuery convertFilter(@NonNull MergeRequestFilter filter) {
         return CriteriaQuery.<MergeRequest>create()
-                .matchPhrase(MergeRequest_.ASSIGNEE, filter.getAssignee())
-                .matchPhrase(MergeRequest_.STATE, filter.getStates());
+                .matchPhrase(MergeRequest_.ASSIGNEE, filter.getAssignee());
     }
 
 }

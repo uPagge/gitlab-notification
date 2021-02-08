@@ -18,6 +18,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,8 @@ public class PipelineParser {
     private final PersonProperty personProperty;
     private final ConversionService conversionService;
 
+    private LocalDateTime lastUpdate = LocalDateTime.now();
+
     public void scanNewPipeline() {
         int page = 0;
         Sheet<Project> projectSheet = projectService.getAll(PaginationImpl.of(page, COUNT));
@@ -72,7 +75,8 @@ public class PipelineParser {
 
     private void processingProject(Project project) {
         int page = 1;
-        List<PipelineJson> pipelineJsons = getPipelineJsons(project.getId(), page);
+        LocalDateTime newLastUpdate = LocalDateTime.now();
+        List<PipelineJson> pipelineJsons = getPipelineJsons(project.getId(), page, lastUpdate);
 
         while (!pipelineJsons.isEmpty()) {
 
@@ -104,15 +108,17 @@ public class PipelineParser {
 
             }
 
-            pipelineJsons = getPipelineJsons(project.getId(), ++page);
+            pipelineJsons = getPipelineJsons(project.getId(), ++page, lastUpdate);
         }
 
+        lastUpdate = newLastUpdate;
     }
 
-    private List<PipelineJson> getPipelineJsons(Long projectId, int page) {
+    private List<PipelineJson> getPipelineJsons(Long projectId, int page, LocalDateTime afterUpdate) {
         return HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPipelines(), projectId, page))
                 .header(ACCEPT)
                 .header(HttpParse.AUTHORIZATION, HttpParse.BEARER + personProperty.getToken())
+                .getParameter("updated_after", afterUpdate.minusHours(12L).toString())
                 .executeList(PipelineJson.class);
     }
 

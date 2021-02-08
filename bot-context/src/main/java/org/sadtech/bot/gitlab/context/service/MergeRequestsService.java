@@ -7,7 +7,6 @@ import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import org.sadtech.haiti.context.service.SimpleManagerService;
 import org.sadtech.haiti.filter.FilterService;
 
-import java.util.List;
 import java.util.Set;
 
 public interface MergeRequestsService extends SimpleManagerService<MergeRequest, Long>, FilterService<MergeRequest, MergeRequestFilter> {
@@ -19,7 +18,5 @@ public interface MergeRequestsService extends SimpleManagerService<MergeRequest,
      * @return Объект, содержащий идентификатор и статус ПР
      */
     Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses);
-
-    List<MergeRequest> getAllByAssignee(Long userId);
 
 }

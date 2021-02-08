@@ -2,6 +2,7 @@ package org.sadtech.bot.gitlab.app.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.sadtech.bot.gitlab.context.service.CleanService;
 import org.sadtech.bot.gitlab.core.service.parser.MergeRequestParser;
 import org.sadtech.bot.gitlab.core.service.parser.NoteParser;
 import org.sadtech.bot.gitlab.core.service.parser.PipelineParser;
@@ -21,6 +22,7 @@ public class SchedulerService {
     private final PipelineParser pipelineParser;
     private final MergeRequestParser mergeRequestParser;
     private final NoteParser noteParser;
+    private final CleanService cleanService;
 
     @Scheduled(cron = "*/30 * * * * *")
     public void newMergeRequest() {
@@ -50,6 +52,12 @@ public class SchedulerService {
     @Scheduled(cron = "*/30 * * * * *")
     public void oldPipeline() {
         pipelineParser.scanOldPipeline();
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void clean() {
+        cleanService.cleanOldPipelines();
+        cleanService.cleanMergedPullRequests();
     }
 
 }

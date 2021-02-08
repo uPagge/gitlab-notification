@@ -7,7 +7,7 @@ import org.sadtech.bot.gitlab.context.repository.PipelineRepository;
 import org.sadtech.bot.gitlab.data.jpa.PipelineJpaRepository;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
-import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
+import org.sadtech.haiti.database.repository.manager.FilterManagerRepository;
 import org.sadtech.haiti.database.util.Converter;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author upagge 17.01.2021
  */
 @Repository
-public class PipelineRepositoryImpl extends AbstractSimpleManagerRepository<Pipeline, Long> implements PipelineRepository {
+public class PipelineRepositoryImpl extends FilterManagerRepository<Pipeline, Long> implements PipelineRepository {
 
     private final PipelineJpaRepository jpaRepository;
 
