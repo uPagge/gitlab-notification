@@ -1,29 +1,49 @@
 package org.sadtech.bot.gitlab.core.service.impl.note;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
+import org.sadtech.bot.gitlab.context.domain.notify.comment.CommentNotify;
 import org.sadtech.bot.gitlab.context.exception.NotFoundException;
 import org.sadtech.bot.gitlab.context.repository.NoteRepository;
 import org.sadtech.bot.gitlab.context.service.NoteService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PersonService;
+import org.sadtech.haiti.context.page.Pagination;
+import org.sadtech.haiti.context.page.Sheet;
+import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@Slf4j
 @Service
-public class NoteServiceImpl extends AbstractNoteService<Note> implements NoteService {
+public class NoteServiceImpl extends AbstractSimpleManagerService<Note, Long> implements NoteService {
+
+    protected static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
     private final NoteRepository noteRepository;
     private final PersonService personService;
 
+    private final NotifyService notifyService;
+    private final PersonInformation personInformation;
+
     public NoteServiceImpl(
             NoteRepository noteRepository,
+            PersonService personService,
             NotifyService notifyService,
-            PersonInformation personInformation,
-            PersonService personService) {
-        super(noteRepository, notifyService, personInformation);
+            PersonInformation personInformation
+    ) {
+        super(noteRepository);
         this.noteRepository = noteRepository;
         this.personService = personService;
+        this.notifyService = notifyService;
+        this.personInformation = personInformation;
     }
 
     @Override
@@ -44,40 +64,36 @@ public class NoteServiceImpl extends AbstractNoteService<Note> implements NoteSe
             note.setWebUrl(oldNote.getWebUrl());
             return noteRepository.save(note);
         }
-//        updateAnswer(oldNote, note);
 
         return oldNote;
     }
 
-    private void updateAnswer(Note oldNote, Note newNote) {
-//        final Set<Long> oldAnswerIds = oldNote.getAnswers();
-//        final Set<Long> newAnswerIds = newNote.getAnswers();
-//        if (!oldAnswerIds.equals(newAnswerIds)) {
-//            final Set<Long> existsNewAnswersIds = commentRepository.existsById(newAnswerIds);
-//            final List<Note> newAnswers = commentRepository.findAllById(existsNewAnswersIds).stream()
-//                    .filter(comment -> !oldAnswerIds.contains(comment.getId()))
-//                    .collect(Collectors.toList());
-//            oldNote.getAnswers().clear();
-//            oldNote.setAnswers(existsNewAnswersIds);
-//            if (!newAnswers.isEmpty()) {
-//                notifyService.send(
-//                        AnswerCommentNotify.builder()
-//                                .url(oldNote.getUrl())
-//                                .youMessage(newNote.getMessage())
-//                                .answers(
-//                                        newAnswers.stream()
-//                                                .map(answerComment -> Answer.of(answerComment.getAuthor(), answerComment.getMessage()))
-//                                                .collect(Collectors.toList())
-//                                )
-//                                .build()
-//                );
-//            }
-//        }
+    @Override
+    public Sheet<Note> getAllByResolved(boolean resolved, @NonNull Pagination pagination) {
+        return noteRepository.findAllByResolved(resolved, pagination);
     }
 
     @Override
-    public void link(@NonNull Long noteId, @NonNull Long mergeRequestId) {
-        noteRepository.link(noteId, mergeRequestId);
+    public List<Note> getAllPersonTask(@NonNull Long userId, boolean resolved) {
+        return noteRepository.findAllByResponsibleIdAndResolved(userId, resolved);
+    }
+
+    protected void notificationPersonal(@NonNull Note note) {
+        Matcher matcher = PATTERN.matcher(note.getBody());
+        Set<String> recipientsLogins = new HashSet<>();
+        while (matcher.find()) {
+            final String login = matcher.group(0).replace("@", "");
+            recipientsLogins.add(login);
+        }
+        if (recipientsLogins.contains(personInformation.getUsername())) {
+            notifyService.send(
+                    CommentNotify.builder()
+                            .authorName(note.getAuthor().getName())
+                            .message(note.getBody())
+                            .url(note.getWebUrl())
+                            .build()
+            );
+        }
     }
 
 }

@@ -40,3 +40,5 @@ gitlab-bot:
     url-pipelines: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines?&page={1,number,#}&per_page=100"
     url-pipeline: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,#}"
     url-commit: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/commits?&page=1&per_page=1"
+    url-new-note: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
+    url-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,integer}&per_page=100"

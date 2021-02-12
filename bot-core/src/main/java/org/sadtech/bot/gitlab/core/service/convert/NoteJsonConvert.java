@@ -30,6 +30,10 @@ public class NoteJsonConvert implements Converter<NoteJson, Note> {
         note.setNoteableId(source.getNoteableId());
         note.setNoteableIid(source.getNoteableIid());
         note.setSystem(source.isSystem());
+        note.setResolved(source.getResolved());
+        if (source.getResolvedBy() != null) {
+            note.setResolvedBy(personConverter.convert(source.getResolvedBy()));
+        }
         return note;
     }
 

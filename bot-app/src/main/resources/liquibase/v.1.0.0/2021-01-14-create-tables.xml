@@ -117,6 +117,28 @@
         <addUniqueConstraint tableName="merge_request_label" columnNames="merge_request_id, label"/>
     </changeSet>
 
+    <changeSet id="2021-02-11-create-discussion" author="uPagge">
+        <createTable tableName="discussion">
+            <column name="id" type="varchar(200)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2021-02-11-create-discussion-task" author="uPagge">
+        <createTable tableName="discussion_merge_request">
+            <column name="discussion_id" type="varchar(200)">
+                <constraints nullable="false" foreignKeyName="discussion_merge_request_discussion_id"
+                             references="discussion(id)" deleteCascade="true"/>
+            </column>
+            <column name="merge_request_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="discussion_merge_request" columnNames="discussion_id, merge_request_id"/>
+    </changeSet>
+
     <changeSet id="2020-01-16-create-table-note" author="uPagge">
         <createTable tableName="note">
             <column name="id" type="int">
@@ -149,22 +171,10 @@
             <column name="responsible_id" type="integer">
                 <constraints foreignKeyName="note_responsible_id_person_id" references="person(id)"/>
             </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="2020-01-17-create-link-note" author="uPagge">
-        <createTable tableName="merge_request_notes">
-            <column name="merge_request_id" type="int">
-                <constraints nullable="false" foreignKeyName="merge_request_notes_merge_request_id"
-                             references="merge_request(id)" deleteCascade="true"/>
-            </column>
-            <column name="notes_id" type="int">
-                <constraints nullable="false" foreignKeyName="merge_request_notes_note_id" references="note(id)"
-                             deleteCascade="true"/>
+            <column name="discussion_id" type="varchar(200)">
+                <constraints foreignKeyName="note_discussion_id" references="discussion(id)" deleteCascade="true"/>
             </column>
         </createTable>
-
-        <addPrimaryKey tableName="merge_request_notes" columnNames="merge_request_id, notes_id"/>
     </changeSet>
 
     <changeSet id="2020-01-17-create-table-pipelines" author="uPagge">
@@ -185,6 +195,9 @@
             <column name="updated_date" type="datetime"/>
             <column name="web_url" type="varchar(300)">
                 <constraints nullable="false"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints foreignKeyName="pipeline_person_id" references="person(id)"/>
             </column>
         </createTable>
     </changeSet>

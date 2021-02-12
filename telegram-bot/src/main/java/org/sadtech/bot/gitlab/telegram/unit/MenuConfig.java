@@ -3,11 +3,10 @@ package org.sadtech.bot.gitlab.telegram.unit;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
-import org.sadtech.bot.gitlab.context.domain.entity.Task;
 import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
+import org.sadtech.bot.gitlab.context.service.DiscussionService;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
-import org.sadtech.bot.gitlab.context.service.TaskService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.service.parser.ProjectParser;
 import org.sadtech.haiti.context.page.Sheet;
@@ -130,7 +129,7 @@ public class MenuConfig {
 
     @Bean
     public AnswerText getTasks(
-            TaskService taskService,
+            DiscussionService discussionService,
             AppSettingService settingService,
             PersonInformation personInformation
     ) {
@@ -138,21 +137,22 @@ public class MenuConfig {
                 .boxAnswer(message ->
                 {
                     final Long userId = personInformation.getId();
-                    final String text = taskService.getAllPersonTask(userId, false).stream()
-                            .collect(Collectors.groupingBy(Task::getMergeRequest))
-                            .entrySet()
-                            .stream()
-                            .map(node -> {
-                                final String mrTitle = node.getKey().getTitle();
-                                final String mrUrl = node.getKey().getWebUrl();
-
-                                final String taskText = node.getValue().stream()
-                                        .map(task -> MessageFormat.format("[{0}]({1})", task.getBody(), task.getWebUrl()))
-                                        .collect(Collectors.joining("\n"));
-
-                                return MessageFormat.format("- [{0}]({1}):\n{2}", mrTitle, mrUrl, taskText);
-                            })
-                            .collect(Collectors.joining("\n\n"));
+                    final String text = "test";
+//                            taskService.getAllPersonTask(userId, false).stream()
+//                            .collect(Collectors.groupingBy(Task::getMergeRequest))
+//                            .entrySet()
+//                            .stream()
+//                            .map(node -> {
+//                                final String mrTitle = node.getKey().getTitle();
+//                                final String mrUrl = node.getKey().getWebUrl();
+//
+//                                final String taskText = node.getValue().stream()
+//                                        .map(task -> MessageFormat.format("[{0}]({1})", task.getBody(), task.getWebUrl()))
+//                                        .collect(Collectors.joining("\n"));
+//
+//                                return MessageFormat.format("- [{0}]({1}):\n{2}", mrTitle, mrUrl, taskText);
+//                            })
+//                            .collect(Collectors.joining("\n\n"));
                     return BoxAnswer.of("".equals(text) ? settingService.getMessage("ui.answer.no_task") : text);
                 })
                 .phrase(settingService.getMessage("ui.menu.task"))

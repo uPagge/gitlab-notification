@@ -3,9 +3,14 @@ package org.sadtech.bot.gitlab.data.impl;
 import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.repository.NoteRepository;
-import org.sadtech.bot.gitlab.data.jpa.CommentRepositoryJpa;
+import org.sadtech.bot.gitlab.data.jpa.NoteRepositoryJpa;
+import org.sadtech.haiti.context.page.Pagination;
+import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerRepository;
+import org.sadtech.haiti.database.util.Converter;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * // TODO: 08.09.2020 Добавить описание.
@@ -15,16 +20,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class NoteRepositoryImpl extends AbstractSimpleManagerRepository<Note, Long> implements NoteRepository {
 
-    private final CommentRepositoryJpa repositoryJpa;
+    private final NoteRepositoryJpa repositoryJpa;
 
-    public NoteRepositoryImpl(CommentRepositoryJpa repositoryJpa) {
+    public NoteRepositoryImpl(NoteRepositoryJpa repositoryJpa) {
         super(repositoryJpa);
         this.repositoryJpa = repositoryJpa;
     }
 
     @Override
-    public void link(@NonNull Long noteId, @NonNull Long mergeRequestId) {
-        repositoryJpa.link(noteId, mergeRequestId);
+    public Sheet<Note> findAllByResolved(boolean resolved, @NonNull Pagination pagination) {
+        return Converter.page(
+                repositoryJpa.findAllByResolved(resolved, Converter.pagination(pagination))
+        );
+    }
+
+    @Override
+    public List<Note> findAllByResponsibleIdAndResolved(@NonNull Long userId, boolean resolved) {
+        return repositoryJpa.findAllByResponsibleIdAndResolved(userId, resolved);
     }
 
 }

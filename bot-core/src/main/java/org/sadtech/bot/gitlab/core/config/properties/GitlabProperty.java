@@ -54,4 +54,8 @@ public class GitlabProperty {
 
     private String urlCommit;
 
+    private String urlNewNote;
+
+    private String urlDiscussion;
+
 }
