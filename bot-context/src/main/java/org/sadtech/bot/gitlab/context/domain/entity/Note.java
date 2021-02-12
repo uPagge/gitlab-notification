@@ -40,9 +40,6 @@ public class Note implements BasicEntity<Long> {
     @JoinColumn(name = "author_id")
     private Person author;
 
-    @Column(name = "system")
-    private boolean system;
-
     @Column(name = "noteable_id")
     private Long noteableId;
 

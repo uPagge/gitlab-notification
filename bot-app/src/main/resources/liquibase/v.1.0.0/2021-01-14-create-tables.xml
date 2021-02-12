@@ -161,9 +161,6 @@
                 <constraints nullable="false" foreignKeyName="merge_request_author_id_person_id"
                              references="person(id)"/>
             </column>
-            <column name="system" type="boolean">
-                <constraints nullable="false"/>
-            </column>
             <column name="noteable_id" type="int"/>
             <column name="noteable_type" type="varchar(100)"/>
             <column name="resolvable" type="varchar(6)"/>

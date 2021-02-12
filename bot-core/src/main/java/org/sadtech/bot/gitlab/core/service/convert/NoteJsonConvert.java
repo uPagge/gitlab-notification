@@ -29,7 +29,6 @@ public class NoteJsonConvert implements Converter<NoteJson, Note> {
         note.setUpdated(source.getUpdated());
         note.setNoteableId(source.getNoteableId());
         note.setNoteableIid(source.getNoteableIid());
-        note.setSystem(source.isSystem());
         note.setResolved(source.getResolved());
         note.setResolvable(source.isResolvable());
         if (source.getResolvedBy() != null) {

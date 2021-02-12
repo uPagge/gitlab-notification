@@ -25,6 +25,7 @@ public class DiscussionJsonConverter implements Converter<DiscussionJson, Discus
         discussion.setId(source.getId());
         discussion.setNotes(
                 source.getNotes().stream()
+                        .filter(noteJson -> !noteJson.isSystem())
                         .map(noteJsonConvert::convert)
                         .collect(Collectors.toList())
         );
