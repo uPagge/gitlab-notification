@@ -36,6 +36,7 @@ public class SchedulerService {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void newDiscussion() {
+        discussionParser.scanOldDiscussions();
         discussionParser.scanNewDiscussion();
     }
 

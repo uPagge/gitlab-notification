@@ -8,6 +8,7 @@ import org.sadtech.haiti.context.domain.BasicEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -46,6 +47,7 @@ public class Discussion implements BasicEntity<String> {
 
     @OneToMany(
             mappedBy = "discussion",
+            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE

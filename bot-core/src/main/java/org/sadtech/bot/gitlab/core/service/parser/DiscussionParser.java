@@ -9,6 +9,7 @@ import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.DiscussionJson;
 import org.sadtech.haiti.context.domain.ExistsContainer;
+import org.sadtech.haiti.context.exception.ConvertException;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
 import org.sadtech.haiti.utils.network.HttpParse;
@@ -102,6 +103,29 @@ public class DiscussionParser {
                 .header(ACCEPT)
                 .header(AUTHORIZATION, BEARER + personProperty.getToken())
                 .executeList(DiscussionJson.class);
+    }
+
+    public void scanOldDiscussions() {
+        int page = 0;
+        Sheet<Discussion> discussionSheet = discussionService.getAll(PaginationImpl.of(page, 100));
+
+        while (discussionSheet.hasContent()) {
+            final List<Discussion> discussions = discussionSheet.getContent();
+
+            for (Discussion discussion : discussions) {
+                final Discussion newDiscussion = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlOneDiscussion(), discussion.getMergeRequest().getProjectId(), discussion.getMergeRequest().getTwoId(), discussion.getId()))
+                        .header(ACCEPT)
+                        .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                        .execute(DiscussionJson.class)
+                        .map(json -> conversionService.convert(json, Discussion.class))
+                        .orElseThrow(() -> new ConvertException("Ошибка парсинга дискуссии"));
+                discussionService.update(newDiscussion);
+            }
+
+            discussionSheet = discussionService.getAll(PaginationImpl.of(++page, 100));
+        }
+
+
     }
 
 }

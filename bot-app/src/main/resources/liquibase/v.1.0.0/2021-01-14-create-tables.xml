@@ -173,9 +173,6 @@
             </column>
             <column name="noteable_iid" type="int"/>
             <column name="web_url" type="varchar(300)"/>
-            <column name="responsible_id" type="integer">
-                <constraints foreignKeyName="note_responsible_id_person_id" references="person(id)"/>
-            </column>
             <column name="discussion_id" type="varchar(200)">
                 <constraints foreignKeyName="note_discussion_id" references="discussion(id)" deleteCascade="true"/>
             </column>

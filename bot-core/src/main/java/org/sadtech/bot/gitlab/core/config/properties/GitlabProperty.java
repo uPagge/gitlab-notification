@@ -58,4 +58,6 @@ public class GitlabProperty {
 
     private String urlDiscussion;
 
+    private String urlOneDiscussion;
+
 }

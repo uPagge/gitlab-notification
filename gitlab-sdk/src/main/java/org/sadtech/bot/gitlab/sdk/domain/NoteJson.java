@@ -35,7 +35,7 @@ public class NoteJson {
     @JsonProperty("noteable_type")
     private String noteableType;
 
-    private Boolean resolvable;
+    private boolean resolvable;
 
     private Boolean resolved;
 

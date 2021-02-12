@@ -69,10 +69,13 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     @Override
     public Discussion update(@NonNull Discussion discussion) {
-        final Map<Long, Note> noteMap = discussionRepository.findById(discussion.getId()).orElseThrow(() -> new NotFoundException("Дискуссия не найдена"))
+        final Discussion oldDiscussion = discussionRepository.findById(discussion.getId()).orElseThrow(() -> new NotFoundException("Дискуссия не найдена"));
+        final Map<Long, Note> noteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, note -> note));
 
+        discussion.setMergeRequest(oldDiscussion.getMergeRequest());
+        discussion.setResponsible(oldDiscussion.getResponsible());
         discussion.getNotes().forEach(note -> updateNote(note, noteMap));
 
         return discussionRepository.save(discussion);
@@ -81,9 +84,9 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     private void updateNote(Note note, Map<Long, Note> noteMap) {
         if (noteMap.containsKey(note.getId())) {
             final Note oldNote = noteMap.get(note.getId());
-            if (!oldNote.getUpdated().equals(note.getUpdated())) {
-                note.setWebUrl(oldNote.getWebUrl());
-            }
+            note.setWebUrl(oldNote.getWebUrl());
+        } else {
+            notificationPersonal(note);
         }
     }
 

@@ -95,7 +95,7 @@ public class UnitConfig {
                                         final String discussionId = note.getDiscussion().getId();
                                         discussionService.answer(discussionId, MessageFormat.format("@{0}, {1}", note.getAuthor().getUserName(), message.getText()));
                                     }
-                                    return BoxAnswer.of("Победа");
+                                    return BoxAnswer.of("");
                                 }
                             }
                             return BoxAnswer.of("Ошибка");

@@ -55,6 +55,9 @@ public class Note implements BasicEntity<Long> {
     @Column(name = "web_url")
     private String webUrl;
 
+    @Column(name = "resolvable")
+    private boolean resolvable;
+
     @Column(name = "resolved")
     private Boolean resolved;
 
