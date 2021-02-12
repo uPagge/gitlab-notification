@@ -32,6 +32,10 @@ public class Discussion implements BasicEntity<String> {
     @Column(name = "id")
     private String id;
 
+    @ManyToOne
+    @JoinColumn(name = "responsible_id")
+    private Person responsible;
+
     @ManyToOne()
     @JoinTable(
             name = "discussion_merge_request",

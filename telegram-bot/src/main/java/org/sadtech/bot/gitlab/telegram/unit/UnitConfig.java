@@ -2,9 +2,12 @@ package org.sadtech.bot.gitlab.telegram.unit;
 
 import lombok.RequiredArgsConstructor;
 import org.sadtech.bot.gitlab.context.domain.AppLocale;
+import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.service.AppSettingService;
+import org.sadtech.bot.gitlab.context.service.DiscussionService;
 import org.sadtech.bot.gitlab.context.service.NoteService;
 import org.sadtech.bot.gitlab.core.service.parser.ProjectParser;
+import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.social.bot.domain.unit.AnswerCheck;
 import org.sadtech.social.bot.domain.unit.AnswerProcessing;
 import org.sadtech.social.bot.domain.unit.AnswerText;
@@ -18,6 +21,7 @@ import org.sadtech.social.core.utils.KeyBoards;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,7 +77,8 @@ public class UnitConfig {
 
     @Bean
     public AnswerText answerNote(
-            NoteService noteService
+            NoteService noteService,
+            DiscussionService discussionService
     ) {
         return AnswerText.builder()
                 .boxAnswer(
@@ -84,9 +89,11 @@ public class UnitConfig {
                                     final String url = ((Link) attachment).getUrl();
                                     Matcher matcher = NOTE_LINK.matcher(url);
                                     if (matcher.find()) {
-                                        final String note = url.substring(matcher.start(), matcher.end());
-                                        Long noteId = Long.valueOf(note.replaceAll("#note_", ""));
-//                                        noteService.answer(noteId, message.getText());
+                                        final String noteText = url.substring(matcher.start(), matcher.end());
+                                        Long noteId = Long.valueOf(noteText.replaceAll("#note_", ""));
+                                        final Note note = noteService.getById(noteId).orElseThrow(() -> new NotFoundException("Note не найдено"));
+                                        final String discussionId = note.getDiscussion().getId();
+                                        discussionService.answer(discussionId, MessageFormat.format("@{0}, {1}", note.getAuthor().getUserName(), message.getText()));
                                     }
                                     return BoxAnswer.of("Победа");
                                 }

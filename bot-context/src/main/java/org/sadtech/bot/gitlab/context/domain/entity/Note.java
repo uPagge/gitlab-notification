@@ -62,10 +62,6 @@ public class Note implements BasicEntity<Long> {
     @JoinColumn(name = "resolved_id")
     private Person resolvedBy;
 
-    @ManyToOne
-    @JoinColumn(name = "responsible_id")
-    private Person responsible;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "discussion_id")
     private Discussion discussion;

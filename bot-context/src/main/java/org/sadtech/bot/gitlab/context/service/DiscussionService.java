@@ -13,6 +13,4 @@ public interface DiscussionService extends SimpleManagerService<Discussion, Stri
 
     void answer(@NonNull String discussionId, @NonNull String text);
 
-    void linkMergeRequest(@NonNull String discussionId, @NonNull Long mergeRequestId);
-
 }

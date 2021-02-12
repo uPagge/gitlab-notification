@@ -10,8 +10,6 @@ import org.sadtech.haiti.database.repository.manager.AbstractSimpleManagerReposi
 import org.sadtech.haiti.database.util.Converter;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 /**
  * // TODO: 08.09.2020 Добавить описание.
  *
@@ -32,11 +30,6 @@ public class NoteRepositoryImpl extends AbstractSimpleManagerRepository<Note, Lo
         return Converter.page(
                 repositoryJpa.findAllByResolved(resolved, Converter.pagination(pagination))
         );
-    }
-
-    @Override
-    public List<Note> findAllByResponsibleIdAndResolved(@NonNull Long userId, boolean resolved) {
-        return repositoryJpa.findAllByResponsibleIdAndResolved(userId, resolved);
     }
 
 }

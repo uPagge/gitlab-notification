@@ -122,6 +122,10 @@
             <column name="id" type="varchar(200)">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
+            <column name="responsible_id" type="int">
+                <constraints nullable="false" foreignKeyName="discussion_responsible_id_person_id"
+                             references="person(id)"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -132,7 +136,8 @@
                              references="discussion(id)" deleteCascade="true"/>
             </column>
             <column name="merge_request_id" type="int">
-                <constraints nullable="false"/>
+                <constraints foreignKeyName="discussion_merge_request_merge_request_id" references="merge_request(id)"
+                             deleteCascade="true" nullable="false"/>
             </column>
         </createTable>
 

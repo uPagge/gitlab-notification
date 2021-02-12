@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.sadtech.bot.gitlab.context.service.CleanService;
 import org.sadtech.bot.gitlab.core.service.parser.DiscussionParser;
 import org.sadtech.bot.gitlab.core.service.parser.MergeRequestParser;
-import org.sadtech.bot.gitlab.core.service.parser.NoteParser;
 import org.sadtech.bot.gitlab.core.service.parser.PipelineParser;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ public class SchedulerService {
 
     private final PipelineParser pipelineParser;
     private final MergeRequestParser mergeRequestParser;
-    private final NoteParser noteParser;
     private final CleanService cleanService;
     private final DiscussionParser discussionParser;
 

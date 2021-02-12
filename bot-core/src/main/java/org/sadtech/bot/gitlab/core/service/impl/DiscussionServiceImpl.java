@@ -2,8 +2,10 @@ package org.sadtech.bot.gitlab.core.service.impl;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.Discussion;
@@ -89,13 +91,16 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     @Override
     public void answer(@NonNull String discussionId, @NonNull String text) {
         final Discussion discussion = discussionRepository.findById(discussionId)
-                .orElseThrow(() -> new org.sadtech.haiti.context.exception.NotFoundException("Note " + discussionId + " не найдена"));
+                .orElseThrow(() -> new org.sadtech.haiti.context.exception.NotFoundException("Дисскусия " + discussionId + " не найдена"));
         final MergeRequest mergeRequest = discussion.getMergeRequest();
         final Long projectId = mergeRequest.getProjectId();
 
         final String requestUrl = MessageFormat.format(gitlabProperty.getUrlNewNote(), projectId, mergeRequest.getTwoId(), discussion.getId(), text);
 
+        RequestBody formBody = new FormBody.Builder().build();
+
         Request request = new Request.Builder()
+                .post(formBody)
                 .header(AUTHORIZATION, BEARER + personProperty.getToken())
                 .url(requestUrl)
                 .build();
@@ -107,11 +112,6 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-
-    }
-
-    @Override
-    public void linkMergeRequest(@NonNull String discussionId, @NonNull Long mergeRequestId) {
 
     }
 

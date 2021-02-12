@@ -83,6 +83,7 @@ public class DiscussionParser {
                     .map(json -> {
                         final Discussion discussion = conversionService.convert(json, Discussion.class);
                         discussion.setMergeRequest(mergeRequest);
+                        discussion.setResponsible(mergeRequest.getAuthor());
                         discussion.getNotes().forEach(
                                 note -> {
                                     final String url = MessageFormat.format(gitlabProperty.getUrlNote(), mergeRequest.getWebUrl(), note.getId());
@@ -92,7 +93,7 @@ public class DiscussionParser {
                         return discussion;
                     })
                     .collect(Collectors.toList());
-            final List<Discussion> discussions = discussionService.createAll(newDiscussions);
+            discussionService.createAll(newDiscussions);
         }
     }
 

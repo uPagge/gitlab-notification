@@ -6,8 +6,6 @@ import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.context.repository.SimpleManagerRepository;
 
-import java.util.List;
-
 /**
  * // TODO: 08.09.2020 Добавить описание.
  *
@@ -16,7 +14,5 @@ import java.util.List;
 public interface NoteRepository extends SimpleManagerRepository<Note, Long> {
 
     Sheet<Note> findAllByResolved(boolean resolved, @NonNull Pagination pagination);
-
-    List<Note> findAllByResponsibleIdAndResolved(@NonNull Long userId, boolean resolved);
 
 }

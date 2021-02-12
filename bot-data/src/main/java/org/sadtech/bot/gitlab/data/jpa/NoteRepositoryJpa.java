@@ -5,12 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface NoteRepositoryJpa extends JpaRepository<Note, Long> {
 
     Page<Note> findAllByResolved(boolean resolved, Pageable pageable);
-
-    List<Note> findAllByResponsibleIdAndResolved(Long responsibleId, boolean resolved);
 
 }
