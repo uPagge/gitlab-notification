@@ -12,6 +12,7 @@ import org.sadtech.bot.gitlab.context.domain.entity.Discussion;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.CommentNotify;
+import org.sadtech.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
 import org.sadtech.bot.gitlab.context.repository.DiscussionRepository;
 import org.sadtech.bot.gitlab.context.service.DiscussionService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
@@ -85,9 +86,33 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         if (noteMap.containsKey(note.getId())) {
             final Note oldNote = noteMap.get(note.getId());
             note.setWebUrl(oldNote.getWebUrl());
+
+            if (note.isResolvable()) {
+                updateTask(note, oldNote);
+            }
+
         } else {
             notificationPersonal(note);
         }
+    }
+
+    private void updateTask(Note note, Note oldNote) {
+        if (isResolved(note, oldNote)) {
+            notifyService.send(
+                    TaskCloseNotify.builder()
+                            .authorName(oldNote.getAuthor().getName())
+                            .messageTask(oldNote.getBody())
+                            .url(oldNote.getWebUrl())
+                            .build()
+            );
+        }
+    }
+
+    private boolean isResolved(Note note, Note oldNote) {
+        return oldNote.getResolvedBy() == null
+                && note.getResolvedBy() != null
+                && personInformation.getId().equals(oldNote.getAuthor().getId())
+                && !note.getResolvedBy().getId().equals(oldNote.getAuthor().getId());
     }
 
 

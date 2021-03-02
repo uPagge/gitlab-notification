@@ -10,6 +10,8 @@ import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class NoteServiceImpl extends AbstractSimpleManagerService<Note, Long> implements NoteService {
@@ -35,6 +37,11 @@ public class NoteServiceImpl extends AbstractSimpleManagerService<Note, Long> im
     @Override
     public Sheet<Note> getAllByResolved(boolean resolved, @NonNull Pagination pagination) {
         return noteRepository.findAllByResolved(resolved, pagination);
+    }
+
+    @Override
+    public List<Note> getAllPersonTask(@NonNull Long userId, boolean resolved) {
+        return noteRepository.findAllByResponsibleIdAndResolved(userId, resolved);
     }
 
 }

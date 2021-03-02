@@ -113,13 +113,17 @@ public class DiscussionParser {
             final List<Discussion> discussions = discussionSheet.getContent();
 
             for (Discussion discussion : discussions) {
-                final Discussion newDiscussion = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlOneDiscussion(), discussion.getMergeRequest().getProjectId(), discussion.getMergeRequest().getTwoId(), discussion.getId()))
-                        .header(ACCEPT)
-                        .header(AUTHORIZATION, BEARER + personProperty.getToken())
-                        .execute(DiscussionJson.class)
-                        .map(json -> conversionService.convert(json, Discussion.class))
-                        .orElseThrow(() -> new ConvertException("Ошибка парсинга дискуссии"));
-                discussionService.update(newDiscussion);
+                if (discussion.getMergeRequest() != null) {
+                    final Discussion newDiscussion = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlOneDiscussion(), discussion.getMergeRequest().getProjectId(), discussion.getMergeRequest().getTwoId(), discussion.getId()))
+                            .header(ACCEPT)
+                            .header(AUTHORIZATION, BEARER + personProperty.getToken())
+                            .execute(DiscussionJson.class)
+                            .map(json -> conversionService.convert(json, Discussion.class))
+                            .orElseThrow(() -> new ConvertException("Ошибка парсинга дискуссии"));
+                    discussionService.update(newDiscussion);
+                } else {
+                    discussionService.deleteById(discussion.getId());
+                }
             }
 
             discussionSheet = discussionService.getAll(PaginationImpl.of(++page, 100));

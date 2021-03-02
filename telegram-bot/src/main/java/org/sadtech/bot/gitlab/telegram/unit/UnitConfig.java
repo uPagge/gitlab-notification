@@ -62,7 +62,7 @@ public class UnitConfig {
                         message -> {
                             Mail mail = (Mail) message;
                             final List<Mail> forwardMails = mail.getForwardMail();
-                            if (forwardMails.size() == 1) {
+                            if (forwardMails != null && forwardMails.size() == 1) {
                                 final Mail forwardMail = forwardMails.get(0);
                                 return forwardMail.getAttachments().stream()
                                         .anyMatch(attachment -> AttachmentType.LINK.equals(attachment.getType()));

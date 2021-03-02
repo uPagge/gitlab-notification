@@ -24,34 +24,14 @@ public class SchedulerService {
     private final CleanService cleanService;
     private final DiscussionParser discussionParser;
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void newMergeRequest() {
-        mergeRequestParser.parsingNewMergeRequest();
-    }
-
-    @Scheduled(cron = "*/30 * * * * *")
-    public void oldMergeRequest() {
         mergeRequestParser.parsingOldMergeRequest();
-    }
-
-    @Scheduled(cron = "*/30 * * * * *")
-    public void newDiscussion() {
+        mergeRequestParser.parsingNewMergeRequest();
+        pipelineParser.scanOldPipeline();
+        pipelineParser.scanNewPipeline();
         discussionParser.scanOldDiscussions();
         discussionParser.scanNewDiscussion();
-    }
-
-    @Scheduled(cron = "*/30 * * * * *")
-    public void newPipeline() {
-        pipelineParser.scanNewPipeline();
-    }
-
-    @Scheduled(cron = "*/30 * * * * *")
-    public void oldPipeline() {
-        pipelineParser.scanOldPipeline();
-    }
-
-    @Scheduled(cron = "0 */1 * * * *")
-    public void clean() {
         cleanService.cleanOldPipelines();
         cleanService.cleanMergedPullRequests();
     }
