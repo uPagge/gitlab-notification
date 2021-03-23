@@ -126,6 +126,7 @@
                 <constraints nullable="false" foreignKeyName="discussion_responsible_id_person_id"
                              references="person(id)"/>
             </column>
+            <column name="resolved" type="boolean"/>
         </createTable>
     </changeSet>
 

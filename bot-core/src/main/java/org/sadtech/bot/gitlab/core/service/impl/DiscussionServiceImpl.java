@@ -13,9 +13,11 @@ import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Note;
 import org.sadtech.bot.gitlab.context.domain.notify.comment.CommentNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
+import org.sadtech.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import org.sadtech.bot.gitlab.context.repository.DiscussionRepository;
 import org.sadtech.bot.gitlab.context.service.DiscussionService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
+import org.sadtech.bot.gitlab.context.service.PersonService;
 import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.haiti.context.exception.NotFoundException;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -45,6 +48,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     protected static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
+    private final PersonService personService;
     private final DiscussionRepository discussionRepository;
     private final PersonInformation personInformation;
 
@@ -53,8 +57,9 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     private final PersonProperty personProperty;
     private final NotifyService notifyService;
 
-    public DiscussionServiceImpl(DiscussionRepository discussionRepository, PersonInformation personInformation, GitlabProperty gitlabProperty, PersonProperty personProperty, NotifyService notifyService) {
+    public DiscussionServiceImpl(PersonService personService, DiscussionRepository discussionRepository, PersonInformation personInformation, GitlabProperty gitlabProperty, PersonProperty personProperty, NotifyService notifyService) {
         super(discussionRepository);
+        this.personService = personService;
         this.discussionRepository = discussionRepository;
         this.personInformation = personInformation;
         this.gitlabProperty = gitlabProperty;
@@ -64,35 +69,78 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     @Override
     public Discussion create(@NonNull Discussion discussion) {
+        discussion.getNotes().forEach(note -> personService.create(note.getAuthor()));
         discussion.getNotes().forEach(this::notificationPersonal);
+        discussion.getNotes().forEach(note -> notifyNewTask(note, discussion));
+
+        final boolean resolved = discussion.getNotes().stream()
+                .allMatch(note -> note.isResolvable() && note.getResolved());
+        discussion.setResolved(resolved);
         return discussionRepository.save(discussion);
+    }
+
+    private void notifyNewTask(Note note, Discussion discussion) {
+        if (note.isResolvable()
+                && personInformation.getId().equals(discussion.getResponsible().getId())
+                && !personInformation.getId().equals(note.getAuthor().getId())
+                && note.getResolved() != null
+                && !note.getResolved()
+        ) {
+            notifyService.send(
+                    TaskNewNotify.builder()
+                            .authorName(note.getAuthor().getName())
+                            .messageTask(note.getBody())
+                            .url(note.getWebUrl())
+                            .build()
+            );
+        }
     }
 
     @Override
     public Discussion update(@NonNull Discussion discussion) {
-        final Discussion oldDiscussion = discussionRepository.findById(discussion.getId()).orElseThrow(() -> new NotFoundException("Дискуссия не найдена"));
+        final Discussion oldDiscussion = discussionRepository.findById(discussion.getId())
+                .orElseThrow(() -> new NotFoundException("Дискуссия не найдена"));
         final Map<Long, Note> noteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, note -> note));
+        final boolean inDiscussion = discussion.getNotes().stream()
+                .anyMatch(note -> personInformation.getId().equals(note.getAuthor().getId()));
 
         discussion.setMergeRequest(oldDiscussion.getMergeRequest());
         discussion.setResponsible(oldDiscussion.getResponsible());
-        discussion.getNotes().forEach(note -> updateNote(note, noteMap));
-
+        discussion.getNotes().forEach(note -> updateNote(note, noteMap, inDiscussion));
+        final boolean resolved = discussion.getNotes().stream()
+                .allMatch(note -> note.isResolvable() && note.getResolved());
+        discussion.setResolved(resolved);
         return discussionRepository.save(discussion);
     }
 
-    private void updateNote(Note note, Map<Long, Note> noteMap) {
+    private void updateNote(Note note, Map<Long, Note> noteMap, boolean inDiscussion) {
         if (noteMap.containsKey(note.getId())) {
             final Note oldNote = noteMap.get(note.getId());
-            note.setWebUrl(oldNote.getWebUrl());
 
             if (note.isResolvable()) {
                 updateTask(note, oldNote);
             }
 
         } else {
-            notificationPersonal(note);
+            if (inDiscussion) {
+                notifyNewAnswer(note);
+            } else {
+                notificationPersonal(note);
+            }
+        }
+    }
+
+    private void notifyNewAnswer(Note note) {
+        if (!personInformation.getId().equals(note.getAuthor().getId())) {
+            notifyService.send(
+                    CommentNotify.builder()
+                            .url(note.getWebUrl())
+                            .message(note.getBody())
+                            .authorName(note.getAuthor().getName())
+                            .build()
+            );
         }
     }
 
@@ -141,6 +189,11 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
             log.error(e.getMessage(), e);
         }
 
+    }
+
+    @Override
+    public List<Discussion> getAllByMergeRequestId(@NonNull Long mergeRequestId) {
+        return discussionRepository.findAllByMergeRequestId(mergeRequestId);
     }
 
     protected void notificationPersonal(@NonNull Note note) {

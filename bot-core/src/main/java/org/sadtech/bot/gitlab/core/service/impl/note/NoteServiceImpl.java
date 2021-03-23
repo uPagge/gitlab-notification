@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 public class NoteServiceImpl extends AbstractSimpleManagerService<Note, Long> implements NoteService {
 
-
     private final NoteRepository noteRepository;
 
     public NoteServiceImpl(NoteRepository noteRepository) {

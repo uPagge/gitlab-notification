@@ -9,7 +9,6 @@ import org.sadtech.bot.gitlab.core.config.properties.GitlabProperty;
 import org.sadtech.bot.gitlab.core.config.properties.PersonProperty;
 import org.sadtech.bot.gitlab.sdk.domain.DiscussionJson;
 import org.sadtech.haiti.context.domain.ExistsContainer;
-import org.sadtech.haiti.context.exception.ConvertException;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.core.page.PaginationImpl;
 import org.sadtech.haiti.utils.network.HttpParse;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -93,6 +93,7 @@ public class DiscussionParser {
                         );
                         return discussion;
                     })
+                    .filter(discussion -> discussion.getNotes() != null && !discussion.getNotes().isEmpty())
                     .collect(Collectors.toList());
             discussionService.createAll(newDiscussions);
         }
@@ -114,13 +115,21 @@ public class DiscussionParser {
 
             for (Discussion discussion : discussions) {
                 if (discussion.getMergeRequest() != null) {
-                    final Discussion newDiscussion = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlOneDiscussion(), discussion.getMergeRequest().getProjectId(), discussion.getMergeRequest().getTwoId(), discussion.getId()))
+                    final Optional<Discussion> optNewDiscussion = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlOneDiscussion(), discussion.getMergeRequest().getProjectId(), discussion.getMergeRequest().getTwoId(), discussion.getId()))
                             .header(ACCEPT)
                             .header(AUTHORIZATION, BEARER + personProperty.getToken())
                             .execute(DiscussionJson.class)
-                            .map(json -> conversionService.convert(json, Discussion.class))
-                            .orElseThrow(() -> new ConvertException("Ошибка парсинга дискуссии"));
-                    discussionService.update(newDiscussion);
+                            .map(json -> {
+                                final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
+                                newDiscussion.getNotes().forEach(
+                                        note -> {
+                                            final String url = MessageFormat.format(gitlabProperty.getUrlNote(), discussion.getMergeRequest().getWebUrl(), note.getId());
+                                            note.setWebUrl(url);
+                                        }
+                                );
+                                return newDiscussion;
+                            });
+                    optNewDiscussion.ifPresent(discussionService::update);
                 } else {
                     discussionService.deleteById(discussion.getId());
                 }

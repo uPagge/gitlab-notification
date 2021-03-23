@@ -37,6 +37,9 @@ public class Discussion implements BasicEntity<String> {
     @JoinColumn(name = "responsible_id")
     private Person responsible;
 
+    @Column(name = "resolved")
+    private Boolean resolved;
+
     @ManyToOne()
     @JoinTable(
             name = "discussion_merge_request",
@@ -58,6 +61,10 @@ public class Discussion implements BasicEntity<String> {
     public void setNotes(List<Note> notes) {
         notes.forEach(note -> note.setDiscussion(this));
         this.notes = notes;
+    }
+
+    public Note getFirstNote() {
+        return this.notes.get(0);
     }
 
 }

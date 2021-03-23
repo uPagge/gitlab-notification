@@ -54,7 +54,7 @@ public class AppSettingServiceImpl implements AppSettingService {
     }
 
     @Override
-    public String getMessage(@NonNull String label, String... params) {
+    public String getMessage(@NonNull String label, Object... params) {
         final Object[] paramsArray = Arrays.stream(params).toArray();
         return messageSource.getMessage(
                 label,

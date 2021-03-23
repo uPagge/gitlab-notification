@@ -16,7 +16,7 @@ public interface AppSettingService {
 
     String getMessage(@NonNull String label);
 
-    String getMessage(@NonNull String label, String... params);
+    String getMessage(@NonNull String label, Object... params);
 
     void setLocale(@NonNull AppLocale appLocale);
 

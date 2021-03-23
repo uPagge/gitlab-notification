@@ -36,7 +36,6 @@ import static org.sadtech.haiti.utils.network.HttpParse.BEARER;
 @RequiredArgsConstructor
 public class MergeRequestParser {
 
-
     public static final Integer COUNT = 100;
     private static final Set<MergeRequestState> OLD_STATUSES = Stream.of(
             MergeRequestState.MERGED, MergeRequestState.OPENED, MergeRequestState.CLOSED
@@ -119,7 +118,9 @@ public class MergeRequestParser {
                 .header(ACCEPT)
                 .header(AUTHORIZATION, BEARER + personProperty.getToken())
                 .executeList(CommitJson.class);
-        mergeRequest.setDateLastCommit(commitJson.get(0).getCreatedDate());
+        if (commitJson != null && !commitJson.isEmpty()) {
+            mergeRequest.setDateLastCommit(commitJson.get(0).getCreatedDate());
+        }
     }
 
     private List<MergeRequestJson> getMergeRequestJsons(Project project, int page) {

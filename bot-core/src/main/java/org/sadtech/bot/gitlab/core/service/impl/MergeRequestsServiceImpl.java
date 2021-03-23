@@ -4,6 +4,7 @@ import lombok.NonNull;
 import org.sadtech.bot.gitlab.context.domain.IdAndStatusPr;
 import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
+import org.sadtech.bot.gitlab.context.domain.entity.Discussion;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.entity.Project;
 import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
@@ -12,6 +13,7 @@ import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.NewPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.StatusPrNotify;
 import org.sadtech.bot.gitlab.context.domain.notify.pullrequest.UpdatePrNotify;
 import org.sadtech.bot.gitlab.context.repository.MergeRequestRepository;
+import org.sadtech.bot.gitlab.context.service.DiscussionService;
 import org.sadtech.bot.gitlab.context.service.MergeRequestsService;
 import org.sadtech.bot.gitlab.context.service.NotifyService;
 import org.sadtech.bot.gitlab.context.service.PersonService;
@@ -24,8 +26,11 @@ import org.sadtech.haiti.filter.FilterService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<MergeRequest, Long> implements MergeRequestsService {
@@ -35,6 +40,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     private final PersonService personService;
     private final FilterService<MergeRequest, MergeRequestFilter> filterService;
     private final ProjectService projectService;
+    private final DiscussionService discussionService;
 
     private final PersonInformation personInformation;
 
@@ -44,7 +50,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             PersonService personService,
             @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, MergeRequestFilter> filterService,
             ProjectService projectService,
-            PersonInformation personInformation
+            DiscussionService discussionService, PersonInformation personInformation
     ) {
         super(mergeRequestRepository);
         this.notifyService = notifyService;
@@ -52,6 +58,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         this.personService = personService;
         this.filterService = filterService;
         this.projectService = projectService;
+        this.discussionService = discussionService;
         this.personInformation = personInformation;
     }
 
@@ -125,12 +132,30 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
                 !personInformation.getId().equals(mergeRequest.getAuthor().getId())
                         && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit())
         ) {
+            final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId())
+                    .stream()
+                    .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
+                    .collect(Collectors.toList());
+            final long allTask = discussions.size();
+            final long resolvedTask = discussions.stream()
+                    .filter(Discussion::getResolved)
+                    .count();
+            final long allYouTasks = discussions.stream()
+                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
+                    .count();
+            final long resolvedYouTask = discussions.stream()
+                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
+                    .count();
             notifyService.send(
                     UpdatePrNotify.builder()
                             .author(oldMergeRequest.getAuthor().getName())
                             .name(oldMergeRequest.getTitle())
                             .projectKey(project.getName())
                             .url(oldMergeRequest.getWebUrl())
+                            .allTasks(allTask)
+                            .allResolvedTasks(resolvedTask)
+                            .personTasks(allYouTasks)
+                            .personResolvedTasks(resolvedYouTask)
                             .build()
             );
         }
@@ -159,6 +184,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
                 !oldStatus.equals(newStatus)
                         && oldMergeRequest.getAuthor().getId().equals(personInformation.getId())
         ) {
+
             notifyService.send(
                     StatusPrNotify.builder()
                             .name(newMergeRequest.getTitle())
