@@ -5,7 +5,7 @@ import org.sadtech.bot.gitlab.context.domain.MergeRequestState;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
 import org.sadtech.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import org.sadtech.haiti.context.service.SimpleManagerService;
-import org.sadtech.haiti.filter.FilterService;
+import org.sadtech.haiti.context.service.simple.FilterService;
 
 import java.util.Set;
 

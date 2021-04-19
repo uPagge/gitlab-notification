@@ -7,7 +7,7 @@ import org.sadtech.bot.gitlab.context.domain.filter.PipelineFilter;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
 import org.sadtech.haiti.context.service.SimpleManagerService;
-import org.sadtech.haiti.filter.FilterService;
+import org.sadtech.haiti.context.service.simple.FilterService;
 
 import java.util.Set;
 

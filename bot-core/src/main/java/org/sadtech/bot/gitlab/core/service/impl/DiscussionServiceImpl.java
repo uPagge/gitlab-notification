@@ -6,7 +6,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.sadtech.bot.gitlab.context.domain.PersonInformation;
 import org.sadtech.bot.gitlab.context.domain.entity.Discussion;
 import org.sadtech.bot.gitlab.context.domain.entity.MergeRequest;
@@ -29,6 +28,7 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -146,11 +146,24 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     private void updateTask(Note note, Note oldNote) {
         if (isResolved(note, oldNote)) {
+            final MergeRequest mergeRequest = oldNote.getDiscussion().getMergeRequest();
+            final List<Discussion> discussions = getAllByMergeRequestId(mergeRequest.getId())
+                    .stream()
+                    .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
+                    .collect(Collectors.toList());
+            final long allYouTasks = discussions.stream()
+                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
+                    .count();
+            final long resolvedYouTask = discussions.stream()
+                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
+                    .count();
             notifyService.send(
                     TaskCloseNotify.builder()
                             .authorName(oldNote.getAuthor().getName())
                             .messageTask(oldNote.getBody())
                             .url(oldNote.getWebUrl())
+                            .personTasks(allYouTasks)
+                            .personResolvedTasks(resolvedYouTask)
                             .build()
             );
         }
@@ -182,9 +195,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
                 .build();
 
         try {
-            final Response execute = client.newCall(request).execute();
-            System.out.println(execute.isSuccessful());
-            System.out.println(execute.body().toString());
+            client.newCall(request).execute();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

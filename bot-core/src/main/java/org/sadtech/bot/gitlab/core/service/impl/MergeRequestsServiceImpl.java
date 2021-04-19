@@ -21,8 +21,8 @@ import org.sadtech.bot.gitlab.context.service.ProjectService;
 import org.sadtech.haiti.context.exception.NotFoundException;
 import org.sadtech.haiti.context.page.Pagination;
 import org.sadtech.haiti.context.page.Sheet;
+import org.sadtech.haiti.context.service.simple.FilterService;
 import org.sadtech.haiti.core.service.AbstractSimpleManagerService;
-import org.sadtech.haiti.filter.FilterService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +64,10 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public MergeRequest create(@NonNull MergeRequest mergeRequest) {
+        if (mergeRequest.getAssignee() != null) {
+            personService.create(mergeRequest.getAssignee());
+        }
         personService.create(mergeRequest.getAuthor());
-        personService.create(mergeRequest.getAssignee());
 
         mergeRequest.setNotification(true);
 
@@ -102,8 +104,10 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public MergeRequest update(@NonNull MergeRequest mergeRequest) {
+        if (mergeRequest.getAssignee() != null) {
+            personService.create(mergeRequest.getAssignee());
+        }
         personService.create(mergeRequest.getAuthor());
-        personService.create(mergeRequest.getAssignee());
 
         final MergeRequest oldMergeRequest = mergeRequestRepository.findById(mergeRequest.getId())
                 .orElseThrow(() -> new NotFoundException("МержРеквест не найден"));
@@ -112,7 +116,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             mergeRequest.setNotification(oldMergeRequest.getNotification());
         }
 
-        if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())) {
+        if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate()) || oldMergeRequest.isConflict() != mergeRequest.isConflict()) {
             final Project project = projectService.getById(mergeRequest.getProjectId())
                     .orElseThrow(() -> new NotFoundException("Проект не найден"));
 
@@ -131,6 +135,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         if (
                 !personInformation.getId().equals(mergeRequest.getAuthor().getId())
                         && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit())
+                        && !mergeRequest.isConflict()
         ) {
             final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId())
                     .stream()
@@ -169,6 +174,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         ) {
             notifyService.send(
                     ConflictPrNotify.builder()
+                            .sourceBranch(oldMergeRequest.getSourceBranch())
                             .name(mergeRequest.getTitle())
                             .url(mergeRequest.getWebUrl())
                             .projectKey(project.getName())
