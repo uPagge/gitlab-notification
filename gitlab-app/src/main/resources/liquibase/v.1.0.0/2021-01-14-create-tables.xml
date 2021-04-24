@@ -13,6 +13,14 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2020-01-16" author="uPagge">
+        <insert tableName="app_setting">
+            <column name="id" value="1"/>
+            <column name="first_start" value="true"/>
+            <column name="language" value="EN"/>
+        </insert>
+    </changeSet>
+
     <changeSet id="2020-01-14-create-table-project" author="uPagge">
         <createTable tableName="project">
             <column name="id" type="int">
@@ -85,7 +93,7 @@
                              references="person(id)"/>
             </column>
             <column name="assignee_id" type="int">
-                <constraints nullable="false" foreignKeyName="merge_request_assignee_id_person_id"
+                <constraints foreignKeyName="merge_request_assignee_id_person_id"
                              references="person(id)"/>
             </column>
             <column name="source_branch" type="varchar(100)">

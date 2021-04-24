@@ -15,7 +15,6 @@ import org.sadtech.social.core.service.MailService;
 import org.sadtech.social.core.service.MessageService;
 import org.sadtech.social.core.service.impl.MailServiceImpl;
 import org.sadtech.social.core.service.sender.Sending;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
