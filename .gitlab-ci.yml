@@ -22,7 +22,7 @@ build:
       - gitlab-app/target/gitlab-notification.jar
 
 docker-build:
-  image: docker/buildx-bin:latest
+  image: jdrouet/docker-with-buildx:stable
   stage: deploy
   only:
     - test
