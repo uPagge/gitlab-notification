@@ -31,6 +31,6 @@ docker-build-master:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
   script:
     - cd gitlab-app
-    - docker build --no-cache -f Docker-linux -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+    - docker build --no-cache -f Dockerfile-linux -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
     - docker push "$CI_REGISTRY_IMAGE:latest"
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
