@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine3.14
+FROM openjdk:17-jdk-oraclelinux8
 MAINTAINER uPagge <me@upagge.ru>
 RUN apk add --no-cache bash && \
     addgroup -S gitlabbot && \
