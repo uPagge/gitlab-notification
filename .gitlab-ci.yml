@@ -32,7 +32,7 @@ docker-build:
     - cd gitlab-app
     - docker buildx create --use
     - docker buildx build --push --platform linux/amd64 -f Dockerfile-linux -t "upagge/test:latest" .
-    - docker buildx build --push --platform linux/arm64/v8 -f Dockerfile-maс -t "upagge/test:latest" .
+    - docker buildx build --push --platform linux/arm64/v8 -f Dockerfile-mac -t "upagge/test:latest" .
 #    - docker push "$CI_REGISTRY_IMAGE:latest"
 #    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
 
