@@ -9,7 +9,7 @@ stages:
 build:
   stage: build
   only:
-    - /^\d+\.\d\.\d$/
+    - /^v.*$/
   except:
     - branches
   script:
@@ -22,7 +22,7 @@ docker-build-master:
   image: docker:latest
   stage: deploy
   only:
-    - /^\d+\.\d\.\d$/
+    - /^v.*$/
   except:
     - branches
   services:
