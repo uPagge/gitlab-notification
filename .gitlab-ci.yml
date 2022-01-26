@@ -2,10 +2,6 @@ stages:
   - build
   - deploy
 
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-
 build:
   image: maven:3.8.4-openjdk-17
   stage: build
@@ -35,7 +31,8 @@ docker-build:
   script:
     - cd gitlab-app
     - docker buildx create --use
-    - docker buildx build --push --no-cache --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f Dockerfile-linux -t "upagge/test:latest" .
+    - docker buildx build --platform linux/amd64 -f Dockerfile-linux -t "upagge/test:latest" .
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8, -f Docker-mav -t "upagge/test:latest" .
 #    - docker push "$CI_REGISTRY_IMAGE:latest"
 #    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
 
