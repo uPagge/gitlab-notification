@@ -1,0 +1,36 @@
+image: maven:3.8.4-openjdk-11
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  only:
+    - /^\d+\.\d\.\d$/
+  except:
+    - branches
+  script:
+    - 'mvn -U clean package'
+  artifacts:
+    paths:
+      - gitlab-app/target/gitlab-notification.jar
+
+docker-build-master:
+  image: docker:latest
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  services:
+    - docker:dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+  script:
+    - cd publisher-telegram
+    - docker build --no-cache -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"

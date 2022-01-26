@@ -5,9 +5,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
+        <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <groupId>dev.struchkov.bot.gitlab</groupId>
+    <artifactId>gitlab-bot</artifactId>
+    <version>3.1.0</version>
+    <packaging>pom</packaging>
+
     <modules>
         <module>bot-context</module>
         <module>telegram-bot</module>
@@ -17,11 +23,6 @@
         <module>bot-data</module>
     </modules>
 
-    <groupId>org.sadtech.bot.gitlab</groupId>
-    <artifactId>gitlab-bot</artifactId>
-    <version>3.0.1-RELEASE</version>
-    <packaging>pom</packaging>
-
     <name>Parent GitLab Notify Bot</name>
     <description>Notifications about gitlab events in Telegram</description>
     <url>https://github.com/uPagge/gitlab-notification</url>
@@ -29,138 +30,99 @@
         <license>
             <name>Apache License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-            <comments>
-                Copyright 2010 the original author or authors.
-
-                Licensed under the Apache License, Version 2.0 (the "License");
-                you may not use this file except in compliance with the License.
-                You may obtain a copy of the License at
-
-                https://www.apache.org/licenses/LICENSE-2.0
-
-                Unless required by applicable law or agreed to in writing, software
-                distributed under the License is distributed on an "AS IS" BASIS,
-                WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-                implied.
-                See the License for the specific language governing permissions and
-                limitations under the License.
-            </comments>
         </license>
     </licenses>
-
-    <organization>
-        <name>SADTECH</name>
-        <url>https://sadtech.org</url>
-    </organization>
-
-    <scm>
-        <connection>scm:git:https://github.com/uPagge/gitlab-notification.git</connection>
-        <url>https://github.com/uPagge/gitlab-notification</url>
-        <developerConnection>scm:git:https://github.com/uPagge/gitlab-notification.git</developerConnection>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/uPagge/gitlab-notification/issues</url>
     </issueManagement>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
-        <gitlab.app.version>1.0.0-SNAPSHOT</gitlab.app.version>
-        <gitlab.sdk.version>3.0.1-RELEASE</gitlab.sdk.version>
-        <gitlab.context.version>3.0.1-RELEASE</gitlab.context.version>
-        <gitlab.data.version>3.0.1-RELEASE</gitlab.data.version>
-        <gitlab.telegram.version>3.0.1-RELEASE</gitlab.telegram.version>
-        <gitlab.core.version>3.0.1-RELEASE</gitlab.core.version>
+        <gitlab.core.version>3.1.0</gitlab.core.version>
+        <gitlab.app.version>3.1.0</gitlab.app.version>
+        <gitlab.sdk.version>3.1.0</gitlab.sdk.version>
+        <gitlab.context.version>3.1.0</gitlab.context.version>
+        <gitlab.data.version>3.1.0</gitlab.data.version>
+        <gitlab.telegram.version>3.1.0</gitlab.telegram.version>
+        <gitlab.core.version>3.1.0</gitlab.core.version>
 
-        <haiti.context.version>0.0.2-SNAPSHOT</haiti.context.version>
-        <haiti.database.version>0.0.3-SNAPSHOT</haiti.database.version>
-        <haiti.filter.criteria.version>0.0.3-SNAPSHOT</haiti.filter.criteria.version>
-        <sadtech.bot.telegram.core.version>0.0.2-SNAPSHOT</sadtech.bot.telegram.core.version>
-        <sadtech.bot.vsc.context.version>0.0.1-RELEASE</sadtech.bot.vsc.context.version>
+        <haiti.ver>0.0.4</haiti.ver>
+        <godfather.telegram.core.version>0.0.2</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
         <hibernate.jpa-modelgen.version>6.0.0.Alpha5</hibernate.jpa-modelgen.version>
         <google.guava.version>28.2-jre</google.guava.version>
+        <jackson.databind.version>2.13.1</jackson.databind.version>
+        <jackson.datatype.jsr310.version>2.13.1</jackson.datatype.jsr310.version>
+
+        <plugin.maven.compiler.ver>3.9.0</plugin.maven.compiler.ver>
+        <plugin.nexus.staging.ver>1.6.8</plugin.nexus.staging.ver>
+        <plugin.maven.source.ver>3.2.1</plugin.maven.source.ver>
+        <plugin.maven.javadoc.ver>3.3.1</plugin.maven.javadoc.ver>
+        <plugin.maven.gpg.ver>3.0.1</plugin.maven.gpg.ver>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>dev.struchkov.haiti</groupId>
+                <artifactId>haiti-bom</artifactId>
+                <version>${haiti.ver}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- модули проекта -->
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-core</artifactId>
                 <version>${gitlab.core.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>gitlab-core</artifactId>
                 <version>${gitlab.core.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>telegram-bot</artifactId>
                 <version>${gitlab.telegram.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-context</artifactId>
                 <version>${gitlab.context.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>gitlab-sdk</artifactId>
                 <version>${gitlab.sdk.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.sadtech.bot.gitlab</groupId>
+                <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-data</artifactId>
                 <version>${gitlab.data.version}</version>
             </dependency>
 
             <!-- /модули проекта -->
-            <!-- SADTECH -->
+            <!-- haiti -->
 
             <dependency>
-                <groupId>org.sadtech.haiti.data</groupId>
-                <artifactId>haiti-database</artifactId>
-                <version>${haiti.database.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.bot.godfather</groupId>
-                <artifactId>telegram-bot</artifactId>
-                <version>${sadtech.bot.telegram.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.haiti</groupId>
-                <artifactId>haiti-context</artifactId>
-                <version>${haiti.context.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.sadtech.haiti.filter</groupId>
-                <artifactId>haiti-filter-criteria</artifactId>
-                <version>${haiti.filter.criteria.version}</version>
+                <groupId>dev.struchkov.godfather</groupId>
+                <artifactId>telegram-core</artifactId>
+                <version>${godfather.telegram.core.version}</version>
             </dependency>
 
             <!-- /SADTECH -->
@@ -231,10 +193,15 @@
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.databind.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.datatype.jsr310.version}</version>
+            </dependency>
             <!-- /http -->
 
         </dependencies>
@@ -244,96 +211,24 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
-                    <extensions>true</extensions>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.9.0</version>
                     <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.5</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
-
-
-        <plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
-        </plugins>
-
     </build>
 
     <developers>
         <developer>
             <id>uPagge</id>
             <name>Struchkov Mark</name>
-            <email>upagge@ya.ru</email>
-            <organization>SADTECH</organization>
-            <organizationUrl>https://sadtech.org</organizationUrl>
-            <url>https://uPagge.sadtech.org</url>
-            <roles>
-                <role>Project lead</role>
-            </roles>
-            <timezone>+3</timezone>
+            <email>mark@struchkov.dev</email>
+            <url>https://mark.struchkov.dev</url>
         </developer>
     </developers>
 

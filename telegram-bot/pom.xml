@@ -2,65 +2,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>gitlab-bot</artifactId>
-        <groupId>org.sadtech.bot.gitlab</groupId>
-        <version>3.0.1-RELEASE</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.struchkov.bot.gitlab</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <version>3.1.0</version>
+    </parent>
 
     <artifactId>telegram-bot</artifactId>
     <version>${gitlab.telegram.version}</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
+            <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.godfather</groupId>
-            <artifactId>telegram-bot</artifactId>
+            <groupId>dev.struchkov.godfather</groupId>
+            <artifactId>telegram-core</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <developers>
-        <developer>
-            <id>uPagge</id>
-            <name>Struchkov Mark</name>
-            <email>upagge@ya.ru</email>
-            <organization>SADTECH</organization>
-            <organizationUrl>https://sadtech.org</organizationUrl>
-            <url>https://uPagge.ru</url>
-            <roles>
-                <role>Project lead</role>
-            </roles>
-            <timezone>+3</timezone>
-        </developer>
-    </developers>
 
 </project>

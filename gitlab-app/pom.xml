@@ -2,72 +2,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>org.sadtech.bot.gitlab</groupId>
-        <artifactId>gitlab-bot</artifactId>
-        <version>3.0.1-RELEASE</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.struchkov.bot.gitlab</groupId>
+        <artifactId>gitlab-bot</artifactId>
+        <version>3.1.0</version>
+    </parent>
 
     <artifactId>gitlab-app</artifactId>
     <version>${gitlab.app.version}</version>
 
-    <name>Parent Bitbucket Server Notify Bot</name>
-    <description>Notifications about Bitbucket Server events in Telegram</description>
+    <name>Gitlab Notification Bot</name>
+    <description>Notifications about Gitlab Server events in Telegram</description>
     <url>https://github.com/uPagge/bitbucketbot</url>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-            <comments>
-                Copyright 2010 the original author or authors.
-
-                Licensed under the Apache License, Version 2.0 (the "License");
-                you may not use this file except in compliance with the License.
-                You may obtain a copy of the License at
-
-                https://www.apache.org/licenses/LICENSE-2.0
-
-                Unless required by applicable law or agreed to in writing, software
-                distributed under the License is distributed on an "AS IS" BASIS,
-                WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-                implied.
-                See the License for the specific language governing permissions and
-                limitations under the License.
-            </comments>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>SADTECH</name>
-        <url>https://sadtech.org</url>
-    </organization>
 
     <dependencies>
-
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
+            <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>bot-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
+            <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>bot-data</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
+            <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>telegram-bot</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.bot.gitlab</groupId>
+            <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>gitlab-sdk</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.sadtech.haiti</groupId>
-            <artifactId>haiti-utils</artifactId>
+            <groupId>dev.struchkov.haiti.utils</groupId>
+            <artifactId>haiti-utils-network</artifactId>
         </dependency>
 
         <dependency>
@@ -85,7 +57,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -97,41 +68,7 @@
                     <finalName>gitlab-notification</finalName>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
-
-    <developers>
-        <developer>
-            <id>uPagge</id>
-            <name>Struchkov Mark</name>
-            <email>upagge@ya.ru</email>
-            <organization>SADTECH</organization>
-            <organizationUrl>https://sadtech.org</organizationUrl>
-            <url>https://uPagge.sadtech.org</url>
-            <roles>
-                <role>Project lead</role>
-            </roles>
-            <timezone>+3</timezone>
-        </developer>
-    </developers>
 
 </project>
