@@ -1,4 +1,4 @@
-FROM upagge/openjdk-mac-slim:17.0.2
+FROM openjdk:17-alpine3.14
 MAINTAINER uPagge <me@upagge.ru>
 RUN apk add --no-cache bash && \
     addgroup -S gitlabbot && \

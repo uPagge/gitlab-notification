@@ -1,4 +1,4 @@
-image: maven:3.8.4-openjdk-11
+image: maven:3.8.4-openjdk-17
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
 
@@ -30,7 +30,7 @@ docker-build-master:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
   script:
-    - cd publisher-telegram
-    - docker build --no-cache -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+    - cd gitlab-app
+    - docker build --no-cache -f Docker-linux -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
     - docker push "$CI_REGISTRY_IMAGE:latest"
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
