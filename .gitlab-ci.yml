@@ -8,9 +8,9 @@ build:
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
   only:
-    - test
-#  except:
-#    - branches
+    - /^v.*$/
+  except:
+    - branches
   script:
     - 'mvn -U clean package'
   artifacts:
@@ -21,9 +21,9 @@ docker-build:
   image: upagge/docker-buildx:latest
   stage: deploy
   only:
-    - test
-#  except:
-#    - branches
+    - /^v.*$/
+  except:
+    - branches
   services:
     - docker:dind
   before_script:
@@ -31,23 +31,4 @@ docker-build:
   script:
     - cd gitlab-app
     - docker buildx create --use
-    - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "upagge/test:latest" .
-#    - docker push "$CI_REGISTRY_IMAGE:latest"
-#    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-
-#docker-build-master:
-#  image: docker/buildx-bin
-#  stage: deploy
-#  only:
-#    - /^v.*$/
-#  except:
-#    - branches
-#  services:
-#    - docker:dind
-#  before_script:
-#    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
-#  script:
-#    - cd gitlab-app
-#    - docker build --no-cache -f Dockerfile-linux -t "$CI_REGISTRY_IMAGE:latest" . -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-#    - docker push "$CI_REGISTRY_IMAGE:latest"
-#    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+    - docker buildx build --push --platform linux/amd64,linux/arm64/v8,linux/arm64/v7 -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" .
