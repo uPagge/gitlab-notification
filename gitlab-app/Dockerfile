@@ -1,8 +1,7 @@
-FROM openjdk:17-jdk-oraclelinux8
+FROM openjdk:17.0.2-jdk-slim-buster
 MAINTAINER uPagge <me@upagge.ru>
-RUN apk add --no-cache bash && \
-    addgroup -S gitlabbot && \
-    adduser -S gitlabbot -G gitlabbot && \
+RUN addgroup gitlabbot --disabled-password && \
+    adduser gitlabbot --ingroup gitlabbot && \
     mkdir -p /bot && \
     chown -R gitlabbot:gitlabbot /bot
 WORKDIR /bot
