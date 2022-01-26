@@ -2,6 +2,10 @@ stages:
   - build
   - deploy
 
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
 build:
   image: maven:3.8.4-openjdk-17
   stage: build
