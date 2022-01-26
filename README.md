@@ -2,8 +2,9 @@
 
 Это приложение позволит вам получать уведомления о событиях из GitLab.
 
-Статья-документация: https://struchkov.dev/blog/gitlab-telegram-bot/
-Исходный код: https://github.com/uPagge/gitlab-notification
+> Статья-документация: https://struchkov.dev/blog/gitlab-telegram-bot/
+>
+> Исходный код: https://github.com/uPagge/gitlab-notification
 
 ## Возможности бота
 1. Уведомление о новых MergeRequest
