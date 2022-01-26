@@ -22,9 +22,9 @@ docker-build-master:
   image: docker:latest
   stage: deploy
   only:
-    - master
+    - /^\d+\.\d\.\d$/
   except:
-    - tags
+    - branches
   services:
     - docker:dind
   before_script:
