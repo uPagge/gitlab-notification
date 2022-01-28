@@ -4,12 +4,10 @@ import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.MessageUtils;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
-import dev.struchkov.bot.gitlab.context.utils.UpdateDataComparator;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * // TODO: 20.09.2020 Добавить описание.
@@ -17,9 +15,9 @@ import java.util.stream.Collectors;
  * @author upagge 20.09.2020
  */
 @Getter
-public class GoodMorningNotify extends Notify {
+//TODO [28.01.2022]: Решить доработать и оставить или удалить.
+public class GoodMorningNotify implements Notify {
 
-    private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
     private static final Integer PR_COUNT = 4;
 
     private final List<MergeRequest> mergeRequestsReviews;
@@ -31,7 +29,9 @@ public class GoodMorningNotify extends Notify {
     protected GoodMorningNotify(
             List<MergeRequest> mergeRequestsReviews,
             List<MergeRequest> mergeRequestsNeedWork,
-            String personName, String version) {
+            String personName,
+            String version
+    ) {
         this.mergeRequestsReviews = mergeRequestsReviews;
         this.mergeRequestsNeedWork = mergeRequestsNeedWork;
         this.personName = personName;
@@ -40,13 +40,13 @@ public class GoodMorningNotify extends Notify {
 
     @Override
     public String generateMessage(AppSettingService settingService) {
-        StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
+        final StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
         if (!mergeRequestsReviews.isEmpty()) {
             message.append("Необходимо проверить ").append(mergeRequestsReviews.size()).append(" ПР:").append(Smile.BR);
             MessageUtils.pullRequestForReview(
                     mergeRequestsReviews.stream()
                             .limit(3)
-                            .collect(Collectors.toList())
+                            .toList()
             ).ifPresent(message::append);
         } else {
             message.append("Поздравляю, у тебя ни одного ПР на проверку!");
@@ -54,7 +54,7 @@ public class GoodMorningNotify extends Notify {
         MessageUtils.pullRequestForNeedWork(
                 mergeRequestsNeedWork.stream()
                         .limit(3)
-                        .collect(Collectors.toList())
+                        .toList()
         ).ifPresent(
                 messageNeedWork -> message.append(Smile.TWO_BR)
                         .append(Smile.DANGEROUS).append(" Требуется доработать ").append(mergeRequestsNeedWork.size()).append(" ПР:").append(Smile.BR)

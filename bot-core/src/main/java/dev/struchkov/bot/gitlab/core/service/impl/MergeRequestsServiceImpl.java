@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<MergeRequest, Long> implements MergeRequestsService {
@@ -82,7 +81,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         if (!personInformation.getId().equals(newMergeRequest.getAuthor().getId())) {
 
             final String projectName = projectService.getById(newMergeRequest.getProjectId())
-                    .orElseThrow(() -> new NotFoundException("Проект не найден"))
+                    .orElseThrow(NotFoundException.supplier("Проект не найден"))
                     .getName();
             if (!newMergeRequest.isConflict()) {
                 notifyService.send(
@@ -110,7 +109,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         personService.create(mergeRequest.getAuthor());
 
         final MergeRequest oldMergeRequest = mergeRequestRepository.findById(mergeRequest.getId())
-                .orElseThrow(() -> new NotFoundException("МержРеквест не найден"));
+                .orElseThrow(NotFoundException.supplier("МержРеквест не найден"));
 
         if (mergeRequest.getNotification() == null) {
             mergeRequest.setNotification(oldMergeRequest.getNotification());
@@ -118,7 +117,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
         if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate()) || oldMergeRequest.isConflict() != mergeRequest.isConflict()) {
             final Project project = projectService.getById(mergeRequest.getProjectId())
-                    .orElseThrow(() -> new NotFoundException("Проект не найден"));
+                    .orElseThrow(NotFoundException.supplier("Проект не найден"));
 
             if (Boolean.TRUE.equals(oldMergeRequest.getNotification())) {
                 notifyStatus(oldMergeRequest, mergeRequest, project);
@@ -140,7 +139,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
             final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId())
                     .stream()
                     .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
-                    .collect(Collectors.toList());
+                    .toList();
             final long allTask = discussions.size();
             final long resolvedTask = discussions.stream()
                     .filter(Discussion::getResolved)

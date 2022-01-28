@@ -30,8 +30,6 @@ public enum Smile {
     TOP_ONE("\uD83C\uDF1F\uD83C\uDF1F\uD83C\uDF1F"),
     TOP_TWO("\uD83D\uDE0E"),
     TOP_THREE("\uD83E\uDD49"),
-    KAKASHKA("\uD83D\uDCA9"),
-    LUPA("\uD83D\uDD0D"),
     DANGEROUS("⚠️"),
     COMMENT("\uD83D\uDCAC"),
     ARROW("➜"),

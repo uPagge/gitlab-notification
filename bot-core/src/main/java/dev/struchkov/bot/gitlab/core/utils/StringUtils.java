@@ -13,11 +13,4 @@ public class StringUtils {
 
     public static final String H_PRIVATE_TOKEN = "PRIVATE-TOKEN";
 
-    public static String cutOff(String string, int length) {
-        if (string != null) {
-            return string.length() > length ? string.substring(0, length) + "..." : string;
-        }
-        return null;
-    }
-
 }

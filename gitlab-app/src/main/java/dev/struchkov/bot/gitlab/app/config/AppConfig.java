@@ -61,7 +61,7 @@ public class AppConfig {
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .execute(PersonInformation.class)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+                .orElseThrow(NotFoundException.supplier("Пользователь не найден"));
         personInformation.setTelegramId(personProperty.getTelegramId());
         return personInformation;
     }

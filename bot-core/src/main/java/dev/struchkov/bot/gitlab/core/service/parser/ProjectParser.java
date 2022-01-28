@@ -70,7 +70,7 @@ public class ProjectParser {
             final List<Project> newProjects = projectJsons.stream()
                     .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Project.class))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!newProjects.isEmpty()) {
                 projectService.createAll(newProjects);
@@ -97,7 +97,7 @@ public class ProjectParser {
                                     .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                                     .execute(PersonJson.class)
                                     .map(json -> conversionService.convert(json, Person.class)).orElseThrow(() -> new ConvertException("Ошибка преобразования нового пользователя"))
-                    ).collect(Collectors.toList());
+                    ).toList();
 
             personService.createAll(newPersons);
 

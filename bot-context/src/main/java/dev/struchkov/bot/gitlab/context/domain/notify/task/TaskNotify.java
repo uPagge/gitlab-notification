@@ -1,12 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.task;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
-public abstract class TaskNotify extends Notify {
+public abstract class TaskNotify implements Notify {
 
     protected final String authorName;
     protected final String url;

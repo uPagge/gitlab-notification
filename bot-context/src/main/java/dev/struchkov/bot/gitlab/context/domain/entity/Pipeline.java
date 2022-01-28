@@ -1,10 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
+import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.haiti.context.domain.BasicEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

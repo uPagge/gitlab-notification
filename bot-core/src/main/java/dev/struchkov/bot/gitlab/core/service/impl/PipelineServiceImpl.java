@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.CANCELED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.FAILED;
@@ -35,21 +33,25 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
 @Service
 public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, Long> implements PipelineService {
 
-    private static final Set<PipelineStatus> notificationStatus = Stream.of(
-            FAILED, SUCCESS, CANCELED, SKIPPED
-    ).collect(Collectors.toSet());
+    private static final Set<PipelineStatus> notificationStatus = Set.of(FAILED, SUCCESS, CANCELED, SKIPPED);
 
     private final NotifyService notifyService;
-    private final PipelineRepository repository;
+    private final PipelineRepository pipelineRepository;
     private final PersonService personService;
     private final PipelineFilterService pipelineFilterService;
 
     private final PersonInformation personInformation;
 
-    public PipelineServiceImpl(NotifyService notifyService, PipelineRepository repository, PersonService personService, PipelineFilterService pipelineFilterService, PersonInformation personInformation) {
-        super(repository);
+    public PipelineServiceImpl(
+            NotifyService notifyService,
+            PipelineRepository pipelineRepository,
+            PersonService personService,
+            PipelineFilterService pipelineFilterService,
+            PersonInformation personInformation
+    ) {
+        super(pipelineRepository);
         this.notifyService = notifyService;
-        this.repository = repository;
+        this.pipelineRepository = pipelineRepository;
         this.personService = personService;
         this.pipelineFilterService = pipelineFilterService;
         this.personInformation = personInformation;
@@ -58,7 +60,7 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     @Override
     public Pipeline create(@NonNull Pipeline pipeline) {
         personService.create(pipeline.getPerson());
-        final Pipeline newPipeline = repository.save(pipeline);
+        final Pipeline newPipeline = pipelineRepository.save(pipeline);
 
         if (
                 notificationStatus.contains(pipeline.getStatus())
@@ -81,8 +83,8 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
 
     @Override
     public Pipeline update(@NonNull Pipeline pipeline) {
-        final Pipeline oldPipeline = repository.findById(pipeline.getId())
-                .orElseThrow(() -> new NotFoundException("Pipeline не найден"));
+        final Pipeline oldPipeline = pipelineRepository.findById(pipeline.getId())
+                .orElseThrow(NotFoundException.supplier("Pipeline не найден"));
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             pipeline.setProject(oldPipeline.getProject());
@@ -103,7 +105,7 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
                                 .build()
                 );
 
-                return repository.save(pipeline);
+                return pipelineRepository.save(pipeline);
             }
 
         }
@@ -113,7 +115,7 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
 
     @Override
     public Sheet<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pagination pagination) {
-        return repository.findAllByStatuses(statuses, pagination);
+        return pipelineRepository.findAllByStatuses(statuses, pagination);
     }
 
     @Override
@@ -135,4 +137,5 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     public long count(@NonNull PipelineFilter filter) {
         return pipelineFilterService.count(filter);
     }
+
 }

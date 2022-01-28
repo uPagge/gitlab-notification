@@ -93,7 +93,7 @@ public class DiscussionParser {
                         return discussion;
                     })
                     .filter(discussion -> discussion.getNotes() != null && !discussion.getNotes().isEmpty())
-                    .collect(Collectors.toList());
+                    .toList();
             discussionService.createAll(newDiscussions);
         }
     }

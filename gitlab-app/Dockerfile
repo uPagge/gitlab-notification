@@ -1,6 +1,6 @@
 FROM openjdk:17.0.2-jdk-slim-buster
 MAINTAINER uPagge <me@upagge.ru>
-RUN addgroup gitlabbot --disabled-password && \
+RUN apt upgrade && addgroup gitlabbot --disabled-password && \
     adduser gitlabbot --ingroup gitlabbot && \
     mkdir -p /bot && \
     chown -R gitlabbot:gitlabbot /bot

@@ -11,6 +11,7 @@ import dev.struchkov.bot.gitlab.context.service.AppSettingService;
  * @author upagge 11.10.2020
  */
 @Getter
+//TODO [28.01.2022]: Решить доработать и оставить или удалить
 public class ForgottenSmartPrNotify extends PrNotify {
 
     @Builder

@@ -17,13 +17,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MessageUtils {
 
-    private static final UpdateDataComparator COMPARATOR = new UpdateDataComparator();
-
     public static Optional<String> pullRequestForReview(@NonNull List<MergeRequest> mergeRequestsReviews) {
         if (!mergeRequestsReviews.isEmpty()) {
             return Optional.of(
                     mergeRequestsReviews.stream()
-                            .sorted(COMPARATOR)
                             .map(MessageUtils::generateStringItemPullRequestReview)
                             .collect(Collectors.joining("\n"))
             );
@@ -51,7 +48,6 @@ public final class MessageUtils {
                 link(mergeRequest.getTitle(), mergeRequest.getWebUrl());
     }
 
-    @NonNull
     private static String link(String name, String url) {
         return "[" + name + "](" + url + ")";
     }

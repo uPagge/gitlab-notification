@@ -1,10 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
 
-import lombok.Getter;
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
+import lombok.Getter;
 
 @Getter
-public abstract class PrNotify extends Notify {
+public abstract class PrNotify implements Notify {
 
     protected final String projectName;
     protected final String title;

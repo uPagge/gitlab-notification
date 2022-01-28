@@ -1,9 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
-import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.godfather.telegram.service.SendPreProcessing;
-import dev.struchkov.haiti.utils.Strings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +18,7 @@ public class ReplaceUrlLocalhost implements SendPreProcessing {
 
     @Override
     public String pretreatment(String s) {
-        if (property.getReplaceUrl() !=null && !"${GITLAB_REPLACE_URL}".equals(property.getReplaceUrl())) {
+        if (property.getReplaceUrl() != null && !"${GITLAB_REPLACE_URL}".equals(property.getReplaceUrl())) {
             return s.replace(property.getReplaceUrl(), property.getBaseUrl());
         }
         return s;

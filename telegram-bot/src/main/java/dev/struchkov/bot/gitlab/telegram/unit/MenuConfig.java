@@ -102,7 +102,7 @@ public class MenuConfig {
     ) {
         return AnswerText.builder()
                 .boxAnswer(message -> {
-                    final List<String> urlList = Arrays.stream(message.getText().split("/")).collect(Collectors.toList());
+                    final List<String> urlList = Arrays.stream(message.getText().split("/")).toList();
                     int lastElement = urlList.size() - 1;
                     final String projectUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequestAdd(), urlList.get(lastElement - 1), urlList.get(lastElement));
                     projectParser.parseByUrl(projectUrl);

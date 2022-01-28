@@ -10,7 +10,7 @@ import lombok.Getter;
  * @author upagge 20.09.2020
  */
 @Getter
-public class SimpleTextNotify extends Notify {
+public class SimpleTextNotify implements Notify {
 
     private final String message;
 

@@ -27,8 +27,9 @@ public class DiscussionJsonConverter implements Converter<DiscussionJson, Discus
                 source.getNotes().stream()
                         .filter(noteJson -> !noteJson.isSystem())
                         .map(noteJsonConvert::convert)
-                        .collect(Collectors.toList())
+                        .toList()
         );
         return discussion;
     }
+
 }

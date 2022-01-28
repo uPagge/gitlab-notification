@@ -18,4 +18,5 @@ import java.util.Set;
 public interface PipelineRepository extends SimpleManagerRepository<Pipeline, Long>, FilterOperation<Pipeline> {
 
     Sheet<Pipeline> findAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pagination pagination);
+
 }

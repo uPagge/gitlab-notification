@@ -31,7 +31,7 @@ public class CleanServiceImpl implements CleanService {
 
     private static final int COUNT = 1000;
     private static final MergeRequestFilter CLEAN_FILTER = MergeRequestFilter.builder()
-            .states(Stream.of(MERGED, CLOSED).collect(Collectors.toSet()))
+            .states(Set.of(MERGED, CLOSED))
             .build();
 
     private final MergeRequestsService mergeRequestsService;
@@ -45,7 +45,7 @@ public class CleanServiceImpl implements CleanService {
         while (mergeRequestSheet.hasContent()) {
             final Set<Long> ids = mergeRequestSheet.getContent().stream()
                     .map(MergeRequest::getId)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toUnmodifiableSet());
 
             mergeRequestsService.deleteAllById(ids);
 
@@ -62,7 +62,7 @@ public class CleanServiceImpl implements CleanService {
         while (sheet.hasContent()) {
             final Set<Long> ids = sheet.getContent().stream()
                     .map(Pipeline::getId)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toUnmodifiableSet());
 
             pipelineService.deleteAllById(ids);
 

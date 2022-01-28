@@ -25,7 +25,7 @@ public enum AppLocale {
         return Arrays.stream(values())
                 .filter(appLocale -> appLocale.getLabel().equals(label))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Ошибка, локализация не найдена. Попробуйте снова."));
+                .orElseThrow(NotFoundException.supplier("Ошибка, локализация не найдена. Попробуйте снова."));
     }
 
     public Locale getValue() {

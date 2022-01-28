@@ -6,8 +6,10 @@ import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
 
+import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
+
 @Getter
-public class CommentNotify extends Notify {
+public class CommentNotify implements Notify {
 
     private final String authorName;
     private final String message;

@@ -4,6 +4,8 @@ import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 
+import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
+
 /**
  * // TODO: 10.09.2020 Добавить описание.
  *

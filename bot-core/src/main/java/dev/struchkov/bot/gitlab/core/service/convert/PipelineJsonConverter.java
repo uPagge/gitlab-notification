@@ -45,30 +45,19 @@ public class PipelineJsonConverter implements Converter<PipelineJson, Pipeline> 
     }
 
     private PipelineStatus convertStatus(PipelineStatusJson status) {
-        switch (status) {
-            case SKIPPED:
-                return SKIPPED;
-            case CANCELED:
-                return CANCELED;
-            case SUCCESS:
-                return SUCCESS;
-            case MANUAL:
-                return MANUAL;
-            case CREATED:
-                return CREATED;
-            case PENDING:
-                return PENDING;
-            case RUNNING:
-                return RUNNING;
-            case PREPARING:
-                return PREPARING;
-            case SCHEDULED:
-                return SCHEDULED;
-            case WAITING_FOR_RESOURCE:
-                return WAITING_FOR_RESOURCE;
-            default:
-                return FAILED;
-        }
+        return switch (status) {
+            case SKIPPED -> SKIPPED;
+            case CANCELED -> CANCELED;
+            case SUCCESS -> SUCCESS;
+            case MANUAL -> MANUAL;
+            case CREATED -> CREATED;
+            case PENDING -> PENDING;
+            case RUNNING -> RUNNING;
+            case PREPARING -> PREPARING;
+            case SCHEDULED -> SCHEDULED;
+            case WAITING_FOR_RESOURCE -> WAITING_FOR_RESOURCE;
+            default -> FAILED;
+        };
     }
 
 }

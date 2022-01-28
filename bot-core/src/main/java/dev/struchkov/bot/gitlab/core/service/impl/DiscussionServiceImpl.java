@@ -97,7 +97,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     @Override
     public Discussion update(@NonNull Discussion discussion) {
         final Discussion oldDiscussion = discussionRepository.findById(discussion.getId())
-                .orElseThrow(() -> new NotFoundException("Дискуссия не найдена"));
+                .orElseThrow(NotFoundException.supplier("Дискуссия не найдена"));
         final Map<Long, Note> noteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, note -> note));
@@ -148,7 +148,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
             final List<Discussion> discussions = getAllByMergeRequestId(mergeRequest.getId())
                     .stream()
                     .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
-                    .collect(Collectors.toList());
+                    .toList();
             final long allYouTasks = discussions.stream()
                     .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
                     .count();
@@ -178,7 +178,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     @Override
     public void answer(@NonNull String discussionId, @NonNull String text) {
         final Discussion discussion = discussionRepository.findById(discussionId)
-                .orElseThrow(() -> new NotFoundException("Дисскусия " + discussionId + " не найдена"));
+                .orElseThrow(NotFoundException.supplier("Дисскусия {0} не найдена", discussionId));
         final MergeRequest mergeRequest = discussion.getMergeRequest();
         final Long projectId = mergeRequest.getProjectId();
 

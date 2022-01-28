@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
 
+import dev.struchkov.haiti.utils.Strings;
 import lombok.Builder;
 import lombok.Getter;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
@@ -7,6 +8,8 @@ import dev.struchkov.bot.gitlab.context.utils.Smile;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Getter
 public class NewPrNotify extends PrNotify {
@@ -52,7 +55,7 @@ public class NewPrNotify extends PrNotify {
                 title,
                 url,
                 labelText,
-                (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : "",
+                (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : Strings.EMPTY,
                 Smile.AUTHOR.getValue(),
                 author,
                 Smile.TREE.getValue(),

@@ -46,7 +46,7 @@ public class ProjectServiceImpl extends AbstractSimpleManagerService<Project, Lo
 
         if (!newProject.getCreatorId().equals(personInformation.getId())) {
             final String authorName = personService.getById(newProject.getCreatorId())
-                    .orElseThrow(() -> new NotFoundException("Пользователь не найден"))
+                    .orElseThrow(NotFoundException.supplier("Пользователь не найден"))
                     .getName();
             notifyService.send(
                     NewProjectNotify.builder()

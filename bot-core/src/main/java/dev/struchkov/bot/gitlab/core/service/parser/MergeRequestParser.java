@@ -25,7 +25,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
@@ -35,9 +34,9 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 public class MergeRequestParser {
 
     public static final Integer COUNT = 100;
-    private static final Set<MergeRequestState> OLD_STATUSES = Stream.of(
+    private static final Set<MergeRequestState> OLD_STATUSES = Set.of(
             MergeRequestState.MERGED, MergeRequestState.OPENED, MergeRequestState.CLOSED
-    ).collect(Collectors.toSet());
+    );
 
     private final GitlabProperty gitlabProperty;
     private final MergeRequestsService mergeRequestsService;
@@ -58,7 +57,7 @@ public class MergeRequestParser {
                         parsingCommits(newMergeRequest);
                         return newMergeRequest;
                     })
-                    .orElseThrow(() -> new NotFoundException("МержРеквест не найден, возможно удален"));
+                    .orElseThrow(NotFoundException.supplier("МержРеквест не найден, возможно удален"));
             mergeRequestsService.update(mergeRequest);
         }
 
@@ -98,7 +97,7 @@ public class MergeRequestParser {
                             parsingCommits(mergeRequest);
                             return mergeRequest;
                         })
-                        .collect(Collectors.toList());
+                        .toList();
 
                 mergeRequestsService.createAll(newMergeRequests);
             }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -23,7 +24,7 @@ import java.util.Locale;
 public class AppSettingServiceImpl implements AppSettingService {
 
     private static final Long KEY = 1L;
-    private static final NotFoundException EXCEPTION = new NotFoundException("Ошибка, невозможно найти настройки приложения, проверьте базу данных.");
+    public static final Supplier<NotFoundException> NOT_FOUND_SETTINGS = NotFoundException.supplier("Ошибка, невозможно найти настройки приложения, проверьте базу данных.");
     private final AppSettingRepository appSettingRepository;
 
     private final MessageSource messageSource;
@@ -31,13 +32,13 @@ public class AppSettingServiceImpl implements AppSettingService {
     @Override
     public boolean isFirstStart() {
         return appSettingRepository.findById(KEY)
-                .orElseThrow(() -> EXCEPTION)
+                .orElseThrow(NOT_FOUND_SETTINGS)
                 .isFirstStart();
     }
 
     @Override
     public void disableFirstStart() {
-        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(() -> EXCEPTION);
+        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(NOT_FOUND_SETTINGS);
         appSetting.setFirstStart(false);
         appSettingRepository.save(appSetting);
     }
@@ -45,12 +46,11 @@ public class AppSettingServiceImpl implements AppSettingService {
     @Override
     public String getMessage(@NonNull String label) {
         final Locale value = appSettingRepository.findById(KEY)
-                .orElseThrow(() -> EXCEPTION)
+                .orElseThrow(NOT_FOUND_SETTINGS)
                 .getAppLocale().getValue();
-        final String message = messageSource.getMessage(
+        return messageSource.getMessage(
                 label, null, value
         );
-        return message;
     }
 
     @Override
@@ -60,14 +60,14 @@ public class AppSettingServiceImpl implements AppSettingService {
                 label,
                 paramsArray,
                 appSettingRepository.findById(KEY)
-                        .orElseThrow(() -> EXCEPTION)
+                        .orElseThrow(NOT_FOUND_SETTINGS)
                         .getAppLocale().getValue()
         );
     }
 
     @Override
     public void setLocale(@NonNull AppLocale appLocale) {
-        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(() -> EXCEPTION);
+        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(NOT_FOUND_SETTINGS);
         appSetting.setAppLocale(appLocale);
         appSettingRepository.save(appSetting);
     }

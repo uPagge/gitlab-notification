@@ -44,17 +44,13 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
     }
 
     private MergeRequestState convertState(MergeRequestStateJson state) {
-        switch (state) {
-            case CLOSED:
-                return MergeRequestState.CLOSED;
-            case LOCKED:
-                return MergeRequestState.LOCKED;
-            case MERGED:
-                return MergeRequestState.MERGED;
-            case OPENED:
-                return MergeRequestState.OPENED;
-        }
-        throw new ConvertException("Статус ПР не найден");
+        return switch (state) {
+            case CLOSED -> MergeRequestState.CLOSED;
+            case LOCKED -> MergeRequestState.LOCKED;
+            case MERGED -> MergeRequestState.MERGED;
+            case OPENED -> MergeRequestState.OPENED;
+            default -> throw new ConvertException("Статус ПР не найден");
+        };
     }
 
 }

@@ -45,9 +45,9 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 public class PipelineParser {
 
     public static final Integer COUNT = 100;
-    private static final Set<PipelineStatus> oldStatus = Stream.of(
+    private static final Set<PipelineStatus> oldStatus = Set.of(
             CREATED, WAITING_FOR_RESOURCE, PREPARING, PENDING, RUNNING, MANUAL
-    ).collect(Collectors.toSet());
+    );
     private final PipelineService pipelineService;
     private final ProjectService projectService;
     private final GitlabProperty gitlabProperty;
