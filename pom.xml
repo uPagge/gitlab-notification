@@ -52,7 +52,7 @@
         <gitlab.telegram.version>3.1.0</gitlab.telegram.version>
         <gitlab.core.version>3.1.0</gitlab.core.version>
 
-        <haiti.ver>0.0.5</haiti.ver>
+        <haiti.ver>1.0.0</haiti.ver>
         <godfather.telegram.core.version>0.0.2</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>

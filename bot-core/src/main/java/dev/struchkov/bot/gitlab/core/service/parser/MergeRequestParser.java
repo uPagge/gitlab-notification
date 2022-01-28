@@ -12,7 +12,6 @@ import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
 import dev.struchkov.haiti.context.domain.ExistsContainer;
-import dev.struchkov.haiti.context.exception.NotFoundException;
 import dev.struchkov.haiti.context.page.Sheet;
 import dev.struchkov.haiti.context.page.impl.PaginationImpl;
 import dev.struchkov.haiti.utils.network.HttpParse;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,17 +48,18 @@ public class MergeRequestParser {
         final Set<IdAndStatusPr> existIds = mergeRequestsService.getAllId(OLD_STATUSES);
 
         for (IdAndStatusPr existId : existIds) {
-            final MergeRequest mergeRequest = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequest(), existId.getProjectId(), existId.getTwoId()))
+            final String mrUrl = MessageFormat.format(gitlabProperty.getUrlPullRequest(), existId.getProjectId(), existId.getTwoId());
+            final Optional<MergeRequestJson> json = HttpParse.request(mrUrl)
                     .header(ACCEPT)
                     .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                    .execute(MergeRequestJson.class)
-                    .map(json -> {
-                        final MergeRequest newMergeRequest = conversionService.convert(json, MergeRequest.class);
+                    .execute(MergeRequestJson.class);
+            final Optional<MergeRequest> mergeRequest = json
+                    .map(mergeRequestJson -> {
+                        final MergeRequest newMergeRequest = conversionService.convert(mergeRequestJson, MergeRequest.class);
                         parsingCommits(newMergeRequest);
                         return newMergeRequest;
-                    })
-                    .orElseThrow(NotFoundException.supplier("МержРеквест не найден, возможно удален"));
-            mergeRequestsService.update(mergeRequest);
+                    });
+            mergeRequest.ifPresent(mergeRequestsService::update);
         }
 
     }
@@ -98,7 +99,6 @@ public class MergeRequestParser {
                             return mergeRequest;
                         })
                         .toList();
-
                 mergeRequestsService.createAll(newMergeRequests);
             }
 
