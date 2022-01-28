@@ -6,11 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 /**
- * // TODO: 11.02.2021 Добавить описание.
- *
  * @author upagge 11.02.2021
  */
 @Component

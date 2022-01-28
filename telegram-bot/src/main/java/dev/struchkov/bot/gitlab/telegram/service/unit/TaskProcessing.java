@@ -1,10 +1,10 @@
-package dev.struchkov.bot.gitlab.telegram.service.unit;
-
-/**
- * // TODO: 17.09.2020 Добавить описание.
- *
- * @author upagge 17.09.2020
- */
+//package dev.struchkov.bot.gitlab.telegram.service.unit;
+//
+///**
+// * // TODO: 17.09.2020 Добавить описание.
+// *
+// * @author upagge 17.09.2020
+// */
 //@Component
 //@RequiredArgsConstructor
 //public class TaskProcessing implements ProcessingData<Message> {

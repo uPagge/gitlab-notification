@@ -7,12 +7,13 @@ import lombok.NonNull;
 import java.util.List;
 
 /**
- * // TODO: 11.02.2021 Добавить описание.
- *
  * @author upagge 11.02.2021
  */
 public interface DiscussionRepository extends SimpleManagerRepository<Discussion, String> {
 
+    /**
+     * Вернуть все дискусии для MR
+     */
     List<Discussion> findAllByMergeRequestId(@NonNull Long mergeRequestId);
 
 }

@@ -3,8 +3,6 @@ package dev.struchkov.bot.gitlab.sdk.domain;
 import lombok.Data;
 
 /**
- * TODO: Добавить описание класса.
- *
  * @author upagge [31.01.2020]
  */
 @Data

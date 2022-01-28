@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * // TODO: 19.01.2021 Добавить описание.
- *
  * @author upagge 19.01.2021
  */
 @Component

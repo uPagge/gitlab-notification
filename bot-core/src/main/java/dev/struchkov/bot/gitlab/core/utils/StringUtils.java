@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * // TODO: 29.09.2020 Добавить описание.
+ * Утилитарный класс для работы со сторками.
  *
  * @author upagge 29.09.2020
  */

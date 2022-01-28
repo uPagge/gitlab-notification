@@ -3,8 +3,6 @@ package dev.struchkov.bot.gitlab.sdk.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
- *
  * @author upagge 17.01.2021
  */
 public enum PipelineStatusJson {

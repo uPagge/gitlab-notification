@@ -35,8 +35,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.FALSE;
+
 /**
- * // TODO: 11.02.2021 Добавить описание.
+ * Сервис для работы с дискуссиями.
  *
  * @author upagge 11.02.2021
  */
@@ -69,7 +71,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
     public Discussion create(@NonNull Discussion discussion) {
         discussion.getNotes().forEach(note -> personService.create(note.getAuthor()));
         discussion.getNotes().forEach(this::notificationPersonal);
-        discussion.getNotes().forEach(note -> notifyNewTask(note, discussion));
+        discussion.getNotes().forEach(note -> notifyNewNote(note, discussion));
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
@@ -77,13 +79,11 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         return discussionRepository.save(discussion);
     }
 
-    private void notifyNewTask(Note note, Discussion discussion) {
-        if (note.isResolvable()
-                && personInformation.getId().equals(discussion.getResponsible().getId())
-                && !personInformation.getId().equals(note.getAuthor().getId())
-                && note.getResolved() != null
-                && !note.getResolved()
-        ) {
+    /**
+     * <p>Уведомляет пользователя, если появился новый комментарий</p>
+     */
+    private void notifyNewNote(Note note, Discussion discussion) {
+        if (isNeedNotifyNewNote(note, discussion)) {
             notifyService.send(
                     TaskNewNotify.builder()
                             .authorName(note.getAuthor().getName())
@@ -94,22 +94,34 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         }
     }
 
+    private boolean isNeedNotifyNewNote(Note note, Discussion discussion) {
+        final Long personId = personInformation.getId();
+        return note.isResolvable() // Тип комментария требует решения (Задачи)
+                && personId.equals(discussion.getResponsible().getId()) // Создатель дискуссии пользователь приложения
+                && !personId.equals(note.getAuthor().getId()) // Создатель комментария не пользователь системы
+                && FALSE.equals(note.getResolved()); // Комментарий не отмечен как решенный
+    }
+
     @Override
     public Discussion update(@NonNull Discussion discussion) {
         final Discussion oldDiscussion = discussionRepository.findById(discussion.getId())
                 .orElseThrow(NotFoundException.supplier("Дискуссия не найдена"));
-        final Map<Long, Note> noteMap = oldDiscussion
+        final Map<Long, Note> idAndNoteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, note -> note));
-        final boolean inDiscussion = discussion.getNotes().stream()
+
+        // Пользователь участвовал в обсуждении
+        final boolean userParticipatedInDiscussion = discussion.getNotes().stream()
                 .anyMatch(note -> personInformation.getId().equals(note.getAuthor().getId()));
 
         discussion.setMergeRequest(oldDiscussion.getMergeRequest());
         discussion.setResponsible(oldDiscussion.getResponsible());
-        discussion.getNotes().forEach(note -> updateNote(note, noteMap, inDiscussion));
+        discussion.getNotes().forEach(note -> updateNote(note, idAndNoteMap, userParticipatedInDiscussion));
+
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
         discussion.setResolved(resolved);
+
         return discussionRepository.save(discussion);
     }
 
@@ -205,9 +217,12 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         return discussionRepository.findAllByMergeRequestId(mergeRequestId);
     }
 
+    /**
+     * Уведомляет пользователя, если его никнейм упоминается в комментарии.
+     */
     protected void notificationPersonal(@NonNull Note note) {
-        Matcher matcher = PATTERN.matcher(note.getBody());
-        Set<String> recipientsLogins = new HashSet<>();
+        final Matcher matcher = PATTERN.matcher(note.getBody());
+        final Set<String> recipientsLogins = new HashSet<>();
         while (matcher.find()) {
             final String login = matcher.group(0).replace("@", "");
             recipientsLogins.add(login);

@@ -8,6 +8,7 @@ import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.godfather.context.domain.BoxAnswer;
 import dev.struchkov.godfather.context.domain.content.Mail;
+import dev.struchkov.godfather.context.domain.content.Message;
 import dev.struchkov.godfather.context.domain.content.attachment.Attachment;
 import dev.struchkov.godfather.context.domain.content.attachment.AttachmentType;
 import dev.struchkov.godfather.context.domain.content.attachment.Link;
@@ -40,7 +41,7 @@ public class UnitConfig {
     @Bean
     public AnswerCheck checkFirstStart(
             AppSettingService settingService,
-            AnswerText textCheckLanguage,
+            AnswerText<Message> textCheckLanguage,
             AnswerCheck checkMenuOrAnswer
     ) {
         return AnswerCheck.builder()
@@ -54,8 +55,8 @@ public class UnitConfig {
 
     @Bean
     public AnswerCheck checkMenuOrAnswer(
-            AnswerText menu,
-            AnswerText answerNote
+            AnswerText<Message> menu,
+            AnswerText<Message> answerNote
     ) {
         return AnswerCheck.builder()
                 .check(
@@ -76,7 +77,7 @@ public class UnitConfig {
     }
 
     @Bean
-    public AnswerText answerNote(
+    public AnswerText<Message> answerNote(
             NoteService noteService,
             DiscussionService discussionService
     ) {
@@ -105,7 +106,7 @@ public class UnitConfig {
     }
 
     @Bean
-    public AnswerText textCheckLanguage(
+    public AnswerText<Message> textCheckLanguage(
             AnswerProcessing checkLanguage
     ) {
         return AnswerText.builder()
@@ -122,7 +123,7 @@ public class UnitConfig {
     @Bean
     public AnswerProcessing checkLanguage(
             AppSettingService settingService,
-            AnswerText textParserPrivateProject
+            AnswerText<Message> textParserPrivateProject
     ) {
         return AnswerProcessing
                 .builder()
@@ -140,7 +141,7 @@ public class UnitConfig {
     }
 
     @Bean
-    public AnswerText textParserPrivateProject(
+    public AnswerText<Message> textParserPrivateProject(
             AnswerCheck checkParserPrivateProject,
             AppSettingService settingService
     ) {
@@ -162,7 +163,7 @@ public class UnitConfig {
     public AnswerCheck checkParserPrivateProject(
             AppSettingService appSettingService,
             AnswerProcessing parserPrivateProject,
-            AnswerText textParseOwnerProject
+            AnswerText<Message> textParseOwnerProject
     ) {
         return AnswerCheck.builder()
                 .check(
@@ -177,7 +178,7 @@ public class UnitConfig {
     public AnswerProcessing parserPrivateProject(
             ProjectParser projectParser,
             AppSettingService settingService,
-            AnswerText textParseOwnerProject
+            AnswerText<Message> textParseOwnerProject
     ) {
         return AnswerProcessing.builder()
                 .processingData(message -> {
@@ -189,7 +190,7 @@ public class UnitConfig {
     }
 
     @Bean
-    public AnswerText textParseOwnerProject(
+    public AnswerText<Message> textParseOwnerProject(
             AppSettingService settingService,
             AnswerCheck checkParseOwnerProject
     ) {

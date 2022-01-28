@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * // TODO: 17.09.2020 Добавить описание.
+ * Отправляет сообщение в телеграмм.
  *
  * @author upagge 17.09.2020
  */

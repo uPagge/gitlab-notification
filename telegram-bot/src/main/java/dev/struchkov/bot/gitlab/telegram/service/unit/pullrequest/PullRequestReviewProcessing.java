@@ -7,8 +7,6 @@ import dev.struchkov.godfather.context.service.usercode.ProcessingData;
 import lombok.RequiredArgsConstructor;
 
 /**
- * // TODO: 17.09.2020 Добавить описание.
- *
  * @author upagge 17.09.2020
  */
 //@Component

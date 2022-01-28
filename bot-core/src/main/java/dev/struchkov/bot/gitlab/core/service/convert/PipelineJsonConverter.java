@@ -21,8 +21,6 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
- *
  * @author upagge 17.01.2021
  */
 @Component

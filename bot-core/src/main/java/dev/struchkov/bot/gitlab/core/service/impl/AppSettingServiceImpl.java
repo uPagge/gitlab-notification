@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.function.Supplier;
 
 /**
- * // TODO: 16.01.2021 Добавить описание.
+ * Сервис отвечает за пользовательские настройки приложения.
  *
  * @author upagge 16.01.2021
  */
@@ -31,26 +31,20 @@ public class AppSettingServiceImpl implements AppSettingService {
 
     @Override
     public boolean isFirstStart() {
-        return appSettingRepository.findById(KEY)
-                .orElseThrow(NOT_FOUND_SETTINGS)
-                .isFirstStart();
+        return getAppSetting().isFirstStart();
     }
 
     @Override
     public void disableFirstStart() {
-        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(NOT_FOUND_SETTINGS);
+        final AppSetting appSetting = getAppSetting();
         appSetting.setFirstStart(false);
         appSettingRepository.save(appSetting);
     }
 
     @Override
     public String getMessage(@NonNull String label) {
-        final Locale value = appSettingRepository.findById(KEY)
-                .orElseThrow(NOT_FOUND_SETTINGS)
-                .getAppLocale().getValue();
-        return messageSource.getMessage(
-                label, null, value
-        );
+        final Locale value = getAppSetting().getAppLocale().getValue();
+        return messageSource.getMessage(label, null, value);
     }
 
     @Override
@@ -59,17 +53,20 @@ public class AppSettingServiceImpl implements AppSettingService {
         return messageSource.getMessage(
                 label,
                 paramsArray,
-                appSettingRepository.findById(KEY)
-                        .orElseThrow(NOT_FOUND_SETTINGS)
-                        .getAppLocale().getValue()
+                getAppSetting().getAppLocale().getValue()
         );
     }
 
     @Override
     public void setLocale(@NonNull AppLocale appLocale) {
-        final AppSetting appSetting = appSettingRepository.findById(KEY).orElseThrow(NOT_FOUND_SETTINGS);
+        final AppSetting appSetting = getAppSetting();
         appSetting.setAppLocale(appLocale);
         appSettingRepository.save(appSetting);
+    }
+
+    private AppSetting getAppSetting() {
+        return appSettingRepository.findById(KEY)
+                .orElseThrow(NOT_FOUND_SETTINGS);
     }
 
 }

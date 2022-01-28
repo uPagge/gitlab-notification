@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * // TODO: 16.01.2021 Добавить описание.
+ * Основные настройки приложения.
  *
  * @author upagge 16.01.2021
  */

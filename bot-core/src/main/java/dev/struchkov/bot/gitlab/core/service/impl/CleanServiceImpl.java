@@ -15,13 +15,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.CLOSED;
 import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.MERGED;
 
 /**
- * // TODO: 08.02.2021 Добавить описание.
+ * Реализация сервиса очистки данных.
  *
  * @author upagge 08.02.2021
  */
@@ -30,7 +29,7 @@ import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.MERGED;
 public class CleanServiceImpl implements CleanService {
 
     private static final int COUNT = 1000;
-    private static final MergeRequestFilter CLEAN_FILTER = MergeRequestFilter.builder()
+    private static final MergeRequestFilter MR_CLEAN_FILTER = MergeRequestFilter.builder()
             .states(Set.of(MERGED, CLOSED))
             .build();
 
@@ -38,9 +37,9 @@ public class CleanServiceImpl implements CleanService {
     private final PipelineService pipelineService;
 
     @Override
-    public void cleanMergedPullRequests() {
+    public void cleanOldMergedRequests() {
         int page = 0;
-        Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(CLEAN_FILTER, PaginationImpl.of(page, COUNT));
+        Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PaginationImpl.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
             final Set<Long> ids = mergeRequestSheet.getContent().stream()
@@ -49,7 +48,7 @@ public class CleanServiceImpl implements CleanService {
 
             mergeRequestsService.deleteAllById(ids);
 
-            mergeRequestSheet = mergeRequestsService.getAll(CLEAN_FILTER, PaginationImpl.of(++page, COUNT));
+            mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PaginationImpl.of(++page, COUNT));
         }
     }
 

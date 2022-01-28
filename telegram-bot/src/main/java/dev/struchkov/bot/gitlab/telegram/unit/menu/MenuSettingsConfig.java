@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.telegram.unit.menu;
 import dev.struchkov.bot.gitlab.context.domain.AppLocale;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.godfather.context.domain.BoxAnswer;
+import dev.struchkov.godfather.context.domain.content.Message;
 import dev.struchkov.godfather.context.utils.KeyBoards;
 import dev.struchkov.godfather.core.domain.unit.AnswerText;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +18,9 @@ import org.springframework.context.annotation.Configuration;
 public class MenuSettingsConfig {
 
     @Bean
-    public AnswerText settingsLanguage(
+    public AnswerText<Message> settingsLanguage(
             AppSettingService settingService,
-            AnswerText setLanguage
+            AnswerText<Message> setLanguage
     ) {
         return AnswerText.builder()
                 .boxAnswer(
@@ -34,7 +35,7 @@ public class MenuSettingsConfig {
     }
 
     @Bean
-    public AnswerText setLanguage(
+    public AnswerText<Message> setLanguage(
             AppSettingService settingService
     ) {
         return AnswerText.builder()

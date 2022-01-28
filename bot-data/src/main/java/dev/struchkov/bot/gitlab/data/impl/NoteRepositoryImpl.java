@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * // TODO: 08.09.2020 Добавить описание.
  *
  * @author upagge 08.09.2020
  */

@@ -8,8 +8,6 @@ import lombok.Getter;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 /**
- * // TODO: 10.09.2020 Добавить описание.
- *
  * @author upagge 10.09.2020
  */
 @Getter

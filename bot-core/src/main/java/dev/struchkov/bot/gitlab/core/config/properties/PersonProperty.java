@@ -6,8 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * // TODO: 15.01.2021 Добавить описание.
- *
  * @author upagge 15.01.2021
  */
 

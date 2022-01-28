@@ -6,8 +6,6 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * // TODO: 11.02.2021 Добавить описание.
- *
  * @author upagge 11.02.2021
  */
 @Getter

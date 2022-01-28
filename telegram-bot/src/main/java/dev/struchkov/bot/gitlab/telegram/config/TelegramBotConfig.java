@@ -24,8 +24,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.Collections;
 
 /**
- * TODO: Добавить описание класса.
- *
  * @author upagge [30.01.2020]
  */
 @Configuration

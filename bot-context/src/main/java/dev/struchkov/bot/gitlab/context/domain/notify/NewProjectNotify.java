@@ -8,23 +8,18 @@ import lombok.Builder;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 /**
- * // TODO: 15.01.2021 Добавить описание.
- *
  * @author upagge 15.01.2021
  */
-public class NewProjectNotify implements Notify {
 
-    private final String projectName;
-    private final String projectUrl;
-    private final String projectDescription;
-    private final String authorName;
+public record NewProjectNotify(
+        String projectName,
+        String projectUrl,
+        String projectDescription,
+        String authorName
+) implements Notify {
 
     @Builder
-    public NewProjectNotify(String projectName, String projectUrl, String projectDescription, String authorName) {
-        this.projectName = projectName;
-        this.projectUrl = projectUrl;
-        this.projectDescription = projectDescription;
-        this.authorName = authorName;
+    public NewProjectNotify {
     }
 
     @Override

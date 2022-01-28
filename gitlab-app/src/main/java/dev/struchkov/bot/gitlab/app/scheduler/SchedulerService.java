@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
- * // TODO: 14.01.2021 Добавить описание.
- *
  * @author upagge 14.01.2021
  */
 @Slf4j
@@ -33,7 +31,7 @@ public class SchedulerService {
         discussionParser.scanOldDiscussions();
         discussionParser.scanNewDiscussion();
         cleanService.cleanOldPipelines();
-        cleanService.cleanMergedPullRequests();
+        cleanService.cleanOldMergedRequests();
     }
 
 }

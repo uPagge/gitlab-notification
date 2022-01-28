@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * TODO: Добавить описание класса.
- *
  * @author upagge [30.01.2020]
  */
 @Data

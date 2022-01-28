@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * // TODO: 16.01.2021 Добавить описание.
+ * Список локализаций приложения.
  *
  * @author upagge 16.01.2021
  */

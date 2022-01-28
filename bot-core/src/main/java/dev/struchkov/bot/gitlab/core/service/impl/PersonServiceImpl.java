@@ -8,8 +8,6 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
- * // TODO: 15.01.2021 Добавить описание.
- *
  * @author upagge 15.01.2021
  */
 @Service

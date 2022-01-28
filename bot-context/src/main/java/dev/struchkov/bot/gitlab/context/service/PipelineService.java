@@ -12,7 +12,7 @@ import lombok.NonNull;
 import java.util.Set;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
+ * Сервис для работы с пайплайнами
  *
  * @author upagge 17.01.2021
  */

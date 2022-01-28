@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.CREATED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.MANUAL;
@@ -35,11 +34,10 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
+ * Парсер пайплайнов.
  *
  * @author upagge 17.01.2021
  */
-
 @Service
 @RequiredArgsConstructor
 public class PipelineParser {
@@ -101,7 +99,7 @@ public class PipelineParser {
                                 pipeline.setProject(project);
                                 return pipeline;
                             })
-                            .orElseThrow(() -> new ConvertException("Ошибка обновления Pipelines"));
+                            .orElseThrow(ConvertException.supplier("Ошибка обновления Pipelines"));
                     pipelineService.create(newPipeline);
                 }
 
@@ -136,7 +134,7 @@ public class PipelineParser {
                         .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                         .execute(PipelineJson.class)
                         .map(json -> conversionService.convert(json, Pipeline.class))
-                        .orElseThrow(() -> new ConvertException("Ошибка обновления Pipelines"));
+                        .orElseThrow(ConvertException.supplier("Ошибка обновления Pipelines"));
 
                 pipelineService.update(newPipeline);
             }

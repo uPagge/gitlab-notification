@@ -14,8 +14,6 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
- * // TODO: 14.01.2021 Добавить описание.
- *
  * @author upagge 14.01.2021
  */
 @Service
@@ -44,21 +42,25 @@ public class ProjectServiceImpl extends AbstractSimpleManagerService<Project, Lo
     public Project create(@NonNull Project project) {
         final Project newProject = projectRepository.save(project);
 
-        if (!newProject.getCreatorId().equals(personInformation.getId())) {
+        if (!personInformation.getId().equals(newProject.getCreatorId())) {
             final String authorName = personService.getById(newProject.getCreatorId())
                     .orElseThrow(NotFoundException.supplier("Пользователь не найден"))
                     .getName();
-            notifyService.send(
-                    NewProjectNotify.builder()
-                            .projectDescription(newProject.getDescription())
-                            .projectName(newProject.getName())
-                            .projectUrl(newProject.getWebUrl())
-                            .authorName(authorName)
-                            .build()
-            );
+            sendNotifyNewProject(newProject, authorName);
         }
 
         return newProject;
+    }
+
+    private void sendNotifyNewProject(Project newProject, String authorName) {
+        notifyService.send(
+                NewProjectNotify.builder()
+                        .projectDescription(newProject.getDescription())
+                        .projectName(newProject.getName())
+                        .projectUrl(newProject.getWebUrl())
+                        .authorName(authorName)
+                        .build()
+        );
     }
 
     @Override

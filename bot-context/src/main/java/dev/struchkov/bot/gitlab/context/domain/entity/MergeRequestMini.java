@@ -12,8 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * // TODO: 12.09.2020 Добавить описание.
- *
  * @author upagge 12.09.2020
  */
 @Getter

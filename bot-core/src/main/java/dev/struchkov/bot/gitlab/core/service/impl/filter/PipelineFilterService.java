@@ -13,7 +13,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 /**
- * // TODO: 08.02.2021 Добавить описание.
+ * Сервис фильтрации пайплайнов.
  *
  * @author upagge 08.02.2021
  */

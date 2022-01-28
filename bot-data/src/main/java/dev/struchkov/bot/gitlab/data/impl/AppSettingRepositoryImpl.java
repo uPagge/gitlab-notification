@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * // TODO: 16.01.2021 Добавить описание.
- *
  * @author upagge 16.01.2021
  */
 @Repository

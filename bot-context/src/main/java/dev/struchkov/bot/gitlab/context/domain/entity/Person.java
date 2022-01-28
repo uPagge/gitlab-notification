@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * // TODO: 14.01.2021 Добавить описание.
- *
  * @author upagge 14.01.2021
  */
 @Entity

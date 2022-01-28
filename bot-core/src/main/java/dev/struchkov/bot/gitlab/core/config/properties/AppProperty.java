@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * // TODO: 11.10.2020 Добавить описание.
+ * Основные настройки приложения.
  *
  * @author upagge 11.10.2020
  */

@@ -10,8 +10,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
- *
  * @author upagge 17.01.2021
  */
 @Data

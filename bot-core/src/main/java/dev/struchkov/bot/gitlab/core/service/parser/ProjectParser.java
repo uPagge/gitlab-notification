@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
- * // TODO: 14.01.2021 Добавить описание.
+ * Парсер проектов.
  *
  * @author upagge 14.01.2021
  */
@@ -60,13 +60,13 @@ public class ProjectParser {
 
         while (!projectJsons.isEmpty()) {
 
-            final Set<Long> jsonIds = projectJsons.stream()
+            final Set<Long> projectIds = projectJsons.stream()
                     .map(ProjectJson::getId)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toUnmodifiableSet());
 
             createNewPersons(projectJsons);
 
-            final ExistsContainer<Project, Long> existsContainer = projectService.existsById(jsonIds);
+            final ExistsContainer<Project, Long> existsContainer = projectService.existsById(projectIds);
             final List<Project> newProjects = projectJsons.stream()
                     .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Project.class))
@@ -81,11 +81,11 @@ public class ProjectParser {
     }
 
     private void createNewPersons(List<ProjectJson> projectJsons) {
-        final Set<Long> jsonIds = projectJsons.stream()
+        final Set<Long> personCreatorId = projectJsons.stream()
                 .map(ProjectJson::getCreatorId)
                 .collect(Collectors.toSet());
 
-        final ExistsContainer<Person, Long> existsContainer = personService.existsById(jsonIds);
+        final ExistsContainer<Person, Long> existsContainer = personService.existsById(personCreatorId);
 
         if (!existsContainer.isAllFound()) {
             final Collection<Long> notFoundId = existsContainer.getIdNoFound();
@@ -96,11 +96,11 @@ public class ProjectParser {
                                     .header(ACCEPT)
                                     .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                                     .execute(PersonJson.class)
-                                    .map(json -> conversionService.convert(json, Person.class)).orElseThrow(() -> new ConvertException("Ошибка преобразования нового пользователя"))
+                                    .map(json -> conversionService.convert(json, Person.class))
+                                    .orElseThrow(ConvertException.supplier("Ошибка преобразования нового пользователя"))
                     ).toList();
 
             personService.createAll(newPersons);
-
         }
     }
 
@@ -119,7 +119,7 @@ public class ProjectParser {
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .execute(ProjectJson.class)
                 .map(json -> conversionService.convert(json, Project.class))
-                .orElseThrow(() -> new ConvertException("Ошибка получения проекта"));
+                .orElseThrow(ConvertException.supplier("Ошибка получения проекта"));
         if (!projectService.existsById(project.getId())) {
             projectService.create(project);
         }

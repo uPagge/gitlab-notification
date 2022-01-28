@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * // TODO: 15.01.2021 Добавить описание.
- *
  * @author upagge 15.01.2021
  */
 @Getter

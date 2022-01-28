@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Set;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
- *
  * @author upagge 17.01.2021
  */
 @Repository

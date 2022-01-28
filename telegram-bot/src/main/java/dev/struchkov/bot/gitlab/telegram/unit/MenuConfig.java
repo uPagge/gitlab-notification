@@ -10,6 +10,7 @@ import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.godfather.context.domain.BoxAnswer;
+import dev.struchkov.godfather.context.domain.content.Message;
 import dev.struchkov.godfather.context.domain.keyboard.KeyBoard;
 import dev.struchkov.godfather.context.domain.keyboard.KeyBoardLine;
 import dev.struchkov.godfather.context.domain.keyboard.button.KeyBoardButtonText;
@@ -35,12 +36,12 @@ import java.util.stream.Collectors;
 public class MenuConfig {
 
     @Bean
-    public AnswerText menu(
+    public AnswerText<Message> menu(
             AppSettingService settingService,
-            AnswerText settings,
-            AnswerText textAddNewProject,
-            AnswerText getTasks,
-            AnswerText getAssigneeMergeRequest
+            AnswerText<Message> settings,
+            AnswerText<Message> textAddNewProject,
+            AnswerText<Message> getTasks,
+            AnswerText<Message> getAssigneeMergeRequest
     ) {
         return AnswerText.builder()
                 .boxAnswer(message ->
@@ -83,9 +84,9 @@ public class MenuConfig {
     }
 
     @Bean
-    public AnswerText textAddNewProject(
+    public AnswerText<Message> textAddNewProject(
             AppSettingService settingService,
-            AnswerText addNewProject
+            AnswerText<Message> addNewProject
     ) {
         return AnswerText.builder()
                 .boxAnswer(BoxAnswer.processing(settingService.getMessage("ui.menu.add_mr.text")))
@@ -95,7 +96,7 @@ public class MenuConfig {
     }
 
     @Bean
-    public AnswerText addNewProject(
+    public AnswerText<Message> addNewProject(
             AppSettingService settingService,
             ProjectParser projectParser,
             GitlabProperty gitlabProperty
@@ -112,9 +113,9 @@ public class MenuConfig {
     }
 
     @Bean
-    public AnswerText settings(
+    public AnswerText<Message> settings(
             AppSettingService settingService,
-            AnswerText settingsLanguage
+            AnswerText<Message> settingsLanguage
     ) {
         return AnswerText.builder()
                 .boxAnswer(message ->
@@ -128,7 +129,7 @@ public class MenuConfig {
     }
 
     @Bean
-    public AnswerText getTasks(
+    public AnswerText<Message> getTasks(
             AppSettingService settingService,
             PersonInformation personInformation,
             NoteService noteService
@@ -151,7 +152,7 @@ public class MenuConfig {
     }
 
     @Bean
-    public AnswerText getAssigneeMergeRequest(
+    public AnswerText<Message> getAssigneeMergeRequest(
             MergeRequestsService mergeRequestsService,
             PersonInformation personInformation,
             AppSettingService settingService

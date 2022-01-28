@@ -10,34 +10,19 @@ import java.text.MessageFormat;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
- *
  * @author upagge 17.01.2021
  */
-public class PipelineNotify implements Notify {
-
-    private final Long pipelineId;
-    private final String projectName;
-    private final String refName;
-    private final String newStatus;
-    private final String webUrl;
-    private String oldStatus = "n/a";
+public record PipelineNotify(
+        Long pipelineId,
+        String projectName,
+        String refName,
+        String oldStatus,
+        String newStatus,
+        String webUrl
+) implements Notify {
 
     @Builder
-    public PipelineNotify(
-            Long pipelineId,
-            String projectName,
-            String refName,
-            String oldStatus,
-            String newStatus,
-            String webUrl
-    ) {
-        this.pipelineId = pipelineId;
-        this.projectName = projectName;
-        this.refName = refName;
-        this.oldStatus = oldStatus;
-        this.newStatus = newStatus;
-        this.webUrl = webUrl;
+    public PipelineNotify {
     }
 
     @Override

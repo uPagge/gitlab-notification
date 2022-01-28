@@ -2,6 +2,7 @@ package dev.struchkov.bot.gitlab.core.service.impl;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
+import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
 import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import dev.struchkov.bot.gitlab.context.domain.notify.pipeline.PipelineNotify;
@@ -26,13 +27,14 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SKIPPED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
 
 /**
- * // TODO: 17.01.2021 Добавить описание.
+ * Реализация сервиса для работы с пайплайнами.
  *
  * @author upagge 17.01.2021
  */
 @Service
 public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, Long> implements PipelineService {
 
+    // Статусы пайплайнов, о которых нужно уведомить
     private static final Set<PipelineStatus> notificationStatus = Set.of(FAILED, SUCCESS, CANCELED, SKIPPED);
 
     private final NotifyService notifyService;
@@ -61,12 +63,12 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     public Pipeline create(@NonNull Pipeline pipeline) {
         personService.create(pipeline.getPerson());
         final Pipeline newPipeline = pipelineRepository.save(pipeline);
+        notifyNewPipeline(pipeline, "n/a");
+        return newPipeline;
+    }
 
-        if (
-                notificationStatus.contains(pipeline.getStatus())
-                        && pipeline.getPerson() != null
-                        && personInformation.getId().equals(pipeline.getPerson().getId())
-        ) {
+    private void notifyNewPipeline(Pipeline pipeline, String oldStatus) {
+        if (isNeedNotifyNewPipeline(pipeline)) {
             notifyService.send(
                     PipelineNotify.builder()
                             .newStatus(pipeline.getStatus().name())
@@ -74,11 +76,10 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
                             .projectName(pipeline.getProject().getName())
                             .refName(pipeline.getRef())
                             .webUrl(pipeline.getWebUrl())
+                            .oldStatus(oldStatus)
                             .build()
             );
         }
-
-        return newPipeline;
     }
 
     @Override
@@ -88,29 +89,18 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             pipeline.setProject(oldPipeline.getProject());
-
-            if (
-                    notificationStatus.contains(pipeline.getStatus())
-                            && pipeline.getPerson() != null
-                            && personInformation.getId().equals(pipeline.getPerson().getId())
-            ) {
-                notifyService.send(
-                        PipelineNotify.builder()
-                                .pipelineId(pipeline.getId())
-                                .webUrl(pipeline.getWebUrl())
-                                .projectName(pipeline.getProject().getName())
-                                .refName(pipeline.getRef())
-                                .newStatus(pipeline.getStatus().name())
-                                .oldStatus(oldPipeline.getStatus().name())
-                                .build()
-                );
-
-                return pipelineRepository.save(pipeline);
-            }
-
+            notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
+            return pipelineRepository.save(pipeline);
         }
 
         return oldPipeline;
+    }
+
+    private boolean isNeedNotifyNewPipeline(@NonNull Pipeline pipeline) {
+        final Person personPipelineCreator = pipeline.getPerson();
+        return notificationStatus.contains(pipeline.getStatus()) // Пайплайн имеет статус необходимый для уведомления
+                && personPipelineCreator != null
+                && personInformation.getId().equals(personPipelineCreator.getId()); // Пользователь приложения является инициатором пайплайна
     }
 
     @Override

@@ -9,8 +9,6 @@ import lombok.NonNull;
 import java.util.List;
 
 /**
- * // TODO: 08.09.2020 Добавить описание.
- *
  * @author upagge 08.09.2020
  */
 public interface NoteRepository extends SimpleManagerRepository<Note, Long> {

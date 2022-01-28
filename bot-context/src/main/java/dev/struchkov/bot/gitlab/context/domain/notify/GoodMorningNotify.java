@@ -5,7 +5,6 @@ import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.MessageUtils;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.util.List;
 
@@ -14,28 +13,17 @@ import java.util.List;
  *
  * @author upagge 20.09.2020
  */
-@Getter
 //TODO [28.01.2022]: Решить доработать и оставить или удалить.
-public class GoodMorningNotify implements Notify {
+public record GoodMorningNotify(
+        List<MergeRequest> mergeRequestsReviews,
+        List<MergeRequest> mergeRequestsNeedWork,
+        String personName, String version
+) implements Notify {
 
     private static final Integer PR_COUNT = 4;
 
-    private final List<MergeRequest> mergeRequestsReviews;
-    private final List<MergeRequest> mergeRequestsNeedWork;
-    private final String personName;
-    private final String version;
-
     @Builder
-    protected GoodMorningNotify(
-            List<MergeRequest> mergeRequestsReviews,
-            List<MergeRequest> mergeRequestsNeedWork,
-            String personName,
-            String version
-    ) {
-        this.mergeRequestsReviews = mergeRequestsReviews;
-        this.mergeRequestsNeedWork = mergeRequestsNeedWork;
-        this.personName = personName;
-        this.version = version;
+    public GoodMorningNotify {
     }
 
     @Override

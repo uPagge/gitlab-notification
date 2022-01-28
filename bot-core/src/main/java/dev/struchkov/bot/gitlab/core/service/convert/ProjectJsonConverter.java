@@ -6,8 +6,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 /**
- * // TODO: 14.01.2021 Добавить описание.
- *
  * @author upagge 14.01.2021
  */
 @Component
