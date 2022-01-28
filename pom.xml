@@ -11,7 +11,7 @@
 
     <groupId>dev.struchkov.bot.gitlab</groupId>
     <artifactId>gitlab-bot</artifactId>
-    <version>3.1.0</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -44,13 +44,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gitlab.core.version>3.1.0</gitlab.core.version>
-        <gitlab.app.version>3.1.0</gitlab.app.version>
-        <gitlab.sdk.version>3.1.0</gitlab.sdk.version>
-        <gitlab.context.version>3.1.0</gitlab.context.version>
-        <gitlab.data.version>3.1.0</gitlab.data.version>
-        <gitlab.telegram.version>3.1.0</gitlab.telegram.version>
-        <gitlab.core.version>3.1.0</gitlab.core.version>
+        <gitlab.core.version>1.0.0</gitlab.core.version>
+        <gitlab.app.version>1.0.0</gitlab.app.version>
+        <gitlab.sdk.version>1.0.0</gitlab.sdk.version>
+        <gitlab.context.version>1.0.0</gitlab.context.version>
+        <gitlab.data.version>1.0.0</gitlab.data.version>
+        <gitlab.telegram.version>1.0.0</gitlab.telegram.version>
+        <gitlab.core.version>1.0.0</gitlab.core.version>
 
         <haiti.ver>1.0.0</haiti.ver>
         <godfather.telegram.core.version>0.0.2</godfather.telegram.core.version>

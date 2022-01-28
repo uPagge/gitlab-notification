@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.struchkov.bot.gitlab</groupId>
         <artifactId>gitlab-bot</artifactId>
-        <version>3.1.0</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>bot-context</artifactId>
