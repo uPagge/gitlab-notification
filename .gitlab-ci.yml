@@ -8,10 +8,9 @@ build:
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
   only:
-    - test
-#    - /^v.*$/
-#  except:
-#    - branches
+    - /^v.*$/
+  except:
+    - branches
   script:
     - 'mvn -U clean package'
   artifacts:
@@ -22,10 +21,9 @@ docker-build:
   image: upagge/docker-buildx:latest
   stage: deploy
   only:
-#    - /^v.*$/
-    - test
-#  except:
-#    - branches
+    - /^v.*$/
+  except:
+    - branches
   services:
     - docker:dind
   before_script:
@@ -33,4 +31,4 @@ docker-build:
   script:
     - cd gitlab-app
     - docker buildx create --use
-    - docker buildx build --push --platform linux/amd64,linux/arm64/v8,windows/amd64  -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker buildx build --push --platform linux/amd64,linux/arm64/v8,windows/amd64  -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" .
