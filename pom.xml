@@ -53,7 +53,7 @@
         <gitlab.core.version>1.0.0</gitlab.core.version>
 
         <haiti.ver>1.0.0</haiti.ver>
-        <godfather.telegram.core.version>0.0.2</godfather.telegram.core.version>
+        <godfather.telegram.core.version>0.0.4</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
