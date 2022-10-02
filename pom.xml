@@ -59,7 +59,7 @@
 
         <hibernate.jpa-modelgen.version>6.0.0.Alpha5</hibernate.jpa-modelgen.version>
         <google.guava.version>31.0.1-jre</google.guava.version>
-        <jackson.databind.version>2.13.1</jackson.databind.version>
+        <jackson.databind.version>2.13.4</jackson.databind.version>
         <jackson.datatype.jsr310.version>2.13.1</jackson.datatype.jsr310.version>
 
         <plugin.maven.compiler.ver>3.9.0</plugin.maven.compiler.ver>
