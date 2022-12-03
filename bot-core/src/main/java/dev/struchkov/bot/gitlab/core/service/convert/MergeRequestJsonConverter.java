@@ -4,10 +4,14 @@ import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestStateJson;
-import dev.struchkov.haiti.context.exception.ConvertException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 
 /**
  * @author upagge 15.01.2021
@@ -31,7 +35,7 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
         mergeRequest.setState(convertState(source.getState()));
         mergeRequest.setProjectId(source.getProjectId());
         mergeRequest.setWebUrl(source.getWebUrl());
-        mergeRequest.setLabels(source.getLabels());
+        mergeRequest.setLabels(convertLabels(source.getLabels()));
         if (source.getAssignee() != null) {
             mergeRequest.setAssignee(convertPerson.convert(source.getAssignee()));
         }
@@ -41,13 +45,21 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
         return mergeRequest;
     }
 
+    private static Set<String> convertLabels(Set<String> source) {
+        if (checkNotEmpty(source)) {
+            return source.stream()
+                    .map(label -> label.replaceAll("-", "_"))
+                    .collect(Collectors.toSet());
+        }
+        return null;
+    }
+
     private MergeRequestState convertState(MergeRequestStateJson state) {
         return switch (state) {
             case CLOSED -> MergeRequestState.CLOSED;
             case LOCKED -> MergeRequestState.LOCKED;
             case MERGED -> MergeRequestState.MERGED;
             case OPENED -> MergeRequestState.OPENED;
-            default -> throw new ConvertException("Статус ПР не найден");
         };
     }
 

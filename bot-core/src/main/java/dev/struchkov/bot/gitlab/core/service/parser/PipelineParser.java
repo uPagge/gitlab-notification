@@ -10,12 +10,11 @@ import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineJson;
 import dev.struchkov.haiti.context.domain.ExistsContainer;
-import dev.struchkov.haiti.context.exception.ConvertException;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.page.impl.PaginationImpl;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -31,6 +30,7 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PENDING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PREPARING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.RUNNING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
+import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -56,7 +56,7 @@ public class PipelineParser {
 
     public void scanNewPipeline() {
         int page = 0;
-        Sheet<Project> projectSheet = projectService.getAll(PaginationImpl.of(page, COUNT));
+        Page<Project> projectSheet = projectService.getAll(PageRequest.of(page, COUNT));
 
         while (projectSheet.hasContent()) {
             final List<Project> projects = projectSheet.getContent();
@@ -65,7 +65,7 @@ public class PipelineParser {
                 processingProject(project);
             }
 
-            projectSheet = projectService.getAll(PaginationImpl.of(++page, COUNT));
+            projectSheet = projectService.getAll(PageRequest.of(++page, COUNT));
         }
 
     }
@@ -99,7 +99,7 @@ public class PipelineParser {
                                 pipeline.setProject(project);
                                 return pipeline;
                             })
-                            .orElseThrow(ConvertException.supplier("Ошибка обновления Pipelines"));
+                            .orElseThrow(convertException("Ошибка обновления Pipelines"));
                     pipelineService.create(newPipeline);
                 }
 
@@ -121,7 +121,7 @@ public class PipelineParser {
 
     public void scanOldPipeline() {
         int page = 0;
-        Sheet<Pipeline> pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PaginationImpl.of(page, COUNT));
+        Page<Pipeline> pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(page, COUNT));
 
         while (pipelineSheet.hasContent()) {
             final List<Pipeline> pipelines = pipelineSheet.getContent();
@@ -134,12 +134,12 @@ public class PipelineParser {
                         .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                         .execute(PipelineJson.class)
                         .map(json -> conversionService.convert(json, Pipeline.class))
-                        .orElseThrow(ConvertException.supplier("Ошибка обновления Pipelines"));
+                        .orElseThrow(convertException("Ошибка обновления Pipelines"));
 
                 pipelineService.update(newPipeline);
             }
 
-            pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PaginationImpl.of(++page, COUNT));
+            pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(++page, COUNT));
         }
     }
 

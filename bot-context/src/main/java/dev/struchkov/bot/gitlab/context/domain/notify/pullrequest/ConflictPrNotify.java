@@ -1,9 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
 
+import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
+
+import java.text.MessageFormat;
 
 @Getter
 public class ConflictPrNotify extends PrNotify {
@@ -22,9 +23,9 @@ public class ConflictPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
-        return settingService.getMessage(
-                "notify.pr.conflict",
+    public String generateMessage() {
+        return MessageFormat.format(
+                "{0} *Attention! MergeRequest conflict | {4}*{1}[{2}]({3})",
                 Smile.DANGEROUS.getValue(), Smile.HR.getValue(), title, url, projectName, sourceBranch
         );
     }

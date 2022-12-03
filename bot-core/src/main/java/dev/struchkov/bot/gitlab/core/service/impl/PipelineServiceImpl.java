@@ -11,20 +11,22 @@ import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.core.service.impl.filter.PipelineFilterService;
-import dev.struchkov.haiti.context.exception.NotFoundException;
-import dev.struchkov.haiti.context.page.Pagination;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.core.service.AbstractSimpleManagerService;
+import dev.struchkov.haiti.context.domain.ExistsContainer;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.CANCELED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.FAILED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SKIPPED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
+import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 
 /**
  * Реализация сервиса для работы с пайплайнами.
@@ -32,37 +34,23 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
  * @author upagge 17.01.2021
  */
 @Service
-public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, Long> implements PipelineService {
+@RequiredArgsConstructor
+public class PipelineServiceImpl implements PipelineService {
 
     // Статусы пайплайнов, о которых нужно уведомить
     private static final Set<PipelineStatus> notificationStatus = Set.of(FAILED, SUCCESS, CANCELED, SKIPPED);
 
     private final NotifyService notifyService;
-    private final PipelineRepository pipelineRepository;
+    private final PipelineRepository repository;
     private final PersonService personService;
     private final PipelineFilterService pipelineFilterService;
 
     private final PersonInformation personInformation;
 
-    public PipelineServiceImpl(
-            NotifyService notifyService,
-            PipelineRepository pipelineRepository,
-            PersonService personService,
-            PipelineFilterService pipelineFilterService,
-            PersonInformation personInformation
-    ) {
-        super(pipelineRepository);
-        this.notifyService = notifyService;
-        this.pipelineRepository = pipelineRepository;
-        this.personService = personService;
-        this.pipelineFilterService = pipelineFilterService;
-        this.personInformation = personInformation;
-    }
-
     @Override
     public Pipeline create(@NonNull Pipeline pipeline) {
         personService.create(pipeline.getPerson());
-        final Pipeline newPipeline = pipelineRepository.save(pipeline);
+        final Pipeline newPipeline = repository.save(pipeline);
         notifyNewPipeline(pipeline, "n/a");
         return newPipeline;
     }
@@ -84,13 +72,13 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
 
     @Override
     public Pipeline update(@NonNull Pipeline pipeline) {
-        final Pipeline oldPipeline = pipelineRepository.findById(pipeline.getId())
-                .orElseThrow(NotFoundException.supplier("Pipeline не найден"));
+        final Pipeline oldPipeline = repository.findById(pipeline.getId())
+                .orElseThrow(notFoundException("Pipeline не найден"));
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             pipeline.setProject(oldPipeline.getProject());
             notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
-            return pipelineRepository.save(pipeline);
+            return repository.save(pipeline);
         }
 
         return oldPipeline;
@@ -104,28 +92,32 @@ public class PipelineServiceImpl extends AbstractSimpleManagerService<Pipeline, 
     }
 
     @Override
-    public Sheet<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pagination pagination) {
-        return pipelineRepository.findAllByStatuses(statuses, pagination);
+    public Page<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pageable pagination) {
+        return repository.findAllByStatuses(statuses, pagination);
     }
 
     @Override
-    public Sheet<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pagination pagination) {
+    public Page<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pageable pagination) {
         return pipelineFilterService.getAll(filter, pagination);
     }
 
     @Override
-    public Optional<Pipeline> getFirst(@NonNull PipelineFilter filter) {
-        return pipelineFilterService.getFirst(filter);
+    public ExistsContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds) {
+        final List<Pipeline> existsEntity = repository.findAllById(pipelineIds);
+        final Set<Long> existsIds = existsEntity.stream().map(Pipeline::getId).collect(Collectors.toSet());
+        if (existsIds.containsAll(pipelineIds)) {
+            return ExistsContainer.allFind(existsEntity);
+        } else {
+            final Set<Long> noExistsId = pipelineIds.stream()
+                    .filter(id -> !existsIds.contains(id))
+                    .collect(Collectors.toSet());
+            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+        }
     }
 
     @Override
-    public boolean exists(@NonNull PipelineFilter filter) {
-        return pipelineFilterService.exists(filter);
-    }
-
-    @Override
-    public long count(@NonNull PipelineFilter filter) {
-        return pipelineFilterService.count(filter);
+    public void deleteAllById(Set<Long> pipelineIds) {
+        repository.deleteAllByIds(pipelineIds);
     }
 
 }

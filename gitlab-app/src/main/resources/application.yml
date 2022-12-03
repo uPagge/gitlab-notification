@@ -7,7 +7,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     password: ${DATASOURCE_PASSWORD}
   liquibase:
-    change-log: classpath:liquibase/change-log.xml
+    change-log: classpath:liquibase/changelog.xml
   jpa:
     show-sql: false
     hibernate:
@@ -22,7 +22,7 @@ telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
 gitlab-bot:
-  version: 0.0.6 Beta
+  version: 0.0.7 Beta
   person:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
@@ -30,8 +30,8 @@ gitlab-bot:
     base-url: ${GITLAB_URL}
     replaceUrl: ${GITLAB_REPLACE_URL}
     url-project: ${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100
-    url-pull-request-open: ${GITLAB_URL}/api/v4/projects/{0, number, integer}/merge_requests?state=opened&page={1, number, integer}&per_page=100
-    url-pull-request-close: ${GITLAB_URL}
+    url-pull-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page=100"
+    url-pull-request-close: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
     url-pull-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
     url-pull-request: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
     url-merge-request-add: ${GITLAB_URL}/api/v4/projects/{0}%2F{1}

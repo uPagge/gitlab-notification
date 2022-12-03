@@ -1,7 +1,6 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.pipeline;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 
@@ -26,9 +25,9 @@ public record PipelineNotify(
     }
 
     @Override
-    public String generateMessage(AppSettingService appSettingService) {
+    public String generateMessage() {
         return MessageFormat.format(
-                appSettingService.getMessage("notify.pipeline"),
+                "{0} *Pipeline {1,number,#}* | {2}{3}[{4}]({5}){3}{6} {7} {8}",
                 Smile.BUILD,
                 pipelineId,
                 escapeMarkdown(projectName),

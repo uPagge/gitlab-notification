@@ -1,7 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
-import dev.struchkov.godfather.telegram.service.SendPreProcessing;
+import dev.struchkov.godfather.telegram.simple.sender.SendPreProcessing;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -3,6 +3,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="liquibase/v.1.0.0/2021-01-14-create-tables.xml"/>
+    <changeSet id="2022-12-03-add-tab-v-1-0-0" author="uPagge">
+        <tagDatabase tag="v.1.0.0"/>
+    </changeSet>
+
+    <include file="2022-12-03-create-tables.xml" relativeToChangelogFile="true"/>
+    <include file="2022-12-03-insert.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

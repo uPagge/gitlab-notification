@@ -1,19 +1,31 @@
 package dev.struchkov.bot.gitlab.context.repository;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
-import dev.struchkov.haiti.context.repository.SimpleManagerRepository;
-import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author upagge 11.02.2021
  */
-public interface DiscussionRepository extends SimpleManagerRepository<Discussion, String> {
+public interface DiscussionRepository {
 
     /**
      * Вернуть все дискусии для MR
      */
-    List<Discussion> findAllByMergeRequestId(@NonNull Long mergeRequestId);
+    List<Discussion> findAllByMergeRequestId(Long mergeRequestId);
+
+    Discussion save(Discussion discussion);
+
+    Optional<Discussion> findById(String discussionId);
+
+    void deleteById(String discussionId);
+
+    Page<Discussion> findAll(Pageable pagination);
+
+    List<Discussion> findAllById(Set<String> discussionIds);
 
 }

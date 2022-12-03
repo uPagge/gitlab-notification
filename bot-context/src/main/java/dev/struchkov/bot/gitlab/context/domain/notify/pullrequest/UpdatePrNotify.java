@@ -3,7 +3,8 @@ package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+
+import java.text.MessageFormat;
 
 @Getter
 public class UpdatePrNotify extends PrNotify {
@@ -34,9 +35,9 @@ public class UpdatePrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
-        return settingService.getMessage(
-                "notify.pr.update",
+    public String generateMessage() {
+        return MessageFormat.format(
+                "{0} *MergeRequest update | {6}*{3}[{1}]({2}){3}{4}: {5}",
                 Smile.UPDATE.getValue(), title, url, Smile.HR.getValue(), Smile.AUTHOR.getValue(), author, projectName, allTasks, allResolvedTasks, personTasks, personResolvedTasks
         );
     }

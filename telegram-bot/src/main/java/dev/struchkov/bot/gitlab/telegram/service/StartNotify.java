@@ -27,7 +27,7 @@ public class StartNotify {
                     SimpleTextNotify.builder()
                             .message("Привет. Желаю продуктивного дня :)" +
                                     "\n-- -- -- -- --\n" +
-                                    "Version " + appProperty.getVersion() + " | Developer: [uPagge](https://struchkov.dev/blog)")
+                                    "Version " + appProperty.getVersion() + " | Developer: [uPagge](https://mark.struchkov.dev)")
                             .build()
             );
         }

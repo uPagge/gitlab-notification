@@ -11,7 +11,7 @@
 
     <groupId>dev.struchkov.bot.gitlab</groupId>
     <artifactId>gitlab-bot</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -44,20 +44,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <gitlab.core.version>1.0.0</gitlab.core.version>
-        <gitlab.app.version>1.0.0</gitlab.app.version>
-        <gitlab.sdk.version>1.0.0</gitlab.sdk.version>
-        <gitlab.context.version>1.0.0</gitlab.context.version>
-        <gitlab.data.version>1.0.0</gitlab.data.version>
-        <gitlab.telegram.version>1.0.0</gitlab.telegram.version>
-        <gitlab.core.version>1.0.0</gitlab.core.version>
-
-        <haiti.ver>1.0.0</haiti.ver>
-        <godfather.telegram.core.version>0.0.2</godfather.telegram.core.version>
+        <godfather.telegram.core.version>0.0.37</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
-        <hibernate.jpa-modelgen.version>6.0.0.Alpha5</hibernate.jpa-modelgen.version>
         <google.guava.version>31.0.1-jre</google.guava.version>
         <jackson.databind.version>2.13.1</jackson.databind.version>
         <jackson.datatype.jsr310.version>2.13.1</jackson.datatype.jsr310.version>
@@ -71,68 +61,96 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>dev.struchkov.haiti</groupId>
-                <artifactId>haiti-bom</artifactId>
-                <version>${haiti.ver}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <!-- модули проекта -->
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-core</artifactId>
-                <version>${gitlab.core.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>gitlab-core</artifactId>
-                <version>${gitlab.core.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>telegram-bot</artifactId>
-                <version>${gitlab.telegram.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-context</artifactId>
-                <version>${gitlab.context.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>gitlab-sdk</artifactId>
-                <version>${gitlab.sdk.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.struchkov.bot.gitlab</groupId>
                 <artifactId>bot-data</artifactId>
-                <version>${gitlab.data.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- /модули проекта -->
             <!-- haiti -->
 
             <dependency>
-                <groupId>dev.struchkov.godfather</groupId>
-                <artifactId>telegram-core</artifactId>
+                <groupId>dev.struchkov.haiti.utils</groupId>
+                <artifactId>haiti-utils-field-constants</artifactId>
+                <version>0.0.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.haiti</groupId>
+                <artifactId>haiti-utils</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.haiti</groupId>
+                <artifactId>haiti-exception</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.haiti.utils</groupId>
+                <artifactId>haiti-utils-network</artifactId>
+                <version>0.0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.haiti.filter</groupId>
+                <artifactId>haiti-filter-criteria</artifactId>
+                <version>0.0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.godfather.telegram</groupId>
+                <artifactId>telegram-consumer-simple</artifactId>
+                <version>${godfather.telegram.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.godfather.telegram</groupId>
+                <artifactId>telegram-core-simple</artifactId>
+                <version>${godfather.telegram.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.struchkov.godfather.telegram</groupId>
+                <artifactId>telegram-sender-simple</artifactId>
                 <version>${godfather.telegram.core.version}</version>
             </dependency>
 
             <!-- /SADTECH -->
             <!-- БД -->
-
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>${hibernate.jpa-modelgen.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.postgresql</groupId>

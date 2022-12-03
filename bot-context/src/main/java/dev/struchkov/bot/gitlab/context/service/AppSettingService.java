@@ -1,8 +1,5 @@
 package dev.struchkov.bot.gitlab.context.service;
 
-import dev.struchkov.bot.gitlab.context.domain.AppLocale;
-import lombok.NonNull;
-
 /**
  * Сервис отвечает за пользовательские настройки приложения.
  *
@@ -23,22 +20,5 @@ public interface AppSettingService {
      * @see AppSettingService#isFirstStart()
      */
     void disableFirstStart();
-
-    /**
-     * Позволяет получить по ключу текст на языке, который установил пользователь
-     *
-     * @param label ключ сообщений
-     * @return Сообщение на языке пользователя
-     */
-    String getMessage(@NonNull String label);
-
-    String getMessage(@NonNull String label, Object... params);
-
-    /**
-     * Устанавливает язык приложения
-     *
-     * @param appLocale Язык, который необходимо установить
-     */
-    void setLocale(@NonNull AppLocale appLocale);
 
 }

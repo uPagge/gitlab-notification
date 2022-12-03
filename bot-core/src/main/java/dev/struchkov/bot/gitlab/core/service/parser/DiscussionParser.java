@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
@@ -8,12 +9,11 @@ import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.sdk.domain.DiscussionJson;
-import dev.struchkov.haiti.context.domain.ExistsContainer;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.page.impl.PaginationImpl;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -49,12 +49,12 @@ public class DiscussionParser {
      */
     public void scanNewDiscussion() {
         int page = 0;
-        Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PaginationImpl.of(page, COUNT));
+        Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
             mergeRequestSheet.getContent()
                     .forEach(this::processingMergeRequest);
-            mergeRequestSheet = mergeRequestsService.getAll(PaginationImpl.of(++page, COUNT));
+            mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(++page, COUNT));
         }
     }
 
@@ -97,7 +97,7 @@ public class DiscussionParser {
      */
     public void scanOldDiscussions() {
         int page = 0;
-        Sheet<Discussion> discussionSheet = discussionService.getAll(PaginationImpl.of(page, COUNT));
+        Page<Discussion> discussionSheet = discussionService.getAll(PageRequest.of(page, COUNT));
 
         while (discussionSheet.hasContent()) {
             final List<Discussion> discussions = discussionSheet.getContent();
@@ -119,7 +119,7 @@ public class DiscussionParser {
                 }
             }
 
-            discussionSheet = discussionService.getAll(PaginationImpl.of(++page, COUNT));
+            discussionSheet = discussionService.getAll(PageRequest.of(++page, COUNT));
         }
 
     }

@@ -1,72 +1,85 @@
 package dev.struchkov.bot.gitlab.telegram.unit;
 
-import dev.struchkov.bot.gitlab.context.domain.AppLocale;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
-import dev.struchkov.godfather.context.domain.BoxAnswer;
-import dev.struchkov.godfather.context.domain.content.Mail;
-import dev.struchkov.godfather.context.domain.content.Message;
-import dev.struchkov.godfather.context.domain.content.attachment.Attachment;
-import dev.struchkov.godfather.context.domain.content.attachment.AttachmentType;
-import dev.struchkov.godfather.context.domain.content.attachment.Link;
-import dev.struchkov.godfather.context.utils.KeyBoards;
-import dev.struchkov.godfather.core.domain.unit.AnswerCheck;
-import dev.struchkov.godfather.core.domain.unit.AnswerProcessing;
-import dev.struchkov.godfather.core.domain.unit.AnswerText;
-import dev.struchkov.godfather.core.domain.unit.UnitActiveType;
-import dev.struchkov.haiti.context.exception.NotFoundException;
+import dev.struchkov.godfather.main.core.unit.UnitActiveType;
+import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.main.domain.annotation.Unit;
+import dev.struchkov.godfather.main.domain.content.Attachment;
+import dev.struchkov.godfather.main.domain.content.Mail;
+import dev.struchkov.godfather.simple.core.unit.AnswerCheck;
+import dev.struchkov.godfather.simple.core.unit.AnswerText;
+import dev.struchkov.godfather.simple.core.unit.MainUnit;
+import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
+import dev.struchkov.godfather.telegram.domain.attachment.TelegramAttachmentType;
+import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ANSWER_NOTE;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_FIRST_START;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_MENU_OR_ANSWER;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSER_PRIVATE_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSE_OWNER_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.END_SETTING;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.GENERAL_MENU;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.PARSER_PRIVATE_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.PARSE_OWNER_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_PRIVATE_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSE_OWNER_PROJECT;
+import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
+import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
+import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+
 /**
  * TODO: Добавить описание класса.
  *
  * @author upagge [30.01.2020]
  */
-@Configuration
+@Component
 @RequiredArgsConstructor
 public class UnitConfig {
 
     private static final Pattern NOTE_LINK = Pattern.compile("#note_\\d+$");
 
-    @Bean
-    public AnswerCheck checkFirstStart(
-            AppSettingService settingService,
-            AnswerText<Message> textCheckLanguage,
-            AnswerCheck checkMenuOrAnswer
+    private final AppSettingService settingService;
+    private final NoteService noteService;
+    private final DiscussionService discussionService;
+    private final ProjectParser projectParser;
+
+    @Unit(value = CHECK_FIRST_START, main = true)
+    public AnswerCheck<Mail> checkFirstStart(
+            @Unit(TEXT_PARSER_PRIVATE_PROJECT) MainUnit<Mail> textParserPrivateProject,
+            @Unit(CHECK_MENU_OR_ANSWER) MainUnit<Mail> checkMenuOrAnswer
     ) {
-        return AnswerCheck.builder()
-                .check(
-                        message -> settingService.isFirstStart()
-                )
+        return AnswerCheck.<Mail>builder()
+                .check(message -> settingService.isFirstStart())
                 .unitFalse(checkMenuOrAnswer)
-                .unitTrue(textCheckLanguage)
+                .unitTrue(textParserPrivateProject)
                 .build();
     }
 
-    @Bean
-    public AnswerCheck checkMenuOrAnswer(
-            AnswerText<Message> menu,
-            AnswerText<Message> answerNote
+    @Unit(value = CHECK_MENU_OR_ANSWER)
+    public AnswerCheck<Mail> checkMenuOrAnswer(
+            @Unit(GENERAL_MENU) MainUnit<Mail> menu,
+            @Unit(ANSWER_NOTE) MainUnit<Mail> answerNote
     ) {
-        return AnswerCheck.builder()
+        return AnswerCheck.<Mail>builder()
                 .check(
-                        message -> {
-                            Mail mail = (Mail) message;
+                        mail -> {
                             final List<Mail> forwardMails = mail.getForwardMail();
                             if (forwardMails != null && forwardMails.size() == 1) {
                                 final Mail forwardMail = forwardMails.get(0);
-                                return forwardMail.getAttachments().stream()
-                                        .anyMatch(attachment -> AttachmentType.LINK.equals(attachment.getType()));
+                                return Attachments.findFirstLink(forwardMail.getAttachments()).isPresent();
                             }
                             return false;
                         }
@@ -76,177 +89,134 @@ public class UnitConfig {
                 .build();
     }
 
-    @Bean
-    public AnswerText<Message> answerNote(
-            NoteService noteService,
-            DiscussionService discussionService
-    ) {
-        return AnswerText.builder()
-                .boxAnswer(
-                        message -> {
-                            final List<Attachment> attachments = ((Mail) message).getForwardMail().get(0).getAttachments();
+    @Unit(ANSWER_NOTE)
+    public AnswerText<Mail> answerNote() {
+        return AnswerText.<Mail>builder()
+                .answer(
+                        mail -> {
+                            final List<Attachment> attachments = mail.getForwardMail().get(0).getAttachments();
                             for (Attachment attachment : attachments) {
-                                if (AttachmentType.LINK.equals(attachment.getType())) {
-                                    final String url = ((Link) attachment).getUrl();
-                                    Matcher matcher = NOTE_LINK.matcher(url);
+                                if (TelegramAttachmentType.LINK.name().equals(attachment.getType())) {
+                                    final String url = ((LinkAttachment) attachment).getUrl();
+                                    final Matcher matcher = NOTE_LINK.matcher(url);
                                     if (matcher.find()) {
                                         final String noteText = url.substring(matcher.start(), matcher.end());
-                                        Long noteId = Long.valueOf(noteText.replaceAll("#note_", ""));
-                                        final Note note = noteService.getById(noteId).orElseThrow(NotFoundException.supplier("Note не найдено"));
+                                        final Long noteId = Long.valueOf(noteText.replaceAll("#note_", ""));
+                                        final Note note = noteService.getByIdOrThrow(noteId);
                                         final String discussionId = note.getDiscussion().getId();
-                                        discussionService.answer(discussionId, MessageFormat.format("@{0}, {1}", note.getAuthor().getUserName(), message.getText()));
+                                        discussionService.answer(discussionId, MessageFormat.format("@{0}, {1}", note.getAuthor().getUserName(), mail.getText()));
+                                        return BoxAnswer.builder().build();
                                     }
-                                    return BoxAnswer.of("");
                                 }
                             }
-                            return BoxAnswer.of("Ошибка");
+                            return boxAnswer("Ошибка");
                         }
                 )
                 .build();
     }
 
-    @Bean
-    public AnswerText<Message> textCheckLanguage(
-            AnswerProcessing checkLanguage
+    @Unit(TEXT_PARSER_PRIVATE_PROJECT)
+    public AnswerText<Mail> textParserPrivateProject(
+            @Unit(CHECK_PARSER_PRIVATE_PROJECT) MainUnit<Mail> checkParserPrivateProject
     ) {
-        return AnswerText.builder()
-                .boxAnswer(message ->
-                        BoxAnswer.builder()
-                                .message("Hi :)\n\nLet's choose a language for.")
-                                .keyBoard(KeyBoards.verticalDuoMenuString("Русский", "English"))
-                                .build()
-                )
-                .nextUnit(checkLanguage)
-                .build();
-    }
-
-    @Bean
-    public AnswerProcessing checkLanguage(
-            AppSettingService settingService,
-            AnswerText<Message> textParserPrivateProject
-    ) {
-        return AnswerProcessing
-                .builder()
-                .processingData(
-                        message -> {
-                            final AppLocale appLocale = AppLocale.of(message.getText());
-                            settingService.setLocale(appLocale);
-                            return BoxAnswer.of(
-                                    settingService.getMessage("ui.lang_changed")
-                            );
-                        }
-                )
-                .nextUnit(textParserPrivateProject)
-                .build();
-    }
-
-    @Bean
-    public AnswerText<Message> textParserPrivateProject(
-            AnswerCheck checkParserPrivateProject,
-            AppSettingService settingService
-    ) {
-        return AnswerText.builder()
-                .boxAnswer(message ->
-                        BoxAnswer.builder()
-                                .message(settingService.getMessage("ui.monitor_private_projects"))
-                                .keyBoard(KeyBoards.verticalDuoMenuString(
-                                        settingService.getMessage("main.yes"), settingService.getMessage("main.no")
-                                ))
-                                .build()
+        return AnswerText.<Mail>builder()
+                .answer(
+                        boxAnswer(
+                                "Start tracking private projects?",
+                                inlineKeyBoard(
+                                        simpleLine(
+                                                simpleButton("Yes", "YES"),
+                                                simpleButton("No", "NO")
+                                        )
+                                )
+                        )
                 )
                 .activeType(UnitActiveType.AFTER)
-                .nextUnit(checkParserPrivateProject)
+                .next(checkParserPrivateProject)
                 .build();
     }
 
-    @Bean
-    public AnswerCheck checkParserPrivateProject(
-            AppSettingService appSettingService,
-            AnswerProcessing parserPrivateProject,
-            AnswerText<Message> textParseOwnerProject
+    @Unit(CHECK_PARSER_PRIVATE_PROJECT)
+    public AnswerCheck<Mail> checkParserPrivateProject(
+            @Unit(PARSER_PRIVATE_PROJECT) AnswerText<Mail> parserPrivateProject,
+            @Unit(TEXT_PARSE_OWNER_PROJECT) MainUnit<Mail> textParseOwnerProject
     ) {
-        return AnswerCheck.builder()
-                .check(
-                        message -> appSettingService.getMessage("main.yes").equalsIgnoreCase(message.getText())
-                )
+        return AnswerCheck.<Mail>builder()
+                .check(mail -> "YES".equalsIgnoreCase(mail.getText()))
                 .unitTrue(parserPrivateProject)
                 .unitFalse(textParseOwnerProject)
                 .build();
     }
 
-    @Bean
-    public AnswerProcessing parserPrivateProject(
-            ProjectParser projectParser,
-            AppSettingService settingService,
-            AnswerText<Message> textParseOwnerProject
+    @Unit(PARSER_PRIVATE_PROJECT)
+    public AnswerText<Mail> parserPrivateProject(
+            @Unit(TEXT_PARSE_OWNER_PROJECT) MainUnit<Mail> textParseOwnerProject
     ) {
-        return AnswerProcessing.builder()
-                .processingData(message -> {
+        return AnswerText.<Mail>builder()
+                .answer(() -> {
                     projectParser.parseAllPrivateProject();
-                    return BoxAnswer.of(settingService.getMessage("ui.monitor_project_private_success"));
+                    return boxAnswer("Projects have been successfully added to tracking");
                 })
-                .nextUnit(textParseOwnerProject)
+                .next(textParseOwnerProject)
                 .build();
     }
 
-    @Bean
-    public AnswerText<Message> textParseOwnerProject(
-            AppSettingService settingService,
-            AnswerCheck checkParseOwnerProject
+    @Unit(TEXT_PARSE_OWNER_PROJECT)
+    public AnswerText<Mail> textParseOwnerProject(
+            @Unit(CHECK_PARSE_OWNER_PROJECT) MainUnit<Mail> checkParseOwnerProject
     ) {
-        return AnswerText.builder()
-                .boxAnswer(message ->
-                        BoxAnswer.builder()
-                                .message(settingService.getMessage("ui.monitor_owner_projects"))
-                                .keyBoard(KeyBoards.verticalDuoMenuString(
-                                        settingService.getMessage("main.yes"), settingService.getMessage("main.no")
-                                ))
-                                .build()
+        return AnswerText.<Mail>builder()
+                .answer(
+                        boxAnswer(
+                                "Start tracking public projects that you own?",
+                                inlineKeyBoard(
+                                        simpleLine(
+                                                simpleButton("Yes", "YES"),
+                                                simpleButton("No", "NO")
+                                        )
+                                )
+                        )
                 )
                 .activeType(UnitActiveType.AFTER)
-                .nextUnit(checkParseOwnerProject)
+                .next(checkParseOwnerProject)
                 .build();
     }
 
-    @Bean
-    public AnswerCheck checkParseOwnerProject(
-            AppSettingService appSettingService,
-            AnswerProcessing parseOwnerProject,
-            AnswerProcessing endSetting
+    @Unit(CHECK_PARSE_OWNER_PROJECT)
+    public AnswerCheck<Mail> checkParseOwnerProject(
+            @Unit(PARSE_OWNER_PROJECT) MainUnit<Mail> parseOwnerProject,
+            @Unit(END_SETTING) MainUnit<Mail> endSetting
     ) {
-        return AnswerCheck.builder()
-                .check(
-                        message -> appSettingService.getMessage("main.yes").equalsIgnoreCase(message.getText())
-                )
+        return AnswerCheck.<Mail>builder()
+                .check(message -> "YES".equalsIgnoreCase(message.getText()))
                 .unitTrue(parseOwnerProject)
                 .unitFalse(endSetting)
                 .build();
     }
 
-    @Bean
-    public AnswerProcessing parseOwnerProject(
-            ProjectParser projectParser,
-            AppSettingService settingService,
-            AnswerProcessing endSetting
+    @Unit(PARSE_OWNER_PROJECT)
+    public AnswerText<Mail> parseOwnerProject(
+            @Unit(END_SETTING) MainUnit<Mail> endSetting
     ) {
-        return AnswerProcessing.builder()
-                .processingData(message -> {
+        return AnswerText.<Mail>builder()
+                .answer(() -> {
                     projectParser.parseAllProjectOwner();
-                    return BoxAnswer.of(settingService.getMessage("ui.monitor_project_private_success"));
+                    return boxAnswer("Projects have been successfully added to tracking");
                 })
-                .nextUnit(endSetting)
+                .next(endSetting)
                 .build();
     }
 
-    @Bean
-    public AnswerProcessing endSetting(
-            AppSettingService settingService
-    ) {
-        return AnswerProcessing.builder()
-                .processingData(
-                        message -> {
+    @Unit(END_SETTING)
+    public AnswerText<Mail> endSetting() {
+        return AnswerText.<Mail>builder()
+                .answer(
+                        () -> {
                             settingService.disableFirstStart();
-                            return BoxAnswer.of(settingService.getMessage("ui.setup_finished"));
+                            return boxAnswer("""
+                                    Configuration completed successfully
+                                    Developer: [uPagge](https://mark.struchkov.dev)
+                                    """);
                         }
                 )
                 .activeType(UnitActiveType.AFTER)

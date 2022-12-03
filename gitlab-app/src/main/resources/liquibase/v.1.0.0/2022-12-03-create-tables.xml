@@ -1,27 +1,18 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="2020-01-16-create-table-app-setting" author="uPagge">
+    <changeSet id="2022-12-03-create-table-app-setting" author="uPagge">
         <createTable tableName="app_setting">
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="language" type="varchar(10)"/>
             <column name="first_start" type="boolean"/>
         </createTable>
     </changeSet>
 
-    <changeSet id="2020-01-16" author="uPagge">
-        <insert tableName="app_setting">
-            <column name="id" value="1"/>
-            <column name="first_start" value="true"/>
-            <column name="language" value="EN"/>
-        </insert>
-    </changeSet>
-
-    <changeSet id="2020-01-14-create-table-project" author="uPagge">
+    <changeSet id="2022-12-03-create-table-project" author="uPagge">
         <createTable tableName="project">
             <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
@@ -42,7 +33,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2020-01-14-create-table-person" author="uPagge">
+    <changeSet id="2022-12-03-create-table-person" author="uPagge">
         <createTable tableName="person">
             <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
@@ -57,7 +48,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2020-01-14-create-merge-request" author="uPagge">
+    <changeSet id="2022-12-03-create-merge-request" author="uPagge">
         <createTable tableName="merge_request">
             <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
@@ -105,12 +96,26 @@
             <column name="notification" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="date_last_commit" type="datetime"/>
         </createTable>
+
+
+        <createIndex tableName="merge_request" indexName="i_merge_request_project_id">
+            <column name="project_id"/>
+        </createIndex>
+        <createIndex tableName="merge_request" indexName="i_merge_request_assignee_id">
+            <column name="assignee_id"/>
+        </createIndex>
+        <createIndex tableName="merge_request" indexName="i_merge_request_author_id">
+            <column name="author_id"/>
+        </createIndex>
     </changeSet>
 
-    <changeSet id="2020-01-15-create-table-labels" author="uPagge">
+    <changeSet id="2022-12-03-create-table-labels" author="uPagge">
+        <createSequence sequenceName="seq_merge_request" startValue="1" incrementBy="1" cacheSize="20"/>
+
         <createTable tableName="merge_request_label">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int" defaultValueSequenceNext="seq_merge_request">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="merge_request_id" type="int">
@@ -122,10 +127,13 @@
             </column>
         </createTable>
 
+        <createIndex tableName="merge_request_label" indexName="i_merge_request_label_merge_request_id">
+            <column name="merge_request_id"/>
+        </createIndex>
         <addUniqueConstraint tableName="merge_request_label" columnNames="merge_request_id, label"/>
     </changeSet>
 
-    <changeSet id="2021-02-11-create-discussion" author="uPagge">
+    <changeSet id="2022-12-03-create-discussion" author="uPagge">
         <createTable tableName="discussion">
             <column name="id" type="varchar(200)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -136,9 +144,13 @@
             </column>
             <column name="resolved" type="boolean"/>
         </createTable>
+
+        <createIndex tableName="discussion" indexName="i_discussion_responsible_id">
+            <column name="responsible_id"/>
+        </createIndex>
     </changeSet>
 
-    <changeSet id="2021-02-11-create-discussion-task" author="uPagge">
+    <changeSet id="2022-12-03-create-discussion-task" author="uPagge">
         <createTable tableName="discussion_merge_request">
             <column name="discussion_id" type="varchar(200)">
                 <constraints nullable="false" foreignKeyName="discussion_merge_request_discussion_id"
@@ -153,7 +165,7 @@
         <addPrimaryKey tableName="discussion_merge_request" columnNames="discussion_id, merge_request_id"/>
     </changeSet>
 
-    <changeSet id="2020-01-16-create-table-note" author="uPagge">
+    <changeSet id="2022-12-03-create-table-note" author="uPagge">
         <createTable tableName="note">
             <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
@@ -183,9 +195,16 @@
                 <constraints foreignKeyName="note_discussion_id" references="discussion(id)" deleteCascade="true"/>
             </column>
         </createTable>
+
+        <createIndex tableName="note" indexName="i_note_author_id">
+            <column name="author_id"/>
+        </createIndex>
+        <createIndex tableName="note" indexName="i_note_discussion_id">
+            <column name="discussion_id"/>
+        </createIndex>
     </changeSet>
 
-    <changeSet id="2020-01-17-create-table-pipelines" author="uPagge">
+    <changeSet id="2022-12-03-create-table-pipelines" author="uPagge">
         <createTable tableName="pipeline">
             <column name="id" type="int">
                 <constraints nullable="false" primaryKey="true"/>
@@ -208,12 +227,13 @@
                 <constraints foreignKeyName="pipeline_person_id" references="person(id)"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="2020-01-19-create-table-commit" author="uPagge">
-        <addColumn tableName="merge_request">
-            <column name="date_last_commit" type="datetime"/>
-        </addColumn>
+        <createIndex tableName="pipeline" indexName="i_pipeline_project_id">
+            <column name="project_id"/>
+        </createIndex>
+        <createIndex tableName="pipeline" indexName="i_pipeline_person_id">
+            <column name="person_id"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

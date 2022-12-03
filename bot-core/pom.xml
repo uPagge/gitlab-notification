@@ -6,11 +6,10 @@
     <parent>
         <groupId>dev.struchkov.bot.gitlab</groupId>
         <artifactId>gitlab-bot</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>bot-core</artifactId>
-    <version>${gitlab.core.version}</version>
 
     <dependencies>
         <dependency>
@@ -21,16 +20,6 @@
         <dependency>
             <groupId>dev.struchkov.bot.gitlab</groupId>
             <artifactId>bot-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.struchkov.haiti.data</groupId>
-            <artifactId>haiti-database</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
 
         <dependency>

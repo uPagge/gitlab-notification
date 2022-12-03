@@ -34,7 +34,7 @@ public class AnswerCommentNotify implements Notify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
+    public String generateMessage() {
         final String answerText = answers.stream()
                 .map(answer -> answer.getAuthorName() + ": " + answer.getMessage().substring(0, Math.min(answer.getMessage().length(), 500)))
                 .collect(Collectors.joining(TWO_NEW_LINE));

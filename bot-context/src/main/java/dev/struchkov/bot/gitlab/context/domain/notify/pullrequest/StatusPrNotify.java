@@ -6,6 +6,8 @@ import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 
+import java.text.MessageFormat;
+
 @Getter
 public class StatusPrNotify extends PrNotify {
 
@@ -26,9 +28,9 @@ public class StatusPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
-        return settingService.getMessage(
-                "notify.pr.state",
+    public String generateMessage() {
+        return MessageFormat.format(
+                "{0} *MergeRequest status changed | {7}*{1}[{2}]({3}){1}{4} {5} {6}",
                 Smile.PEN.getValue(), Smile.HR.getValue(), title, url, oldStatus.name(), Smile.ARROW.getValue(), newStatus.name(), projectName
         );
     }

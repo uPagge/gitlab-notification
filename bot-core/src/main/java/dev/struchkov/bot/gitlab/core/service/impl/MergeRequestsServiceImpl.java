@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
@@ -17,49 +18,33 @@ import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
-import dev.struchkov.haiti.context.exception.NotFoundException;
-import dev.struchkov.haiti.context.page.Pagination;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.service.simple.FilterService;
-import dev.struchkov.haiti.core.service.AbstractSimpleManagerService;
+import dev.struchkov.bot.gitlab.core.service.impl.filter.MergeRequestFilterService;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
+import static java.lang.Boolean.TRUE;
 
 @Service
-public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<MergeRequest, Long> implements MergeRequestsService {
+@RequiredArgsConstructor
+public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     private final NotifyService notifyService;
-    private final MergeRequestRepository mergeRequestRepository;
+    private final MergeRequestRepository repository;
     private final PersonService personService;
-    private final FilterService<MergeRequest, MergeRequestFilter> filterService;
+    private final MergeRequestFilterService filterService;
     private final ProjectService projectService;
     private final DiscussionService discussionService;
 
     private final PersonInformation personInformation;
-
-    protected MergeRequestsServiceImpl(
-            MergeRequestRepository mergeRequestRepository,
-            NotifyService notifyService,
-            PersonService personService,
-            @Qualifier("mergeRequestFilterService") FilterService<MergeRequest, MergeRequestFilter> filterService,
-            ProjectService projectService,
-            DiscussionService discussionService, PersonInformation personInformation
-    ) {
-        super(mergeRequestRepository);
-        this.notifyService = notifyService;
-        this.mergeRequestRepository = mergeRequestRepository;
-        this.personService = personService;
-        this.filterService = filterService;
-        this.projectService = projectService;
-        this.discussionService = discussionService;
-        this.personInformation = personInformation;
-    }
 
     @Override
     public MergeRequest create(@NonNull MergeRequest mergeRequest) {
@@ -70,7 +55,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
         mergeRequest.setNotification(true);
 
-        final MergeRequest newMergeRequest = mergeRequestRepository.save(mergeRequest);
+        final MergeRequest newMergeRequest = repository.save(mergeRequest);
 
         notifyNewPr(newMergeRequest);
 
@@ -80,9 +65,7 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
     private void notifyNewPr(MergeRequest newMergeRequest) {
         if (!personInformation.getId().equals(newMergeRequest.getAuthor().getId())) {
 
-            final String projectName = projectService.getById(newMergeRequest.getProjectId())
-                    .orElseThrow(NotFoundException.supplier("Проект не найден"))
-                    .getName();
+            final String projectName = projectService.getByIdOrThrow(newMergeRequest.getProjectId()).getName();
             if (!newMergeRequest.isConflict()) {
                 notifyService.send(
                         NewPrNotify.builder()
@@ -108,24 +91,23 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
         }
         personService.create(mergeRequest.getAuthor());
 
-        final MergeRequest oldMergeRequest = mergeRequestRepository.findById(mergeRequest.getId())
-                .orElseThrow(NotFoundException.supplier("МержРеквест не найден"));
+        final MergeRequest oldMergeRequest = repository.findById(mergeRequest.getId())
+                .orElseThrow(notFoundException("МержРеквест не найден"));
 
         if (mergeRequest.getNotification() == null) {
             mergeRequest.setNotification(oldMergeRequest.getNotification());
         }
 
         if (!oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate()) || oldMergeRequest.isConflict() != mergeRequest.isConflict()) {
-            final Project project = projectService.getById(mergeRequest.getProjectId())
-                    .orElseThrow(NotFoundException.supplier("Проект не найден"));
+            final Project project = projectService.getByIdOrThrow(mergeRequest.getProjectId());
 
-            if (Boolean.TRUE.equals(oldMergeRequest.getNotification())) {
+            if (TRUE.equals(oldMergeRequest.getNotification())) {
                 notifyStatus(oldMergeRequest, mergeRequest, project);
                 notifyConflict(oldMergeRequest, mergeRequest, project);
                 notifyUpdate(oldMergeRequest, mergeRequest, project);
             }
 
-            return mergeRequestRepository.save(mergeRequest);
+            return repository.save(mergeRequest);
         }
         return oldMergeRequest;
     }
@@ -204,27 +186,43 @@ public class MergeRequestsServiceImpl extends AbstractSimpleManagerService<Merge
 
     @Override
     public Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses) {
-        return mergeRequestRepository.findAllIdByStateIn(statuses);
+        return repository.findAllIdByStateIn(statuses);
     }
 
     @Override
-    public Sheet<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pagination pagination) {
+    public Page<MergeRequest> getAll(Pageable pagination) {
+        return repository.findAll(pagination);
+    }
+
+    @Override
+    public Page<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pageable pagination) {
         return filterService.getAll(filter, pagination);
     }
 
     @Override
-    public Optional<MergeRequest> getFirst(@NonNull MergeRequestFilter mergeRequestFilter) {
-        return filterService.getFirst(mergeRequestFilter);
+    public ExistsContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds) {
+        final List<MergeRequest> existsEntity = repository.findAllById(mergeRequestIds);
+        final Set<Long> existsIds = existsEntity.stream().map(MergeRequest::getId).collect(Collectors.toSet());
+        if (existsIds.containsAll(mergeRequestIds)) {
+            return ExistsContainer.allFind(existsEntity);
+        } else {
+            final Set<Long> noExistsId = mergeRequestIds.stream()
+                    .filter(id -> !existsIds.contains(id))
+                    .collect(Collectors.toSet());
+            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+        }
     }
 
     @Override
-    public boolean exists(@NonNull MergeRequestFilter filter) {
-        return filterService.exists(filter);
+    public List<MergeRequest> createAll(List<MergeRequest> newMergeRequests) {
+        return newMergeRequests.stream()
+                .map(this::create)
+                .toList();
     }
 
     @Override
-    public long count(@NonNull MergeRequestFilter mergeRequestFilter) {
-        return filterService.count(mergeRequestFilter);
+    public void deleteAllById(@NonNull Set<Long> mergeRequestIds) {
+        repository.deleteByIds(mergeRequestIds);
     }
 
 }

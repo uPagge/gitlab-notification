@@ -6,11 +6,10 @@
     <parent>
         <groupId>dev.struchkov.bot.gitlab</groupId>
         <artifactId>gitlab-bot</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>telegram-bot</artifactId>
-    <version>${gitlab.telegram.version}</version>
 
     <dependencies>
         <dependency>
@@ -19,8 +18,18 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.struchkov.godfather</groupId>
-            <artifactId>telegram-core</artifactId>
+            <groupId>dev.struchkov.godfather.telegram</groupId>
+            <artifactId>telegram-consumer-simple</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.struchkov.godfather.telegram</groupId>
+            <artifactId>telegram-sender-simple</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.struchkov.godfather.telegram</groupId>
+            <artifactId>telegram-core-simple</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,5 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
-import dev.struchkov.haiti.context.domain.BasicEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "project")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Project implements BasicEntity<Long> {
+public class Project {
 
     @Id
     @Column(name = "id")
