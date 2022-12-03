@@ -50,7 +50,7 @@
 
         <google.guava.version>31.1-jre</google.guava.version>
         <jackson.databind.version>2.14.1</jackson.databind.version>
-        <jackson.datatype.jsr310.version>2.13.1</jackson.datatype.jsr310.version>
+        <jackson.datatype.jsr310.version>2.14.1</jackson.datatype.jsr310.version>
 
         <plugin.maven.compiler.ver>3.9.0</plugin.maven.compiler.ver>
         <plugin.nexus.staging.ver>1.6.8</plugin.nexus.staging.ver>
