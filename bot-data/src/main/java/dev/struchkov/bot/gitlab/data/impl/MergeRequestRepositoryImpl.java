@@ -5,31 +5,62 @@ import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.repository.MergeRequestRepository;
 import dev.struchkov.bot.gitlab.data.jpa.MergeRequestJpaRepository;
-import dev.struchkov.haiti.database.repository.manager.FilterManagerRepository;
+import dev.struchkov.haiti.filter.Filter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public class MergeRequestRepositoryImpl extends FilterManagerRepository<MergeRequest, Long> implements MergeRequestRepository {
+@RequiredArgsConstructor
+public class MergeRequestRepositoryImpl implements MergeRequestRepository {
 
-    private final MergeRequestJpaRepository repositoryJpa;
-
-    public MergeRequestRepositoryImpl(MergeRequestJpaRepository jpaRepository) {
-        super(jpaRepository);
-        repositoryJpa = jpaRepository;
-    }
+    private final MergeRequestJpaRepository jpaRepository;
 
     @Override
     public Set<IdAndStatusPr> findAllIdByStateIn(@NonNull Set<MergeRequestState> statuses) {
-        return repositoryJpa.findAllIdByStateIn(statuses);
+        return jpaRepository.findAllIdByStateIn(statuses);
     }
 
     @Override
     public List<MergeRequest> findAllByAssignee(@NonNull Long userId) {
-        return repositoryJpa.findAllByAssigneeId(userId);
+        return jpaRepository.findAllByAssigneeId(userId);
+    }
+
+    @Override
+    public MergeRequest save(MergeRequest mergeRequest) {
+        return jpaRepository.save(mergeRequest);
+    }
+
+    @Override
+    public Optional<MergeRequest> findById(Long mergeRequestId) {
+        return jpaRepository.findById(mergeRequestId);
+    }
+
+    @Override
+    public Page<MergeRequest> findAll(Pageable pagination) {
+        return jpaRepository.findAll(pagination);
+    }
+
+    @Override
+    public List<MergeRequest> findAllById(Set<Long> mergeRequestIds) {
+        return jpaRepository.findAllById(mergeRequestIds);
+    }
+
+    @Override
+    public void deleteByIds(Set<Long> mergeRequestIds) {
+        jpaRepository.deleteAllByIdIn(mergeRequestIds);
+    }
+
+    @Override
+    public Page<MergeRequest> filter(Filter filter, Pageable pageable) {
+        return jpaRepository.findAll(filter.<Specification<MergeRequest>>build(), pageable);
     }
 
 }

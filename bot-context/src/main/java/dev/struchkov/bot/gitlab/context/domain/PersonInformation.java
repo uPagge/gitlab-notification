@@ -13,6 +13,6 @@ public class PersonInformation {
     private String username;
     private String name;
     private Long id;
-    private Long telegramId;
+    private String telegramId;
 
 }

@@ -1,10 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
-import dev.struchkov.haiti.context.domain.BasicEntity;
+import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -28,9 +28,10 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@FieldNames
 @Table(name = "merge_request")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MergeRequest implements BasicEntity<Long> {
+public class MergeRequest {
 
     @Id
     @Column(name = "id")

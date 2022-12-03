@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
@@ -14,14 +15,15 @@ import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
-import dev.struchkov.haiti.context.exception.NotFoundException;
-import dev.struchkov.haiti.core.service.AbstractSimpleManagerService;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static java.lang.Boolean.FALSE;
 
 /**
@@ -44,28 +47,19 @@ import static java.lang.Boolean.FALSE;
  */
 @Slf4j
 @Service
-public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussion, String> implements DiscussionService {
+@RequiredArgsConstructor
+public class DiscussionServiceImpl implements DiscussionService {
 
     protected static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
     private final PersonService personService;
-    private final DiscussionRepository discussionRepository;
+    private final DiscussionRepository repository;
     private final PersonInformation personInformation;
 
     private final OkHttpClient client = new OkHttpClient();
     private final GitlabProperty gitlabProperty;
     private final PersonProperty personProperty;
     private final NotifyService notifyService;
-
-    public DiscussionServiceImpl(PersonService personService, DiscussionRepository discussionRepository, PersonInformation personInformation, GitlabProperty gitlabProperty, PersonProperty personProperty, NotifyService notifyService) {
-        super(discussionRepository);
-        this.personService = personService;
-        this.discussionRepository = discussionRepository;
-        this.personInformation = personInformation;
-        this.gitlabProperty = gitlabProperty;
-        this.personProperty = personProperty;
-        this.notifyService = notifyService;
-    }
 
     @Override
     public Discussion create(@NonNull Discussion discussion) {
@@ -76,7 +70,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
         discussion.setResolved(resolved);
-        return discussionRepository.save(discussion);
+        return repository.save(discussion);
     }
 
     /**
@@ -104,8 +98,8 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     @Override
     public Discussion update(@NonNull Discussion discussion) {
-        final Discussion oldDiscussion = discussionRepository.findById(discussion.getId())
-                .orElseThrow(NotFoundException.supplier("Дискуссия не найдена"));
+        final Discussion oldDiscussion = repository.findById(discussion.getId())
+                .orElseThrow(notFoundException("Дискуссия не найдена"));
         final Map<Long, Note> idAndNoteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, note -> note));
@@ -122,7 +116,7 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
                 .allMatch(note -> note.isResolvable() && note.getResolved());
         discussion.setResolved(resolved);
 
-        return discussionRepository.save(discussion);
+        return repository.save(discussion);
     }
 
     private void updateNote(Note note, Map<Long, Note> noteMap, boolean inDiscussion) {
@@ -189,8 +183,8 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     @Override
     public void answer(@NonNull String discussionId, @NonNull String text) {
-        final Discussion discussion = discussionRepository.findById(discussionId)
-                .orElseThrow(NotFoundException.supplier("Дисскусия {0} не найдена", discussionId));
+        final Discussion discussion = repository.findById(discussionId)
+                .orElseThrow(notFoundException("Дисскусия {0} не найдена", discussionId));
         final MergeRequest mergeRequest = discussion.getMergeRequest();
         final Long projectId = mergeRequest.getProjectId();
 
@@ -214,7 +208,38 @@ public class DiscussionServiceImpl extends AbstractSimpleManagerService<Discussi
 
     @Override
     public List<Discussion> getAllByMergeRequestId(@NonNull Long mergeRequestId) {
-        return discussionRepository.findAllByMergeRequestId(mergeRequestId);
+        return repository.findAllByMergeRequestId(mergeRequestId);
+    }
+
+    @Override
+    public ExistsContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds) {
+        final List<Discussion> existsEntity = repository.findAllById(discussionIds);
+        final Set<String> existsIds = existsEntity.stream().map(Discussion::getId).collect(Collectors.toSet());
+        if (existsIds.containsAll(discussionIds)) {
+            return dev.struchkov.bot.gitlab.context.domain.ExistsContainer.allFind(existsEntity);
+        } else {
+            final Set<String> noExistsId = discussionIds.stream()
+                    .filter(id -> !existsIds.contains(id))
+                    .collect(Collectors.toSet());
+            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+        }
+    }
+
+    @Override
+    public List<Discussion> createAll(@NonNull List<Discussion> newDiscussions) {
+        return newDiscussions.stream()
+                .map(this::create)
+                .toList();
+    }
+
+    @Override
+    public Page<Discussion> getAll(@NonNull Pageable pagination) {
+        return repository.findAll(pagination);
+    }
+
+    @Override
+    public void deleteById(String discussionId) {
+        repository.deleteById(discussionId);
     }
 
     /**

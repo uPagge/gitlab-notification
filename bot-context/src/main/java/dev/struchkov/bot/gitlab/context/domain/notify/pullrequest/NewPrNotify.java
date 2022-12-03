@@ -1,11 +1,11 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
 
+import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.haiti.utils.Strings;
 import lombok.Builder;
 import lombok.Getter;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,15 +40,15 @@ public class NewPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
+    public String generateMessage() {
         String labelText = labels.stream()
                 .map(label -> "#" + label)
                 .collect(Collectors.joining(" "));
         if (!labelText.isEmpty()) {
             labelText = "\n\n" + labelText;
         }
-        return settingService.getMessage(
-                "notify.pr.new",
+        return MessageFormat.format(
+                "{0} *New MergeRequest | {1}*{2}[{3}]({4}){5}{2}{9}: {10} {12} {11}",
                 Smile.FUN.getValue(),
                 projectName,
                 Smile.HR.getValue(),

@@ -1,6 +1,5 @@
 package dev.struchkov.bot.gitlab.context.domain.notify;
 
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import lombok.Builder;
 
 /**
@@ -13,7 +12,7 @@ public record SimpleTextNotify(String message) implements Notify {
     }
 
     @Override
-    public String generateMessage(AppSettingService appSettingService) {
+    public String generateMessage() {
         return message;
     }
 

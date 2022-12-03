@@ -1,33 +1,63 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.repository.PersonRepository;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
-import dev.struchkov.haiti.core.service.AbstractSimpleManagerService;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 
 /**
  * @author upagge 15.01.2021
  */
 @Service
-public class PersonServiceImpl extends AbstractSimpleManagerService<Person, Long> implements PersonService {
+@RequiredArgsConstructor
+public class PersonServiceImpl implements PersonService {
 
-    private final PersonRepository personRepository;
-
-    public PersonServiceImpl(PersonRepository personRepository) {
-        super(personRepository);
-        this.personRepository = personRepository;
-    }
+    private final PersonRepository repository;
 
     @Override
     public Person create(@NonNull Person person) {
-        return personRepository.save(person);
+        return repository.save(person);
     }
 
     @Override
     public Person update(@NonNull Person person) {
-        return personRepository.save(person);
+        return repository.save(person);
+    }
+
+    @Override
+    public Person getByIdOrThrown(@NonNull Long personId) {
+        return repository.findById(personId)
+                .orElseThrow(notFoundException("Пользователь не найден"));
+    }
+
+    @Override
+    public ExistsContainer<Person, Long> existsById(Set<Long> personIds) {
+        final List<Person> existsEntity = repository.findAllById(personIds);
+        final Set<Long> existsIds = existsEntity.stream().map(Person::getId).collect(Collectors.toSet());
+        if (existsIds.containsAll(personIds)) {
+            return ExistsContainer.allFind(existsEntity);
+        } else {
+            final Set<Long> noExistsId = personIds.stream()
+                    .filter(id -> !existsIds.contains(id))
+                    .collect(Collectors.toSet());
+            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+        }
+    }
+
+    @Override
+    public List<Person> createAll(List<Person> newPersons) {
+        return newPersons.stream()
+                .map(this::create)
+                .toList();
     }
 
 }

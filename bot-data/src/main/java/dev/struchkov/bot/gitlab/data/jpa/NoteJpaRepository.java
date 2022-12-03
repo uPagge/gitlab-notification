@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface NoteRepositoryJpa extends JpaRepository<Note, Long> {
+public interface NoteJpaRepository extends JpaRepository<Note, Long> {
 
     Page<Note> findAllByResolved(boolean resolved, Pageable pageable);
 

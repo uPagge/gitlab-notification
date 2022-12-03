@@ -1,27 +1,34 @@
 package dev.struchkov.bot.gitlab.telegram.config;
 
 import dev.struchkov.bot.gitlab.telegram.service.ReplaceUrlLocalhost;
-import dev.struchkov.godfather.context.domain.content.Mail;
-import dev.struchkov.godfather.context.repository.impl.local.MailRepositoryList;
-import dev.struchkov.godfather.context.service.MailService;
-import dev.struchkov.godfather.context.service.MessageService;
-import dev.struchkov.godfather.context.service.impl.MailServiceImpl;
-import dev.struchkov.godfather.context.service.sender.Sending;
-import dev.struchkov.godfather.core.domain.unit.AnswerCheck;
-import dev.struchkov.godfather.telegram.autoresponder.MessageAutoresponderTelegram;
-import dev.struchkov.godfather.telegram.config.TelegramPollingConfig;
-import dev.struchkov.godfather.telegram.listen.EventDistributor;
-import dev.struchkov.godfather.telegram.listen.EventDistributorImpl;
-import dev.struchkov.godfather.telegram.listen.TelegramConnect;
-import dev.struchkov.godfather.telegram.listen.TelegramSender;
-import org.sadtech.autoresponder.repository.UnitPointerRepository;
-import org.sadtech.autoresponder.repository.UnitPointerRepositoryMap;
+import dev.struchkov.bot.gitlab.telegram.unit.MenuConfig;
+import dev.struchkov.bot.gitlab.telegram.unit.UnitConfig;
+import dev.struchkov.godfather.main.domain.content.Mail;
+import dev.struchkov.godfather.simple.context.service.EventHandler;
+import dev.struchkov.godfather.simple.context.service.PersonSettingService;
+import dev.struchkov.godfather.simple.context.service.UnitPointerService;
+import dev.struchkov.godfather.simple.core.provider.StoryLineHandler;
+import dev.struchkov.godfather.simple.core.service.PersonSettingServiceImpl;
+import dev.struchkov.godfather.simple.core.service.StorylineMailService;
+import dev.struchkov.godfather.simple.core.service.StorylineService;
+import dev.struchkov.godfather.simple.core.service.UnitPointerServiceImpl;
+import dev.struchkov.godfather.simple.data.repository.impl.PersonSettingLocalRepository;
+import dev.struchkov.godfather.simple.data.repository.impl.StorylineMapRepository;
+import dev.struchkov.godfather.simple.data.repository.impl.UnitPointLocalRepository;
+import dev.struchkov.godfather.telegram.domain.config.TelegramConnectConfig;
+import dev.struchkov.godfather.telegram.main.context.TelegramConnect;
+import dev.struchkov.godfather.telegram.simple.consumer.EventDistributorService;
+import dev.struchkov.godfather.telegram.simple.context.service.EventDistributor;
+import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import dev.struchkov.godfather.telegram.simple.core.MailAutoresponderTelegram;
+import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
+import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.Collections;
+import java.util.List;
 
 /**
  * @author upagge [30.01.2020]
@@ -31,32 +38,46 @@ import java.util.Collections;
 public class TelegramBotConfig {
 
     @Bean
-    public MailService messageService() {
-        return new MailServiceImpl(new MailRepositoryList());
+    public UnitPointerService unitPointerService() {
+        return new UnitPointerServiceImpl(new UnitPointLocalRepository());
     }
 
     @Bean
-    public UnitPointerRepository unitPointerRepository() {
-        return new UnitPointerRepositoryMap();
+    public PersonSettingService personSettingService() {
+        return new PersonSettingServiceImpl(new PersonSettingLocalRepository());
     }
 
     @Bean
-    public MessageAutoresponderTelegram messageAutoresponderTelegram(
-            Sending sending,
-            MessageService<Mail> messageService,
-            UnitPointerRepository unitPointerRepository,
-            AnswerCheck checkFirstStart
+    public StorylineService<Mail> storylineService(
+            UnitPointerService unitPointerService,
+
+            MenuConfig menuConfig,
+            UnitConfig unitConfig
     ) {
-        return new MessageAutoresponderTelegram(
-                Collections.singleton(checkFirstStart),
-                sending,
-                messageService,
-                unitPointerRepository
+        final List<Object> config = List.of(menuConfig, unitConfig);
+
+        return new StorylineMailService(
+                unitPointerService,
+                new StorylineMapRepository(),
+                config
         );
     }
 
     @Bean
-    public Sending sending(
+    public MailAutoresponderTelegram messageAutoresponderTelegram(
+            TelegramSending sending,
+            PersonSettingService personSettingService,
+
+            StorylineService<Mail> mailStorylineService
+    ) {
+        final MailAutoresponderTelegram autoresponder = new MailAutoresponderTelegram(
+                sending, personSettingService, mailStorylineService
+        );
+        return autoresponder;
+    }
+
+    @Bean
+    public TelegramSending sending(
             TelegramConnect telegramConnect,
             ReplaceUrlLocalhost replaceUrlLocalhost
     ) {
@@ -66,22 +87,29 @@ public class TelegramBotConfig {
     }
 
     @Bean
-    public TelegramConnect telegramConnect(TelegramPollingConfig telegramConfig) {
-        return new TelegramConnect(telegramConfig);
+    public TelegramConnectBot telegramConnect(TelegramConnectConfig telegramConfig) {
+        return new TelegramConnectBot(telegramConfig);
     }
 
     @Bean
     @ConfigurationProperties("telegram-config")
-    public TelegramPollingConfig telegramConfig() {
-        return new TelegramPollingConfig();
+    public TelegramConnectConfig telegramConfig() {
+        return new TelegramConnectConfig();
+    }
+
+    @Bean
+    public StoryLineHandler storyLineHandler(
+            MailAutoresponderTelegram mailAutoresponderTelegram
+    ) {
+        return new StoryLineHandler(mailAutoresponderTelegram);
     }
 
     @Bean
     public EventDistributor eventDistributor(
-            TelegramConnect telegramConnect,
-            MailService mailService
+            TelegramConnectBot telegramConnect,
+            List<EventHandler> eventProviders
     ) {
-        return new EventDistributorImpl(telegramConnect, mailService);
+        return new EventDistributorService(telegramConnect, eventProviders);
     }
 
 }

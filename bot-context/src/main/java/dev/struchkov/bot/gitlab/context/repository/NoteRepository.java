@@ -1,20 +1,20 @@
 package dev.struchkov.bot.gitlab.context.repository;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
-import dev.struchkov.haiti.context.page.Pagination;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.repository.SimpleManagerRepository;
-import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author upagge 08.09.2020
  */
-public interface NoteRepository extends SimpleManagerRepository<Note, Long> {
+public interface NoteRepository {
 
-    List<Note> findAllByResponsibleIdAndResolved(@NonNull Long userId, boolean resolved);
+    List<Note> findAllByResponsibleIdAndResolved(Long userId, boolean resolved);
 
-    Sheet<Note> findAllByResolved(boolean resolved, @NonNull Pagination pagination);
+    Page<Note> findAllByResolved(boolean resolved, Pageable pagination);
 
+    Optional<Note> findById(Long noteId);
 }

@@ -1,6 +1,5 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
-import dev.struchkov.haiti.context.domain.BasicEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ import java.util.List;
 @Entity
 @Table(name = "discussion")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Discussion implements BasicEntity<String> {
+public class Discussion {
 
     @Id
     @Column(name = "id")

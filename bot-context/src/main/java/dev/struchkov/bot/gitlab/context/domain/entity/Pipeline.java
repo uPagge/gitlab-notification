@@ -1,7 +1,7 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
-import dev.struchkov.haiti.context.domain.BasicEntity;
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +23,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@FieldNames
 @Table(name = "pipeline")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Pipeline implements BasicEntity<Long> {
+public class Pipeline {
 
     @Id
     @Column(name = "id")

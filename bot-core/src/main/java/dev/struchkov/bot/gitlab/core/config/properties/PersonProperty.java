@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Configuration;
 public class PersonProperty {
 
     private String token;
-    private Long telegramId;
+    private String telegramId;
 
 }

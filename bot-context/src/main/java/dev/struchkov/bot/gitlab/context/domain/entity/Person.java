@@ -1,6 +1,5 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
-import dev.struchkov.haiti.context.domain.BasicEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Table(name = "person")
-public class Person implements BasicEntity<Long> {
+public class Person {
 
     @Id
     @Column(name = "id")

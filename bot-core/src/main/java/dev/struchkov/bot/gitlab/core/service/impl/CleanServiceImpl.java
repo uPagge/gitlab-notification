@@ -7,9 +7,9 @@ import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import dev.struchkov.bot.gitlab.context.service.CleanService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.page.impl.PaginationImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,7 +39,7 @@ public class CleanServiceImpl implements CleanService {
     @Override
     public void cleanOldMergedRequests() {
         int page = 0;
-        Sheet<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PaginationImpl.of(page, COUNT));
+        Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PageRequest.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
             final Set<Long> ids = mergeRequestSheet.getContent().stream()
@@ -48,7 +48,7 @@ public class CleanServiceImpl implements CleanService {
 
             mergeRequestsService.deleteAllById(ids);
 
-            mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PaginationImpl.of(++page, COUNT));
+            mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PageRequest.of(++page, COUNT));
         }
     }
 
@@ -56,7 +56,7 @@ public class CleanServiceImpl implements CleanService {
     public void cleanOldPipelines() {
         int page = 0;
         final PipelineFilter filter = cleanPipelineFilter();
-        Sheet<Pipeline> sheet = pipelineService.getAll(filter, PaginationImpl.of(page, COUNT));
+        Page<Pipeline> sheet = pipelineService.getAll(filter, PageRequest.of(page, COUNT));
 
         while (sheet.hasContent()) {
             final Set<Long> ids = sheet.getContent().stream()
@@ -65,7 +65,7 @@ public class CleanServiceImpl implements CleanService {
 
             pipelineService.deleteAllById(ids);
 
-            sheet = pipelineService.getAll(filter, PaginationImpl.of(page, COUNT));
+            sheet = pipelineService.getAll(filter, PageRequest.of(page, COUNT));
         }
     }
 

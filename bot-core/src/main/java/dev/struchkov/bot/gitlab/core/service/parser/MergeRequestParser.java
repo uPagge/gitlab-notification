@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
@@ -11,13 +12,12 @@ import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
-import dev.struchkov.haiti.context.domain.ExistsContainer;
-import dev.struchkov.haiti.context.page.Sheet;
-import dev.struchkov.haiti.context.page.impl.PaginationImpl;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -66,7 +66,7 @@ public class MergeRequestParser {
 
     public void parsingNewMergeRequest() {
         int page = 0;
-        Sheet<Project> projectSheet = projectService.getAll(PaginationImpl.of(page, COUNT));
+        Page<Project> projectSheet = projectService.getAll(PageRequest.of(page, COUNT));
 
         while (projectSheet.hasContent()) {
             final List<Project> projects = projectSheet.getContent();
@@ -75,7 +75,7 @@ public class MergeRequestParser {
                 projectProcessing(project);
             }
 
-            projectSheet = projectService.getAll(PaginationImpl.of(++page, COUNT));
+            projectSheet = projectService.getAll(PageRequest.of(++page, COUNT));
         }
     }
 

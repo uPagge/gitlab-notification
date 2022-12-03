@@ -6,13 +6,22 @@
     <parent>
         <groupId>dev.struchkov.bot.gitlab</groupId>
         <artifactId>gitlab-bot</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>bot-context</artifactId>
-    <version>${gitlab.context.version}</version>
 
     <dependencies>
+        <dependency>
+            <groupId>dev.struchkov.haiti.utils</groupId>
+            <artifactId>haiti-utils-field-constants</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -20,7 +29,7 @@
 
         <dependency>
             <groupId>dev.struchkov.haiti</groupId>
-            <artifactId>haiti-context</artifactId>
+            <artifactId>haiti-utils</artifactId>
         </dependency>
 
         <dependency>
@@ -31,11 +40,6 @@
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
     </dependencies>
 

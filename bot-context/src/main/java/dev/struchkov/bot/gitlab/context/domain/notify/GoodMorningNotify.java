@@ -27,7 +27,7 @@ public record GoodMorningNotify(
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
+    public String generateMessage() {
         final StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
         if (!mergeRequestsReviews.isEmpty()) {
             message.append("Необходимо проверить ").append(mergeRequestsReviews.size()).append(" ПР:").append(Smile.BR);

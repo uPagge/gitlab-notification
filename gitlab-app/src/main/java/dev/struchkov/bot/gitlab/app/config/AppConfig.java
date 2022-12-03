@@ -4,7 +4,6 @@ import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
-import dev.struchkov.haiti.context.exception.NotFoundException;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +18,7 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -61,7 +61,7 @@ public class AppConfig {
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .execute(PersonInformation.class)
-                .orElseThrow(NotFoundException.supplier("Пользователь не найден"));
+                .orElseThrow(notFoundException("Пользователь не найден"));
         personInformation.setTelegramId(personProperty.getTelegramId());
         return personInformation;
     }

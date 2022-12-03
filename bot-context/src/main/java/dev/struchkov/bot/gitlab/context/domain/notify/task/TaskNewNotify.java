@@ -1,9 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.task;
 
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.text.MessageFormat;
 
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
@@ -23,9 +24,9 @@ public class TaskNewNotify extends TaskNotify {
     }
 
     @Override
-    public String generateMessage(AppSettingService settingService) {
-        return settingService.getMessage(
-                "notify.task.new",
+    public String generateMessage() {
+        return MessageFormat.format(
+                "{0} *New [task]({1}) assigned{2}*{3}*: {4}",
                 Smile.TASK.getValue(), url, Smile.HR.getValue(), authorName, escapeMarkdown(messageTask)
         );
     }

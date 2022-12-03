@@ -1,15 +1,17 @@
 package dev.struchkov.bot.gitlab.core.service.impl.filter;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
-import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline_;
+import dev.struchkov.bot.gitlab.context.domain.entity.PipelineFields;
 import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import dev.struchkov.bot.gitlab.context.repository.PipelineRepository;
-import dev.struchkov.haiti.core.service.AbstractFilterService;
 import dev.struchkov.haiti.filter.Filter;
 import dev.struchkov.haiti.filter.FilterQuery;
 import dev.struchkov.haiti.filter.criteria.CriteriaFilter;
 import dev.struchkov.haiti.filter.criteria.CriteriaQuery;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,20 +20,24 @@ import org.springframework.stereotype.Service;
  * @author upagge 08.02.2021
  */
 @Service
-public class PipelineFilterService extends AbstractFilterService<Pipeline, PipelineFilter> {
+@RequiredArgsConstructor
+public class PipelineFilterService {
 
-    public PipelineFilterService(PipelineRepository pipelineRepository) {
-        super(pipelineRepository);
+    private final PipelineRepository pipelineRepository;
+
+    public Page<Pipeline> getAll(PipelineFilter filter, Pageable pagination) {
+        return pipelineRepository.filter(createFilter(filter), pagination);
     }
 
-    @Override
-    protected Filter createFilter(@NonNull PipelineFilter pipelineFilter) {
+    private Filter createFilter(@NonNull PipelineFilter pipelineFilter) {
         return CriteriaFilter.<Pipeline>create()
                 .and(convertAnd(pipelineFilter));
     }
 
     private FilterQuery convertAnd(PipelineFilter pipelineFilter) {
         return CriteriaQuery.<Pipeline>create()
-                .lessThan(Pipeline_.CREATED, pipelineFilter.getLessThanCreatedDate());
+                .lessThan(PipelineFields.created, pipelineFilter.getLessThanCreatedDate());
     }
+
+
 }
