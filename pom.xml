@@ -48,15 +48,9 @@
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
-        <google.guava.version>31.0.1-jre</google.guava.version>
-        <jackson.databind.version>2.13.1</jackson.databind.version>
-        <jackson.datatype.jsr310.version>2.13.1</jackson.datatype.jsr310.version>
-
-        <plugin.maven.compiler.ver>3.9.0</plugin.maven.compiler.ver>
-        <plugin.nexus.staging.ver>1.6.8</plugin.nexus.staging.ver>
-        <plugin.maven.source.ver>3.2.1</plugin.maven.source.ver>
-        <plugin.maven.javadoc.ver>3.3.1</plugin.maven.javadoc.ver>
-        <plugin.maven.gpg.ver>3.0.1</plugin.maven.gpg.ver>
+        <google.guava.version>31.1-jre</google.guava.version>
+        <jackson.databind.version>2.14.1</jackson.databind.version>
+        <jackson.datatype.jsr310.version>2.14.1</jackson.datatype.jsr310.version>
     </properties>
 
     <dependencyManagement>
