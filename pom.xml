@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <godfather.telegram.core.version>0.0.37</godfather.telegram.core.version>
+        <godfather.telegram.core.version>0.0.38</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
