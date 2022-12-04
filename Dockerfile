@@ -1,6 +1,8 @@
 FROM eclipse-temurin:17 as app-build
 ENV RELEASE=17
 
+RUN apt-get install binutils
+
 WORKDIR /opt/build
 COPY ./gitlab-app/target/gitlab-notification.jar ./application.jar
 
