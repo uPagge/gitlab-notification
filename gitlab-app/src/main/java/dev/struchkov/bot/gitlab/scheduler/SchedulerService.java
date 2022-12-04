@@ -1,4 +1,4 @@
-package dev.struchkov.bot.gitlab.app.scheduler;
+package dev.struchkov.bot.gitlab.scheduler;
 
 import dev.struchkov.bot.gitlab.context.service.CleanService;
 import dev.struchkov.bot.gitlab.core.service.parser.DiscussionParser;

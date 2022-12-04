@@ -1,4 +1,4 @@
-package dev.struchkov.bot.gitlab.app.config;
+package dev.struchkov.bot.gitlab.config;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
