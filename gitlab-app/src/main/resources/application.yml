@@ -1,5 +1,3 @@
-server:
-  port: 8018
 spring:
   datasource:
     url: ${DATASOURCE_URL}

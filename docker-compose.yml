@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+
+  database:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: "gitlab_bot"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql/data/
+
+  gitlab-bot:
+    image: upagge/gitlab-telegram-notify:latest
+    restart: always
+    depends_on:
+      - database
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+      GITLAB_PERSONAL_TOKEN: ${GITLAB_PERSONAL_TOKEN}
+      TELEGRAM_PERSON_ID: ${TELEGRAM_PERSON_ID}
+      GITLAB_URL: ${GITLAB_URL}
+      DATASOURCE_URL: "jdbc:postgresql://database:5432/gitlab_bot"
+      DATASOURCE_USERNAME: "postgres"
+      DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+
+volumes:
+  database:
