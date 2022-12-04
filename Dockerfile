@@ -7,7 +7,8 @@ COPY ./gitlab-app/target/gitlab-notification.jar ./application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 RUN $JAVA_HOME/bin/jlink \
          --add-modules `jdeps --ignore-missing-deps -q -recursive --multi-release ${RELEASE} --print-module-deps -cp 'dependencies/BOOT-INF/lib/*' application.jar`,jdk.crypto.cryptoki \
-         --strip-debug \
+         --strip-java-debug-attributes \
+         --strip-native-debug-symbols objcopy=/usr/bin/objcopy \
          --no-man-pages \
          --no-header-files \
          --compress=2 \
