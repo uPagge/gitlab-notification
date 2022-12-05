@@ -2,16 +2,20 @@ package dev.struchkov.bot.gitlab.core.service.convert;
 
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestStateJson;
+import dev.struchkov.bot.gitlab.sdk.domain.PersonJson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 
 /**
  * @author upagge 15.01.2021
@@ -35,23 +39,36 @@ public class MergeRequestJsonConverter implements Converter<MergeRequestJson, Me
         mergeRequest.setState(convertState(source.getState()));
         mergeRequest.setProjectId(source.getProjectId());
         mergeRequest.setWebUrl(source.getWebUrl());
-        mergeRequest.setLabels(convertLabels(source.getLabels()));
-        if (source.getAssignee() != null) {
+
+        convertLabels(mergeRequest, source.getLabels());
+        convertReviewers(mergeRequest, source.getReviewers());
+
+        if (checkNotNull(source.getAssignee())) {
             mergeRequest.setAssignee(convertPerson.convert(source.getAssignee()));
         }
+
         mergeRequest.setAuthor(convertPerson.convert(source.getAuthor()));
         mergeRequest.setSourceBranch(source.getSourceBranch());
         mergeRequest.setTargetBranch(source.getTargetBranch());
         return mergeRequest;
     }
 
-    private static Set<String> convertLabels(Set<String> source) {
-        if (checkNotEmpty(source)) {
-            return source.stream()
-                    .map(label -> label.replaceAll("-", "_"))
-                    .collect(Collectors.toSet());
+    private void convertReviewers(MergeRequest mergeRequest, List<PersonJson> jsonReviewers) {
+        if (checkNotEmpty(jsonReviewers)) {
+            final List<Person> reviewers = jsonReviewers.stream()
+                    .map(convertPerson::convert)
+                    .toList();
+            mergeRequest.setReviewers(reviewers);
         }
-        return null;
+    }
+
+    private static void convertLabels(MergeRequest mergeRequest, Set<String> source) {
+        if (checkNotEmpty(source)) {
+            final Set<String> labels = source.stream()
+                    .map(label -> label.replace("-", "_"))
+                    .collect(Collectors.toSet());
+            mergeRequest.setLabels(labels);
+        }
     }
 
     private MergeRequestState convertState(MergeRequestStateJson state) {

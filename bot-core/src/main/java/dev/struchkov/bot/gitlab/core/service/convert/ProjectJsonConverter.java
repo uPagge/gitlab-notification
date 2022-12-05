@@ -2,6 +2,7 @@ package dev.struchkov.bot.gitlab.core.service.convert;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.sdk.domain.ProjectJson;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
  * @author upagge 14.01.2021
  */
 @Component
+@RequiredArgsConstructor
 public class ProjectJsonConverter implements Converter<ProjectJson, Project> {
 
     @Override

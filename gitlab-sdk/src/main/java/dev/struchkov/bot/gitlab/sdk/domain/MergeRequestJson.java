@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,6 +40,8 @@ public class MergeRequestJson {
 
     private PersonJson author;
     private PersonJson assignee;
+
+    private List<PersonJson> reviewers;
 
     @JsonProperty("web_url")
     private String webUrl;

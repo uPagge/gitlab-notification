@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
@@ -22,10 +23,15 @@ import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
@@ -47,19 +53,20 @@ public class MergeRequestParser {
     public void parsingOldMergeRequest() {
         final Set<IdAndStatusPr> existIds = mergeRequestsService.getAllId(OLD_STATUSES);
 
-        for (IdAndStatusPr existId : existIds) {
-            final String mrUrl = MessageFormat.format(gitlabProperty.getUrlPullRequest(), existId.getProjectId(), existId.getTwoId());
-            final Optional<MergeRequestJson> json = HttpParse.request(mrUrl)
-                    .header(ACCEPT)
-                    .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                    .execute(MergeRequestJson.class);
-            final Optional<MergeRequest> mergeRequest = json
-                    .map(mergeRequestJson -> {
-                        final MergeRequest newMergeRequest = conversionService.convert(mergeRequestJson, MergeRequest.class);
-                        parsingCommits(newMergeRequest);
-                        return newMergeRequest;
-                    });
-            mergeRequest.ifPresent(mergeRequestsService::update);
+        final List<MergeRequest> mergeRequests = existIds.stream()
+                .map(this::getMergeRequest)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(mergeRequestJson -> {
+                    final MergeRequest newMergeRequest = conversionService.convert(mergeRequestJson, MergeRequest.class);
+                    parsingCommits(newMergeRequest);
+                    return newMergeRequest;
+                })
+                .collect(Collectors.toList());
+
+        if (checkNotEmpty(mergeRequests)) {
+            personMapping(mergeRequests);
+            mergeRequestsService.updateAll(mergeRequests);
         }
 
     }
@@ -83,7 +90,7 @@ public class MergeRequestParser {
         int page = 1;
         List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons(project, page);
 
-        while (!mergeRequestJsons.isEmpty()) {
+        while (checkNotEmpty(mergeRequestJsons)) {
 
             final Set<Long> jsonIds = mergeRequestJsons.stream()
                     .map(MergeRequestJson::getId)
@@ -99,10 +106,39 @@ public class MergeRequestParser {
                             return mergeRequest;
                         })
                         .toList();
+
+                personMapping(newMergeRequests);
+
                 mergeRequestsService.createAll(newMergeRequests);
             }
 
             mergeRequestJsons = getMergeRequestJsons(project, page++);
+        }
+    }
+
+    private static void personMapping(List<MergeRequest> newMergeRequests) {
+        final Map<Long, Person> personMap = Stream.concat(
+                        newMergeRequests.stream()
+                                .flatMap(mergeRequest -> Stream.of(mergeRequest.getAssignee(), mergeRequest.getAuthor())),
+                        newMergeRequests.stream()
+                                .flatMap(mergeRequest -> mergeRequest.getReviewers().stream())
+                ).distinct()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Person::getId, p -> p));
+
+        for (MergeRequest newMergeRequest : newMergeRequests) {
+            newMergeRequest.setAuthor(personMap.get(newMergeRequest.getAuthor().getId()));
+
+            final Person assignee = newMergeRequest.getAssignee();
+            if (checkNotNull(assignee)) {
+                newMergeRequest.setAssignee(personMap.get(assignee.getId()));
+            }
+
+            newMergeRequest.setReviewers(
+                    newMergeRequest.getReviewers().stream()
+                            .map(reviewer -> personMap.get(reviewer.getId()))
+                            .collect(Collectors.toList())
+            );
         }
     }
 
@@ -123,6 +159,14 @@ public class MergeRequestParser {
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .header(ACCEPT)
                 .executeList(MergeRequestJson.class);
+    }
+
+    private Optional<MergeRequestJson> getMergeRequest(IdAndStatusPr existId) {
+        final String mrUrl = MessageFormat.format(gitlabProperty.getUrlPullRequest(), existId.getProjectId(), existId.getTwoId());
+        return HttpParse.request(mrUrl)
+                .header(ACCEPT)
+                .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
+                .execute(MergeRequestJson.class);
     }
 
 }

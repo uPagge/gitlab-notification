@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="2022-12-05-create-table-reviewers" author="uPagge">
+        <createTable tableName="merge_request_reviewer">
+            <column name="merge_request_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_merge_request_reviewer_merge_request_id"
+                             references="merge_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_merge_request_reviewer_person_id"
+                             references="person(id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="merge_request_reviewer" columnNames="merge_request_id, person_id"/>
+    </changeSet>
+
+</databaseChangeLog>

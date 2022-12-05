@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -34,12 +35,15 @@ public class ProjectServiceImpl implements ProjectService {
     private final PersonInformation personInformation;
 
     @Override
+    @Transactional
     public Project create(@NonNull Project project) {
         final Project newProject = repository.save(project);
 
-        if (!personInformation.getId().equals(newProject.getCreatorId())) {
+        final Long gitlabUserId = personInformation.getId();
+
+        if (!gitlabUserId.equals(newProject.getCreatorId())) {
             final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
-            sendNotifyNewProject(newProject, authorName);
+            notifyAboutNewProject(newProject, authorName);
         }
 
         return newProject;
@@ -87,7 +91,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    private void sendNotifyNewProject(Project newProject, String authorName) {
+    private void notifyAboutNewProject(Project newProject, String authorName) {
         notifyService.send(
                 NewProjectNotify.builder()
                         .projectDescription(newProject.getDescription())

@@ -19,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,9 +91,10 @@ public class MenuConfig {
     public AnswerText<Mail> addNewProject() {
         return AnswerText.<Mail>builder()
                 .answer(mail -> {
-                    final List<String> urlList = Arrays.stream(mail.getText().split("/")).toList();
-                    int lastElement = urlList.size() - 1;
-                    final String projectUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequestAdd(), urlList.get(lastElement - 1), urlList.get(lastElement));
+                    final String mailText = mail.getText();
+                    final String projectUrl = gitlabProperty.getUrlMergeRequestAdd() + mailText.replace(gitlabProperty.getBaseUrl(), "")
+                            .substring(1)
+                            .replace("/", "%2F");
                     projectParser.parseByUrl(projectUrl);
                     return boxAnswer("Project added successfully");
                 })

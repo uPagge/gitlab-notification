@@ -18,6 +18,8 @@ public interface MergeRequestsService {
 
     MergeRequest update(@NonNull MergeRequest mergeRequest);
 
+    List<MergeRequest> updateAll(@NonNull List<MergeRequest> mergeRequests);
+
     /**
      * Получить все идентификаторы вместе со статусами.
      *

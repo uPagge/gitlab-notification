@@ -48,7 +48,7 @@ public class NewPrNotify extends PrNotify {
             labelText = "\n\n" + labelText;
         }
         return MessageFormat.format(
-                "{0} *New MergeRequest | {1}*{2}[{3}]({4}){5}{2}{9}: {10} {12} {11}",
+                "{0} *New merge request for review | {1}*{2}[{3}]({4}){5}{2}{9}: {10} {12} {11}\n{7}: {8}",
                 Smile.FUN.getValue(),
                 projectName,
                 Smile.HR.getValue(),
