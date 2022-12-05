@@ -38,4 +38,6 @@ public interface MergeRequestsService {
 
     void deleteAllById(@NonNull Set<Long> mergeRequestIds);
 
+    List<MergeRequest> getAllByReviewerId(@NonNull Long personId);
+
 }

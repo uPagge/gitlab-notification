@@ -209,6 +209,11 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         repository.deleteByIds(mergeRequestIds);
     }
 
+    @Override
+    public List<MergeRequest> getAllByReviewerId(@NonNull Long personId) {
+        return repository.findAllByReviewerId(personId);
+    }
+
     private void notifyUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         if (
                 !personInformation.getId().equals(mergeRequest.getAuthor().getId())

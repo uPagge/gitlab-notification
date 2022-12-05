@@ -30,4 +30,7 @@ public interface MergeRequestRepository {
     void deleteByIds(Set<Long> mergeRequestIds);
 
     Page<MergeRequest> filter(Filter filter, Pageable pageable);
+
+    List<MergeRequest> findAllByReviewerId(Long personId);
+
 }
