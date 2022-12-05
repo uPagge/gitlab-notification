@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
@@ -8,15 +9,14 @@ import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import dev.struchkov.bot.gitlab.context.domain.notify.pipeline.PipelineNotify;
 import dev.struchkov.bot.gitlab.context.repository.PipelineRepository;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
-import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.core.service.impl.filter.PipelineFilterService;
-import dev.struchkov.haiti.context.domain.ExistsContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,7 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.FAILED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SKIPPED;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.SUCCESS;
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 
 /**
  * Реализация сервиса для работы с пайплайнами.
@@ -42,14 +43,13 @@ public class PipelineServiceImpl implements PipelineService {
 
     private final NotifyService notifyService;
     private final PipelineRepository repository;
-    private final PersonService personService;
     private final PipelineFilterService pipelineFilterService;
 
     private final PersonInformation personInformation;
 
     @Override
+    @Transactional
     public Pipeline create(@NonNull Pipeline pipeline) {
-        personService.create(pipeline.getPerson());
         final Pipeline newPipeline = repository.save(pipeline);
         notifyNewPipeline(pipeline, "n/a");
         return newPipeline;
@@ -87,7 +87,7 @@ public class PipelineServiceImpl implements PipelineService {
     private boolean isNeedNotifyNewPipeline(@NonNull Pipeline pipeline) {
         final Person personPipelineCreator = pipeline.getPerson();
         return notificationStatus.contains(pipeline.getStatus()) // Пайплайн имеет статус необходимый для уведомления
-                && personPipelineCreator != null
+                && checkNotNull(personPipelineCreator) // Создатель пайплайна не null
                 && personInformation.getId().equals(personPipelineCreator.getId()); // Пользователь приложения является инициатором пайплайна
     }
 
@@ -102,16 +102,16 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public ExistsContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds) {
+    public ExistContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds) {
         final List<Pipeline> existsEntity = repository.findAllById(pipelineIds);
         final Set<Long> existsIds = existsEntity.stream().map(Pipeline::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(pipelineIds)) {
-            return ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<Long> noExistsId = pipelineIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 

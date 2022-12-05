@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.context.service;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -26,6 +26,6 @@ public interface ProjectService {
 
     boolean existsById(Long projectId);
 
-    ExistsContainer<Project, Long> existsById(Set<Long> projectIds);
+    ExistContainer<Project, Long> existsById(Set<Long> projectIds);
 
 }

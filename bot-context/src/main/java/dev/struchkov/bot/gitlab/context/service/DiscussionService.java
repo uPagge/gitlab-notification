@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.context.service;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import lombok.NonNull;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public interface DiscussionService {
      */
     List<Discussion> getAllByMergeRequestId(@NonNull Long mergeRequestId);
 
-    ExistsContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds);
+    ExistContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds);
 
     List<Discussion> createAll(@NonNull List<Discussion> newDiscussions);
 

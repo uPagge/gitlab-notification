@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
@@ -184,16 +184,16 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     @Override
-    public ExistsContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds) {
+    public ExistContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds) {
         final List<MergeRequest> existsEntity = repository.findAllById(mergeRequestIds);
         final Set<Long> existsIds = existsEntity.stream().map(MergeRequest::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(mergeRequestIds)) {
-            return ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<Long> noExistsId = mergeRequestIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 

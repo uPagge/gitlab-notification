@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
@@ -69,9 +69,9 @@ public class ProjectParser {
 
             createNewPersons(projectJsons);
 
-            final ExistsContainer<Project, Long> existsContainer = projectService.existsById(projectIds);
+            final ExistContainer<Project, Long> existContainer = projectService.existsById(projectIds);
             final List<Project> newProjects = projectJsons.stream()
-                    .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                    .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Project.class))
                     .toList();
 
@@ -102,10 +102,10 @@ public class ProjectParser {
                 .map(ProjectJson::getCreatorId)
                 .collect(Collectors.toSet());
 
-        final ExistsContainer<Person, Long> existsContainer = personService.existsById(personCreatorId);
+        final ExistContainer<Person, Long> existContainer = personService.existsById(personCreatorId);
 
-        if (!existsContainer.isAllFound()) {
-            final Collection<Long> notFoundId = existsContainer.getIdNoFound();
+        if (!existContainer.isAllFound()) {
+            final Collection<Long> notFoundId = existContainer.getIdNoFound();
 
             final List<Person> newPersons = notFoundId.stream()
                     .map(

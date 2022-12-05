@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
@@ -96,10 +96,10 @@ public class MergeRequestParser {
                     .map(MergeRequestJson::getId)
                     .collect(Collectors.toSet());
 
-            final ExistsContainer<MergeRequest, Long> existsContainer = mergeRequestsService.existsById(jsonIds);
-            if (!existsContainer.isAllFound()) {
+            final ExistContainer<MergeRequest, Long> existContainer = mergeRequestsService.existsById(jsonIds);
+            if (!existContainer.isAllFound()) {
                 final List<MergeRequest> newMergeRequests = mergeRequestJsons.stream()
-                        .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                        .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
                         .map(json -> {
                             final MergeRequest mergeRequest = conversionService.convert(json, MergeRequest.class);
                             parsingCommits(mergeRequest);

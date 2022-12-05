@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
@@ -212,16 +212,16 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
-    public ExistsContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds) {
+    public ExistContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds) {
         final List<Discussion> existsEntity = repository.findAllById(discussionIds);
         final Set<String> existsIds = existsEntity.stream().map(Discussion::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(discussionIds)) {
-            return dev.struchkov.bot.gitlab.context.domain.ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<String> noExistsId = discussionIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 

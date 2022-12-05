@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
@@ -75,10 +75,10 @@ public class DiscussionParser {
                 .map(DiscussionJson::getId)
                 .collect(Collectors.toUnmodifiableSet());
 
-        final ExistsContainer<Discussion, String> existsContainer = discussionService.existsById(discussionIds);
-        if (!existsContainer.isAllFound()) {
+        final ExistContainer<Discussion, String> existContainer = discussionService.existsById(discussionIds);
+        if (!existContainer.isAllFound()) {
             final List<Discussion> newDiscussions = discussionJson.stream()
-                    .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                    .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> {
                         final Discussion discussion = conversionService.convert(json, Discussion.class);
                         discussion.setMergeRequest(mergeRequest);

@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.domain.notify.NewProjectNotify;
@@ -78,16 +78,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ExistsContainer<Project, Long> existsById(Set<Long> projectIds) {
+    public ExistContainer<Project, Long> existsById(Set<Long> projectIds) {
         final List<Project> existsEntity = repository.findAllById(projectIds);
         final Set<Long> existsIds = existsEntity.stream().map(Project::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(projectIds)) {
-            return ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<Long> noExistsId = projectIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 
