@@ -30,14 +30,14 @@ public class Discussion {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "responsible_id")
     private Person responsible;
 
     @Column(name = "resolved")
     private Boolean resolved;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinTable(
             name = "discussion_merge_request",
             joinColumns = @JoinColumn(name = "discussion_id"),
@@ -50,7 +50,8 @@ public class Discussion {
             fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
             }
     )
     private List<Note> notes;

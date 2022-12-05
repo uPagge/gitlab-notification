@@ -18,6 +18,8 @@ public interface DiscussionService {
 
     Discussion update(@NonNull Discussion discussion);
 
+    List<Discussion> updateAll(@NonNull List<Discussion> discussions);
+
     /**
      * Метод отправляющий коментарий в дискуссию.
      *

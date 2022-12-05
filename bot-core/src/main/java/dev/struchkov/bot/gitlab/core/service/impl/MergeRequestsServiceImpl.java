@@ -1,9 +1,11 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
+import dev.struchkov.bot.gitlab.context.domain.AssigneeChanged;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
+import dev.struchkov.bot.gitlab.context.domain.ReviewerChanged;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
@@ -117,24 +119,29 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
             if (isUserInReviewers) {
                 final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
                 if (!savedMergeRequest.isConflict()) {
-                    notifyService.send(
-                            NewPrNotify.builder()
-                                    .projectName(projectName)
-                                    .labels(savedMergeRequest.getLabels())
-                                    .author(savedMergeRequest.getAuthor().getName())
-                                    .description(savedMergeRequest.getDescription())
-                                    .title(savedMergeRequest.getTitle())
-                                    .url(savedMergeRequest.getWebUrl())
-                                    .targetBranch(savedMergeRequest.getTargetBranch())
-                                    .sourceBranch(savedMergeRequest.getSourceBranch())
-                                    .build()
-                    );
+                    sendNotifyAboutNewMr(savedMergeRequest, projectName);
                 }
             }
         }
     }
 
+    private void sendNotifyAboutNewMr(MergeRequest savedMergeRequest, String projectName) {
+        notifyService.send(
+                NewPrNotify.builder()
+                        .projectName(projectName)
+                        .labels(savedMergeRequest.getLabels())
+                        .author(savedMergeRequest.getAuthor().getName())
+                        .description(savedMergeRequest.getDescription())
+                        .title(savedMergeRequest.getTitle())
+                        .url(savedMergeRequest.getWebUrl())
+                        .targetBranch(savedMergeRequest.getTargetBranch())
+                        .sourceBranch(savedMergeRequest.getSourceBranch())
+                        .build()
+        );
+    }
+
     @Override
+    @Transactional
     public MergeRequest update(@NonNull MergeRequest mergeRequest) {
         final MergeRequest oldMergeRequest = repository.findById(mergeRequest.getId())
                 .orElseThrow(notFoundException("MergeRequest не найден"));
@@ -144,24 +151,53 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
             mergeRequest.setNotification(oldMergeRequest.getNotification());
         }
 
-        if (
+        final Long gitlabUserId = personInformation.getId();
+        final AssigneeChanged assigneeChanged = AssigneeChanged.valueOf(gitlabUserId, oldMergeRequest.getAssignee(), mergeRequest.getAssignee());
+        final ReviewerChanged reviewerChanged = ReviewerChanged.valueOf(gitlabUserId, oldMergeRequest.getReviewers(), mergeRequest.getReviewers());
+
+        final boolean isChangedMr =
                 !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())
-                        || oldMergeRequest.isConflict() != mergeRequest.isConflict()
-        ) {
+                        || oldMergeRequest.isConflict() != mergeRequest.isConflict();
+        final boolean isChangedLinkedEntity = reviewerChanged.isChanged() || assigneeChanged.isChanged();
+
+        if (isChangedMr || isChangedLinkedEntity) {
             final Project project = projectService.getByIdOrThrow(mergeRequest.getProjectId());
 
-            if (TRUE.equals(oldMergeRequest.getNotification())) {
+            if (TRUE.equals(notification) && isChangedMr) {
                 notifyAboutStatus(oldMergeRequest, mergeRequest, project);
                 notifyAboutConflict(oldMergeRequest, mergeRequest, project);
-                notifyUpdate(oldMergeRequest, mergeRequest, project);
+                notifyAboutUpdate(oldMergeRequest, mergeRequest, project);
+            }
+
+            if (TRUE.equals(notification) && isChangedLinkedEntity) {
+                notifyReviewer(reviewerChanged, mergeRequest, project);
+                notifyAssignee(assigneeChanged, mergeRequest, project);
             }
 
             return repository.save(mergeRequest);
         }
+
         return oldMergeRequest;
     }
 
+
+    //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление
+    private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest mergeRequest, Project project) {
+        switch (assigneeChanged) {
+            case BECOME -> sendNotifyAboutNewMr(mergeRequest, project.getName());
+        }
+    }
+
+    //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление ревьювера
+    //TODO [05.12.2022|uPagge]: Заменить тип уведомления на самостоятельный
+    private void notifyReviewer(ReviewerChanged reviewerChanged, MergeRequest mergeRequest, Project project) {
+        switch (reviewerChanged) {
+            case BECOME -> sendNotifyAboutNewMr(mergeRequest, project.getName());
+        }
+    }
+
     @Override
+    @Transactional
     public List<MergeRequest> updateAll(@NonNull List<MergeRequest> mergeRequests) {
         return mergeRequests.stream()
                 .map(this::update)
@@ -214,11 +250,13 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return repository.findAllByReviewerId(personId);
     }
 
-    private void notifyUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+    private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+        final Long gitlabUserId = personInformation.getId();
+
         if (
-                !personInformation.getId().equals(mergeRequest.getAuthor().getId())
-                        && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit())
-                        && !mergeRequest.isConflict()
+                !gitlabUserId.equals(mergeRequest.getAuthor().getId()) // Автор MR не пользователь приложения
+                        && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit()) // Изменилась дата последнего коммита
+                        && !mergeRequest.isConflict() // MR не находится в состоянии конфликта
         ) {
             final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId())
                     .stream()
@@ -229,10 +267,10 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                     .filter(Discussion::getResolved)
                     .count();
             final long allYouTasks = discussions.stream()
-                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
+                    .filter(discussion -> gitlabUserId.equals(discussion.getFirstNote().getAuthor().getId()))
                     .count();
             final long resolvedYouTask = discussions.stream()
-                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
+                    .filter(discussion -> gitlabUserId.equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
                     .count();
             notifyService.send(
                     UpdatePrNotify.builder()
@@ -250,10 +288,11 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     protected void notifyAboutConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+        final Long gitlabUserId = personInformation.getId();
         if (
-                !oldMergeRequest.isConflict()
-                        && mergeRequest.isConflict()
-                        && personInformation.getId().equals(oldMergeRequest.getAuthor().getId())
+                !oldMergeRequest.isConflict() // У старого MR не было конфликта
+                        && mergeRequest.isConflict() // А у нового есть
+                        && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
         ) {
             notifyService.send(
                     ConflictPrNotify.builder()
@@ -269,9 +308,10 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     protected void notifyAboutStatus(MergeRequest oldMergeRequest, MergeRequest newMergeRequest, Project project) {
         final MergeRequestState oldStatus = oldMergeRequest.getState();
         final MergeRequestState newStatus = newMergeRequest.getState();
+        final Long gitlabUserId = personInformation.getId();
         if (
-                !oldStatus.equals(newStatus)
-                        && oldMergeRequest.getAuthor().getId().equals(personInformation.getId())
+                !oldStatus.equals(newStatus) // статус изменился
+                        && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // создатель MR является пользователем бота
         ) {
             notifyService.send(
                     StatusPrNotify.builder()

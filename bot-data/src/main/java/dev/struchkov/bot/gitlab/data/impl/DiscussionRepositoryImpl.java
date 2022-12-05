@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.context.repository.DiscussionRepository;
 import dev.struchkov.bot.gitlab.data.jpa.DiscussionJpaRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import java.util.Set;
 /**
  * @author upagge 11.02.2021
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class DiscussionRepositoryImpl implements DiscussionRepository {

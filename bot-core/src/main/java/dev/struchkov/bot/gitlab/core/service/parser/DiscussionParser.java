@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
+import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -17,13 +18,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static dev.struchkov.bot.gitlab.core.utils.StringUtils.H_PRIVATE_TOKEN;
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
+import static dev.struchkov.haiti.utils.Checker.checkNull;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -52,8 +60,12 @@ public class DiscussionParser {
         Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(page, COUNT));
 
         while (mergeRequestSheet.hasContent()) {
-            mergeRequestSheet.getContent()
-                    .forEach(this::processingMergeRequest);
+            final List<MergeRequest> mergeRequests = mergeRequestSheet.getContent();
+
+            for (MergeRequest mergeRequest : mergeRequests) {
+                processingMergeRequest(mergeRequest);
+            }
+
             mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(++page, COUNT));
         }
     }
@@ -86,9 +98,52 @@ public class DiscussionParser {
                         discussion.getNotes().forEach(createNoteLink(mergeRequest));
                         return discussion;
                     })
-                    .filter(discussion -> discussion.getNotes() != null && !discussion.getNotes().isEmpty())
+                    // Фильтрация специально стоит после map(). Таким образом отбрасываются системные уведомления
+                    .filter(discussion -> checkNotEmpty(discussion.getNotes()))
                     .toList();
-            discussionService.createAll(newDiscussions);
+
+            if (checkNotEmpty(newDiscussions)) {
+                personMapping(newDiscussions);
+                discussionService.createAll(newDiscussions);
+            }
+
+        }
+    }
+
+    private void personMapping(List<Discussion> newDiscussions) {
+        final Stream<Person> firstStream = Stream.concat(
+                newDiscussions.stream()
+                        .flatMap(discussion -> discussion.getNotes().stream())
+                        .map(Note::getResolvedBy)
+                        .filter(Objects::nonNull),
+                newDiscussions.stream()
+                        .flatMap(discussion -> discussion.getNotes().stream())
+                        .map(Note::getAuthor)
+                        .filter(Objects::nonNull)
+        );
+
+        final Map<Long, Person> personMap = Stream.concat(
+                        firstStream,
+                        newDiscussions.stream()
+                                .map(Discussion::getResponsible)
+                                .filter(Objects::nonNull)
+                ).distinct()
+                .collect(Collectors.toMap(Person::getId, p -> p));
+
+        for (Discussion newDiscussion : newDiscussions) {
+            final Person responsible = newDiscussion.getResponsible();
+            if (checkNotNull(responsible)) {
+                newDiscussion.setResponsible(personMap.get(responsible.getId()));
+            }
+
+            for (Note note : newDiscussion.getNotes()) {
+                note.setAuthor(personMap.get(note.getAuthor().getId()));
+
+                final Person resolvedBy = note.getResolvedBy();
+                if (checkNotNull(resolvedBy)) {
+                    note.setResolvedBy(personMap.get(resolvedBy.getId()));
+                }
+            }
         }
     }
 
@@ -97,31 +152,45 @@ public class DiscussionParser {
      */
     public void scanOldDiscussions() {
         int page = 0;
-        Page<Discussion> discussionSheet = discussionService.getAll(PageRequest.of(page, COUNT));
+        Page<Discussion> discussionPage = discussionService.getAll(PageRequest.of(page, COUNT));
 
-        while (discussionSheet.hasContent()) {
-            final List<Discussion> discussions = discussionSheet.getContent();
+        while (discussionPage.hasContent()) {
+            final List<Discussion> discussions = discussionPage.getContent();
 
+            // Удаляем обсуждения, которые потеряли свои MR
+            //TODO [05.12.2022|uPagge]: Проверить целесообразность этого действия
+            discussions.stream()
+                    .filter(discussion -> checkNull(discussion.getMergeRequest()))
+                    .map(Discussion::getId)
+                    .forEach(discussionService::deleteById);
+
+            final List<Discussion> newDiscussions = new ArrayList<>();
             for (Discussion discussion : discussions) {
-                if (discussion.getMergeRequest() != null) {
-                    final Optional<Discussion> optNewDiscussion = HttpParse.request(createLinkOldDiscussion(discussion))
-                            .header(ACCEPT)
-                            .header(H_PRIVATE_TOKEN, personProperty.getToken())
-                            .execute(DiscussionJson.class)
+                if (checkNotNull(discussion.getMergeRequest())) {
+                    getOldDiscussionJson(discussion)
                             .map(json -> {
                                 final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
                                 newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
                                 return newDiscussion;
-                            });
-                    optNewDiscussion.ifPresent(discussionService::update);
-                } else {
-                    discussionService.deleteById(discussion.getId());
+                            }).ifPresent(newDiscussions::add);
                 }
             }
 
-            discussionSheet = discussionService.getAll(PageRequest.of(++page, COUNT));
+            if (checkNotEmpty(newDiscussions)) {
+                personMapping(newDiscussions);
+                discussionService.updateAll(newDiscussions);
+            }
+
+            discussionPage = discussionService.getAll(PageRequest.of(++page, COUNT));
         }
 
+    }
+
+    private Optional<DiscussionJson> getOldDiscussionJson(Discussion discussion) {
+        return HttpParse.request(createLinkOldDiscussion(discussion))
+                .header(ACCEPT)
+                .header(H_PRIVATE_TOKEN, personProperty.getToken())
+                .execute(DiscussionJson.class);
     }
 
     private String createLinkOldDiscussion(Discussion discussion) {
@@ -142,7 +211,11 @@ public class DiscussionParser {
 
     private Consumer<Note> createNoteLink(MergeRequest mergeRequest) {
         return note -> {
-            final String url = MessageFormat.format(gitlabProperty.getUrlNote(), mergeRequest.getWebUrl(), note.getId());
+            final String url = MessageFormat.format(
+                    gitlabProperty.getUrlNote(),
+                    mergeRequest.getWebUrl(),
+                    note.getId()
+            );
             note.setWebUrl(url);
         };
     }

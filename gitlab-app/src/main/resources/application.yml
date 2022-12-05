@@ -7,7 +7,7 @@ spring:
   liquibase:
     change-log: classpath:liquibase/changelog.xml
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none
     database-platform: org.hibernate.dialect.PostgreSQLDialect
