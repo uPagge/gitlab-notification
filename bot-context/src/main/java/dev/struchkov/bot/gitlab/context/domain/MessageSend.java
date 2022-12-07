@@ -12,9 +12,10 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MessageSend {
 
+    @EqualsAndHashCode.Include
     private Long id;
     private Long telegramId;
     private String message;

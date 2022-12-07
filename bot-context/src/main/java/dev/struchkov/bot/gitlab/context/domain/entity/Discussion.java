@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author upagge 11.02.2021
@@ -64,5 +65,14 @@ public class Discussion {
     public Note getFirstNote() {
         return this.notes.get(0);
     }
+
+    public Optional<Note> getPrevLastNote() {
+        final int size = notes.size();
+        if (size > 2) {
+            return Optional.of(notes.get(size - 2));
+        }
+        return Optional.empty();
+    }
+
 
 }

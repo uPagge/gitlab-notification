@@ -241,6 +241,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     @Override
+    @Transactional
     public void deleteAllById(@NonNull Set<Long> mergeRequestIds) {
         repository.deleteByIds(mergeRequestIds);
     }

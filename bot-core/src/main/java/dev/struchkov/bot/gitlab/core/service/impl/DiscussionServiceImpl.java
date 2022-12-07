@@ -6,15 +6,16 @@ import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
-import dev.struchkov.bot.gitlab.context.domain.notify.comment.CommentNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import dev.struchkov.bot.gitlab.context.repository.DiscussionRepository;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
+import dev.struchkov.haiti.utils.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,8 +69,11 @@ public class DiscussionServiceImpl implements DiscussionService {
     public Discussion create(@NonNull Discussion discussion) {
         final List<Note> notes = discussion.getNotes();
 
-        notes.forEach(this::notificationPersonal);
-        notes.forEach(note -> notifyNewNote(note, discussion));
+        if (isNeedNotifyNewNote(discussion)) {
+            notifyNewDiscussion(discussion);
+        } else {
+            notes.forEach(this::notificationPersonal);
+        }
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
@@ -81,24 +86,37 @@ public class DiscussionServiceImpl implements DiscussionService {
     /**
      * <p>Уведомляет пользователя, если появился новый комментарий</p>
      */
-    private void notifyNewNote(Note note, Discussion discussion) {
-        if (isNeedNotifyNewNote(note, discussion)) {
-            notifyService.send(
-                    TaskNewNotify.builder()
-                            .authorName(note.getAuthor().getName())
-                            .messageTask(note.getBody())
-                            .url(note.getWebUrl())
-                            .build()
-            );
+    private void notifyNewDiscussion(Discussion discussion) {
+        final Note firstNote = discussion.getFirstNote();
+        final List<Note> notes = discussion.getNotes();
+
+
+        final MergeRequest mergeRequest = discussion.getMergeRequest();
+        final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
+                .mrName(mergeRequest.getTitle())
+                .authorName(firstNote.getAuthor().getName())
+                .discussionMessage(firstNote.getBody())
+                .url(firstNote.getWebUrl());
+
+        if (notes.size() > 1) {
+            for (int i = 1; i < notes.size(); i++) {
+                final Note note = notes.get(i);
+                notifyBuilder.note(
+                        new Pair<>(note.getAuthor().getName(), note.getBody())
+                );
+            }
         }
+
+        notifyService.send(notifyBuilder.build());
     }
 
-    private boolean isNeedNotifyNewNote(Note note, Discussion discussion) {
+    private boolean isNeedNotifyNewNote(Discussion discussion) {
+        final Note firstNote = discussion.getFirstNote();
         final Long gitlabUserId = personInformation.getId();
-        return note.isResolvable() // Тип комментария требует решения (Задачи)
-                && gitlabUserId.equals(discussion.getResponsible().getId()) // Создатель дискуссии пользователь приложения
-                && !gitlabUserId.equals(note.getAuthor().getId()) // Создатель комментария не пользователь системы
-                && FALSE.equals(note.getResolved()); // Комментарий не отмечен как решенный
+        return firstNote.isResolvable() // Тип комментария требует решения (Задачи)
+                && gitlabUserId.equals(discussion.getResponsible().getId()) // Ответственный за дискуссию пользователь
+                && !gitlabUserId.equals(firstNote.getAuthor().getId()) // Создатель комментария не пользователь системы
+                && FALSE.equals(firstNote.getResolved()); // Комментарий не отмечен как решенный
     }
 
     @Override
@@ -160,7 +178,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
             } else {
                 if (userParticipatedInDiscussion) {
-                    notifyNewAnswer(newNote);
+                    notifyNewAnswer(discussion, newNote);
                 } else {
                     notificationPersonal(newNote);
                 }
@@ -169,11 +187,25 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     }
 
-    private void notifyNewAnswer(Note note) {
+    private void notifyNewAnswer(Discussion discussion, Note note) {
         if (!personInformation.getId().equals(note.getAuthor().getId())) {
+            final Note firstNote = discussion.getFirstNote();
+            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+
+
+            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder();
+
+            if (prevLastNote.isPresent()) {
+                final Note prevNote = prevLastNote.get();
+                notifyBuilder.previousMessage(prevNote.getBody());
+                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            }
+
             notifyService.send(
-                    CommentNotify.builder()
+                    notifyBuilder
                             .url(note.getWebUrl())
+                            .discussionMessage(firstNote.getBody())
+                            .discussionAuthor(firstNote.getAuthor().getName())
                             .message(note.getBody())
                             .authorName(note.getAuthor().getName())
                             .build()
@@ -287,7 +319,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         }
         if (recipientsLogins.contains(personInformation.getUsername())) {
             notifyService.send(
-                    CommentNotify.builder()
+                    NewCommentNotify.builder()
                             .authorName(note.getAuthor().getName())
                             .message(note.getBody())
                             .url(note.getWebUrl())

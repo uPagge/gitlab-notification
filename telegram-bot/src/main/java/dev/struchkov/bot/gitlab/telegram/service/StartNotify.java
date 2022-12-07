@@ -25,7 +25,7 @@ public class StartNotify {
         if (!settingService.isFirstStart()) {
             notifyService.send(
                     SimpleTextNotify.builder()
-                            .message("Привет. Желаю продуктивного дня :)" +
+                            .message("Hello. I wish you a productive day :)" +
                                     "\n-- -- -- -- --\n" +
                                     "Version " + appProperty.getVersion() + " | Developer: [uPagge](https://mark.struchkov.dev)")
                             .build()

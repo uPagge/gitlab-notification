@@ -2,7 +2,37 @@ stages:
   - build
   - deploy
 
-build:
+build-develop:
+  image: maven:3.8.6-eclipse-temurin-17
+  stage: build
+  variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
+  only:
+    - develop
+  except:
+    - tags
+  script:
+    - 'mvn -U clean package'
+  artifacts:
+    paths:
+      - gitlab-app/target/gitlab-notification.jar
+
+docker-build-develop:
+  image: upagge/docker-buildx:latest
+  stage: deploy
+  only:
+    - develop
+  except:
+    - tags
+  services:
+    - docker:dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+  script:
+    - docker buildx create --use
+    - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$CI_REGISTRY_IMAGE:develop" .
+
+build-release:
   image: maven:3.8.6-eclipse-temurin-17
   stage: build
   variables:
@@ -17,7 +47,7 @@ build:
     paths:
       - gitlab-app/target/gitlab-notification.jar
 
-docker-build:
+docker-build-release:
   image: upagge/docker-buildx:latest
   stage: deploy
   only:
