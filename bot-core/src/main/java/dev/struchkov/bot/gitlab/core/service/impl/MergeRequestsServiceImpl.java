@@ -29,14 +29,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
-import static dev.struchkov.haiti.utils.Checker.checkNull;
 import static java.lang.Boolean.TRUE;
 
 @Service
@@ -146,8 +144,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         final MergeRequest oldMergeRequest = repository.findById(mergeRequest.getId())
                 .orElseThrow(notFoundException("MergeRequest не найден"));
 
-        final Boolean notification = mergeRequest.getNotification();
-        if (checkNull(notification)) {
+        final Boolean notification = oldMergeRequest.getNotification();
+        if (checkNotNull(notification)) {
             mergeRequest.setNotification(oldMergeRequest.getNotification());
         }
 
@@ -252,27 +250,34 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
-        final Long gitlabUserId = personInformation.getId();
+        final Long botUserGitlabId = personInformation.getId();
 
         if (
-                !gitlabUserId.equals(mergeRequest.getAuthor().getId()) // Автор MR не пользователь приложения
+                !botUserGitlabId.equals(mergeRequest.getAuthor().getId()) // Автор MR не пользователь приложения
                         && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit()) // Изменилась дата последнего коммита
                         && !mergeRequest.isConflict() // MR не находится в состоянии конфликта
         ) {
-            final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId())
-                    .stream()
-                    .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
-                    .toList();
-            final long allTask = discussions.size();
-            final long resolvedTask = discussions.stream()
-                    .filter(Discussion::getResolved)
-                    .count();
-            final long allYouTasks = discussions.stream()
-                    .filter(discussion -> gitlabUserId.equals(discussion.getFirstNote().getAuthor().getId()))
-                    .count();
-            final long resolvedYouTask = discussions.stream()
-                    .filter(discussion -> gitlabUserId.equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
-                    .count();
+
+            long allTask = 0;
+            long resolvedTask = 0;
+            long allYouTasks = 0;
+            long resolvedYouTask = 0;
+            final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId());
+            for (Discussion discussion : discussions) {
+                if (checkNotNull(discussion.getResponsible())) {
+                    final boolean isBotUserAuthorDiscussion = botUserGitlabId.equals(discussion.getFirstNote().getAuthor().getId());
+                    allTask += 1;
+                    if (isBotUserAuthorDiscussion) {
+                        allYouTasks += 1;
+                    }
+                    if (TRUE.equals(discussion.getResolved())) {
+                        resolvedTask += 1;
+                        if (isBotUserAuthorDiscussion) {
+                            resolvedYouTask += 1;
+                        }
+                    }
+                }
+            }
             notifyService.send(
                     UpdatePrNotify.builder()
                             .author(oldMergeRequest.getAuthor().getName())
