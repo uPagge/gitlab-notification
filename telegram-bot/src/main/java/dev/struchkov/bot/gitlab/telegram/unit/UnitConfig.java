@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
+import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.godfather.main.core.unit.UnitActiveType;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
@@ -36,6 +37,7 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.PARSE_OWNER_PROJE
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_PRIVATE_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSE_OWNER_PROJECT;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
@@ -54,6 +56,8 @@ public class UnitConfig {
     private final AppSettingService settingService;
     private final NoteService noteService;
     private final DiscussionService discussionService;
+    private final NotifyService notifyService;
+
     private final ProjectParser projectParser;
 
     @Unit(value = CHECK_FIRST_START, main = true)
@@ -109,7 +113,7 @@ public class UnitConfig {
                                     }
                                 }
                             }
-                            return boxAnswer("Ошибка");
+                            return boxAnswer("Error");
                         }
                 )
                 .build();
@@ -120,8 +124,7 @@ public class UnitConfig {
             @Unit(CHECK_PARSER_PRIVATE_PROJECT) MainUnit<Mail> checkParserPrivateProject
     ) {
         return AnswerText.<Mail>builder()
-                .answer(
-                        boxAnswer(
+                .answer(() -> boxAnswer(
                                 "Start tracking private projects?",
                                 inlineKeyBoard(
                                         simpleLine(
@@ -143,6 +146,7 @@ public class UnitConfig {
     ) {
         return AnswerCheck.<Mail>builder()
                 .check(mail -> "YES".equalsIgnoreCase(mail.getText()))
+                .intermediateAnswerIfTrue(replaceBoxAnswer("Scanning of private projects has begun. Wait..."))
                 .unitTrue(parserPrivateProject)
                 .unitFalse(textParseOwnerProject)
                 .build();
@@ -154,8 +158,9 @@ public class UnitConfig {
     ) {
         return AnswerText.<Mail>builder()
                 .answer(() -> {
+                    notifyService.disableAllNotify();
                     projectParser.parseAllPrivateProject();
-                    return boxAnswer("Projects have been successfully added to tracking");
+                    return replaceBoxAnswer("Projects have been successfully added to tracking");
                 })
                 .next(textParseOwnerProject)
                 .build();
@@ -189,6 +194,7 @@ public class UnitConfig {
     ) {
         return AnswerCheck.<Mail>builder()
                 .check(message -> "YES".equalsIgnoreCase(message.getText()))
+                .intermediateAnswerIfTrue(replaceBoxAnswer("Scanning of public projects has begun. Wait..."))
                 .unitTrue(parseOwnerProject)
                 .unitFalse(endSetting)
                 .build();
@@ -201,7 +207,7 @@ public class UnitConfig {
         return AnswerText.<Mail>builder()
                 .answer(() -> {
                     projectParser.parseAllProjectOwner();
-                    return boxAnswer("Projects have been successfully added to tracking");
+                    return replaceBoxAnswer("Projects have been successfully added to tracking");
                 })
                 .next(endSetting)
                 .build();
@@ -213,7 +219,8 @@ public class UnitConfig {
                 .answer(
                         () -> {
                             settingService.disableFirstStart();
-                            return boxAnswer("""
+                            notifyService.enableAllNotify();
+                            return replaceBoxAnswer("""
                                     Configuration completed successfully
                                     Developer: [uPagge](https://mark.struchkov.dev)
                                     """);

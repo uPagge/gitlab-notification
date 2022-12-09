@@ -10,11 +10,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotifyServiceImpl implements NotifyService {
 
+    private boolean enableAllNotify = true;
     private final MessageSendService messageSendService;
 
     @Override
     public <T extends Notify> void send(T notify) {
-        messageSendService.send(notify);
+        if (enableAllNotify) {
+            messageSendService.send(notify);
+        }
+    }
+
+    @Override
+    public void enableAllNotify() {
+        enableAllNotify = true;
+    }
+
+    @Override
+    public void disableAllNotify() {
+        enableAllNotify = false;
     }
 
 }

@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -47,12 +46,10 @@ public class ProjectParser {
     private final GitlabProperty gitlabProperty;
     private final PersonProperty personProperty;
 
-    @Transactional
     public void parseAllPrivateProject() {
         parseProjects(PRIVATE);
     }
 
-    @Transactional
     public void parseAllProjectOwner() {
         parseProjects(OWNER);
     }

@@ -37,4 +37,12 @@ public enum AssigneeChanged {
         return AssigneeChanged.NOT_CHANGED;
     }
 
+    public boolean getNewStatus(boolean oldStatus) {
+        return switch (this) {
+            case BECOME -> true;
+            case DELETED -> false;
+            case NOT_CHANGED, NOT_AFFECT_USER -> oldStatus;
+        };
+    }
+
 }

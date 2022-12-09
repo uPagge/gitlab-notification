@@ -52,50 +52,37 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     @Override
     @Transactional
     public MergeRequest create(@NonNull MergeRequest mergeRequest) {
-        mergeRequest.setNotification(true);
+        final boolean botUserReviewer = isBotUserReviewer(mergeRequest);
+        final boolean botUserAssignee = isBotUserAssigneeAndNotAuthor(mergeRequest);
 
-        final MergeRequest newMergeRequest = repository.save(mergeRequest);
+        mergeRequest.setNotification(botUserReviewer || botUserAssignee);
+        mergeRequest.setUserAssignee(botUserAssignee);
+        mergeRequest.setUserReviewer(botUserReviewer);
 
-        notifyNewMergeRequest(newMergeRequest);
+        final MergeRequest savedMergeRequest = repository.save(mergeRequest);
 
-        return newMergeRequest;
+        if (botUserReviewer || botUserAssignee) {
+            if (!mergeRequest.isConflict()) {
+                final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
+                if (botUserReviewer) sendNotifyAboutNewMr(savedMergeRequest, projectName);
+                if (botUserAssignee) sendNotifyAboutAssignee(mergeRequest, projectName);
+            }
+        }
+
+        return savedMergeRequest;
     }
 
-    /**
-     * Уведомление о новом MergeRequest.
-     *
-     * @param savedMergeRequest сохраненный в базу новый MergeRequest.
-     */
-    private void notifyNewMergeRequest(MergeRequest savedMergeRequest) {
-        notifyUserAboutNewPullRequestIfHeIsReviewer(savedMergeRequest);
-        notifyUserAboutNewPullRequestIfHeIsAssignee(savedMergeRequest);
-    }
-
-    private void notifyUserAboutNewPullRequestIfHeIsAssignee(MergeRequest savedMergeRequest) {
+    private boolean isBotUserAssigneeAndNotAuthor(MergeRequest mergeRequest) {
         final Long gitlabUserId = personInformation.getId();
-        final Person assignee = savedMergeRequest.getAssignee();
-        final Person author = savedMergeRequest.getAuthor();
+        final Person assignee = mergeRequest.getAssignee();
+        final Person author = mergeRequest.getAuthor();
 
         if (checkNotNull(assignee)) {
             if (gitlabUserId.equals(assignee.getId()) && !isAuthorSameAssignee(author, assignee)) {
-                final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
-                if (!savedMergeRequest.isConflict()) {
-                    //TODO [05.12.2022|uPagge]: Заменить уведомление. Нужно создать новое уведомление, если пользователя назначали ответственным
-                    notifyService.send(
-                            NewPrNotify.builder()
-                                    .projectName(projectName)
-                                    .labels(savedMergeRequest.getLabels())
-                                    .author(author.getName())
-                                    .description(savedMergeRequest.getDescription())
-                                    .title(savedMergeRequest.getTitle())
-                                    .url(savedMergeRequest.getWebUrl())
-                                    .targetBranch(savedMergeRequest.getTargetBranch())
-                                    .sourceBranch(savedMergeRequest.getSourceBranch())
-                                    .build()
-                    );
-                }
+                return true;
             }
         }
+        return false;
     }
 
     /**
@@ -107,33 +94,46 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return author.getId().equals(assignee.getId());
     }
 
-    private void notifyUserAboutNewPullRequestIfHeIsReviewer(MergeRequest savedMergeRequest) {
+    private boolean isBotUserReviewer(MergeRequest savedMergeRequest) {
         final List<Person> reviewers = savedMergeRequest.getReviewers();
-        final Long gitlabUserId = personInformation.getId();
+        final Long botUserGitlabId = personInformation.getId();
 
         if (checkNotEmpty(reviewers)) {
-            final boolean isUserInReviewers = reviewers.stream()
-                    .anyMatch(reviewer -> gitlabUserId.equals(reviewer.getId()));
-            if (isUserInReviewers) {
-                final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
-                if (!savedMergeRequest.isConflict()) {
-                    sendNotifyAboutNewMr(savedMergeRequest, projectName);
+            for (Person reviewer : reviewers) {
+                if (botUserGitlabId.equals(reviewer.getId())) {
+                    return true;
                 }
             }
         }
+        return false;
     }
 
-    private void sendNotifyAboutNewMr(MergeRequest savedMergeRequest, String projectName) {
+    private void sendNotifyAboutNewMr(MergeRequest mergeRequest, String projectName) {
         notifyService.send(
                 NewPrNotify.builder()
                         .projectName(projectName)
-                        .labels(savedMergeRequest.getLabels())
-                        .author(savedMergeRequest.getAuthor().getName())
-                        .description(savedMergeRequest.getDescription())
-                        .title(savedMergeRequest.getTitle())
-                        .url(savedMergeRequest.getWebUrl())
-                        .targetBranch(savedMergeRequest.getTargetBranch())
-                        .sourceBranch(savedMergeRequest.getSourceBranch())
+                        .labels(mergeRequest.getLabels())
+                        .author(mergeRequest.getAuthor().getName())
+                        .description(mergeRequest.getDescription())
+                        .title(mergeRequest.getTitle())
+                        .url(mergeRequest.getWebUrl())
+                        .targetBranch(mergeRequest.getTargetBranch())
+                        .sourceBranch(mergeRequest.getSourceBranch())
+                        .build()
+        );
+    }
+
+    private void sendNotifyAboutAssignee(MergeRequest mergeRequest, String projectName) {
+        notifyService.send(
+                NewPrNotify.builder()
+                        .projectName(projectName)
+                        .labels(mergeRequest.getLabels())
+                        .author(mergeRequest.getAuthor().getName())
+                        .description(mergeRequest.getDescription())
+                        .title(mergeRequest.getTitle())
+                        .url(mergeRequest.getWebUrl())
+                        .targetBranch(mergeRequest.getTargetBranch())
+                        .sourceBranch(mergeRequest.getSourceBranch())
                         .build()
         );
     }
@@ -144,35 +144,37 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         final MergeRequest oldMergeRequest = repository.findById(mergeRequest.getId())
                 .orElseThrow(notFoundException("MergeRequest не найден"));
 
-        final Boolean notification = oldMergeRequest.getNotification();
-        if (checkNotNull(notification)) {
-            mergeRequest.setNotification(oldMergeRequest.getNotification());
-        }
+        mergeRequest.setNotification(oldMergeRequest.isNotification());
 
         final Long gitlabUserId = personInformation.getId();
         final AssigneeChanged assigneeChanged = AssigneeChanged.valueOf(gitlabUserId, oldMergeRequest.getAssignee(), mergeRequest.getAssignee());
         final ReviewerChanged reviewerChanged = ReviewerChanged.valueOf(gitlabUserId, oldMergeRequest.getReviewers(), mergeRequest.getReviewers());
 
-        final boolean isChangedMr =
-                !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())
-                        || oldMergeRequest.isConflict() != mergeRequest.isConflict();
+        mergeRequest.setUserAssignee(assigneeChanged.getNewStatus(oldMergeRequest.isUserAssignee()));
+        mergeRequest.setUserReviewer(reviewerChanged.getNewStatus(oldMergeRequest.isUserReviewer()));
+
+        final boolean isChangedMr = !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())
+                || oldMergeRequest.isConflict() != mergeRequest.isConflict();
         final boolean isChangedLinkedEntity = reviewerChanged.isChanged() || assigneeChanged.isChanged();
 
         if (isChangedMr || isChangedLinkedEntity) {
-            final Project project = projectService.getByIdOrThrow(mergeRequest.getProjectId());
+            final MergeRequest savedMergeRequest = repository.save(mergeRequest);
 
-            if (TRUE.equals(notification) && isChangedMr) {
-                notifyAboutStatus(oldMergeRequest, mergeRequest, project);
-                notifyAboutConflict(oldMergeRequest, mergeRequest, project);
-                notifyAboutUpdate(oldMergeRequest, mergeRequest, project);
+            if (oldMergeRequest.isNotification()) {
+                final Project project = projectService.getByIdOrThrow(mergeRequest.getProjectId());
+
+                if (isChangedMr) {
+                    notifyAboutStatus(oldMergeRequest, savedMergeRequest, project);
+                    notifyAboutConflict(oldMergeRequest, savedMergeRequest, project);
+                    notifyAboutUpdate(oldMergeRequest, savedMergeRequest, project);
+                }
+
+                if (isChangedLinkedEntity) {
+                    notifyReviewer(reviewerChanged, savedMergeRequest, project);
+                    notifyAssignee(assigneeChanged, savedMergeRequest, project);
+                }
             }
-
-            if (TRUE.equals(notification) && isChangedLinkedEntity) {
-                notifyReviewer(reviewerChanged, mergeRequest, project);
-                notifyAssignee(assigneeChanged, mergeRequest, project);
-            }
-
-            return repository.save(mergeRequest);
+            return savedMergeRequest;
         }
 
         return oldMergeRequest;

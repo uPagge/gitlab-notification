@@ -96,9 +96,14 @@
             <column name="notification" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="is_assignee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_reviewer" type="boolean">
+                <constraints nullable="false"/>
+            </column>
             <column name="date_last_commit" type="datetime"/>
         </createTable>
-
 
         <createIndex tableName="merge_request" indexName="i_merge_request_project_id">
             <column name="project_id"/>
@@ -112,12 +117,7 @@
     </changeSet>
 
     <changeSet id="2022-12-03-create-table-labels" author="uPagge">
-        <createSequence sequenceName="seq_merge_request" startValue="1" incrementBy="1" cacheSize="20"/>
-
         <createTable tableName="merge_request_label">
-            <column name="id" type="int" defaultValueSequenceNext="seq_merge_request">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
             <column name="merge_request_id" type="int">
                 <constraints nullable="false" foreignKeyName="merge_request_label_merge_request_id"
                              references="merge_request(id)" deleteCascade="true"/>
@@ -234,6 +234,21 @@
         <createIndex tableName="pipeline" indexName="i_pipeline_person_id">
             <column name="person_id"/>
         </createIndex>
+    </changeSet>
+
+    <changeSet id="2022-12-05-create-table-reviewers" author="uPagge">
+        <createTable tableName="merge_request_reviewer">
+            <column name="merge_request_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_merge_request_reviewer_merge_request_id"
+                             references="merge_request(id)" deleteCascade="true"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_merge_request_reviewer_person_id"
+                             references="person(id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="merge_request_reviewer" columnNames="merge_request_id, person_id"/>
     </changeSet>
 
 </databaseChangeLog>

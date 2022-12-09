@@ -99,7 +99,13 @@ public class MergeRequest {
     private String sourceBranch;
 
     @Column(name = "notification")
-    private Boolean notification;
+    private boolean notification;
+
+    @Column(name = "is_assignee")
+    private boolean userAssignee;
+
+    @Column(name = "is_reviewer")
+    private boolean userReviewer;
 
     @ElementCollection
     @CollectionTable(name = "merge_request_label", joinColumns = @JoinColumn(name = "merge_request_id"))

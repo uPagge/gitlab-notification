@@ -7,6 +7,7 @@ import dev.struchkov.bot.gitlab.context.service.PersonService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -34,12 +35,14 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Person getByIdOrThrown(@NonNull Long personId) {
         return repository.findById(personId)
                 .orElseThrow(notFoundException("Пользователь не найден"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ExistContainer<Person, Long> existsById(Set<Long> personIds) {
         final List<Person> existsEntity = repository.findAllById(personIds);
         final Set<Long> existsIds = existsEntity.stream().map(Person::getId).collect(Collectors.toSet());
@@ -54,6 +57,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public List<Person> createAll(List<Person> newPersons) {
         return newPersons.stream()
                 .map(this::create)

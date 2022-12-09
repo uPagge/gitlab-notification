@@ -66,6 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public List<Project> createAll(List<Project> newProjects) {
         return newProjects.stream()
                 .map(this::create)
@@ -78,6 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ExistContainer<Project, Long> existsById(Set<Long> projectIds) {
         final List<Project> existsEntity = repository.findAllById(projectIds);
         final Set<Long> existsIds = existsEntity.stream().map(Project::getId).collect(Collectors.toSet());

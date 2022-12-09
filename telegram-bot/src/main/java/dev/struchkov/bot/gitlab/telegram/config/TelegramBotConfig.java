@@ -19,9 +19,11 @@ import dev.struchkov.godfather.telegram.domain.config.TelegramConnectConfig;
 import dev.struchkov.godfather.telegram.main.context.TelegramConnect;
 import dev.struchkov.godfather.telegram.simple.consumer.EventDistributorService;
 import dev.struchkov.godfather.telegram.simple.context.service.EventDistributor;
+import dev.struchkov.godfather.telegram.simple.context.service.SenderStorageService;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.godfather.telegram.simple.core.MailAutoresponderTelegram;
 import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
+import dev.struchkov.godfather.telegram.simple.core.service.SenderMapStorageService;
 import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -77,12 +79,19 @@ public class TelegramBotConfig {
     }
 
     @Bean
+    public SenderStorageService senderStorageService() {
+        return new SenderMapStorageService();
+    }
+
+    @Bean
     public TelegramSending sending(
             TelegramConnect telegramConnect,
+            SenderStorageService senderStorageService,
             ReplaceUrlLocalhost replaceUrlLocalhost
     ) {
         final TelegramSender telegramSender = new TelegramSender(telegramConnect);
         telegramSender.setSendPreProcessing(replaceUrlLocalhost);
+        telegramSender.setSenderRepository(senderStorageService);
         return telegramSender;
     }
 
