@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -46,10 +47,12 @@ public class ProjectParser {
     private final GitlabProperty gitlabProperty;
     private final PersonProperty personProperty;
 
+    @Transactional
     public void parseAllPrivateProject() {
         parseProjects(PRIVATE);
     }
 
+    @Transactional
     public void parseAllProjectOwner() {
         parseProjects(OWNER);
     }
@@ -66,9 +69,9 @@ public class ProjectParser {
 
             createNewPersons(projectJsons);
 
-            final ExistsContainer<Project, Long> existsContainer = projectService.existsById(projectIds);
+            final ExistContainer<Project, Long> existContainer = projectService.existsById(projectIds);
             final List<Project> newProjects = projectJsons.stream()
-                    .filter(json -> existsContainer.getIdNoFound().contains(json.getId()))
+                    .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
                     .map(json -> conversionService.convert(json, Project.class))
                     .toList();
 
@@ -80,15 +83,29 @@ public class ProjectParser {
         }
     }
 
+    public void parseByUrl(String projectUrl) {
+        final ProjectJson projectJson = HttpParse.request(projectUrl)
+                .header(ACCEPT)
+                .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
+                .execute(ProjectJson.class)
+                .orElseThrow(convertException("Ошибка получения проекта"));
+        if (!projectService.existsById(projectJson.getId())) {
+            createNewPersons(List.of(projectJson));
+
+            final Project newProject = conversionService.convert(projectJson, Project.class);
+            projectService.create(newProject);
+        }
+    }
+
     private void createNewPersons(List<ProjectJson> projectJsons) {
         final Set<Long> personCreatorId = projectJsons.stream()
                 .map(ProjectJson::getCreatorId)
                 .collect(Collectors.toSet());
 
-        final ExistsContainer<Person, Long> existsContainer = personService.existsById(personCreatorId);
+        final ExistContainer<Person, Long> existContainer = personService.existsById(personCreatorId);
 
-        if (!existsContainer.isAllFound()) {
-            final Collection<Long> notFoundId = existsContainer.getIdNoFound();
+        if (!existContainer.isAllFound()) {
+            final Collection<Long> notFoundId = existContainer.getIdNoFound();
 
             final List<Person> newPersons = notFoundId.stream()
                     .map(
@@ -111,18 +128,6 @@ public class ProjectParser {
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .executeList(ProjectJson.class);
-    }
-
-    public void parseByUrl(String projectUrl) {
-        final Project project = HttpParse.request(projectUrl)
-                .header(ACCEPT)
-                .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                .execute(ProjectJson.class)
-                .map(json -> conversionService.convert(json, Project.class))
-                .orElseThrow(convertException("Ошибка получения проекта"));
-        if (!projectService.existsById(project.getId())) {
-            projectService.create(project);
-        }
     }
 
 }

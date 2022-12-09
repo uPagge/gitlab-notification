@@ -4,8 +4,6 @@ import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.text.MessageFormat;
-
 @Getter
 public class UpdatePrNotify extends PrNotify {
 
@@ -36,10 +34,24 @@ public class UpdatePrNotify extends PrNotify {
 
     @Override
     public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *MergeRequest update | {6}*{3}[{1}]({2}){3}{4}: {5}",
-                Smile.UPDATE.getValue(), title, url, Smile.HR.getValue(), Smile.AUTHOR.getValue(), author, projectName, allTasks, allResolvedTasks, personTasks, personResolvedTasks
-        );
+        final StringBuilder builder = new StringBuilder(Smile.UPDATE.getValue()).append(" *MergeRequest update | ").append(projectName).append("*")
+                .append(Smile.HR.getValue())
+                .append("[").append(title).append("](").append(url).append(")");
+
+
+        if (allTasks > 0) {
+            builder.append(Smile.HR.getValue())
+                    .append("All tasks: ").append(allResolvedTasks).append("/").append(allTasks);
+
+            if (personTasks > 0) {
+                builder.append("\nYour tasks: ").append(personResolvedTasks).append("/").append(personTasks);
+            }
+        }
+
+        builder.append(Smile.HR.getValue())
+                .append(Smile.AUTHOR.getValue()).append(": ").append(author);
+
+        return builder.toString();
     }
 
 }

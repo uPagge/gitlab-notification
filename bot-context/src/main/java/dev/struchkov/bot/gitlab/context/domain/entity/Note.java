@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
+
 @Getter
 @Setter
 @Entity
@@ -20,7 +23,8 @@ import java.time.LocalDateTime;
 public class Note {
 
     @Id
-    @Column
+    @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "type")
@@ -35,7 +39,7 @@ public class Note {
     @Column(name = "updated_date")
     private LocalDateTime updated;
 
-    @ManyToOne
+    @ManyToOne(cascade = {PERSIST, MERGE})
     @JoinColumn(name = "author_id")
     private Person author;
 
@@ -57,7 +61,7 @@ public class Note {
     @Column(name = "resolved")
     private Boolean resolved;
 
-    @ManyToOne
+    @ManyToOne(cascade = {PERSIST, MERGE})
     @JoinColumn(name = "resolved_id")
     private Person resolvedBy;
 

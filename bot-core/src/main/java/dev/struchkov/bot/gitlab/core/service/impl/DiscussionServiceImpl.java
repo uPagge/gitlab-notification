@@ -1,20 +1,21 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
-import dev.struchkov.bot.gitlab.context.domain.notify.comment.CommentNotify;
+import dev.struchkov.bot.gitlab.context.domain.entity.Person;
+import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskNewNotify;
 import dev.struchkov.bot.gitlab.context.repository.DiscussionRepository;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
-import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
+import dev.struchkov.haiti.utils.Pair;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import okhttp3.RequestBody;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -32,12 +34,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static java.lang.Boolean.FALSE;
 
 /**
@@ -52,7 +56,6 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     protected static final Pattern PATTERN = Pattern.compile("@[\\w]+");
 
-    private final PersonService personService;
     private final DiscussionRepository repository;
     private final PersonInformation personInformation;
 
@@ -62,85 +65,147 @@ public class DiscussionServiceImpl implements DiscussionService {
     private final NotifyService notifyService;
 
     @Override
+    @Transactional
     public Discussion create(@NonNull Discussion discussion) {
-        discussion.getNotes().forEach(note -> personService.create(note.getAuthor()));
-        discussion.getNotes().forEach(this::notificationPersonal);
-        discussion.getNotes().forEach(note -> notifyNewNote(note, discussion));
+        final List<Note> notes = discussion.getNotes();
+
+        if (isNeedNotifyNewNote(discussion)) {
+            notifyNewDiscussion(discussion);
+        } else {
+            notes.forEach(this::notificationPersonal);
+        }
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
+
         discussion.setResolved(resolved);
+
         return repository.save(discussion);
     }
 
     /**
      * <p>Уведомляет пользователя, если появился новый комментарий</p>
      */
-    private void notifyNewNote(Note note, Discussion discussion) {
-        if (isNeedNotifyNewNote(note, discussion)) {
-            notifyService.send(
-                    TaskNewNotify.builder()
-                            .authorName(note.getAuthor().getName())
-                            .messageTask(note.getBody())
-                            .url(note.getWebUrl())
-                            .build()
-            );
+    private void notifyNewDiscussion(Discussion discussion) {
+        final Note firstNote = discussion.getFirstNote();
+        final List<Note> notes = discussion.getNotes();
+
+
+        final MergeRequest mergeRequest = discussion.getMergeRequest();
+        final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
+                .mrName(mergeRequest.getTitle())
+                .authorName(firstNote.getAuthor().getName())
+                .discussionMessage(firstNote.getBody())
+                .url(firstNote.getWebUrl());
+
+        if (notes.size() > 1) {
+            for (int i = 1; i < notes.size(); i++) {
+                final Note note = notes.get(i);
+                notifyBuilder.note(
+                        new Pair<>(note.getAuthor().getName(), note.getBody())
+                );
+            }
         }
+
+        notifyService.send(notifyBuilder.build());
     }
 
-    private boolean isNeedNotifyNewNote(Note note, Discussion discussion) {
-        final Long personId = personInformation.getId();
-        return note.isResolvable() // Тип комментария требует решения (Задачи)
-                && personId.equals(discussion.getResponsible().getId()) // Создатель дискуссии пользователь приложения
-                && !personId.equals(note.getAuthor().getId()) // Создатель комментария не пользователь системы
-                && FALSE.equals(note.getResolved()); // Комментарий не отмечен как решенный
+    private boolean isNeedNotifyNewNote(Discussion discussion) {
+        final Note firstNote = discussion.getFirstNote();
+        final Long gitlabUserId = personInformation.getId();
+        return firstNote.isResolvable() // Тип комментария требует решения (Задачи)
+                && gitlabUserId.equals(discussion.getResponsible().getId()) // Ответственный за дискуссию пользователь
+                && !gitlabUserId.equals(firstNote.getAuthor().getId()) // Создатель комментария не пользователь системы
+                && FALSE.equals(firstNote.getResolved()); // Комментарий не отмечен как решенный
     }
 
     @Override
     public Discussion update(@NonNull Discussion discussion) {
         final Discussion oldDiscussion = repository.findById(discussion.getId())
                 .orElseThrow(notFoundException("Дискуссия не найдена"));
-        final Map<Long, Note> idAndNoteMap = oldDiscussion
-                .getNotes().stream()
-                .collect(Collectors.toMap(Note::getId, note -> note));
 
-        // Пользователь участвовал в обсуждении
-        final boolean userParticipatedInDiscussion = discussion.getNotes().stream()
-                .anyMatch(note -> personInformation.getId().equals(note.getAuthor().getId()));
-
-        discussion.setMergeRequest(oldDiscussion.getMergeRequest());
         discussion.setResponsible(oldDiscussion.getResponsible());
-        discussion.getNotes().forEach(note -> updateNote(note, idAndNoteMap, userParticipatedInDiscussion));
+        discussion.setMergeRequest(oldDiscussion.getMergeRequest());
+
+        final Person responsiblePerson = discussion.getResponsible();
+        if (checkNotNull(responsiblePerson)) {
+            for (Note note : discussion.getNotes()) {
+                if (responsiblePerson.getId().equals(note.getAuthor().getId())) {
+                    note.setAuthor(responsiblePerson);
+                }
+                final Person resolvedBy = note.getResolvedBy();
+                if (checkNotNull(resolvedBy)) {
+                    if (responsiblePerson.getId().equals(resolvedBy.getId())) {
+                        note.setResolvedBy(responsiblePerson);
+                    }
+                }
+            }
+        }
+        notifyUpdateNote(oldDiscussion, discussion);
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
+
         discussion.setResolved(resolved);
 
         return repository.save(discussion);
     }
 
-    private void updateNote(Note note, Map<Long, Note> noteMap, boolean inDiscussion) {
-        if (noteMap.containsKey(note.getId())) {
-            final Note oldNote = noteMap.get(note.getId());
-
-            if (note.isResolvable()) {
-                updateTask(note, oldNote);
-            }
-
-        } else {
-            if (inDiscussion) {
-                notifyNewAnswer(note);
-            } else {
-                notificationPersonal(note);
-            }
-        }
+    @Override
+    public List<Discussion> updateAll(@NonNull List<Discussion> discussions) {
+        return discussions.stream()
+                .map(this::update)
+                .collect(Collectors.toList());
     }
 
-    private void notifyNewAnswer(Note note) {
+    private void notifyUpdateNote(Discussion oldDiscussion, Discussion discussion) {
+        final Map<Long, Note> noteMap = oldDiscussion
+                .getNotes().stream()
+                .collect(Collectors.toMap(Note::getId, n -> n));
+
+        // Пользователь участвовал в обсуждении
+        final boolean userParticipatedInDiscussion = oldDiscussion.getNotes().stream()
+                .anyMatch(note -> personInformation.getId().equals(note.getAuthor().getId()));
+
+        for (Note newNote : discussion.getNotes()) {
+            final Long newNoteId = newNote.getId();
+            if (noteMap.containsKey(newNoteId)) {
+                final Note oldNote = noteMap.get(newNoteId);
+
+                if (newNote.isResolvable()) {
+                    updateTask(newNote, oldNote);
+                }
+
+            } else {
+                if (userParticipatedInDiscussion) {
+                    notifyNewAnswer(discussion, newNote);
+                } else {
+                    notificationPersonal(newNote);
+                }
+            }
+        }
+
+    }
+
+    private void notifyNewAnswer(Discussion discussion, Note note) {
         if (!personInformation.getId().equals(note.getAuthor().getId())) {
+            final Note firstNote = discussion.getFirstNote();
+            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+
+
+            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder();
+
+            if (prevLastNote.isPresent()) {
+                final Note prevNote = prevLastNote.get();
+                notifyBuilder.previousMessage(prevNote.getBody());
+                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            }
+
             notifyService.send(
-                    CommentNotify.builder()
+                    notifyBuilder
                             .url(note.getWebUrl())
+                            .discussionMessage(firstNote.getBody())
+                            .discussionAuthor(firstNote.getAuthor().getName())
                             .message(note.getBody())
                             .authorName(note.getAuthor().getName())
                             .build()
@@ -212,16 +277,16 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
-    public ExistsContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds) {
+    public ExistContainer<Discussion, String> existsById(@NonNull Set<String> discussionIds) {
         final List<Discussion> existsEntity = repository.findAllById(discussionIds);
         final Set<String> existsIds = existsEntity.stream().map(Discussion::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(discussionIds)) {
-            return dev.struchkov.bot.gitlab.context.domain.ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<String> noExistsId = discussionIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 
@@ -254,7 +319,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         }
         if (recipientsLogins.contains(personInformation.getUsername())) {
             notifyService.send(
-                    CommentNotify.builder()
+                    NewCommentNotify.builder()
                             .authorName(note.getAuthor().getName())
                             .message(note.getBody())
                             .url(note.getWebUrl())

@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author upagge 11.02.2021
@@ -30,14 +31,14 @@ public class Discussion {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "responsible_id")
     private Person responsible;
 
     @Column(name = "resolved")
     private Boolean resolved;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinTable(
             name = "discussion_merge_request",
             joinColumns = @JoinColumn(name = "discussion_id"),
@@ -50,7 +51,8 @@ public class Discussion {
             fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
             }
     )
     private List<Note> notes;
@@ -63,5 +65,14 @@ public class Discussion {
     public Note getFirstNote() {
         return this.notes.get(0);
     }
+
+    public Optional<Note> getPrevLastNote() {
+        final int size = notes.size();
+        if (size > 2) {
+            return Optional.of(notes.get(size - 2));
+        }
+        return Optional.empty();
+    }
+
 
 }

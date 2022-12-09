@@ -63,4 +63,9 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
         return jpaRepository.findAll(filter.<Specification<MergeRequest>>build(), pageable);
     }
 
+    @Override
+    public List<MergeRequest> findAllByReviewerId(Long personId) {
+        return jpaRepository.findAllByReviewersIn(personId);
+    }
+
 }

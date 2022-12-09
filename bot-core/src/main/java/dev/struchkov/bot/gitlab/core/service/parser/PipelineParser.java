@@ -1,5 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.parser;
 
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
@@ -9,7 +10,6 @@ import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineJson;
-import dev.struchkov.haiti.context.domain.ExistsContainer;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +30,7 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PREPARING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.RUNNING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
 import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -75,17 +75,17 @@ public class PipelineParser {
         LocalDateTime newLastUpdate = LocalDateTime.now();
         List<PipelineJson> pipelineJsons = getPipelineJsons(project.getId(), page, lastUpdate);
 
-        while (!pipelineJsons.isEmpty()) {
+        while (checkNotEmpty(pipelineJsons)) {
 
             final Set<Long> jsonIds = pipelineJsons.stream()
                     .map(PipelineJson::getId)
                     .collect(Collectors.toSet());
 
-            final ExistsContainer<Pipeline, Long> existsContainer = pipelineService.existsById(jsonIds);
+            final ExistContainer<Pipeline, Long> existContainer = pipelineService.existsById(jsonIds);
 
-            if (!existsContainer.isAllFound()) {
+            if (!existContainer.isAllFound()) {
 
-                final Collection<Long> idsNotFound = existsContainer.getIdNoFound();
+                final Set<Long> idsNotFound = existContainer.getIdNoFound();
 
                 for (Long newId : idsNotFound) {
                     final Pipeline newPipeline = HttpParse.request(

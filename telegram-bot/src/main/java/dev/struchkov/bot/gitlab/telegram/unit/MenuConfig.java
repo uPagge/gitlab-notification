@@ -13,13 +13,11 @@ import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.simple.core.unit.MainUnit;
+import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,9 +90,10 @@ public class MenuConfig {
     public AnswerText<Mail> addNewProject() {
         return AnswerText.<Mail>builder()
                 .answer(mail -> {
-                    final List<String> urlList = Arrays.stream(mail.getText().split("/")).toList();
-                    int lastElement = urlList.size() - 1;
-                    final String projectUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequestAdd(), urlList.get(lastElement - 1), urlList.get(lastElement));
+                    final String mailText = mail.getText();
+                    final String projectUrl = gitlabProperty.getUrlMergeRequestAdd() + mailText.replace(gitlabProperty.getBaseUrl(), "")
+                            .substring(1)
+                            .replace("/", "%2F");
                     projectParser.parseByUrl(projectUrl);
                     return boxAnswer("Project added successfully");
                 })
@@ -136,10 +135,9 @@ public class MenuConfig {
         return AnswerText.<Mail>builder()
                 .triggerPhrase(GET_ASSIGNEE_MERGE_REQUEST)
                 .answer(() -> {
-                    final Long userId = personInformation.getId();
-                    final Page<MergeRequest> sheet = mergeRequestsService.getAll(getAssigneeFilter(userId), PageRequest.of(0, 20));
-                    if (sheet.hasContent()) {
-                        final List<MergeRequest> mergeRequests = sheet.getContent();
+                    final Long gitlabUserId = personInformation.getId();
+                    final List<MergeRequest> mergeRequests = mergeRequestsService.getAllByReviewerId(gitlabUserId);
+                    if (Checker.checkNotEmpty(mergeRequests)) {
                         final String text = mergeRequests.stream()
                                 .map(mergeRequest -> MessageFormat.format("[{0}]({1})", mergeRequest.getTitle(), mergeRequest.getWebUrl()))
                                 .collect(Collectors.joining("\n"));
@@ -149,6 +147,7 @@ public class MenuConfig {
                 })
                 .build();
     }
+
 
     private MergeRequestFilter getAssigneeFilter(Long userId) {
         final MergeRequestFilter mergeRequestFilter = new MergeRequestFilter();

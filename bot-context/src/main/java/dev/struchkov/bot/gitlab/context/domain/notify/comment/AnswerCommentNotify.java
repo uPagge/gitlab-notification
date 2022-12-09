@@ -2,7 +2,6 @@ package dev.struchkov.bot.gitlab.context.domain.notify.comment;
 
 import dev.struchkov.bot.gitlab.context.domain.Answer;
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.haiti.utils.Strings;
 import lombok.Builder;

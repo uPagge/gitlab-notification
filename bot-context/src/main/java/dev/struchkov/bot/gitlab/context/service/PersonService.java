@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.context.service;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import lombok.NonNull;
 
@@ -18,7 +18,7 @@ public interface PersonService {
 
     Person getByIdOrThrown(@NonNull Long personId);
 
-    ExistsContainer<Person, Long> existsById(Set<Long> personIds);
+    ExistContainer<Person, Long> existsById(Set<Long> personIds);
 
     List<Person> createAll(List<Person> newPersons);
 

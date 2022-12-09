@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.context.service;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
@@ -18,6 +18,8 @@ public interface MergeRequestsService {
 
     MergeRequest update(@NonNull MergeRequest mergeRequest);
 
+    List<MergeRequest> updateAll(@NonNull List<MergeRequest> mergeRequests);
+
     /**
      * Получить все идентификаторы вместе со статусами.
      *
@@ -30,10 +32,12 @@ public interface MergeRequestsService {
 
     Page<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pageable pagination);
 
-    ExistsContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds);
+    ExistContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds);
 
     List<MergeRequest> createAll(List<MergeRequest> newMergeRequests);
 
     void deleteAllById(@NonNull Set<Long> mergeRequestIds);
+
+    List<MergeRequest> getAllByReviewerId(@NonNull Long personId);
 
 }

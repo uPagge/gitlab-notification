@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.repository.PersonRepository;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
@@ -40,16 +40,16 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public ExistsContainer<Person, Long> existsById(Set<Long> personIds) {
+    public ExistContainer<Person, Long> existsById(Set<Long> personIds) {
         final List<Person> existsEntity = repository.findAllById(personIds);
         final Set<Long> existsIds = existsEntity.stream().map(Person::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(personIds)) {
-            return ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<Long> noExistsId = personIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 

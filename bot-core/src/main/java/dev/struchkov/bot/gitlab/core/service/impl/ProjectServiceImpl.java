@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
-import dev.struchkov.bot.gitlab.context.domain.ExistsContainer;
+import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.domain.notify.NewProjectNotify;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -34,12 +35,15 @@ public class ProjectServiceImpl implements ProjectService {
     private final PersonInformation personInformation;
 
     @Override
+    @Transactional
     public Project create(@NonNull Project project) {
         final Project newProject = repository.save(project);
 
-        if (!personInformation.getId().equals(newProject.getCreatorId())) {
+        final Long gitlabUserId = personInformation.getId();
+
+        if (!gitlabUserId.equals(newProject.getCreatorId())) {
             final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
-            sendNotifyNewProject(newProject, authorName);
+            notifyAboutNewProject(newProject, authorName);
         }
 
         return newProject;
@@ -74,20 +78,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ExistsContainer<Project, Long> existsById(Set<Long> projectIds) {
+    public ExistContainer<Project, Long> existsById(Set<Long> projectIds) {
         final List<Project> existsEntity = repository.findAllById(projectIds);
         final Set<Long> existsIds = existsEntity.stream().map(Project::getId).collect(Collectors.toSet());
         if (existsIds.containsAll(projectIds)) {
-            return ExistsContainer.allFind(existsEntity);
+            return ExistContainer.allFind(existsEntity);
         } else {
             final Set<Long> noExistsId = projectIds.stream()
                     .filter(id -> !existsIds.contains(id))
                     .collect(Collectors.toSet());
-            return ExistsContainer.notAllFind(existsEntity, noExistsId);
+            return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
     }
 
-    private void sendNotifyNewProject(Project newProject, String authorName) {
+    private void notifyAboutNewProject(Project newProject, String authorName) {
         notifyService.send(
                 NewProjectNotify.builder()
                         .projectDescription(newProject.getDescription())
