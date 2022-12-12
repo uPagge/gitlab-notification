@@ -1,9 +1,12 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
-import dev.struchkov.godfather.telegram.simple.sender.SendPreProcessing;
+import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.context.service.PreSendProcessing;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 
 /**
  * Заменяет урл, который назначает гитлаб на любой другой перед отправкой сообщения. Потому что иногда у self-host гитлабов урлы, которые не преобразуются телеграммом в ссылки. В этом случае имеет смысл менять их на ip.
@@ -12,16 +15,16 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ReplaceUrlLocalhost implements SendPreProcessing {
+public class ReplaceUrlLocalhost implements PreSendProcessing {
 
     private final GitlabProperty property;
 
     @Override
-    public String pretreatment(String s) {
-        if (property.getReplaceUrl() != null && !"${GITLAB_REPLACE_URL}".equals(property.getReplaceUrl())) {
-            return s.replace(property.getReplaceUrl(), property.getBaseUrl());
+    public BoxAnswer pretreatment(BoxAnswer boxAnswer) {
+        if (checkNotNull(property.getReplaceUrl()) && !"${GITLAB_REPLACE_URL}".equals(property.getReplaceUrl())) {
+            boxAnswer.setMessage(boxAnswer.getMessage().replace(property.getReplaceUrl(), property.getBaseUrl()));
         }
-        return s;
+        return boxAnswer;
     }
 
 }
