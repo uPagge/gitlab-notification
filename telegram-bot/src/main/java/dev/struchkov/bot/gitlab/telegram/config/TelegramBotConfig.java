@@ -15,6 +15,7 @@ import dev.struchkov.godfather.simple.core.service.UnitPointerServiceImpl;
 import dev.struchkov.godfather.simple.data.repository.impl.PersonSettingLocalRepository;
 import dev.struchkov.godfather.simple.data.repository.impl.StorylineMapRepository;
 import dev.struchkov.godfather.simple.data.repository.impl.UnitPointLocalRepository;
+import dev.struchkov.godfather.telegram.domain.config.ProxyConfig;
 import dev.struchkov.godfather.telegram.domain.config.TelegramConnectConfig;
 import dev.struchkov.godfather.telegram.main.context.TelegramConnect;
 import dev.struchkov.godfather.telegram.simple.consumer.EventDistributorService;
@@ -24,6 +25,7 @@ import dev.struchkov.godfather.telegram.simple.core.MailAutoresponderTelegram;
 import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
 import dev.struchkov.godfather.telegram.simple.core.service.SenderMapRepository;
 import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,6 +93,13 @@ public class TelegramBotConfig {
     @Bean
     public TelegramConnectBot telegramConnect(TelegramConnectConfig telegramConfig) {
         return new TelegramConnectBot(telegramConfig);
+    }
+
+    @Bean
+    @ConfigurationProperties("telegram-proxy-config")
+    @ConditionalOnProperty(prefix = "telegram-config.proxy-config.enable", value = "true")
+    public ProxyConfig proxyConfig() {
+        return new ProxyConfig();
     }
 
     @Bean
