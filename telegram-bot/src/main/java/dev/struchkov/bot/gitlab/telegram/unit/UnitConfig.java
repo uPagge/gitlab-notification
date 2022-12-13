@@ -1,11 +1,13 @@
 package dev.struchkov.bot.gitlab.telegram.unit;
 
+import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
+import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
 import dev.struchkov.godfather.main.core.unit.UnitActiveType;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
@@ -53,6 +55,8 @@ public class UnitConfig {
 
     private static final Pattern NOTE_LINK = Pattern.compile("#note_\\d+$");
 
+    private final PersonInformation personInformation;
+
     private final AppSettingService settingService;
     private final NoteService noteService;
     private final DiscussionService discussionService;
@@ -60,7 +64,17 @@ public class UnitConfig {
 
     private final ProjectParser projectParser;
 
-    @Unit(value = CHECK_FIRST_START, main = true)
+    @Unit(value = UnitName.AUTHORIZATION, main = true)
+    public AnswerCheck<Mail> auth(
+            @Unit(CHECK_FIRST_START) MainUnit<Mail> checkFirstStart
+    ) {
+        return AnswerCheck.<Mail>builder()
+                .check(mail -> personInformation.getTelegramId().equals(mail.getPersonId()))
+                .unitTrue(checkFirstStart)
+                .build();
+    }
+
+    @Unit(value = CHECK_FIRST_START)
     public AnswerCheck<Mail> checkFirstStart(
             @Unit(TEXT_PARSER_PRIVATE_PROJECT) MainUnit<Mail> textParserPrivateProject,
             @Unit(CHECK_MENU_OR_ANSWER) MainUnit<Mail> checkMenuOrAnswer

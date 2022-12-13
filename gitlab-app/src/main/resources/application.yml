@@ -21,8 +21,8 @@ telegram-config:
   bot-token: ${TELEGRAM_BOT_TOKEN}
   proxy-config:
     enable: ${PROXY_ENABLE:false}
-    host: ${PROXY_HOST:host}
-    port: ${PROXY_PORT:8080}
+    host: ${PROXY_HOST:}
+    port: ${PROXY_PORT:}
     type: ${PROXY_TYPE:SOCKS5}
     user: ${PROXY_USERNAME:}
     password: ${PROXY_PASSWORD:}

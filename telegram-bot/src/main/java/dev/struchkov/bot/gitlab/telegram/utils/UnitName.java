@@ -4,7 +4,6 @@ import static dev.struchkov.haiti.utils.Exceptions.utilityClass;
 
 public final class UnitName {
 
-    public static final String SETTINGS_LANGUAGE = "settingsLanguage";
     public static final String GENERAL_MENU = "generalMenu";
     public static final String TEXT_ADD_NEW_PROJECT = "textAddNewProject";
     public static final String ADD_NEW_PROJECT = "addNewProject";
@@ -21,6 +20,7 @@ public final class UnitName {
     public static final String CHECK_PARSE_OWNER_PROJECT = "checkParseOwnerProject";
     public static final String PARSE_OWNER_PROJECT = "parseOwnerProject";
     public static final String END_SETTING = "endSetting";
+    public static final String AUTHORIZATION = "AUTHORIZATION";
 
     private UnitName() {
         utilityClass();
