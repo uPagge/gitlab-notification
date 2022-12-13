@@ -21,6 +21,7 @@ public final class UnitName {
     public static final String PARSE_OWNER_PROJECT = "parseOwnerProject";
     public static final String END_SETTING = "endSetting";
     public static final String AUTHORIZATION = "AUTHORIZATION";
+    public static final String ACCESS_ERROR = "ACCESS_ERROR";
 
     private UnitName() {
         utilityClass();

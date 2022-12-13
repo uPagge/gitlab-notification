@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.telegram.service;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
 import dev.struchkov.bot.gitlab.context.service.MessageSendService;
+import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,9 @@ public class MessageSendTelegramService implements MessageSendService {
 
     @Override
     public void send(@NonNull Notify notify) {
-        sending.send(personInformation.getTelegramId(), boxAnswer(notify.generateMessage()));
+        final BoxAnswer boxAnswer = boxAnswer(notify.generateMessage());
+        boxAnswer.setRecipientIfNull(personInformation.getTelegramId());
+        sending.send(boxAnswer);
     }
 
 }

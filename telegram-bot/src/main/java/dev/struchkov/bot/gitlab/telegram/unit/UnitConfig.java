@@ -6,8 +6,8 @@ import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
+import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
-import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
 import dev.struchkov.godfather.main.core.unit.UnitActiveType;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ACCESS_ERROR;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ANSWER_NOTE;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.AUTHORIZATION;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_FIRST_START;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_MENU_OR_ANSWER;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSER_PRIVATE_PROJECT;
@@ -64,13 +66,29 @@ public class UnitConfig {
 
     private final ProjectParser projectParser;
 
-    @Unit(value = UnitName.AUTHORIZATION, main = true)
+    @Unit(value = AUTHORIZATION, main = true)
     public AnswerCheck<Mail> auth(
-            @Unit(CHECK_FIRST_START) MainUnit<Mail> checkFirstStart
+            @Unit(CHECK_FIRST_START) MainUnit<Mail> checkFirstStart,
+            @Unit(ACCESS_ERROR) MainUnit<Mail> accessError
     ) {
         return AnswerCheck.<Mail>builder()
                 .check(mail -> personInformation.getTelegramId().equals(mail.getPersonId()))
                 .unitTrue(checkFirstStart)
+                .unitFalse(accessError)
+                .build();
+    }
+
+    @Unit(value = ACCESS_ERROR)
+    public AnswerText<Mail> accessError() {
+        return AnswerText.<Mail>builder()
+                .answer(message -> {
+                    final String messageText = new StringBuilder("\uD83D\uDEA8 *Попытка несанкционированного доступа к боту*")
+                            .append(Smile.HR.getValue())
+                            .append("\uD83E\uDDB9\u200D♂️: ").append(message.getPersonId()).append("\n")
+                            .append("\uD83D\uDCAC: ").append(message.getText())
+                            .toString();
+                    return BoxAnswer.builder().recipientPersonId(personInformation.getTelegramId()).message(messageText).build();
+                })
                 .build();
     }
 
