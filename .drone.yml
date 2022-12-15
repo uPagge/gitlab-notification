@@ -7,3 +7,15 @@ steps:
     image: maven:3.8.6-eclipse-temurin-17
     commands:
       - mvn -U clean package
+    volumes:
+      - name: m2
+        path: /root/.m2
+
+trigger:
+  branch:
+    - master
+
+volumes:
+  - name: m2
+    host:
+      path: $MAVEN_REPO
