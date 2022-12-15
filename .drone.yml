@@ -1,0 +1,9 @@
+kind: pipeline
+type: docker
+name: gitlab-notify
+
+steps:
+  - name: package
+    image: maven:3.8.6-eclipse-temurin-17
+    commands:
+      - mvn -U clean package
