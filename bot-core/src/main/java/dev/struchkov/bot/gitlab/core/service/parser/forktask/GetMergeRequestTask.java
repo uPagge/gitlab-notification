@@ -16,30 +16,29 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 @Slf4j
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class GetMergeRequestFromGitlab extends RecursiveTask<List<MergeRequestJson>> {
+public class GetMergeRequestTask extends RecursiveTask<List<MergeRequestJson>> {
 
     private static final int PAGE_COUNT = 100;
 
     private final long projectId;
     private int pageNumber = 0;
     private final String urlMrOpen;
-    private final String personToken;
+    private final String gitlabToken;
 
     @Override
     protected List<MergeRequestJson> compute() {
-        final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons(urlMrOpen, projectId, pageNumber, personToken);
+        final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
         if (mergeRequestJsons.size() == PAGE_COUNT) {
-            final GetMergeRequestFromGitlab newTask = new GetMergeRequestFromGitlab(projectId, pageNumber + 1, urlMrOpen, personToken);
+            final GetMergeRequestTask newTask = new GetMergeRequestTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);
             newTask.fork();
-            final List<MergeRequestJson> result = newTask.join();
-            mergeRequestJsons.addAll(result);
+            mergeRequestJsons.addAll(newTask.join());
         }
         return mergeRequestJsons;
     }
 
-    private List<MergeRequestJson> getMergeRequestJsons(String url, Long projectId, int page, String personToken) {
-        final List<MergeRequestJson> jsons = HttpParse.request(MessageFormat.format(url, projectId, page, PAGE_COUNT))
-                .header(StringUtils.H_PRIVATE_TOKEN, personToken)
+    private List<MergeRequestJson> getMergeRequestJsons() {
+        final List<MergeRequestJson> jsons = HttpParse.request(MessageFormat.format(urlMrOpen, projectId, pageNumber, PAGE_COUNT))
+                .header(StringUtils.H_PRIVATE_TOKEN, gitlabToken)
                 .header(ACCEPT)
                 .executeList(MergeRequestJson.class);
         log.trace("Получено {} шт потенциально новых MR для проекта id:'{}' ", jsons.size(), projectId);

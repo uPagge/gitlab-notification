@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @author upagge 17.01.2021
  */
 @Data
-public class PipelineJson {
+public class PipelineShortJson {
 
     private Long id;
 
@@ -30,8 +30,6 @@ public class PipelineJson {
     private PipelineStatusJson status;
 
     private String ref;
-
-    private PersonJson user;
 
     @JsonProperty("web_url")
     private String webUrl;

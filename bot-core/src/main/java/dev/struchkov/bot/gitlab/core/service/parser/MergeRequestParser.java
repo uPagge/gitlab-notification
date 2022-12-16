@@ -9,27 +9,23 @@ import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
-import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetMergeRequestFromGitlab;
+import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetMergeRequestTask;
+import dev.struchkov.bot.gitlab.core.utils.PoolUtils;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.stream.Collectors;
@@ -41,7 +37,6 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class MergeRequestParser {
 
     private static final Set<MergeRequestState> OLD_STATUSES = Set.of(
@@ -54,16 +49,22 @@ public class MergeRequestParser {
     private final ConversionService conversionService;
     private final PersonProperty personProperty;
 
-    private ForkJoinPool forkJoinPool;
+    private final ForkJoinPool forkJoinPool;
 
-    @PreDestroy
-    public void preDestroy() {
-        forkJoinPool.shutdown();
-    }
-
-    @PostConstruct
-    public void postConstruct() {
-        forkJoinPool = new ForkJoinPool(4);
+    public MergeRequestParser(
+            GitlabProperty gitlabProperty,
+            MergeRequestsService mergeRequestsService,
+            ProjectService projectService,
+            ConversionService conversionService,
+            PersonProperty personProperty,
+            @Qualifier("parserPool") ForkJoinPool forkJoinPool
+    ) {
+        this.gitlabProperty = gitlabProperty;
+        this.mergeRequestsService = mergeRequestsService;
+        this.projectService = projectService;
+        this.conversionService = conversionService;
+        this.personProperty = personProperty;
+        this.forkJoinPool = forkJoinPool;
     }
 
     public void parsingOldMergeRequest() {
@@ -129,30 +130,11 @@ public class MergeRequestParser {
      */
     private List<MergeRequestJson> getMergeRequests(Set<Long> projectIds) {
         final List<ForkJoinTask<List<MergeRequestJson>>> tasks = projectIds.stream()
-                .map(projectId -> new GetMergeRequestFromGitlab(projectId, gitlabProperty.getUrlPullRequestOpen(), personProperty.getToken()))
+                .map(projectId -> new GetMergeRequestTask(projectId, gitlabProperty.getUrlPullRequestOpen(), personProperty.getToken()))
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
-        final List<MergeRequestJson> mergeRequestJsons = new ArrayList<>();
-        Iterator<ForkJoinTask<List<MergeRequestJson>>> iterator = tasks.iterator();
-        while (!tasks.isEmpty()) {
-            while (iterator.hasNext()) {
-                final ForkJoinTask<List<MergeRequestJson>> task = iterator.next();
-                if (task.isDone()) {
-                    final List<MergeRequestJson> jsons;
-                    try {
-                        jsons = task.get();
-                        mergeRequestJsons.addAll(jsons);
-                    } catch (InterruptedException | ExecutionException e) {
-                        log.error(e.getMessage(), e);
-                        Thread.currentThread().interrupt();
-                    }
-                    iterator.remove();
-                }
-            }
-            iterator = tasks.iterator();
-        }
-        return mergeRequestJsons;
+        return PoolUtils.pullTaskResults(tasks);
     }
 
     private static void personMapping(List<MergeRequest> newMergeRequests) {

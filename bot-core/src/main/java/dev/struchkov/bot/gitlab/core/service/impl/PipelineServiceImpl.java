@@ -55,6 +55,14 @@ public class PipelineServiceImpl implements PipelineService {
         return newPipeline;
     }
 
+    @Override
+    @Transactional
+    public List<Pipeline> createAll(@NonNull List<Pipeline> newPipelines) {
+        return newPipelines.stream()
+                .map(this::create)
+                .collect(Collectors.toList());
+    }
+
     private void notifyNewPipeline(Pipeline pipeline, String oldStatus) {
         if (isNeedNotifyNewPipeline(pipeline)) {
             notifyService.send(

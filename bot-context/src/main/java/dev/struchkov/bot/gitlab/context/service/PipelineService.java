@@ -8,6 +8,7 @@ import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,6 +19,8 @@ import java.util.Set;
 public interface PipelineService {
 
     Pipeline create(@NonNull Pipeline pipeline);
+
+    List<Pipeline> createAll(@NonNull List<Pipeline> newPipelines);
 
     Pipeline update(@NonNull Pipeline pipeline);
 

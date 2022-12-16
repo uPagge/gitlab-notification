@@ -39,6 +39,8 @@ public class PipelineJsonConverter implements Converter<PipelineJson, Pipeline> 
         pipeline.setWebUrl(source.getWebUrl());
         pipeline.setStatus(convertStatus(source.getStatus()));
         pipeline.setPerson(convertPerson.convert(source.getUser()));
+
+        pipeline.setProjectId(source.getProjectId());
         return pipeline;
     }
 
