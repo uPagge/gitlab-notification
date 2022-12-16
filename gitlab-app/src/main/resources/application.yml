@@ -37,7 +37,7 @@ gitlab-bot:
     base-url: ${GITLAB_URL}
     replaceUrl: ${GITLAB_REPLACE_URL}
     url-project: ${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100
-    url-pull-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page=100"
+    url-pull-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
     url-pull-request-close: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
     url-pull-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
     url-pull-request: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
@@ -52,6 +52,3 @@ gitlab-bot:
     url-new-note: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
     url-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page=100"
     url-one-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
-logging:
-  level:
-    "dev.struchkov": trace

@@ -27,12 +27,12 @@ public class SchedulerService {
         log.debug("Запуск процесса обновления данных");
         mergeRequestParser.parsingOldMergeRequest();
         mergeRequestParser.parsingNewMergeRequest();
-//        pipelineParser.scanOldPipeline();
-//        pipelineParser.scanNewPipeline();
-//        discussionParser.scanOldDiscussions();
-//        discussionParser.scanNewDiscussion();
-//        cleanService.cleanOldPipelines();
-//        cleanService.cleanOldMergedRequests();
+        pipelineParser.scanOldPipeline();
+        pipelineParser.scanNewPipeline();
+        discussionParser.scanOldDiscussions();
+        discussionParser.scanNewDiscussion();
+        cleanService.cleanOldPipelines();
+        cleanService.cleanOldMergedRequests();
         log.debug("Конец процесса обновления данных");
     }
 
