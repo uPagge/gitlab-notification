@@ -23,4 +23,6 @@ public interface ProjectRepository {
 
     Page<Project> findAllById(Pageable pagination);
 
+    Set<Long> findAllIds();
+
 }

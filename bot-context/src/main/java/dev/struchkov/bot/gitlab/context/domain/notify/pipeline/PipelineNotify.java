@@ -11,6 +11,7 @@ import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 /**
  * @author upagge 17.01.2021
  */
+//TODO [16.12.2022|uPagge]: Нужно реализовать заполнение projectName
 public record PipelineNotify(
         Long pipelineId,
         String projectName,

@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     url: ${DATASOURCE_URL}
@@ -51,3 +52,6 @@ gitlab-bot:
     url-new-note: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
     url-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page=100"
     url-one-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
+logging:
+  level:
+    "dev.struchkov": trace

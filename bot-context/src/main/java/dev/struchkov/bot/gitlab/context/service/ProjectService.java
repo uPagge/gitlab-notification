@@ -3,8 +3,6 @@ package dev.struchkov.bot.gitlab.context.service;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -20,12 +18,11 @@ public interface ProjectService {
 
     Project getByIdOrThrow(@NonNull Long projectId);
 
-    Page<Project> getAll(@NonNull Pageable pagination);
-
     List<Project> createAll(List<Project> newProjects);
 
     boolean existsById(Long projectId);
 
     ExistContainer<Project, Long> existsById(Set<Long> projectIds);
 
+    Set<Long> getAllIds();
 }

@@ -8,6 +8,7 @@ import dev.struchkov.bot.gitlab.context.service.CleanService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.MERGED;
  *
  * @author upagge 08.02.2021
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CleanServiceImpl implements CleanService {
@@ -38,6 +40,7 @@ public class CleanServiceImpl implements CleanService {
 
     @Override
     public void cleanOldMergedRequests() {
+        log.debug("Старт очистки старых MR");
         int page = 0;
         Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PageRequest.of(page, COUNT));
 
@@ -50,10 +53,12 @@ public class CleanServiceImpl implements CleanService {
 
             mergeRequestSheet = mergeRequestsService.getAll(MR_CLEAN_FILTER, PageRequest.of(++page, COUNT));
         }
+        log.debug("Конец очистки старых MR");
     }
 
     @Override
     public void cleanOldPipelines() {
+        log.debug("Старт очистки старых пайплайнов");
         int page = 0;
         final PipelineFilter filter = cleanPipelineFilter();
         Page<Pipeline> sheet = pipelineService.getAll(filter, PageRequest.of(page, COUNT));
@@ -67,6 +72,7 @@ public class CleanServiceImpl implements CleanService {
 
             sheet = pipelineService.getAll(filter, PageRequest.of(page, COUNT));
         }
+        log.debug("Конец очистки старых пайплайнов");
     }
 
     private PipelineFilter cleanPipelineFilter() {

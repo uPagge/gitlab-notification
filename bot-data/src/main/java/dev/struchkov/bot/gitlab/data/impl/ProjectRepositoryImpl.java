@@ -46,4 +46,9 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         return jpaRepository.findAll(pagination);
     }
 
+    @Override
+    public Set<Long> findAllIds() {
+        return jpaRepository.findAllIds();
+    }
+
 }

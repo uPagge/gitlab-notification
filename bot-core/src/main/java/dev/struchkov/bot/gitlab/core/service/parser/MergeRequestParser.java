@@ -5,7 +5,6 @@ import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
-import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -17,8 +16,6 @@ import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -51,6 +48,7 @@ public class MergeRequestParser {
     private final PersonProperty personProperty;
 
     public void parsingOldMergeRequest() {
+        log.debug("Старт обработки старых MR");
         final Set<IdAndStatusPr> existIds = mergeRequestsService.getAllId(OLD_STATUSES);
 
         final List<MergeRequest> mergeRequests = existIds.stream()
@@ -68,27 +66,23 @@ public class MergeRequestParser {
             personMapping(mergeRequests);
             mergeRequestsService.updateAll(mergeRequests);
         }
-
+        log.debug("Конец обработки старых MR");
     }
 
     public void parsingNewMergeRequest() {
-        int page = 0;
-        Page<Project> projectSheet = projectService.getAll(PageRequest.of(page, COUNT));
+        log.debug("Старт обработки новых MR");
+        final Set<Long> projectIds = projectService.getAllIds();
 
-        while (projectSheet.hasContent()) {
-            final List<Project> projects = projectSheet.getContent();
-
-            for (Project project : projects) {
-                projectProcessing(project);
-            }
-
-            projectSheet = projectService.getAll(PageRequest.of(++page, COUNT));
+        for (Long projectId : projectIds) {
+            projectProcessing(projectId);
         }
+
+        log.debug("Конец обработки новых MR");
     }
 
-    private void projectProcessing(Project project) {
+    private void projectProcessing(Long projectId) {
         int page = 1;
-        List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons(project, page);
+        List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons(projectId, page);
 
         while (checkNotEmpty(mergeRequestJsons)) {
 
@@ -97,6 +91,7 @@ public class MergeRequestParser {
                     .collect(Collectors.toSet());
 
             final ExistContainer<MergeRequest, Long> existContainer = mergeRequestsService.existsById(jsonIds);
+            log.trace("Из {} полученных MR не найдены в хранилище {}", jsonIds.size(), existContainer.getIdNoFound().size());
             if (!existContainer.isAllFound()) {
                 final List<MergeRequest> newMergeRequests = mergeRequestJsons.stream()
                         .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
@@ -109,10 +104,11 @@ public class MergeRequestParser {
 
                 personMapping(newMergeRequests);
 
+                log.trace("Пачка новых MR обработана и отправлена на сохранение. Количество: {} шт.", newMergeRequests.size());
                 mergeRequestsService.createAll(newMergeRequests);
             }
 
-            mergeRequestJsons = getMergeRequestJsons(project, page++);
+            mergeRequestJsons = getMergeRequestJsons(projectId, page++);
         }
     }
 
@@ -154,11 +150,13 @@ public class MergeRequestParser {
         }
     }
 
-    private List<MergeRequestJson> getMergeRequestJsons(Project project, int page) {
-        return HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestOpen(), project.getId(), page))
+    private List<MergeRequestJson> getMergeRequestJsons(Long projectId, int page) {
+        final List<MergeRequestJson> jsons = HttpParse.request(MessageFormat.format(gitlabProperty.getUrlPullRequestOpen(), projectId, page))
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .header(ACCEPT)
                 .executeList(MergeRequestJson.class);
+        log.trace("Получено {} шт потенциально новых MR для проекта id:'{}' ", jsons.size(), projectId);
+        return jsons;
     }
 
     private Optional<MergeRequestJson> getMergeRequest(IdAndStatusPr existId) {

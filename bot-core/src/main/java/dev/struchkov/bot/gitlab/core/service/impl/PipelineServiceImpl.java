@@ -61,7 +61,6 @@ public class PipelineServiceImpl implements PipelineService {
                     PipelineNotify.builder()
                             .newStatus(pipeline.getStatus().name())
                             .pipelineId(pipeline.getId())
-                            .projectName(pipeline.getProject().getName())
                             .refName(pipeline.getRef())
                             .webUrl(pipeline.getWebUrl())
                             .oldStatus(oldStatus)
@@ -76,7 +75,6 @@ public class PipelineServiceImpl implements PipelineService {
                 .orElseThrow(notFoundException("Pipeline не найден"));
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
-            pipeline.setProject(oldPipeline.getProject());
             notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
             return repository.save(pipeline);
         }

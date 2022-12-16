@@ -3,7 +3,6 @@ package dev.struchkov.bot.gitlab.core.service.parser;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
-import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -12,6 +11,7 @@ import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +38,7 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
  *
  * @author upagge 17.01.2021
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PipelineParser {
@@ -55,25 +56,21 @@ public class PipelineParser {
     private LocalDateTime lastUpdate = LocalDateTime.now();
 
     public void scanNewPipeline() {
+        log.debug("Старт обработки новых папйплайнов");
         int page = 0;
-        Page<Project> projectSheet = projectService.getAll(PageRequest.of(page, COUNT));
+        final Set<Long> projectIds = projectService.getAllIds();
 
-        while (projectSheet.hasContent()) {
-            final List<Project> projects = projectSheet.getContent();
-
-            for (Project project : projects) {
-                processingProject(project);
-            }
-
-            projectSheet = projectService.getAll(PageRequest.of(++page, COUNT));
+        for (Long projectId : projectIds) {
+            processingProject(projectId);
         }
 
+        log.debug("Конец обработки новых папйплайнов");
     }
 
-    private void processingProject(Project project) {
+    private void processingProject(Long projectId) {
         int page = 1;
         LocalDateTime newLastUpdate = LocalDateTime.now();
-        List<PipelineJson> pipelineJsons = getPipelineJsons(project.getId(), page, lastUpdate);
+        List<PipelineJson> pipelineJsons = getPipelineJsons(projectId, page, lastUpdate);
 
         while (checkNotEmpty(pipelineJsons)) {
 
@@ -89,14 +86,14 @@ public class PipelineParser {
 
                 for (Long newId : idsNotFound) {
                     final Pipeline newPipeline = HttpParse.request(
-                                    MessageFormat.format(gitlabProperty.getUrlPipeline(), project.getId(), newId)
+                                    MessageFormat.format(gitlabProperty.getUrlPipeline(), projectId, newId)
                             )
                             .header(ACCEPT)
                             .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                             .execute(PipelineJson.class)
                             .map(json -> {
                                 final Pipeline pipeline = conversionService.convert(json, Pipeline.class);
-                                pipeline.setProject(project);
+                                pipeline.setProjectId(projectId);
                                 return pipeline;
                             })
                             .orElseThrow(convertException("Ошибка обновления Pipelines"));
@@ -105,7 +102,7 @@ public class PipelineParser {
 
             }
 
-            pipelineJsons = getPipelineJsons(project.getId(), ++page, lastUpdate);
+            pipelineJsons = getPipelineJsons(projectId, ++page, lastUpdate);
         }
 
         lastUpdate = newLastUpdate;
@@ -120,6 +117,7 @@ public class PipelineParser {
     }
 
     public void scanOldPipeline() {
+        log.debug("Старт обработки старых папйплайнов");
         int page = 0;
         Page<Pipeline> pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(page, COUNT));
 
@@ -128,7 +126,7 @@ public class PipelineParser {
 
             for (Pipeline pipeline : pipelines) {
                 final Pipeline newPipeline = HttpParse.request(
-                                MessageFormat.format(gitlabProperty.getUrlPipeline(), pipeline.getProject().getId(), pipeline.getId())
+                                MessageFormat.format(gitlabProperty.getUrlPipeline(), pipeline.getProjectId(), pipeline.getId())
                         )
                         .header(ACCEPT)
                         .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
@@ -141,6 +139,7 @@ public class PipelineParser {
 
             pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(++page, COUNT));
         }
+        log.debug("Конец обработки старых папйплайнов");
     }
 
 }

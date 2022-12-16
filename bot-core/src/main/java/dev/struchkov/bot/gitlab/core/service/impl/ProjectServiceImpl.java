@@ -10,8 +10,6 @@ import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,11 +59,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<Project> getAll(@NonNull Pageable pagination) {
-        return repository.findAllById(pagination);
-    }
-
-    @Override
     @Transactional
     public List<Project> createAll(List<Project> newProjects) {
         return newProjects.stream()
@@ -91,6 +84,12 @@ public class ProjectServiceImpl implements ProjectService {
                     .collect(Collectors.toSet());
             return ExistContainer.notAllFind(existsEntity, noExistsId);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<Long> getAllIds() {
+        return repository.findAllIds();
     }
 
     private void notifyAboutNewProject(Project newProject, String authorName) {

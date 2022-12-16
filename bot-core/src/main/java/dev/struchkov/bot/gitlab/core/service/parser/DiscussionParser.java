@@ -12,6 +12,7 @@ import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.sdk.domain.DiscussionJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +40,7 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
  *
  * @author upagge 11.02.2021
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DiscussionParser {
@@ -56,6 +58,7 @@ public class DiscussionParser {
      * Поиск новых обсуждений
      */
     public void scanNewDiscussion() {
+        log.debug("Старт обработки новых дискуссий");
         int page = 0;
         Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(page, COUNT));
 
@@ -68,6 +71,7 @@ public class DiscussionParser {
 
             mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(++page, COUNT));
         }
+        log.debug("Конец обработки новых дискуссий");
     }
 
     private void processingMergeRequest(MergeRequest mergeRequest) {
@@ -151,6 +155,7 @@ public class DiscussionParser {
      * Сканирование старых обсуждений на предмет новых комментарие
      */
     public void scanOldDiscussions() {
+        log.debug("Старт обработки старых дискуссий");
         int page = 0;
         Page<Discussion> discussionPage = discussionService.getAll(PageRequest.of(page, COUNT));
 
@@ -183,7 +188,7 @@ public class DiscussionParser {
 
             discussionPage = discussionService.getAll(PageRequest.of(++page, COUNT));
         }
-
+        log.debug("Конец обработки старых дискуссий");
     }
 
     private Optional<DiscussionJson> getOldDiscussionJson(Discussion discussion) {
