@@ -1,15 +1,11 @@
+---
 kind: pipeline
 type: docker
-name: gitlab-notify
+name: develop build
 
 steps:
   - name: create jar
     image: maven:3.8.6-eclipse-temurin-17
-    when:
-      branch:
-        - develop
-      ref:
-        - refs/tags/v.*.*.*
     volumes:
       - name: m2
         path: /root/.m2/repository
@@ -25,9 +21,6 @@ steps:
         from_secret: DOCKER_IMAGE_NAME
       DOCKER_REGISTRY_USER:
         from_secret: DOCKER_REGISTRY_USER
-    when:
-      branch:
-        - develop
     volumes:
       - name: dockersock
         path: /var/run
@@ -35,6 +28,25 @@ steps:
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
+
+trigger:
+  branch:
+    - develop
+
+---
+
+kind: pipeline
+type: docker
+name: release build
+
+steps:
+  - name: create jar
+    image: maven:3.8.6-eclipse-temurin-17
+    volumes:
+      - name: m2
+        path: /root/.m2/repository
+    commands:
+      - mvn -U clean package
 
   - name: docker publish release
     image: upagge/docker-buildx:latest
@@ -45,9 +57,6 @@ steps:
         from_secret: DOCKER_IMAGE_NAME
       DOCKER_REGISTRY_USER:
         from_secret: DOCKER_REGISTRY_USER
-    when:
-      ref:
-        - refs/tags/v.*.*.*
     volumes:
       - name: dockersock
         path: /var/run
@@ -57,10 +66,10 @@ steps:
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" .
 
 trigger:
-  branch:
-    - develop
   ref:
     - refs/tags/v.*.*.*
+
+---
 
 services:
   - name: docker
