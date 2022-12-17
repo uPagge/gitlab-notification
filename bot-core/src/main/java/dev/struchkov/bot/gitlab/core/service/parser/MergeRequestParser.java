@@ -10,7 +10,6 @@ import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetMergeRequestTask;
-import dev.struchkov.bot.gitlab.core.utils.PoolUtils;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
@@ -33,6 +32,7 @@ import java.util.stream.Stream;
 
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
+import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
@@ -134,7 +134,7 @@ public class MergeRequestParser {
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
-        return PoolUtils.pullTaskResults(tasks);
+        return pullTaskResults(tasks);
     }
 
     private static void personMapping(List<MergeRequest> newMergeRequests) {

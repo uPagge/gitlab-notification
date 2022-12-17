@@ -5,17 +5,31 @@ name: gitlab-notify
 steps:
   - name: package
     image: maven:3.8.6-eclipse-temurin-17
-    commands:
-      - mvn -U clean package
     volumes:
       - name: m2
-        path: /root/.m2
+        path: /root/.m2/repository
+    commands:
+      - mvn -U clean package
+
+  - name: docker-publish
+    image: upagge/docker-buildx:latest
+    environment:
+      DOCKER_REGISTRY_TOKEN:
+        from_secret: DOCKER_REGISTRY_TOKEN
+      DOCKER_IMAGE_NAME:
+        from_secret: DOCKER_IMAGE_NAME
+      DOCKER_REGISTRY_USER:
+        from_secret: DOCKER_REGISTRY_USER
+    commands:
+      - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
+      - docker buildx create --use
+      - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
 
 trigger:
   branch:
-    - master
+    - develop
 
 volumes:
   - name: m2
     host:
-      path: $MAVEN_REPO
+      path: /drone/volume/m2

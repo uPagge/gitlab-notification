@@ -35,10 +35,10 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PENDING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PREPARING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.RUNNING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
-import static dev.struchkov.bot.gitlab.core.utils.PoolUtils.pullTaskResult;
-import static dev.struchkov.bot.gitlab.core.utils.PoolUtils.pullTaskResults;
 import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
+import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
+import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -137,7 +137,7 @@ public class PipelineParser {
 
 
     public void scanOldPipeline() {
-        log.debug("Старт обработки старых папйплайнов");
+        log.debug("Старт обработки старых пайплайнов");
         int page = 0;
         Page<Pipeline> pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(page, COUNT));
 
@@ -159,7 +159,7 @@ public class PipelineParser {
 
             pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(++page, COUNT));
         }
-        log.debug("Конец обработки старых папйплайнов");
+        log.debug("Конец обработки старых пайплайнов");
     }
 
 }
