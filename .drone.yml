@@ -21,6 +21,7 @@ steps:
       DOCKER_REGISTRY_USER:
         from_secret: DOCKER_REGISTRY_USER
     commands:
+      - sleep 15
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
@@ -29,7 +30,17 @@ trigger:
   branch:
     - develop
 
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+
 volumes:
   - name: m2
     host:
       path: /drone/volume/m2
+  - name: dockersock
+    temp: { }
