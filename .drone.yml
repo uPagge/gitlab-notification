@@ -41,5 +41,8 @@ services:
         path: /var/run
 
 volumes:
+  - name: m2
+    host:
+      path: /drone/volume/m2
   - name: dockersock
     temp: {}
