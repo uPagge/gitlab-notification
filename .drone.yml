@@ -3,6 +3,25 @@ kind: pipeline
 type: docker
 name: develop build
 
+trigger:
+  branch:
+    - develop
+
+services:
+  - name: docker
+    image: docker:20.10.22-dind-alpine3.17
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+
+volumes:
+  - name: m2
+    host:
+      path: /drone/volume/m2
+  - name: dockersock
+    temp: {}
+
 steps:
   - name: create jar
     image: maven:3.8.6-eclipse-temurin-17
@@ -29,15 +48,30 @@ steps:
       - docker buildx create --use
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
 
-trigger:
-  branch:
-    - develop
-
 ---
 
 kind: pipeline
 type: docker
 name: release build
+
+trigger:
+  ref:
+    - refs/tags/v.*.*.*
+
+services:
+  - name: docker
+    image: docker:20.10.22-dind-alpine3.17
+    privileged: true
+    volumes:
+      - name: dockersock
+        path: /var/run
+
+volumes:
+  - name: m2
+    host:
+      path: /drone/volume/m2
+  - name: dockersock
+    temp: {}
 
 steps:
   - name: create jar
@@ -64,24 +98,3 @@ steps:
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" .
-
-trigger:
-  ref:
-    - refs/tags/v.*.*.*
-
----
-
-services:
-  - name: docker
-    image: docker:20.10.22-dind-alpine3.17
-    privileged: true
-    volumes:
-      - name: dockersock
-        path: /var/run
-
-volumes:
-  - name: m2
-    host:
-      path: /drone/volume/m2
-  - name: dockersock
-    temp: {}
