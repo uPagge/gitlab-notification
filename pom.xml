@@ -11,7 +11,7 @@
 
     <groupId>dev.struchkov.bot.gitlab</groupId>
     <artifactId>gitlab-bot</artifactId>
-    <version>1.1.0</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -44,13 +44,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <godfather.telegram.core.version>0.0.44</godfather.telegram.core.version>
+        <godfather.telegram.core.version>0.0.47</godfather.telegram.core.version>
 
         <javax.persistance.version>2.2</javax.persistance.version>
 
         <google.guava.version>31.1-jre</google.guava.version>
         <jackson.databind.version>2.14.1</jackson.databind.version>
         <jackson.datatype.jsr310.version>2.14.1</jackson.datatype.jsr310.version>
+
+        <plugin.maven.compiler.version>3.10.1</plugin.maven.compiler.version>
+        <plugin.maven.release.ver>3.0.0-M7</plugin.maven.release.ver>
     </properties>
 
     <dependencyManagement>
@@ -202,20 +205,58 @@
     </dependencyManagement>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>${plugin.maven.compiler.version}</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${plugin.maven.release.ver}</version>
+                    <configuration>
+                        <preparationGoals>clean compile</preparationGoals>
+                        <goals>package</goals>
+                        <tagNameFormat>v.@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <pushChanges>false</pushChanges>
+                        <localCheckout>true</localCheckout>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <developers>
         <developer>
