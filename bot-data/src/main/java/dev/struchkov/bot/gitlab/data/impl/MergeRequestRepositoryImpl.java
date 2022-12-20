@@ -5,12 +5,8 @@ import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.repository.MergeRequestRepository;
 import dev.struchkov.bot.gitlab.data.jpa.MergeRequestJpaRepository;
-import dev.struchkov.haiti.filter.Filter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -54,13 +50,13 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
     }
 
     @Override
-    public Page<MergeRequest> filter(Filter filter, Pageable pageable) {
-        return jpaRepository.findAll(filter.<Specification<MergeRequest>>build(), pageable);
+    public List<MergeRequest> findAllByReviewerId(Long personId) {
+        return jpaRepository.findAllByReviewersIn(personId);
     }
 
     @Override
-    public List<MergeRequest> findAllByReviewerId(Long personId) {
-        return jpaRepository.findAllByReviewersIn(personId);
+    public void deleteByStates(Set<MergeRequestState> states) {
+        jpaRepository.deleteAllByStateIn(states);
     }
 
 }

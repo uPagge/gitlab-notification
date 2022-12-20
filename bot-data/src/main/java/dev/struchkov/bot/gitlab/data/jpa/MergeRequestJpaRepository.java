@@ -34,4 +34,6 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
     @Query("SELECT mr FROM MergeRequest mr LEFT JOIN mr.reviewers r WHERE r.id = :reviewerId")
     List<MergeRequest> findAllByReviewersIn(@Param("reviewerId") Long reviewerId);
 
+    void deleteAllByStateIn(Set<MergeRequestState> states);
+
 }

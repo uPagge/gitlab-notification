@@ -10,7 +10,6 @@ import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
-import dev.struchkov.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictPrNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewPrNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusPrNotify;
@@ -20,11 +19,9 @@ import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
-import dev.struchkov.bot.gitlab.core.service.impl.filter.MergeRequestFilterService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,18 +29,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.CLOSED;
+import static dev.struchkov.bot.gitlab.context.domain.MergeRequestState.MERGED;
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static java.lang.Boolean.TRUE;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MergeRequestsServiceImpl implements MergeRequestsService {
 
-    private final NotifyService notifyService;
+    public static final Set<MergeRequestState> DELETE_STATES = Set.of(MERGED, CLOSED);
+
     private final MergeRequestRepository repository;
-    private final MergeRequestFilterService filterService;
+
+    private final NotifyService notifyService;
     private final ProjectService projectService;
     private final DiscussionService discussionService;
 
@@ -215,11 +217,6 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     @Override
-    public Page<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pageable pagination) {
-        return filterService.getAll(filter, pagination);
-    }
-
-    @Override
     public ExistContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds) {
         final List<MergeRequest> existsEntity = repository.findAllById(mergeRequestIds);
         final Set<Long> existsIds = existsEntity.stream().map(MergeRequest::getId).collect(Collectors.toSet());
@@ -249,6 +246,13 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     @Override
     public List<MergeRequest> getAllByReviewerId(@NonNull Long personId) {
         return repository.findAllByReviewerId(personId);
+    }
+
+    @Override
+    public void cleanOld() {
+        log.debug("Старт очистки старых MR");
+        repository.deleteByStates(DELETE_STATES);
+        log.debug("Конец очистки старых MR");
     }
 
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {

@@ -4,10 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
-import dev.struchkov.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -30,8 +27,6 @@ public interface MergeRequestsService {
 
     List<MergeRequest> getAll();
 
-    Page<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pageable pagination);
-
     ExistContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds);
 
     List<MergeRequest> createAll(List<MergeRequest> newMergeRequests);
@@ -39,5 +34,7 @@ public interface MergeRequestsService {
     void deleteAllById(@NonNull Set<Long> mergeRequestIds);
 
     List<MergeRequest> getAllByReviewerId(@NonNull Long personId);
+
+    void cleanOld();
 
 }

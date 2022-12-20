@@ -3,10 +3,7 @@ package dev.struchkov.bot.gitlab.context.repository;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
-import dev.struchkov.haiti.filter.Filter;
 import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +23,8 @@ public interface MergeRequestRepository {
 
     void deleteByIds(Set<Long> mergeRequestIds);
 
-    Page<MergeRequest> filter(Filter filter, Pageable pageable);
-
     List<MergeRequest> findAllByReviewerId(Long personId);
+
+    void deleteByStates(Set<MergeRequestState> states);
 
 }
