@@ -1,7 +1,6 @@
 package dev.struchkov.bot.gitlab.context.domain.notify;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.utils.MessageUtils;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
@@ -20,8 +19,6 @@ public record GoodMorningNotify(
         String personName, String version
 ) implements Notify {
 
-    private static final Integer PR_COUNT = 4;
-
     @Builder
     public GoodMorningNotify {
     }
@@ -31,7 +28,7 @@ public record GoodMorningNotify(
         final StringBuilder message = new StringBuilder().append(Smile.SUN).append(" *Доброе утро, ").append(personName).append("* ").append(Smile.SUN).append(Smile.TWO_BR);
         if (!mergeRequestsReviews.isEmpty()) {
             message.append("Необходимо проверить ").append(mergeRequestsReviews.size()).append(" ПР:").append(Smile.BR);
-            MessageUtils.pullRequestForReview(
+            MessageUtils.mergeRequestForReview(
                     mergeRequestsReviews.stream()
                             .limit(3)
                             .toList()
@@ -39,7 +36,7 @@ public record GoodMorningNotify(
         } else {
             message.append("Поздравляю, у тебя ни одного ПР на проверку!");
         }
-        MessageUtils.pullRequestForNeedWork(
+        MessageUtils.mergeRequestForNeedWork(
                 mergeRequestsNeedWork.stream()
                         .limit(3)
                         .toList()
