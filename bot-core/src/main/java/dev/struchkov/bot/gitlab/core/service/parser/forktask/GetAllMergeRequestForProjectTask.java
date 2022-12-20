@@ -17,7 +17,7 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 @Slf4j
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class GetMergeRequestTask extends RecursiveTask<List<MergeRequestJson>> {
+public class GetAllMergeRequestForProjectTask extends RecursiveTask<List<MergeRequestJson>> {
 
     private static final int PAGE_COUNT = 100;
 
@@ -32,7 +32,7 @@ public class GetMergeRequestTask extends RecursiveTask<List<MergeRequestJson>> {
         Thread.sleep(100);
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
         if (mergeRequestJsons.size() == PAGE_COUNT) {
-            final GetMergeRequestTask newTask = new GetMergeRequestTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);
+            final GetAllMergeRequestForProjectTask newTask = new GetAllMergeRequestForProjectTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);
             newTask.fork();
             mergeRequestJsons.addAll(newTask.join());
         }

@@ -9,7 +9,8 @@ import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
-import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetMergeRequestTask;
+import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetAllMergeRequestForProjectTask;
+import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetSingleMergeRequestTask;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
+import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
@@ -71,10 +73,7 @@ public class MergeRequestParser {
         log.debug("Старт обработки старых MR");
         final Set<IdAndStatusPr> existIds = mergeRequestsService.getAllId(OLD_STATUSES);
 
-        final List<MergeRequest> mergeRequests = existIds.stream()
-                .map(this::getMergeRequest)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        final List<MergeRequest> newMergeRequests = getOldMergeRequests(existIds).stream()
                 .map(mergeRequestJson -> {
                     final MergeRequest newMergeRequest = conversionService.convert(mergeRequestJson, MergeRequest.class);
                     parsingCommits(newMergeRequest);
@@ -82,11 +81,28 @@ public class MergeRequestParser {
                 })
                 .collect(Collectors.toList());
 
-        if (checkNotEmpty(mergeRequests)) {
-            personMapping(mergeRequests);
-            mergeRequestsService.updateAll(mergeRequests);
+        if (checkNotEmpty(newMergeRequests)) {
+            personMapping(newMergeRequests);
+            mergeRequestsService.updateAll(newMergeRequests);
         }
         log.debug("Конец обработки старых MR");
+    }
+
+    private List<MergeRequestJson> getOldMergeRequests(Set<IdAndStatusPr> existIds) {
+        final List<ForkJoinTask<Optional<MergeRequestJson>>> tasks = existIds.stream()
+                .map(
+                        existId -> new GetSingleMergeRequestTask(
+                                gitlabProperty.getUrlMergeRequest(),
+                                existId.getProjectId(),
+                                existId.getTwoId(),
+                                personProperty.getToken()
+                        )
+                ).map(forkJoinPool::submit)
+                .collect(Collectors.toList());
+
+        return pullTaskResult(tasks).stream()
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
     }
 
     public void parsingNewMergeRequest() {
@@ -130,7 +146,7 @@ public class MergeRequestParser {
      */
     private List<MergeRequestJson> getMergeRequests(Set<Long> projectIds) {
         final List<ForkJoinTask<List<MergeRequestJson>>> tasks = projectIds.stream()
-                .map(projectId -> new GetMergeRequestTask(projectId, gitlabProperty.getUrlMergeRequestOpen(), personProperty.getToken()))
+                .map(projectId -> new GetAllMergeRequestForProjectTask(projectId, gitlabProperty.getUrlMergeRequestOpen(), personProperty.getToken()))
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
@@ -173,14 +189,6 @@ public class MergeRequestParser {
         if (commitJson != null && !commitJson.isEmpty()) {
             mergeRequest.setDateLastCommit(commitJson.get(0).getCreatedDate());
         }
-    }
-
-    private Optional<MergeRequestJson> getMergeRequest(IdAndStatusPr existId) {
-        final String mrUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequest(), existId.getProjectId(), existId.getTwoId());
-        return HttpParse.request(mrUrl)
-                .header(ACCEPT)
-                .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                .execute(MergeRequestJson.class);
     }
 
 }
