@@ -9,16 +9,13 @@ import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetPipelineShortTask;
 import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetPipelineTask;
-import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineJson;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineShortJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +35,6 @@ import static dev.struchkov.haiti.utils.Checker.checkFalse;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
  * Парсер пайплайнов.
@@ -91,12 +87,9 @@ public class PipelineParser {
             if (checkFalse(existContainer.isAllFound())) {
                 final Set<Long> idsNotFound = existContainer.getIdNoFound();
 
-                final List<PipelineJson> pipelineJsons = getNewPipelineJson(pipelineProjectMap, idsNotFound);
+                final List<Pipeline> newPipelines = getNewPipelines(pipelineProjectMap, idsNotFound);
 
-                if (checkNotEmpty(pipelineJsons)) {
-                    final List<Pipeline> newPipelines = pipelineJsons.stream()
-                            .map(json -> conversionService.convert(json, Pipeline.class))
-                            .collect(Collectors.toList());
+                if (checkNotEmpty(newPipelines)) {
                     pipelineService.createAll(newPipelines);
                 }
             }
@@ -106,8 +99,8 @@ public class PipelineParser {
         log.debug("Конец обработки новых пайплайнов");
     }
 
-    private List<PipelineJson> getNewPipelineJson(Map<Long, Long> pipelineProjectMap, Set<Long> idsNotFound) {
-        final List<ForkJoinTask<PipelineJson>> tasks = idsNotFound.stream()
+    private List<Pipeline> getNewPipelines(Map<Long, Long> pipelineProjectMap, Set<Long> idsNotFound) {
+        final List<ForkJoinTask<Optional<PipelineJson>>> tasks = idsNotFound.stream()
                 .map(pipelineId -> new GetPipelineTask(
                         gitlabProperty.getUrlPipeline(),
                         pipelineProjectMap.get(pipelineId),
@@ -117,8 +110,10 @@ public class PipelineParser {
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
-        final List<PipelineJson> pipelineJsons = pullTaskResult(tasks);
-        return pipelineJsons;
+        return pullTaskResult(tasks).stream()
+                .flatMap(Optional::stream)
+                .map(json -> conversionService.convert(json, Pipeline.class))
+                .collect(Collectors.toList());
     }
 
     private List<PipelineShortJson> getPipelineShortJsons(Set<Long> projectIds) {
@@ -144,20 +139,25 @@ public class PipelineParser {
         log.debug("Старт обработки старых пайплайнов");
         final List<Pipeline> pipelines = pipelineService.getAllByStatuses(oldStatus);
 
-        for (Pipeline pipeline : pipelines) {
-            final Optional<Pipeline> optNewPipeline = HttpParse.request(
-                            MessageFormat.format(gitlabProperty.getUrlPipeline(), pipeline.getProjectId(), pipeline.getId())
-                    )
-                    .header(ACCEPT)
-                    .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                    .execute(PipelineJson.class)
-                    .map(json -> conversionService.convert(json, Pipeline.class));
-            if (optNewPipeline.isPresent()) {
-                final Pipeline newPipeline = optNewPipeline.get();
-                pipelineService.update(newPipeline);
-            } else {
-                log.error("Ошибка обновления пайплайна. ProjectId:{}, PipelineId:{}", pipeline.getProjectId(), pipeline.getId());
-            }
+        final List<ForkJoinTask<Optional<PipelineJson>>> tasks = pipelines.stream()
+                .map(
+                        pipeline -> new GetPipelineTask(
+                                gitlabProperty.getUrlPipeline(),
+                                pipeline.getProjectId(),
+                                pipeline.getId(),
+                                personProperty.getToken()
+                        )
+                )
+                .map(forkJoinPool::submit)
+                .collect(Collectors.toList());
+
+        final List<Pipeline> newPipelines = pullTaskResult(tasks).stream()
+                .flatMap(Optional::stream)
+                .map(json -> conversionService.convert(json, Pipeline.class))
+                .collect(Collectors.toList());
+
+        if (checkNotEmpty(newPipelines)) {
+            pipelineService.updateAll(pipelines);
         }
 
         log.debug("Конец обработки старых пайплайнов");

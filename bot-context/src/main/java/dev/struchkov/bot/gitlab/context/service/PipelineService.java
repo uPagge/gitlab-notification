@@ -24,6 +24,8 @@ public interface PipelineService {
 
     Pipeline update(@NonNull Pipeline pipeline);
 
+    List<Pipeline> updateAll(@NonNull List<Pipeline> pipelines);
+
     List<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses);
 
     Page<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pageable pagination);
@@ -31,5 +33,4 @@ public interface PipelineService {
     ExistContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds);
 
     void deleteAllById(Set<Long> pipelineIds);
-
 }

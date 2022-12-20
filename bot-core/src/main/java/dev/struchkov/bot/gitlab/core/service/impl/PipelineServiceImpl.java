@@ -92,6 +92,13 @@ public class PipelineServiceImpl implements PipelineService {
         return oldPipeline;
     }
 
+    @Override
+    public List<Pipeline> updateAll(@NonNull List<Pipeline> pipelines) {
+        return pipelines.stream()
+                .map(this::update)
+                .collect(Collectors.toList());
+    }
+
     private boolean isNeedNotifyNewPipeline(@NonNull Pipeline pipeline) {
         final Person personPipelineCreator = pipeline.getPerson();
         return notificationStatus.contains(pipeline.getStatus()) // Пайплайн имеет статус необходимый для уведомления
