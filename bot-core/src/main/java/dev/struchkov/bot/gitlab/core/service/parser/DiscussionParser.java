@@ -184,7 +184,7 @@ public class DiscussionParser {
 
     private String createLinkOldDiscussion(Discussion discussion) {
         return MessageFormat.format(
-                gitlabProperty.getUrlOneDiscussion(),
+                gitlabProperty.getDiscussionUrl(),
                 discussion.getMergeRequest().getProjectId(),
                 discussion.getMergeRequest().getTwoId(),
                 discussion.getId()
@@ -192,7 +192,7 @@ public class DiscussionParser {
     }
 
     private List<DiscussionJson> getDiscussionJson(MergeRequest mergeRequest, int page) {
-        return HttpParse.request(MessageFormat.format(gitlabProperty.getUrlDiscussion(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page))
+        return HttpParse.request(MessageFormat.format(gitlabProperty.getDiscussionsUrl(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page))
                 .header(ACCEPT)
                 .header(H_PRIVATE_TOKEN, personProperty.getToken())
                 .executeList(DiscussionJson.class);
@@ -201,7 +201,7 @@ public class DiscussionParser {
     private Consumer<Note> createNoteLink(MergeRequest mergeRequest) {
         return note -> {
             final String url = MessageFormat.format(
-                    gitlabProperty.getUrlNote(),
+                    gitlabProperty.getNoteUrl(),
                     mergeRequest.getWebUrl(),
                     note.getId()
             );

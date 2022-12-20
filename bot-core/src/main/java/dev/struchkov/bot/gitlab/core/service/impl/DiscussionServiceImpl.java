@@ -250,7 +250,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         final MergeRequest mergeRequest = discussion.getMergeRequest();
         final Long projectId = mergeRequest.getProjectId();
 
-        final String requestUrl = MessageFormat.format(gitlabProperty.getUrlNewNote(), projectId, mergeRequest.getTwoId(), discussion.getId(), text);
+        final String requestUrl = MessageFormat.format(gitlabProperty.getNewNoteUrl(), projectId, mergeRequest.getTwoId(), discussion.getId(), text);
 
         RequestBody formBody = new FormBody.Builder().build();
 

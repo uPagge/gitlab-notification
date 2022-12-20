@@ -35,19 +35,19 @@ gitlab-bot:
   gitlab:
     base-url: ${GITLAB_URL}
     replaceUrl: ${GITLAB_REPLACE_URL}
-    url-project: ${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100
-    url-merge-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
-    url-merge-request-close: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
-    url-merge-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
-    url-merge-request: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
-    url-merge-request-add: "${GITLAB_URL}/api/v4/projects/"
-    user-url: ${GITLAB_URL}/api/v4/user
     users-url: ${GITLAB_URL}/api/v4/users
-    url-note: "{0}#note_{1,number,#}"
-    url-note-api: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes/{2,number,#}"
-    url-pipelines: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines?&page={1,number,#}&per_page={2,number,#}"
-    url-pipeline: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,#}"
-    url-commit: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/commits?&page=1&per_page=1"
-    url-new-note: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
-    url-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page=100"
-    url-one-discussion: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
+    user-url: ${GITLAB_URL}/api/v4/user
+    projects-url: "${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100"
+    open-merge-requests-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
+    close-merge-requests-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
+    comments-of-merge-request-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
+    merge-request-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
+    project-add-url: "${GITLAB_URL}/api/v4/projects/"
+    note-url: "{0}#note_{1,number,#}"
+    notes-of-merge-request-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes/{2,number,#}"
+    pipelines-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines?&page={1,number,#}&per_page={2,number,#}"
+    pipeline-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,#}"
+    last-commit-of-merge-request-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/commits?&page=1&per_page=1"
+    new-note-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
+    discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page=100"
+    discussion-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"

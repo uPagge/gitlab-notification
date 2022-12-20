@@ -18,50 +18,54 @@ public class GitlabProperty {
 
     private String baseUrl;
 
-    /**
-     * Адрес, по которому можно получить открытые ПР
-     */
-    private String urlMergeRequestOpen;
-
-    /**
-     * Адрес, по которому можно получить закрытые ПР
-     */
-    private String urlMergeRequestClose;
-
-    /**
-     * Адрес, по которому можно получить комментарии к ПР
-     */
-    private String urlMergeRequestComment;
-
-    /**
-     * Адрес ПР
-     */
-    private String urlMergeRequest;
-
-    private String urlProject;
-
-    private String userUrl;
+    private String replaceUrl;
 
     private String usersUrl;
 
-    private String urlMergeRequestAdd;
+    private String userUrl;
 
-    private String urlNote;
+    private String projectsUrl;
 
-    private String urlNoteApi;
+    /**
+     * Адрес, по которому можно получить открытые MR
+     */
+    private String openMergeRequestsUrl;
 
-    private String urlPipelines;
+    /**
+     * Адрес, по которому можно получить закрытые MR
+     */
+    private String closeMergeRequestsUrl;
 
-    private String urlPipeline;
+    /**
+     * Адрес, по которому можно получить комментарии к MR
+     */
+    private String commentsOfMergeRequestUrl;
 
-    private String urlCommit;
+    /**
+     * Адрес MR
+     */
+    private String mergeRequestUrl;
 
-    private String urlNewNote;
+    private String projectAddUrl;
 
-    private String urlDiscussion;
+    private String noteUrl;
 
-    private String urlOneDiscussion;
+    private String notesOfMergeRequestUrl;
 
-    private String replaceUrl;
+    private String pipelinesUrl;
+
+    private String pipelineUrl;
+
+    private String lastCommitOfMergeRequestUrl;
+
+    private String newNoteUrl;
+
+    /**
+     * Адрес дискуссий для MR
+     */
+    private String discussionsUrl;
+
+    private String discussionUrl;
+
 
 }

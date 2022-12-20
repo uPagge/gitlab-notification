@@ -91,7 +91,7 @@ public class MenuConfig {
         return AnswerText.<Mail>builder()
                 .answer(mail -> {
                     final String mailText = mail.getText();
-                    final String projectUrl = gitlabProperty.getUrlMergeRequestAdd() + mailText.replace(gitlabProperty.getBaseUrl(), "")
+                    final String projectUrl = gitlabProperty.getProjectAddUrl() + mailText.replace(gitlabProperty.getBaseUrl(), "")
                             .substring(1)
                             .replace("/", "%2F");
                     projectParser.parseByUrl(projectUrl);

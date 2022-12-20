@@ -92,7 +92,7 @@ public class MergeRequestParser {
         final List<ForkJoinTask<Optional<MergeRequestJson>>> tasks = existIds.stream()
                 .map(
                         existId -> new GetSingleMergeRequestTask(
-                                gitlabProperty.getUrlMergeRequest(),
+                                gitlabProperty.getMergeRequestUrl(),
                                 existId.getProjectId(),
                                 existId.getTwoId(),
                                 personProperty.getToken()
@@ -146,7 +146,7 @@ public class MergeRequestParser {
      */
     private List<MergeRequestJson> getMergeRequests(Set<Long> projectIds) {
         final List<ForkJoinTask<List<MergeRequestJson>>> tasks = projectIds.stream()
-                .map(projectId -> new GetAllMergeRequestForProjectTask(projectId, gitlabProperty.getUrlMergeRequestOpen(), personProperty.getToken()))
+                .map(projectId -> new GetAllMergeRequestForProjectTask(projectId, gitlabProperty.getOpenMergeRequestsUrl(), personProperty.getToken()))
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
@@ -181,7 +181,7 @@ public class MergeRequestParser {
 
     private void parsingCommits(MergeRequest mergeRequest) {
         final List<CommitJson> commitJson = HttpParse.request(
-                        MessageFormat.format(gitlabProperty.getUrlCommit(), mergeRequest.getProjectId(), mergeRequest.getTwoId())
+                        MessageFormat.format(gitlabProperty.getLastCommitOfMergeRequestUrl(), mergeRequest.getProjectId(), mergeRequest.getTwoId())
                 )
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())

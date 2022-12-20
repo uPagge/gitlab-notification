@@ -120,7 +120,7 @@ public class ProjectParser {
 
     private List<ProjectJson> getProjectJsons(int page, String... params) {
         String param = String.join("", params);
-        final String url = MessageFormat.format(gitlabProperty.getUrlProject(), page);
+        final String url = MessageFormat.format(gitlabProperty.getProjectsUrl(), page);
         return HttpParse.request(url + param)
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())

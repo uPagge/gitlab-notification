@@ -102,7 +102,7 @@ public class PipelineParser {
     private List<Pipeline> getNewPipelines(Map<Long, Long> pipelineProjectMap, Set<Long> idsNotFound) {
         final List<ForkJoinTask<Optional<PipelineJson>>> tasks = idsNotFound.stream()
                 .map(pipelineId -> new GetPipelineTask(
-                        gitlabProperty.getUrlPipeline(),
+                        gitlabProperty.getPipelineUrl(),
                         pipelineProjectMap.get(pipelineId),
                         pipelineId,
                         personProperty.getToken()
@@ -120,7 +120,7 @@ public class PipelineParser {
         LocalDateTime newLastUpdate = LocalDateTime.now();
         final List<ForkJoinTask<List<PipelineShortJson>>> tasks = projectIds.stream()
                 .map(projectId -> new GetPipelineShortTask(
-                        gitlabProperty.getUrlPipelines(),
+                        gitlabProperty.getPipelinesUrl(),
                         projectId,
                         lastUpdate,
                         personProperty.getToken()
@@ -142,7 +142,7 @@ public class PipelineParser {
         final List<ForkJoinTask<Optional<PipelineJson>>> tasks = pipelines.stream()
                 .map(
                         pipeline -> new GetPipelineTask(
-                                gitlabProperty.getUrlPipeline(),
+                                gitlabProperty.getPipelineUrl(),
                                 pipeline.getProjectId(),
                                 pipeline.getId(),
                                 personProperty.getToken()
