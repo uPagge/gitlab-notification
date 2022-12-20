@@ -1,6 +1,7 @@
 package dev.struchkov.bot.gitlab.scheduler;
 
 import dev.struchkov.bot.gitlab.context.service.CleanService;
+import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.core.service.parser.DiscussionParser;
 import dev.struchkov.bot.gitlab.core.service.parser.MergeRequestParser;
 import dev.struchkov.bot.gitlab.core.service.parser.PipelineParser;
@@ -22,6 +23,8 @@ public class SchedulerService {
     private final CleanService cleanService;
     private final DiscussionParser discussionParser;
 
+    private final PipelineService pipelineService;
+
     @Scheduled(cron = "0 */1 * * * *")
     public void newMergeRequest() {
         log.debug("Запуск процесса обновления данных");
@@ -31,7 +34,7 @@ public class SchedulerService {
         pipelineParser.scanNewPipeline();
         discussionParser.scanOldDiscussions();
         discussionParser.scanNewDiscussion();
-        cleanService.cleanOldPipelines();
+        pipelineService.cleanOld();
         cleanService.cleanOldMergedRequests();
         log.debug("Конец процесса обновления данных");
     }

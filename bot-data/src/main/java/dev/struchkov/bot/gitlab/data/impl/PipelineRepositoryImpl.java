@@ -4,13 +4,11 @@ import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
 import dev.struchkov.bot.gitlab.context.repository.PipelineRepository;
 import dev.struchkov.bot.gitlab.data.jpa.PipelineJpaRepository;
-import dev.struchkov.haiti.filter.Filter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,13 +43,9 @@ public class PipelineRepositoryImpl implements PipelineRepository {
     }
 
     @Override
-    public void deleteAllByIds(Set<Long> pipelineIds) {
-        jpaRepository.deleteAllById(pipelineIds);
-    }
-
-    @Override
-    public Page<Pipeline> filter(Filter filter, Pageable pagination) {
-        return jpaRepository.findAll(filter.<Specification<Pipeline>>build(), pagination);
+    @Transactional
+    public void deleteByCreatedBefore(LocalDateTime date) {
+        jpaRepository.deleteAllByCreatedBefore(date);
     }
 
 }

@@ -14,10 +14,5 @@ public interface CleanService {
      */
     void cleanOldMergedRequests();
 
-    /**
-     * <p>Удаляет старые пайплайны</p>
-     * <p>По умолчанию удаляет все пайплайны старше суток</p>
-     */
-    void cleanOldPipelines();
 
 }

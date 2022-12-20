@@ -3,10 +3,7 @@ package dev.struchkov.bot.gitlab.context.service;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
-import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -28,9 +25,8 @@ public interface PipelineService {
 
     List<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses);
 
-    Page<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pageable pagination);
-
     ExistContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds);
 
-    void deleteAllById(Set<Long> pipelineIds);
+    void cleanOld();
+
 }

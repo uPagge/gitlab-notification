@@ -5,19 +5,17 @@ import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
-import dev.struchkov.bot.gitlab.context.domain.filter.PipelineFilter;
 import dev.struchkov.bot.gitlab.context.domain.notify.pipeline.PipelineNotify;
 import dev.struchkov.bot.gitlab.context.repository.PipelineRepository;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
-import dev.struchkov.bot.gitlab.core.service.impl.filter.PipelineFilterService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +32,7 @@ import static dev.struchkov.haiti.utils.Checker.checkNotNull;
  *
  * @author upagge 17.01.2021
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PipelineServiceImpl implements PipelineService {
@@ -43,7 +42,6 @@ public class PipelineServiceImpl implements PipelineService {
 
     private final NotifyService notifyService;
     private final PipelineRepository repository;
-    private final PipelineFilterService pipelineFilterService;
 
     private final PersonInformation personInformation;
 
@@ -111,10 +109,6 @@ public class PipelineServiceImpl implements PipelineService {
         return repository.findAllByStatuses(statuses);
     }
 
-    @Override
-    public Page<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pageable pagination) {
-        return pipelineFilterService.getAll(filter, pagination);
-    }
 
     @Override
     public ExistContainer<Pipeline, Long> existsById(@NonNull Set<Long> pipelineIds) {
@@ -131,8 +125,10 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public void deleteAllById(Set<Long> pipelineIds) {
-        repository.deleteAllByIds(pipelineIds);
+    public void cleanOld() {
+        log.debug("Старт очистки старых пайплайнов");
+        repository.deleteByCreatedBefore(LocalDateTime.now().minusDays(1L));
+        log.debug("Конец очистки старых пайплайнов");
     }
 
 }

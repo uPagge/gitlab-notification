@@ -2,10 +2,8 @@ package dev.struchkov.bot.gitlab.context.repository;
 
 import dev.struchkov.bot.gitlab.context.domain.PipelineStatus;
 import dev.struchkov.bot.gitlab.context.domain.entity.Pipeline;
-import dev.struchkov.haiti.filter.Filter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,8 +21,6 @@ public interface PipelineRepository {
 
     List<Pipeline> findAllById(Set<Long> pipelineIds);
 
-    void deleteAllByIds(Set<Long> pipelineIds);
-
-    Page<Pipeline> filter(Filter filter, Pageable pagination);
+    void deleteByCreatedBefore(LocalDateTime date);
 
 }
