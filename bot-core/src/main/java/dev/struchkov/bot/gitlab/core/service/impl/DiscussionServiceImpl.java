@@ -3,7 +3,7 @@ package dev.struchkov.bot.gitlab.core.service.impl;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
-import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
@@ -88,7 +88,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         final Note firstNote = discussion.getFirstNote();
         final List<Note> notes = discussion.getNotes();
 
-        final MergeRequest mergeRequest = discussion.getMergeRequest();
+        final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
         final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
                 .mrName(mergeRequest.getTitle())
                 .authorName(firstNote.getAuthor().getName())
@@ -117,6 +117,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
+    @Transactional
     public Discussion update(@NonNull Discussion discussion) {
         final Discussion oldDiscussion = repository.findById(discussion.getId())
                 .orElseThrow(notFoundException("Дискуссия не найдена"));
@@ -212,7 +213,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     private void updateTask(Note note, Note oldNote) {
         if (isResolved(note, oldNote)) {
-            final MergeRequest mergeRequest = oldNote.getDiscussion().getMergeRequest();
+            final MergeRequestForDiscussion mergeRequest = oldNote.getDiscussion().getMergeRequest();
             final List<Discussion> discussions = getAllByMergeRequestId(mergeRequest.getId())
                     .stream()
                     .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
@@ -247,7 +248,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     public void answer(@NonNull String discussionId, @NonNull String text) {
         final Discussion discussion = repository.findById(discussionId)
                 .orElseThrow(notFoundException("Дисскусия {0} не найдена", discussionId));
-        final MergeRequest mergeRequest = discussion.getMergeRequest();
+        final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
         final Long projectId = mergeRequest.getProjectId();
 
         final String requestUrl = MessageFormat.format(gitlabProperty.getNewNoteUrl(), projectId, mergeRequest.getTwoId(), discussion.getId(), text);

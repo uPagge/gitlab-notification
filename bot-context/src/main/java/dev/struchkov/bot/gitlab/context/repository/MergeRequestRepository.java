@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.context.repository;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import lombok.NonNull;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface MergeRequestRepository {
 
     Optional<MergeRequest> findById(Long mergeRequestId);
 
-    List<MergeRequest> findAll();
+    List<MergeRequestForDiscussion> findAllForDiscussion();
 
     List<MergeRequest> findAllById(Set<Long> mergeRequestIds);
 

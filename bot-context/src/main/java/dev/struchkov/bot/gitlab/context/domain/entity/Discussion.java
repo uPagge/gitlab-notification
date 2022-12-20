@@ -44,7 +44,7 @@ public class Discussion {
             joinColumns = @JoinColumn(name = "discussion_id"),
             inverseJoinColumns = @JoinColumn(name = "merge_request_id")
     )
-    private MergeRequest mergeRequest;
+    private MergeRequestForDiscussion mergeRequest;
 
     @OneToMany(
             mappedBy = "discussion",

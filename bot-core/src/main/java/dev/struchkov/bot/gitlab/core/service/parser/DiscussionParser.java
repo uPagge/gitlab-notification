@@ -2,7 +2,7 @@ package dev.struchkov.bot.gitlab.core.service.parser;
 
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
-import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
@@ -73,16 +73,16 @@ public class DiscussionParser {
      */
     public void scanNewDiscussion() {
         log.debug("Старт обработки новых дискуссий");
-        final List<MergeRequest> mergeRequests = mergeRequestsService.getAll();
+        final List<MergeRequestForDiscussion> mergeRequests = mergeRequestsService.getAllForDiscussion();
 
-        for (MergeRequest mergeRequest : mergeRequests) {
+        for (MergeRequestForDiscussion mergeRequest : mergeRequests) {
             processingMergeRequest(mergeRequest);
         }
 
         log.debug("Конец обработки новых дискуссий");
     }
 
-    private void processingMergeRequest(MergeRequest mergeRequest) {
+    private void processingMergeRequest(MergeRequestForDiscussion mergeRequest) {
         int page = 1;
         List<DiscussionJson> discussionJson = getDiscussionJson(mergeRequest, page);
 
@@ -94,7 +94,7 @@ public class DiscussionParser {
         }
     }
 
-    private void createNewDiscussion(List<DiscussionJson> discussionJson, MergeRequest mergeRequest) {
+    private void createNewDiscussion(List<DiscussionJson> discussionJson, MergeRequestForDiscussion mergeRequest) {
         final Set<String> discussionIds = discussionJson.stream()
                 .map(DiscussionJson::getId)
                 .collect(Collectors.toUnmodifiableSet());
@@ -200,14 +200,14 @@ public class DiscussionParser {
         );
     }
 
-    private List<DiscussionJson> getDiscussionJson(MergeRequest mergeRequest, int page) {
+    private List<DiscussionJson> getDiscussionJson(MergeRequestForDiscussion mergeRequest, int page) {
         return HttpParse.request(MessageFormat.format(gitlabProperty.getDiscussionsUrl(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page))
                 .header(ACCEPT)
                 .header(H_PRIVATE_TOKEN, personProperty.getToken())
                 .executeList(DiscussionJson.class);
     }
 
-    private Consumer<Note> createNoteLink(MergeRequest mergeRequest) {
+    private Consumer<Note> createNoteLink(MergeRequestForDiscussion mergeRequest) {
         return note -> {
             final String url = MessageFormat.format(
                     gitlabProperty.getNoteUrl(),

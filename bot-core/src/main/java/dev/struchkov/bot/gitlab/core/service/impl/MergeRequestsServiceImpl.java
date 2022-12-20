@@ -8,6 +8,7 @@ import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.ReviewerChanged;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictPrNotify;
@@ -212,8 +213,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     @Override
-    public List<MergeRequest> getAll() {
-        return repository.findAll();
+    public List<MergeRequestForDiscussion> getAllForDiscussion() {
+        return repository.findAllForDiscussion();
     }
 
     @Override
@@ -235,12 +236,6 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return newMergeRequests.stream()
                 .map(this::create)
                 .toList();
-    }
-
-    @Override
-    @Transactional
-    public void deleteAllById(@NonNull Set<Long> mergeRequestIds) {
-        repository.deleteByIds(mergeRequestIds);
     }
 
     @Override

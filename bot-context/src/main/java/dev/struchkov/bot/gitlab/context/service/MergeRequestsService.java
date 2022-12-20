@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import lombok.NonNull;
 
 import java.util.List;
@@ -25,13 +26,11 @@ public interface MergeRequestsService {
      */
     Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses);
 
-    List<MergeRequest> getAll();
+    List<MergeRequestForDiscussion> getAllForDiscussion();
 
     ExistContainer<MergeRequest, Long> existsById(@NonNull Set<Long> mergeRequestIds);
 
     List<MergeRequest> createAll(List<MergeRequest> newMergeRequests);
-
-    void deleteAllById(@NonNull Set<Long> mergeRequestIds);
 
     List<MergeRequest> getAllByReviewerId(@NonNull Long personId);
 
