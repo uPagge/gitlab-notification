@@ -34,6 +34,7 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PENDING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PREPARING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.RUNNING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
+import static dev.struchkov.haiti.utils.Checker.checkFalse;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
@@ -84,23 +85,14 @@ public class PipelineParser {
         final Map<Long, Long> pipelineProjectMap = getPipelineShortJsons(projectIds).stream()
                 .collect(Collectors.toMap(PipelineShortJson::getId, PipelineShortJson::getProjectId));
 
-        if (!pipelineProjectMap.isEmpty()) {
+        if (checkNotEmpty(pipelineProjectMap)) {
             final ExistContainer<Pipeline, Long> existContainer = pipelineService.existsById(pipelineProjectMap.keySet());
 
-            if (!existContainer.isAllFound()) {
+            if (checkFalse(existContainer.isAllFound())) {
                 final Set<Long> idsNotFound = existContainer.getIdNoFound();
 
-                final List<ForkJoinTask<PipelineJson>> tasks = idsNotFound.stream()
-                        .map(pipelineId -> new GetPipelineTask(
-                                gitlabProperty.getUrlPipeline(),
-                                pipelineProjectMap.get(pipelineId),
-                                pipelineId,
-                                personProperty.getToken()
-                        ))
-                        .map(forkJoinPool::submit)
-                        .collect(Collectors.toList());
+                final List<PipelineJson> pipelineJsons = getNewPipelineJson(pipelineProjectMap, idsNotFound);
 
-                final List<PipelineJson> pipelineJsons = pullTaskResult(tasks);
                 if (checkNotEmpty(pipelineJsons)) {
                     final List<Pipeline> newPipelines = pipelineJsons.stream()
                             .map(json -> conversionService.convert(json, Pipeline.class))
@@ -112,6 +104,21 @@ public class PipelineParser {
         }
 
         log.debug("Конец обработки новых пайплайнов");
+    }
+
+    private List<PipelineJson> getNewPipelineJson(Map<Long, Long> pipelineProjectMap, Set<Long> idsNotFound) {
+        final List<ForkJoinTask<PipelineJson>> tasks = idsNotFound.stream()
+                .map(pipelineId -> new GetPipelineTask(
+                        gitlabProperty.getUrlPipeline(),
+                        pipelineProjectMap.get(pipelineId),
+                        pipelineId,
+                        personProperty.getToken()
+                ))
+                .map(forkJoinPool::submit)
+                .collect(Collectors.toList());
+
+        final List<PipelineJson> pipelineJsons = pullTaskResult(tasks);
+        return pipelineJsons;
     }
 
     private List<PipelineShortJson> getPipelineShortJsons(Set<Long> projectIds) {
