@@ -90,7 +90,6 @@ public class DiscussionServiceImpl implements DiscussionService {
         final Note firstNote = discussion.getFirstNote();
         final List<Note> notes = discussion.getNotes();
 
-
         final MergeRequest mergeRequest = discussion.getMergeRequest();
         final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
                 .mrName(mergeRequest.getTitle())
