@@ -1,10 +1,9 @@
-package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
+package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
+import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
+import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
-import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
-import dev.struchkov.bot.gitlab.context.service.AppSettingService;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 
 import java.text.MessageFormat;
 

@@ -1,4 +1,4 @@
-package dev.struchkov.bot.gitlab.context.domain.notify.pullrequest;
+package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
 import lombok.Getter;
