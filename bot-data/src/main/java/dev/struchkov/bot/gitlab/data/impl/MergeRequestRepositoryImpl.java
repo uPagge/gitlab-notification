@@ -29,11 +29,6 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
     }
 
     @Override
-    public List<MergeRequest> findAllByAssignee(@NonNull Long userId) {
-        return jpaRepository.findAllByAssigneeId(userId);
-    }
-
-    @Override
     public MergeRequest save(MergeRequest mergeRequest) {
         return jpaRepository.save(mergeRequest);
     }
@@ -44,8 +39,8 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
     }
 
     @Override
-    public Page<MergeRequest> findAll(Pageable pagination) {
-        return jpaRepository.findAll(pagination);
+    public List<MergeRequest> findAll() {
+        return jpaRepository.findAll();
     }
 
     @Override

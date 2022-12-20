@@ -210,8 +210,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     @Override
-    public Page<MergeRequest> getAll(Pageable pagination) {
-        return repository.findAll(pagination);
+    public List<MergeRequest> getAll() {
+        return repository.findAll();
     }
 
     @Override

@@ -3,8 +3,6 @@ package dev.struchkov.bot.gitlab.context.service;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import lombok.NonNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -37,7 +35,7 @@ public interface DiscussionService {
 
     List<Discussion> createAll(@NonNull List<Discussion> newDiscussions);
 
-    Page<Discussion> getAll(@NonNull Pageable pagination);
+    List<Discussion> getAll();
 
     void deleteById(String discussionId);
 

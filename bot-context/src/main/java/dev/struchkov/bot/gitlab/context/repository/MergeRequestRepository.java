@@ -16,14 +16,11 @@ public interface MergeRequestRepository {
 
     Set<IdAndStatusPr> findAllIdByStateIn(@NonNull Set<MergeRequestState> states);
 
-    //TODO [28.01.2022]: Решить, нужно ли оставить
-    List<MergeRequest> findAllByAssignee(@NonNull Long userId);
-
     MergeRequest save(MergeRequest mergeRequest);
 
     Optional<MergeRequest> findById(Long mergeRequestId);
 
-    Page<MergeRequest> findAll(Pageable pagination);
+    List<MergeRequest> findAll();
 
     List<MergeRequest> findAllById(Set<Long> mergeRequestIds);
 

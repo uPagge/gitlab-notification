@@ -14,8 +14,6 @@ import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -45,8 +43,6 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 @RequiredArgsConstructor
 public class DiscussionParser {
 
-    public static final int COUNT = 500;
-
     private final DiscussionService discussionService;
     private final MergeRequestsService mergeRequestsService;
     private final ConversionService conversionService;
@@ -59,18 +55,12 @@ public class DiscussionParser {
      */
     public void scanNewDiscussion() {
         log.debug("Старт обработки новых дискуссий");
-        int page = 0;
-        Page<MergeRequest> mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(page, COUNT));
+        final List<MergeRequest> mergeRequests = mergeRequestsService.getAll();
 
-        while (mergeRequestSheet.hasContent()) {
-            final List<MergeRequest> mergeRequests = mergeRequestSheet.getContent();
-
-            for (MergeRequest mergeRequest : mergeRequests) {
-                processingMergeRequest(mergeRequest);
-            }
-
-            mergeRequestSheet = mergeRequestsService.getAll(PageRequest.of(++page, COUNT));
+        for (MergeRequest mergeRequest : mergeRequests) {
+            processingMergeRequest(mergeRequest);
         }
+
         log.debug("Конец обработки новых дискуссий");
     }
 
@@ -156,38 +146,32 @@ public class DiscussionParser {
      */
     public void scanOldDiscussions() {
         log.debug("Старт обработки старых дискуссий");
-        int page = 0;
-        Page<Discussion> discussionPage = discussionService.getAll(PageRequest.of(page, COUNT));
+        final List<Discussion> discussions = discussionService.getAll();
 
-        while (discussionPage.hasContent()) {
-            final List<Discussion> discussions = discussionPage.getContent();
+        // Удаляем обсуждения, которые потеряли свои MR
+        //TODO [05.12.2022|uPagge]: Проверить целесообразность этого действия
+        discussions.stream()
+                .filter(discussion -> checkNull(discussion.getMergeRequest()))
+                .map(Discussion::getId)
+                .forEach(discussionService::deleteById);
 
-            // Удаляем обсуждения, которые потеряли свои MR
-            //TODO [05.12.2022|uPagge]: Проверить целесообразность этого действия
-            discussions.stream()
-                    .filter(discussion -> checkNull(discussion.getMergeRequest()))
-                    .map(Discussion::getId)
-                    .forEach(discussionService::deleteById);
-
-            final List<Discussion> newDiscussions = new ArrayList<>();
-            for (Discussion discussion : discussions) {
-                if (checkNotNull(discussion.getMergeRequest())) {
-                    getOldDiscussionJson(discussion)
-                            .map(json -> {
-                                final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
-                                newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
-                                return newDiscussion;
-                            }).ifPresent(newDiscussions::add);
-                }
+        final List<Discussion> newDiscussions = new ArrayList<>();
+        for (Discussion discussion : discussions) {
+            if (checkNotNull(discussion.getMergeRequest())) {
+                getOldDiscussionJson(discussion)
+                        .map(json -> {
+                            final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
+                            newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
+                            return newDiscussion;
+                        }).ifPresent(newDiscussions::add);
             }
-
-            if (checkNotEmpty(newDiscussions)) {
-                personMapping(newDiscussions);
-                discussionService.updateAll(newDiscussions);
-            }
-
-            discussionPage = discussionService.getAll(PageRequest.of(++page, COUNT));
         }
+
+        if (checkNotEmpty(newDiscussions)) {
+            personMapping(newDiscussions);
+            discussionService.updateAll(newDiscussions);
+        }
+
         log.debug("Конец обработки старых дискуссий");
     }
 

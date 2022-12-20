@@ -23,8 +23,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -297,8 +295,8 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
-    public Page<Discussion> getAll(@NonNull Pageable pagination) {
-        return repository.findAll(pagination);
+    public List<Discussion> getAll() {
+        return repository.findAll();
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface MergeRequestsService {
      */
     Set<IdAndStatusPr> getAllId(Set<MergeRequestState> statuses);
 
-    Page<MergeRequest> getAll(Pageable pagination);
+    List<MergeRequest> getAll();
 
     Page<MergeRequest> getAll(@NonNull MergeRequestFilter filter, Pageable pagination);
 
