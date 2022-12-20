@@ -35,8 +35,8 @@ gitlab-bot:
   gitlab:
     base-url: ${GITLAB_URL}
     replaceUrl: ${GITLAB_REPLACE_URL}
-    users-url: ${GITLAB_URL}/api/v4/users
-    user-url: ${GITLAB_URL}/api/v4/user
+    users-url: "${GITLAB_URL}/api/v4/users"
+    user-url: "${GITLAB_URL}/api/v4/user"
     projects-url: "${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100"
     open-merge-requests-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
     close-merge-requests-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"

@@ -12,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class GetAllMergeRequestForProjectTask extends RecursiveTask<List<MergeRe
     protected List<MergeRequestJson> compute() {
         Thread.sleep(100);
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
-        if (mergeRequestJsons.size() == PAGE_COUNT) {
+        if (checkNotEmpty(mergeRequestJsons) && mergeRequestJsons.size() == PAGE_COUNT) {
             final GetAllMergeRequestForProjectTask newTask = new GetAllMergeRequestForProjectTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);
             newTask.fork();
             mergeRequestJsons.addAll(newTask.join());

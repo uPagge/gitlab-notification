@@ -11,8 +11,8 @@ import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.sdk.domain.DiscussionJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +31,6 @@ import java.util.stream.Stream;
 import static dev.struchkov.bot.gitlab.core.utils.StringUtils.H_PRIVATE_TOKEN;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
-import static dev.struchkov.haiti.utils.Checker.checkNull;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
@@ -40,15 +40,33 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class DiscussionParser {
 
     private final DiscussionService discussionService;
+
     private final MergeRequestsService mergeRequestsService;
     private final ConversionService conversionService;
+    private final ForkJoinPool forkJoinPool;
 
     private final GitlabProperty gitlabProperty;
+
     private final PersonProperty personProperty;
+
+    public DiscussionParser(
+            DiscussionService discussionService,
+            MergeRequestsService mergeRequestsService,
+            ConversionService conversionService,
+            @Qualifier("parserPool") ForkJoinPool forkJoinPool,
+            GitlabProperty gitlabProperty,
+            PersonProperty personProperty
+    ) {
+        this.discussionService = discussionService;
+        this.mergeRequestsService = mergeRequestsService;
+        this.conversionService = conversionService;
+        this.forkJoinPool = forkJoinPool;
+        this.gitlabProperty = gitlabProperty;
+        this.personProperty = personProperty;
+    }
 
     /**
      * Поиск новых обсуждений
@@ -148,23 +166,14 @@ public class DiscussionParser {
         log.debug("Старт обработки старых дискуссий");
         final List<Discussion> discussions = discussionService.getAll();
 
-        // Удаляем обсуждения, которые потеряли свои MR
-        //TODO [05.12.2022|uPagge]: Проверить целесообразность этого действия
-        discussions.stream()
-                .filter(discussion -> checkNull(discussion.getMergeRequest()))
-                .map(Discussion::getId)
-                .forEach(discussionService::deleteById);
-
         final List<Discussion> newDiscussions = new ArrayList<>();
         for (Discussion discussion : discussions) {
-            if (checkNotNull(discussion.getMergeRequest())) {
-                getOldDiscussionJson(discussion)
-                        .map(json -> {
-                            final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
-                            newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
-                            return newDiscussion;
-                        }).ifPresent(newDiscussions::add);
-            }
+            getOldDiscussionJson(discussion)
+                    .map(json -> {
+                        final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
+                        newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
+                        return newDiscussion;
+                    }).ifPresent(newDiscussions::add);
         }
 
         if (checkNotEmpty(newDiscussions)) {
