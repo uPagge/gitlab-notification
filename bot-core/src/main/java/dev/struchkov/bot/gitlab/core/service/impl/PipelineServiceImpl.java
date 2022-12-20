@@ -82,7 +82,7 @@ public class PipelineServiceImpl implements PipelineService {
         final Pipeline oldPipeline = repository.findById(pipeline.getId())
                 .orElseThrow(notFoundException("Pipeline не найден"));
 
-        pipeline.setProjectId(pipeline.getProjectId());
+        pipeline.setProjectId(oldPipeline.getProjectId());
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
