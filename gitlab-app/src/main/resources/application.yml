@@ -36,10 +36,10 @@ gitlab-bot:
     base-url: ${GITLAB_URL}
     replaceUrl: ${GITLAB_REPLACE_URL}
     url-project: ${GITLAB_URL}/api/v4/projects?page={0, number, integer}&per_page=100
-    url-pull-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
-    url-pull-request-close: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
-    url-pull-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
-    url-pull-request: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
+    url-merge-request-open: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=opened&page={1, number, integer}&per_page={2, number, integer}"
+    url-merge-request-close: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests?state=closed&page={1, number, integer}&per_page=100"
+    url-merge-request-comment: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/notes?&page={2,number,#}&per_page=100"
+    url-merge-request: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}"
     url-merge-request-add: "${GITLAB_URL}/api/v4/projects/"
     user-url: ${GITLAB_URL}/api/v4/user
     users-url: ${GITLAB_URL}/api/v4/users

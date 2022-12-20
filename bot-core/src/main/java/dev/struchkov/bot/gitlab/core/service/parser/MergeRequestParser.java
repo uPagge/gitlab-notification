@@ -130,7 +130,7 @@ public class MergeRequestParser {
      */
     private List<MergeRequestJson> getMergeRequests(Set<Long> projectIds) {
         final List<ForkJoinTask<List<MergeRequestJson>>> tasks = projectIds.stream()
-                .map(projectId -> new GetMergeRequestTask(projectId, gitlabProperty.getUrlPullRequestOpen(), personProperty.getToken()))
+                .map(projectId -> new GetMergeRequestTask(projectId, gitlabProperty.getUrlMergeRequestOpen(), personProperty.getToken()))
                 .map(forkJoinPool::submit)
                 .collect(Collectors.toList());
 
@@ -176,7 +176,7 @@ public class MergeRequestParser {
     }
 
     private Optional<MergeRequestJson> getMergeRequest(IdAndStatusPr existId) {
-        final String mrUrl = MessageFormat.format(gitlabProperty.getUrlPullRequest(), existId.getProjectId(), existId.getTwoId());
+        final String mrUrl = MessageFormat.format(gitlabProperty.getUrlMergeRequest(), existId.getProjectId(), existId.getTwoId());
         return HttpParse.request(mrUrl)
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())

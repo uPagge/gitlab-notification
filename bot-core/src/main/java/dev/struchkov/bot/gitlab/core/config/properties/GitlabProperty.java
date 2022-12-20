@@ -21,22 +21,22 @@ public class GitlabProperty {
     /**
      * Адрес, по которому можно получить открытые ПР
      */
-    private String urlPullRequestOpen;
+    private String urlMergeRequestOpen;
 
     /**
      * Адрес, по которому можно получить закрытые ПР
      */
-    private String urlPullRequestClose;
+    private String urlMergeRequestClose;
 
     /**
      * Адрес, по которому можно получить комментарии к ПР
      */
-    private String urlPullRequestComment;
+    private String urlMergeRequestComment;
 
     /**
      * Адрес ПР
      */
-    private String urlPullRequest;
+    private String urlMergeRequest;
 
     private String urlProject;
 
