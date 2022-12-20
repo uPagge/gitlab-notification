@@ -16,14 +16,13 @@ import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -35,7 +34,6 @@ import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PENDING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.PREPARING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.RUNNING;
 import static dev.struchkov.bot.gitlab.context.domain.PipelineStatus.WAITING_FOR_RESOURCE;
-import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
@@ -138,27 +136,24 @@ public class PipelineParser {
 
     public void scanOldPipeline() {
         log.debug("Старт обработки старых пайплайнов");
-        int page = 0;
-        Page<Pipeline> pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(page, COUNT));
+        final List<Pipeline> pipelines = pipelineService.getAllByStatuses(oldStatus);
 
-        while (pipelineSheet.hasContent()) {
-            final List<Pipeline> pipelines = pipelineSheet.getContent();
-
-            for (Pipeline pipeline : pipelines) {
-                final Pipeline newPipeline = HttpParse.request(
-                                MessageFormat.format(gitlabProperty.getUrlPipeline(), pipeline.getProjectId(), pipeline.getId())
-                        )
-                        .header(ACCEPT)
-                        .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
-                        .execute(PipelineJson.class)
-                        .map(json -> conversionService.convert(json, Pipeline.class))
-                        .orElseThrow(convertException("Ошибка обновления Pipelines"));
-
+        for (Pipeline pipeline : pipelines) {
+            final Optional<Pipeline> optNewPipeline = HttpParse.request(
+                            MessageFormat.format(gitlabProperty.getUrlPipeline(), pipeline.getProjectId(), pipeline.getId())
+                    )
+                    .header(ACCEPT)
+                    .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
+                    .execute(PipelineJson.class)
+                    .map(json -> conversionService.convert(json, Pipeline.class));
+            if (optNewPipeline.isPresent()) {
+                final Pipeline newPipeline = optNewPipeline.get();
                 pipelineService.update(newPipeline);
+            } else {
+                log.error("Ошибка обновления пайплайна. ProjectId:{}, PipelineId:{}", pipeline.getProjectId(), pipeline.getId());
             }
-
-            pipelineSheet = pipelineService.getAllByStatuses(oldStatus, PageRequest.of(++page, COUNT));
         }
+
         log.debug("Конец обработки старых пайплайнов");
     }
 

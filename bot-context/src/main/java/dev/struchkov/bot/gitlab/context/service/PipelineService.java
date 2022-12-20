@@ -24,7 +24,7 @@ public interface PipelineService {
 
     Pipeline update(@NonNull Pipeline pipeline);
 
-    Page<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pageable pagination);
+    List<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses);
 
     Page<Pipeline> getAll(@NonNull PipelineFilter filter, @NonNull Pageable pagination);
 

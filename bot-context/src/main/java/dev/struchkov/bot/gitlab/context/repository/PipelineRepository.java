@@ -19,7 +19,7 @@ public interface PipelineRepository {
 
     Optional<Pipeline> findById(Long pipelineId);
 
-    Page<Pipeline> findAllByStatuses(Set<PipelineStatus> statuses, Pageable pagination);
+    List<Pipeline> findAllByStatuses(Set<PipelineStatus> statuses);
 
     List<Pipeline> findAllById(Set<Long> pipelineIds);
 

@@ -35,8 +35,8 @@ public class PipelineRepositoryImpl implements PipelineRepository {
     }
 
     @Override
-    public Page<Pipeline> findAllByStatuses(Set<PipelineStatus> statuses, Pageable pagination) {
-        return jpaRepository.findAllByStatusIn(statuses, pagination);
+    public List<Pipeline> findAllByStatuses(Set<PipelineStatus> statuses) {
+        return jpaRepository.findAllByStatusIn(statuses);
     }
 
     @Override

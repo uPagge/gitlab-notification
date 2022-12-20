@@ -82,6 +82,8 @@ public class PipelineServiceImpl implements PipelineService {
         final Pipeline oldPipeline = repository.findById(pipeline.getId())
                 .orElseThrow(notFoundException("Pipeline не найден"));
 
+        pipeline.setProjectId(pipeline.getProjectId());
+
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
             notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
             return repository.save(pipeline);
@@ -98,8 +100,8 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Page<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses, @NonNull Pageable pagination) {
-        return repository.findAllByStatuses(statuses, pagination);
+    public List<Pipeline> getAllByStatuses(@NonNull Set<PipelineStatus> statuses) {
+        return repository.findAllByStatuses(statuses);
     }
 
     @Override
