@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Данные необходимые для взаимодействия с API Bitbucket.
+ * Данные необходимые для взаимодействия с API GitLab.
  *
  * @author upagge [31.01.2020]
  */

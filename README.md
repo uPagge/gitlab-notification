@@ -41,7 +41,7 @@ sudo docker run --name gitlab-notify  \
 #### Переменные
 
 * `TELEGRAM_BOT_TOKEN` -- токен, который вы получили при создание бота.
-* `TELEGRAM_BOT_USERNAME` -- название, которое вы дали боту. Пример my_bitbucket_bot
+* `TELEGRAM_BOT_USERNAME` -- название, которое вы дали боту. Пример my_gitlab_bot
 * `GITLAB_PERSONAL_TOKEN` -- токен, который вы получили в GitLab
 * `TELEGRAM_PERSON_ID` -- ваш id в телеграм, можно узнать у [этого бота](https://t.me/myidbot)
 * `GITLAB_URL` -- можно указать https://gitlab.com или url на ваш локальный GitLab строго в таком формате http://localhost:7990

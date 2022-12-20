@@ -12,8 +12,7 @@
     <artifactId>bot-data</artifactId>
 
     <name>GitLab Server Data</name>
-    <description>Implementation of the Bitbucket server version repository layer</description>
-    <url>https://github.com/uPagge/bitbucketbot</url>
+    <description>Implementation of the GitLab server version repository layer</description>
 
     <dependencies>
         <dependency>

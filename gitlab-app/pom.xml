@@ -13,7 +13,7 @@
 
     <name>Gitlab Notification Bot</name>
     <description>Notifications about Gitlab Server events in Telegram</description>
-    <url>https://github.com/uPagge/bitbucketbot</url>
+    <url>https://git.struchkov.dev/Telegram-Bots/gitlab-notification</url>
 
     <dependencies>
         <dependency>
