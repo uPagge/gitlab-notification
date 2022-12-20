@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
@@ -26,7 +27,9 @@ public class GetMergeRequestTask extends RecursiveTask<List<MergeRequestJson>> {
     private final String gitlabToken;
 
     @Override
+    @SneakyThrows
     protected List<MergeRequestJson> compute() {
+        Thread.sleep(100);
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
         if (mergeRequestJsons.size() == PAGE_COUNT) {
             final GetMergeRequestTask newTask = new GetMergeRequestTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);

@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PipelineJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
@@ -22,7 +23,9 @@ public class GetPipelineTask extends RecursiveTask<PipelineJson> {
     private final String gitlabToken;
 
     @Override
+    @SneakyThrows
     protected PipelineJson compute() {
+        Thread.sleep(100);
         final PipelineJson pipelineJson = HttpParse.request(
                         MessageFormat.format(urlPipeline, projectId, pipelineId)
                 )

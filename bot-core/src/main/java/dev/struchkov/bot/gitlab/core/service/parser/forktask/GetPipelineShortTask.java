@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.sdk.domain.PipelineShortJson;
 import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
@@ -28,7 +29,9 @@ public class GetPipelineShortTask extends RecursiveTask<List<PipelineShortJson>>
     private final String gitlabToken;
 
     @Override
+    @SneakyThrows
     protected List<PipelineShortJson> compute() {
+        Thread.sleep(100);
         final List<PipelineShortJson> jsons = getPipelineJsons();
         if (jsons.size() == PAGE_COUNT) {
             final GetPipelineShortTask newTask = new GetPipelineShortTask(urlPipelines, projectId, pageNumber + 1, lastUpdate, gitlabToken);
