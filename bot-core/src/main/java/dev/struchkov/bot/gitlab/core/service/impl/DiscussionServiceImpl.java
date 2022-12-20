@@ -300,11 +300,6 @@ public class DiscussionServiceImpl implements DiscussionService {
         return repository.findAll();
     }
 
-    @Override
-    public void deleteById(String discussionId) {
-        repository.deleteById(discussionId);
-    }
-
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */

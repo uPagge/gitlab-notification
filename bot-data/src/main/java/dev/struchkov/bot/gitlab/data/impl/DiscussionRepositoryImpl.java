@@ -38,11 +38,6 @@ public class DiscussionRepositoryImpl implements DiscussionRepository {
     }
 
     @Override
-    public void deleteById(String discussionId) {
-        jpaRepository.deleteById(discussionId);
-    }
-
-    @Override
     public List<Discussion> findAll() {
         return jpaRepository.findAll();
     }

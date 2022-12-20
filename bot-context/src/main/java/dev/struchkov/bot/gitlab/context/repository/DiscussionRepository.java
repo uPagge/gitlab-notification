@@ -20,8 +20,6 @@ public interface DiscussionRepository {
 
     Optional<Discussion> findById(String discussionId);
 
-    void deleteById(String discussionId);
-
     List<Discussion> findAll();
 
     List<Discussion> findAllById(Set<String> discussionIds);

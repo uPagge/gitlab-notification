@@ -37,6 +37,4 @@ public interface DiscussionService {
 
     List<Discussion> getAll();
 
-    void deleteById(String discussionId);
-
 }
