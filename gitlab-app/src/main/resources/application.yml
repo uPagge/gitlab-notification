@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: ${DATASOURCE_URL}
