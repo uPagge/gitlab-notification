@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static dev.struchkov.bot.gitlab.core.utils.StringUtils.H_PRIVATE_TOKEN;
+import static dev.struchkov.haiti.utils.Checker.checkFalse;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
@@ -41,6 +42,8 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 @Slf4j
 @Component
 public class DiscussionParser {
+
+    public static final int PAGE_COUNT = 100;
 
     private final DiscussionService discussionService;
 
@@ -75,22 +78,20 @@ public class DiscussionParser {
         log.debug("Старт обработки новых дискуссий");
         final List<MergeRequestForDiscussion> mergeRequests = mergeRequestsService.getAllForDiscussion();
 
-        for (MergeRequestForDiscussion mergeRequest : mergeRequests) {
-            processingMergeRequest(mergeRequest);
-        }
+        mergeRequests.forEach(this::processingNewDiscussion);
 
         log.debug("Конец обработки новых дискуссий");
     }
 
-    private void processingMergeRequest(MergeRequestForDiscussion mergeRequest) {
+    private void processingNewDiscussion(MergeRequestForDiscussion mergeRequest) {
         int page = 1;
-        List<DiscussionJson> discussionJson = getDiscussionJson(mergeRequest, page);
+        final List<DiscussionJson> discussionJson = getDiscussionJson(mergeRequest, page);
 
-        while (!discussionJson.isEmpty()) {
-
+        if (checkNotEmpty(discussionJson)) {
+            while (discussionJson.size() == PAGE_COUNT) {
+                discussionJson.addAll(getDiscussionJson(mergeRequest, ++page));
+            }
             createNewDiscussion(discussionJson, mergeRequest);
-
-            discussionJson = getDiscussionJson(mergeRequest, ++page);
         }
     }
 
@@ -100,9 +101,10 @@ public class DiscussionParser {
                 .collect(Collectors.toUnmodifiableSet());
 
         final ExistContainer<Discussion, String> existContainer = discussionService.existsById(discussionIds);
-        if (!existContainer.isAllFound()) {
+        final Set<String> notFoundIds = existContainer.getIdNoFound();
+        if (checkFalse(existContainer.isAllFound())) {
             final List<Discussion> newDiscussions = discussionJson.stream()
-                    .filter(json -> existContainer.getIdNoFound().contains(json.getId()))
+                    .filter(json -> notFoundIds.contains(json.getId()))
                     .map(json -> {
                         final Discussion discussion = conversionService.convert(json, Discussion.class);
                         discussion.setMergeRequest(mergeRequest);
@@ -201,7 +203,7 @@ public class DiscussionParser {
     }
 
     private List<DiscussionJson> getDiscussionJson(MergeRequestForDiscussion mergeRequest, int page) {
-        return HttpParse.request(MessageFormat.format(gitlabProperty.getDiscussionsUrl(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page))
+        return HttpParse.request(MessageFormat.format(gitlabProperty.getDiscussionsUrl(), mergeRequest.getProjectId(), mergeRequest.getTwoId(), page, PAGE_COUNT))
                 .header(ACCEPT)
                 .header(H_PRIVATE_TOKEN, personProperty.getToken())
                 .executeList(DiscussionJson.class);

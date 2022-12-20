@@ -49,5 +49,5 @@ gitlab-bot:
     pipeline-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/pipelines/{1,number,#}"
     last-commit-of-merge-request-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/commits?&page=1&per_page=1"
     new-note-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
-    discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page=100"
+    discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page={3,number,#}"
     discussion-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"

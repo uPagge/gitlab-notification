@@ -23,7 +23,7 @@ public class GetAllMergeRequestForProjectTask extends RecursiveTask<List<MergeRe
     private static final int PAGE_COUNT = 100;
 
     private final long projectId;
-    private int pageNumber = 0;
+    private int pageNumber = 1;
     private final String urlMrOpen;
     private final String gitlabToken;
 

@@ -24,7 +24,7 @@ public class GetAllDiscussionForMergeRequestTask extends RecursiveTask<List<Disc
     private final long projectId;
     private final long mergeRequestTwoId;
     private final String personalGitlabToken;
-    private int page = 0;
+    private int page = 1;
 
     @Override
     @SneakyThrows

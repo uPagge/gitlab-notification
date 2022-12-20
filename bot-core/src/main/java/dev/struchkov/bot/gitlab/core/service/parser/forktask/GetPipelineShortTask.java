@@ -24,7 +24,7 @@ public class GetPipelineShortTask extends RecursiveTask<List<PipelineShortJson>>
 
     private final String urlPipelines;
     private final long projectId;
-    private int pageNumber = 0;
+    private int pageNumber = 1;
     private final LocalDateTime lastUpdate;
     private final String gitlabToken;
 
