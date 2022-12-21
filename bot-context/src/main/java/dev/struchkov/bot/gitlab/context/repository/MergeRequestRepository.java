@@ -22,8 +22,6 @@ public interface MergeRequestRepository {
 
     List<MergeRequest> findAllById(Set<Long> mergeRequestIds);
 
-    void deleteByIds(Set<Long> mergeRequestIds);
-
     List<MergeRequest> findAllByReviewerId(Long personId);
 
     void deleteByStates(Set<MergeRequestState> states);
