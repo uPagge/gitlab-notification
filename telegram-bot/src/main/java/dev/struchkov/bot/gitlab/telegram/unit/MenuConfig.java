@@ -1,9 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.unit;
 
-import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
-import dev.struchkov.bot.gitlab.context.domain.filter.MergeRequestFilter;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -18,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +29,7 @@ import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.clickButtonRaw;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -80,7 +78,7 @@ public class MenuConfig {
             @Unit(ADD_NEW_PROJECT) MainUnit<Mail> addNewProject
     ) {
         return AnswerText.<Mail>builder()
-                .triggerPhrase(TEXT_ADD_NEW_PROJECT)
+                .triggerCheck(clickButtonRaw(TEXT_ADD_NEW_PROJECT))
                 .answer(boxAnswer("Copy the url of the project and send it to me"))
                 .next(addNewProject)
                 .build();
@@ -104,9 +102,7 @@ public class MenuConfig {
     public AnswerText<Mail> settings() {
         return AnswerText.<Mail>builder()
                 .triggerPhrase(SETTINGS)
-                .answer(
-                        boxAnswer("This is the settings menu")
-                )
+                .answer(boxAnswer("This is the settings menu"))
                 .build();
     }
 
@@ -146,14 +142,6 @@ public class MenuConfig {
                     return boxAnswer("You are not assigned in charge of MR");
                 })
                 .build();
-    }
-
-
-    private MergeRequestFilter getAssigneeFilter(Long userId) {
-        final MergeRequestFilter mergeRequestFilter = new MergeRequestFilter();
-        mergeRequestFilter.setAssignee(userId);
-        mergeRequestFilter.setStates(Collections.singleton(MergeRequestState.OPENED));
-        return mergeRequestFilter;
     }
 
 }
