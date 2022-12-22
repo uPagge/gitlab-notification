@@ -157,7 +157,7 @@ public class PipelineParser {
                 .collect(Collectors.toList());
 
         if (checkNotEmpty(newPipelines)) {
-            pipelineService.updateAll(pipelines);
+            pipelineService.updateAll(newPipelines);
         }
 
         log.debug("Конец обработки старых пайплайнов");
