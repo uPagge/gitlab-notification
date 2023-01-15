@@ -26,4 +26,6 @@ public interface MergeRequestRepository {
 
     void deleteByStates(Set<MergeRequestState> states);
 
+    Set<Long> findAllIds();
+
 }

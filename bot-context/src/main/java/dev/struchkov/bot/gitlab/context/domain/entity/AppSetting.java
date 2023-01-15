@@ -26,4 +26,7 @@ public class AppSetting {
     @Column(name = "first_start")
     private boolean firstStart;
 
+    @Column(name = "enable_notify")
+    private boolean enableNotify;
+
 }

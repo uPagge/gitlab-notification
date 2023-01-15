@@ -25,7 +25,7 @@ public class GetSingleMergeRequestTask extends RecursiveTask<Optional<MergeReque
     @Override
     @SneakyThrows
     protected Optional<MergeRequestJson> compute() {
-        Thread.sleep(100);
+        Thread.sleep(200);
         final String mrUrl = MessageFormat.format(urlMr, projectId, mrTwoId);
         return HttpParse.request(mrUrl)
                 .header(ACCEPT)

@@ -48,4 +48,9 @@ public class PipelineRepositoryImpl implements PipelineRepository {
         jpaRepository.deleteAllByCreatedBefore(date);
     }
 
+    @Override
+    public Set<Long> findAllIds() {
+        return jpaRepository.findAllIds();
+    }
+
 }

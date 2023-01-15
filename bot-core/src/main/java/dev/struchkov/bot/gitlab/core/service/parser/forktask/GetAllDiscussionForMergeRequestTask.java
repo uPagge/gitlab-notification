@@ -29,7 +29,7 @@ public class GetAllDiscussionForMergeRequestTask extends RecursiveTask<List<Disc
     @Override
     @SneakyThrows
     protected List<DiscussionJson> compute() {
-        Thread.sleep(100);
+        Thread.sleep(200);
         final List<DiscussionJson> jsons = getDiscussionJson();
         if (checkNotEmpty(jsons) && jsons.size() == PAGE_COUNT) {
             final var newTask = new GetAllDiscussionForMergeRequestTask(discussionsUrl, projectId, mergeRequestTwoId, personalGitlabToken, page + 1);

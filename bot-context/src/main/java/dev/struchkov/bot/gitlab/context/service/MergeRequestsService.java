@@ -36,4 +36,6 @@ public interface MergeRequestsService {
 
     void cleanOld();
 
+    Set<Long> getAllIds();
+
 }

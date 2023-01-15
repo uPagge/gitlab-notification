@@ -5,8 +5,8 @@ import dev.struchkov.bot.gitlab.context.repository.AppSettingRepository;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.haiti.context.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Supplier;
 
@@ -25,18 +25,30 @@ public class AppSettingServiceImpl implements AppSettingService {
     public static final Supplier<NotFoundException> NOT_FOUND_SETTINGS = notFoundException("Ошибка, невозможно найти настройки приложения, проверьте базу данных.");
     private final AppSettingRepository appSettingRepository;
 
-    private final MessageSource messageSource;
-
     @Override
+    @Transactional(readOnly = true)
     public boolean isFirstStart() {
         return getAppSetting().isFirstStart();
     }
 
     @Override
+    @Transactional
     public void disableFirstStart() {
         final AppSetting appSetting = getAppSetting();
         appSetting.setFirstStart(false);
-        appSettingRepository.save(appSetting);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isEnableAllNotify() {
+        return getAppSetting().isEnableNotify();
+    }
+
+    @Override
+    @Transactional
+    public void turnOnAllNotify() {
+        final AppSetting appSetting = getAppSetting();
+        appSetting.setEnableNotify(true);
     }
 
     private AppSetting getAppSetting() {

@@ -2,6 +2,6 @@ package dev.struchkov.bot.gitlab.context.domain.notify;
 
 public interface Notify {
 
-    String generateMessage();
+    String getType();
 
 }

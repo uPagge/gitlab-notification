@@ -24,4 +24,6 @@ public interface DiscussionRepository {
 
     List<Discussion> findAllById(Set<String> discussionIds);
 
+    Set<String> findAllIds();
+
 }

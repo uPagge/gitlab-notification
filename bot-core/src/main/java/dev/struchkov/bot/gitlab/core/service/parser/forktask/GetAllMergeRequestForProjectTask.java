@@ -30,7 +30,7 @@ public class GetAllMergeRequestForProjectTask extends RecursiveTask<List<MergeRe
     @Override
     @SneakyThrows
     protected List<MergeRequestJson> compute() {
-        Thread.sleep(100);
+        Thread.sleep(200);
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
         if (checkNotEmpty(mergeRequestJsons) && mergeRequestJsons.size() == PAGE_COUNT) {
             final GetAllMergeRequestForProjectTask newTask = new GetAllMergeRequestForProjectTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);

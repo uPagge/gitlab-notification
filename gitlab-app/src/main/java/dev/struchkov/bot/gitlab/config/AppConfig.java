@@ -10,13 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
@@ -30,20 +26,15 @@ import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 @EnableScheduling
 public class AppConfig {
 
-    /**
-     * Отвечает за работу шедулеров в паралельном режиме
-     */
-    @Bean
-    public TaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-        taskScheduler.setPoolSize(12);
-        return taskScheduler;
-    }
-
-    @Bean
-    public ExecutorService executorService() {
-        return Executors.newFixedThreadPool(3);
-    }
+//    /**
+//     * Отвечает за работу шедулеров в паралельном режиме
+//     */
+//    @Bean
+//    public TaskScheduler taskScheduler() {
+//        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+//        taskScheduler.setPoolSize(12);
+//        return taskScheduler;
+//    }
 
     @Bean
     public ConversionService conversionService(Converter... converters) {

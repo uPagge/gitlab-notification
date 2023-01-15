@@ -1,11 +1,12 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class UpdatePrNotify extends PrNotify {
+
+    public static final String TYPE = "UpdatePrNotify";
 
     private final String author;
     private final Long allTasks;
@@ -32,26 +33,10 @@ public class UpdatePrNotify extends PrNotify {
         this.personResolvedTasks = personResolvedTasks;
     }
 
+
     @Override
-    public String generateMessage() {
-        final StringBuilder builder = new StringBuilder(Smile.UPDATE.getValue()).append(" *MergeRequest update | ").append(projectName).append("*")
-                .append(Smile.HR.getValue())
-                .append("[").append(title).append("](").append(url).append(")");
-
-
-        if (allTasks > 0) {
-            builder.append(Smile.HR.getValue())
-                    .append("All tasks: ").append(allResolvedTasks).append("/").append(allTasks);
-
-            if (personTasks > 0) {
-                builder.append("\nYour tasks: ").append(personResolvedTasks).append("/").append(personTasks);
-            }
-        }
-
-        builder.append(Smile.HR.getValue())
-                .append(Smile.AUTHOR.getValue()).append(": ").append(author);
-
-        return builder.toString();
+    public String getType() {
+        return TYPE;
     }
 
 }

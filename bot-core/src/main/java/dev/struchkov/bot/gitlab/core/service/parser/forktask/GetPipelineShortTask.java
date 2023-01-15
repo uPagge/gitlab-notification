@@ -31,7 +31,7 @@ public class GetPipelineShortTask extends RecursiveTask<List<PipelineShortJson>>
     @Override
     @SneakyThrows
     protected List<PipelineShortJson> compute() {
-        Thread.sleep(100);
+        Thread.sleep(200);
         final List<PipelineShortJson> jsons = getPipelineJsons();
         if (jsons.size() == PAGE_COUNT) {
             final GetPipelineShortTask newTask = new GetPipelineShortTask(urlPipelines, projectId, pageNumber + 1, lastUpdate, gitlabToken);

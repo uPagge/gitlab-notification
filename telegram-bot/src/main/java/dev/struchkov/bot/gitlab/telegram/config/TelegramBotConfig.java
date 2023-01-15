@@ -1,17 +1,20 @@
 package dev.struchkov.bot.gitlab.telegram.config;
 
 import dev.struchkov.bot.gitlab.telegram.service.ReplaceUrlLocalhost;
+import dev.struchkov.bot.gitlab.telegram.unit.CommandUnit;
 import dev.struchkov.bot.gitlab.telegram.unit.MenuConfig;
-import dev.struchkov.bot.gitlab.telegram.unit.UnitConfig;
+import dev.struchkov.bot.gitlab.telegram.unit.flow.InitSettingFlow;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.context.service.EventHandler;
 import dev.struchkov.godfather.simple.context.service.PersonSettingService;
 import dev.struchkov.godfather.simple.context.service.UnitPointerService;
 import dev.struchkov.godfather.simple.core.provider.StoryLineHandler;
 import dev.struchkov.godfather.simple.core.service.PersonSettingServiceImpl;
+import dev.struchkov.godfather.simple.core.service.StorylineContextMapImpl;
 import dev.struchkov.godfather.simple.core.service.StorylineMailService;
 import dev.struchkov.godfather.simple.core.service.StorylineService;
 import dev.struchkov.godfather.simple.core.service.UnitPointerServiceImpl;
+import dev.struchkov.godfather.simple.data.StorylineContext;
 import dev.struchkov.godfather.simple.data.repository.impl.PersonSettingLocalRepository;
 import dev.struchkov.godfather.simple.data.repository.impl.StorylineMapRepository;
 import dev.struchkov.godfather.simple.data.repository.impl.UnitPointLocalRepository;
@@ -25,6 +28,7 @@ import dev.struchkov.godfather.telegram.simple.core.MailAutoresponderTelegram;
 import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
 import dev.struchkov.godfather.telegram.simple.core.service.SenderMapRepository;
 import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +36,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author upagge [30.01.2020]
@@ -39,6 +45,16 @@ import java.util.List;
 @Configuration
 @EnableScheduling
 public class TelegramBotConfig {
+
+    @Bean("messageExecutorService")
+    public ExecutorService executorService() {
+        return Executors.newFixedThreadPool(3);
+    }
+
+    @Bean
+    public StorylineContext storylineContext() {
+        return new StorylineContextMapImpl();
+    }
 
     @Bean
     public UnitPointerService unitPointerService() {
@@ -55,9 +71,10 @@ public class TelegramBotConfig {
             UnitPointerService unitPointerService,
 
             MenuConfig menuConfig,
-            UnitConfig unitConfig
+            InitSettingFlow unitConfig,
+            CommandUnit commandUnit
     ) {
-        final List<Object> config = List.of(menuConfig, unitConfig);
+        final List<Object> config = List.of(menuConfig, unitConfig, commandUnit);
 
         return new StorylineMailService(
                 unitPointerService,
@@ -68,6 +85,7 @@ public class TelegramBotConfig {
 
     @Bean
     public MailAutoresponderTelegram messageAutoresponderTelegram(
+            @Qualifier("messageExecutorService") ExecutorService executorService,
             TelegramSending sending,
             PersonSettingService personSettingService,
 
@@ -76,6 +94,7 @@ public class TelegramBotConfig {
         final MailAutoresponderTelegram autoresponder = new MailAutoresponderTelegram(
                 sending, personSettingService, mailStorylineService
         );
+        autoresponder.setExecutorService(executorService);
         return autoresponder;
     }
 

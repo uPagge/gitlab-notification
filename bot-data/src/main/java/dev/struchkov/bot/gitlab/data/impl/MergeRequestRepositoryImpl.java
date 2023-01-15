@@ -65,4 +65,9 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
         jpaRepository.deleteAllByStateIn(states);
     }
 
+    @Override
+    public Set<Long> findAllIds() {
+        return jpaRepository.findAllIds();
+    }
+
 }

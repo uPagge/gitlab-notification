@@ -25,7 +25,7 @@ public class GetPipelineTask extends RecursiveTask<Optional<PipelineJson>> {
     @Override
     @SneakyThrows
     protected Optional<PipelineJson> compute() {
-        Thread.sleep(100);
+        Thread.sleep(200);
         return HttpParse.request(MessageFormat.format(urlPipeline, projectId, pipelineId))
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, gitlabToken)

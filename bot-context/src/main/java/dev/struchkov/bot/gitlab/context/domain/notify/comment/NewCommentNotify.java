@@ -1,41 +1,45 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.comment;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
+import lombok.Getter;
 
-import static dev.struchkov.haiti.utils.Checker.checkNotNull;
-import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
+@Getter
+public final class NewCommentNotify implements Notify {
 
-@Builder
-public record NewCommentNotify(
-        String url,
-        String discussionMessage,
-        String discussionAuthor,
-        String previousMessage,
-        String previousAuthor,
-        String authorName,
-        String message
-) implements Notify {
+    public static final String TYPE = "NewCommentNotify";
+
+    private final String url;
+    private final String discussionMessage;
+    private final String discussionAuthor;
+    private final String previousMessage;
+    private final String previousAuthor;
+    private final String authorName;
+    private final String message;
+
+    @Builder
+    public NewCommentNotify(
+            String url,
+            String discussionMessage,
+            String discussionAuthor,
+            String previousMessage,
+            String previousAuthor,
+            String authorName,
+            String message
+    ) {
+        this.url = url;
+        this.discussionMessage = discussionMessage;
+        this.discussionAuthor = discussionAuthor;
+        this.previousMessage = previousMessage;
+        this.previousAuthor = previousAuthor;
+        this.authorName = authorName;
+        this.message = message;
+    }
+
 
     @Override
-    public String generateMessage() {
-
-        final StringBuilder builder = new StringBuilder(Smile.COMMENT.getValue()).append(" [New answer in discussion](").append(url).append(")\n---  ---  ---  ---");
-
-        if (checkNotNull(discussionMessage)) {
-            builder.append("\n-- -- discussion first message -- --\n")
-                    .append("*").append(discussionAuthor).append("*: ").append(escapeMarkdown(discussionMessage));
-        }
-
-        if (checkNotNull(previousMessage)) {
-            builder.append("\n-- -- -- previous message -- -- --\n")
-                    .append("*").append(previousAuthor).append("*: ").append(escapeMarkdown(previousMessage));
-        }
-
-        builder.append("\n-- -- -- --- new answer --- -- -- --\n")
-                .append("*").append(authorName).append("*: ").append(escapeMarkdown(message));
-        return builder.toString();
+    public String getType() {
+        return TYPE;
     }
 
 }

@@ -29,4 +29,6 @@ public interface PipelineService {
 
     void cleanOld();
 
+    Set<Long> getAllIds();
+
 }

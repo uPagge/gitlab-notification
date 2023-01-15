@@ -258,6 +258,44 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <repository>
+            <id>struchkov-nexus-release</id>
+            <url>https://nexus.struchkov.dev/repository/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>struchkov-nexus-snapshot</id>
+            <url>https://nexus.struchkov.dev/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>struchkov-nexus-release</id>
+            <url>https://nexus.struchkov.dev/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>struchkov-nexus-snapshot</id>
+            <url>https://nexus.struchkov.dev/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>uPagge</id>

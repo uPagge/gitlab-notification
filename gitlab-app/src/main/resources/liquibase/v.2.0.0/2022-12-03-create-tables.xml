@@ -8,7 +8,12 @@
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="first_start" type="boolean"/>
+            <column name="first_start" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enable_notify" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

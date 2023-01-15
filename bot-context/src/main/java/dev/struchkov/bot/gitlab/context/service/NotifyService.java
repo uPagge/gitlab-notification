@@ -12,8 +12,4 @@ public interface NotifyService {
 
     <T extends Notify> void send(T notify);
 
-    void enableAllNotify();
-
-    void disableAllNotify();
-
 }

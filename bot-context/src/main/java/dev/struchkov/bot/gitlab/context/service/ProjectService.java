@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,4 +26,7 @@ public interface ProjectService {
     ExistContainer<Project, Long> existsById(Set<Long> projectIds);
 
     Set<Long> getAllIds();
+
+    Optional<String> getProjectNameById(Long projectId);
+
 }

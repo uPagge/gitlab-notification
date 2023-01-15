@@ -51,4 +51,9 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         return jpaRepository.findAllIds();
     }
 
+    @Override
+    public Optional<String> findProjectNameById(Long projectId) {
+        return jpaRepository.findProjectNameById(projectId);
+    }
+
 }

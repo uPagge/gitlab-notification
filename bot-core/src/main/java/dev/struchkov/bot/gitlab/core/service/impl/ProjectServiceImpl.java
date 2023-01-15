@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -90,6 +91,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional(readOnly = true)
     public Set<Long> getAllIds() {
         return repository.findAllIds();
+    }
+
+    @Override
+    public Optional<String> getProjectNameById(@NonNull Long projectId) {
+        return repository.findProjectNameById(projectId);
     }
 
     private void notifyAboutNewProject(Project newProject, String authorName) {

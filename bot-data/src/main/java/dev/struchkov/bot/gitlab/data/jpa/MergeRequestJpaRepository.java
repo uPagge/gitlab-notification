@@ -24,4 +24,7 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
 
     void deleteAllByStateIn(Set<MergeRequestState> states);
 
+    @Query("SELECT mr.id FROM MergeRequest mr")
+    Set<Long> findAllIds();
+
 }

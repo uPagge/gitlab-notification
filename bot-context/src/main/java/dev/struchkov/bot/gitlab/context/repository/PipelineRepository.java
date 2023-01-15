@@ -23,4 +23,6 @@ public interface PipelineRepository {
 
     void deleteByCreatedBefore(LocalDateTime date);
 
+    Set<Long> findAllIds();
+
 }

@@ -21,4 +21,8 @@ public interface AppSettingService {
      */
     void disableFirstStart();
 
+    boolean isEnableAllNotify();
+
+    void turnOnAllNotify();
+
 }

@@ -300,6 +300,11 @@ public class DiscussionServiceImpl implements DiscussionService {
         return repository.findAll();
     }
 
+    @Override
+    public Set<String> getAllIds() {
+        return repository.findAllIds();
+    }
+
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */

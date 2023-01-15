@@ -1,16 +1,15 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.task;
 
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
-
-import java.text.MessageFormat;
-
-import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
+import lombok.Getter;
 
 /**
  * @author upagge 10.09.2020
  */
+@Getter
 public class TaskCloseNotify extends TaskNotify {
+
+    public static final String TYPE = "TaskCloseNotify";
 
     private final Long personTasks;
     private final Long personResolvedTasks;
@@ -29,11 +28,8 @@ public class TaskCloseNotify extends TaskNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *Closed [task]({1}){2}*{3}*: {4}",
-                Smile.TASK.getValue(), url, Smile.HR.getValue(), authorName, escapeMarkdown(messageTask), personTasks, personResolvedTasks
-        );
+    public String getType() {
+        return TYPE;
     }
 
 }

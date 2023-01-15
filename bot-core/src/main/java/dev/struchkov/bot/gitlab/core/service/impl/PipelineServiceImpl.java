@@ -49,7 +49,7 @@ public class PipelineServiceImpl implements PipelineService {
     @Transactional
     public Pipeline create(@NonNull Pipeline pipeline) {
         final Pipeline newPipeline = repository.save(pipeline);
-        notifyNewPipeline(pipeline, "n/a");
+        notifyNewPipeline(pipeline, PipelineStatus.NULL);
         return newPipeline;
     }
 
@@ -61,11 +61,12 @@ public class PipelineServiceImpl implements PipelineService {
                 .collect(Collectors.toList());
     }
 
-    private void notifyNewPipeline(Pipeline pipeline, String oldStatus) {
+    private void notifyNewPipeline(Pipeline pipeline, PipelineStatus oldStatus) {
         if (isNeedNotifyNewPipeline(pipeline)) {
             notifyService.send(
                     PipelineNotify.builder()
-                            .newStatus(pipeline.getStatus().name())
+                            .projectId(pipeline.getProjectId())
+                            .newStatus(pipeline.getStatus())
                             .pipelineId(pipeline.getId())
                             .refName(pipeline.getRef())
                             .webUrl(pipeline.getWebUrl())
@@ -83,7 +84,7 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setProjectId(oldPipeline.getProjectId());
 
         if (!oldPipeline.getUpdated().equals(pipeline.getUpdated())) {
-            notifyNewPipeline(pipeline, oldPipeline.getStatus().name());
+            notifyNewPipeline(pipeline, oldPipeline.getStatus());
             return repository.save(pipeline);
         }
 
@@ -129,6 +130,11 @@ public class PipelineServiceImpl implements PipelineService {
         log.debug("Старт очистки старых пайплайнов");
         repository.deleteByCreatedBefore(LocalDateTime.now().minusDays(1L));
         log.debug("Конец очистки старых пайплайнов");
+    }
+
+    @Override
+    public Set<Long> getAllIds() {
+        return repository.findAllIds();
     }
 
 }

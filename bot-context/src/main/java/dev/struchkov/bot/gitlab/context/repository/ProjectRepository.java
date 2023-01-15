@@ -25,4 +25,6 @@ public interface ProjectRepository {
 
     Set<Long> findAllIds();
 
+    Optional<String> findProjectNameById(Long projectId);
+
 }

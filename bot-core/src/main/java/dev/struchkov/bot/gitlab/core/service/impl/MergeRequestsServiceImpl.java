@@ -250,6 +250,12 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         log.debug("Конец очистки старых MR");
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Set<Long> getAllIds() {
+        return repository.findAllIds();
+    }
+
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         final Long botUserGitlabId = personInformation.getId();
 

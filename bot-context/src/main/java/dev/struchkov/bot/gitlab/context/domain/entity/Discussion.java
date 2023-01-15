@@ -38,7 +38,7 @@ public class Discussion {
     @Column(name = "resolved")
     private Boolean resolved;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinTable(
             name = "discussion_merge_request",
             joinColumns = @JoinColumn(name = "discussion_id"),

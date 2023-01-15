@@ -47,4 +47,9 @@ public class DiscussionRepositoryImpl implements DiscussionRepository {
         return jpaRepository.findAllById(discussionIds);
     }
 
+    @Override
+    public Set<String> findAllIds() {
+        return jpaRepository.findAllIds();
+    }
+
 }

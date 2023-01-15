@@ -1,14 +1,13 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.text.MessageFormat;
-
 @Getter
 public class StatusPrNotify extends PrNotify {
+
+    public static final String TYPE = "StatusPrNotify";
 
     private final MergeRequestState oldStatus;
     private final MergeRequestState newStatus;
@@ -27,11 +26,8 @@ public class StatusPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *MergeRequest status changed | {7}*{1}[{2}]({3}){1}{4} {5} {6}",
-                Smile.PEN.getValue(), Smile.HR.getValue(), title, url, oldStatus.name(), Smile.ARROW.getValue(), newStatus.name(), projectName
-        );
+    public String getType() {
+        return TYPE;
     }
 
 }

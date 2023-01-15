@@ -1,35 +1,37 @@
 package dev.struchkov.bot.gitlab.context.domain.notify;
 
-import dev.struchkov.bot.gitlab.context.utils.Smile;
-import dev.struchkov.haiti.utils.Strings;
 import lombok.Builder;
-
-import java.text.MessageFormat;
-
-import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
+import lombok.Getter;
 
 /**
  * @author upagge 15.01.2021
  */
-public record NewProjectNotify(
-        String projectName,
-        String projectUrl,
-        String projectDescription,
-        String authorName
-) implements Notify {
+@Getter
+public final class NewProjectNotify implements Notify {
+
+    public static final String TYPE = "NewProjectNotify";
+
+    private final String projectName;
+    private final String projectUrl;
+    private final String projectDescription;
+    private final String authorName;
 
     @Builder
-    public NewProjectNotify {
+    public NewProjectNotify(
+            String projectName,
+            String projectUrl,
+            String projectDescription,
+            String authorName
+    ) {
+        this.projectName = projectName;
+        this.projectUrl = projectUrl;
+        this.projectDescription = projectDescription;
+        this.authorName = authorName;
     }
 
     @Override
-    public String generateMessage() {
-        return MessageFormat.format(
-                "{0} *New project*{1}[{2}]({3}){1}{4}{5}: {6}",
-                Smile.FUN.getValue(), Smile.HR.getValue(), projectName, projectUrl,
-                (projectDescription != null && !"".equals(projectDescription)) ? escapeMarkdown(projectDescription) + Smile.HR : Strings.EMPTY,
-                Smile.AUTHOR.getValue(), authorName
-        );
+    public String getType() {
+        return TYPE;
     }
 
 }

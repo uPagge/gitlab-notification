@@ -1,18 +1,14 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
-import dev.struchkov.bot.gitlab.context.utils.Smile;
-import dev.struchkov.haiti.utils.Strings;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.text.MessageFormat;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Getter
 public class NewPrNotify extends PrNotify {
+
+    public static final String TYPE = "NewPrNotify";
 
     private final String description;
     private final String author;
@@ -40,29 +36,8 @@ public class NewPrNotify extends PrNotify {
     }
 
     @Override
-    public String generateMessage() {
-        String labelText = labels.stream()
-                .map(label -> "#" + label)
-                .collect(Collectors.joining(" "));
-        if (!labelText.isEmpty()) {
-            labelText = "\n\n" + labelText;
-        }
-        return MessageFormat.format(
-                "{0} *New merge request for review | {1}*{2}[{3}]({4}){5}{2}{9}: {10} {12} {11}\n{7}: {8}",
-                Smile.FUN.getValue(),
-                projectName,
-                Smile.HR.getValue(),
-                title,
-                url,
-                labelText,
-                (description != null && !"".equals(description)) ? escapeMarkdown(description) + Smile.HR : Strings.EMPTY,
-                Smile.AUTHOR.getValue(),
-                author,
-                Smile.TREE.getValue(),
-                sourceBranch,
-                targetBranch,
-                Smile.ARROW.getValue()
-        );
+    public String getType() {
+        return TYPE;
     }
 
 }

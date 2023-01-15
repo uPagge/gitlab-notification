@@ -37,4 +37,6 @@ public interface DiscussionService {
 
     List<Discussion> getAll();
 
+    Set<String> getAllIds();
+
 }
