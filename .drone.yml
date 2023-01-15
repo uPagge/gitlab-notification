@@ -46,7 +46,7 @@ steps:
     commands:
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
-      - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
+      - docker buildx build -f Dockerfile-develop --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" .
 
 ---
 
@@ -100,6 +100,6 @@ steps:
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" .
 ---
 kind: signature
-hmac: 1bb00c9edf1c37a2f36c92ea6c1cb9023630b05550b4dc3148c6f5b30cad4af6
+hmac: 35a90784852fd87ed37036310873fb0c02457fb3dafd79cd2c1661b36b56117a
 
 ...
