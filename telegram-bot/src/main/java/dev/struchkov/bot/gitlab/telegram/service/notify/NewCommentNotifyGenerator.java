@@ -14,7 +14,7 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
 
     @Override
     public BoxAnswer generate(NewCommentNotify notify) {
-        final StringBuilder builder = new StringBuilder(Smile.COMMENT.getValue()).append(" [New answer in discussion](").append(notify.getUrl()).append(")\n---  ---  ---  ---");
+        final StringBuilder builder = new StringBuilder(Smile.COMMENT.getValue()).append(" [New answer in discussion](").append(notify.getUrl()).append(")");
 
         if (checkNotNull(notify.getDiscussionMessage())) {
             builder.append("\n-- -- discussion first message -- --\n")
