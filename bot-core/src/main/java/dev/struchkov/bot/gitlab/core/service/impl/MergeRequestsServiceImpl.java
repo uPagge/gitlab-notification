@@ -156,28 +156,26 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         mergeRequest.setUserAssignee(assigneeChanged.getNewStatus(oldMergeRequest.isUserAssignee()));
         mergeRequest.setUserReviewer(reviewerChanged.getNewStatus(oldMergeRequest.isUserReviewer()));
 
-        final boolean isChangedMr = !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate())
-                || oldMergeRequest.isConflict() != mergeRequest.isConflict();
+        final boolean isChangedMr = !oldMergeRequest.getUpdatedDate().equals(mergeRequest.getUpdatedDate()) || oldMergeRequest.isConflict() != mergeRequest.isConflict();
         final boolean isChangedLinkedEntity = reviewerChanged.isChanged() || assigneeChanged.isChanged();
 
         if (isChangedMr || isChangedLinkedEntity) {
-            final MergeRequest savedMergeRequest = repository.save(mergeRequest);
 
             if (oldMergeRequest.isNotification()) {
                 final Project project = projectService.getByIdOrThrow(mergeRequest.getProjectId());
 
                 if (isChangedMr) {
-                    notifyAboutStatus(oldMergeRequest, savedMergeRequest, project);
-                    notifyAboutConflict(oldMergeRequest, savedMergeRequest, project);
-                    notifyAboutUpdate(oldMergeRequest, savedMergeRequest, project);
+                    notifyAboutStatus(oldMergeRequest, mergeRequest, project);
+                    notifyAboutConflict(oldMergeRequest, mergeRequest, project);
+                    notifyAboutUpdate(oldMergeRequest, mergeRequest, project);
                 }
 
                 if (isChangedLinkedEntity) {
-                    notifyReviewer(reviewerChanged, savedMergeRequest, project);
-                    notifyAssignee(assigneeChanged, savedMergeRequest, project);
+                    notifyReviewer(reviewerChanged, mergeRequest, project);
+                    notifyAssignee(assigneeChanged, mergeRequest, project);
                 }
             }
-            return savedMergeRequest;
+            return repository.save(mergeRequest);
         }
 
         return oldMergeRequest;
@@ -261,8 +259,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
         if (
                 !botUserGitlabId.equals(mergeRequest.getAuthor().getId()) // Автор MR не пользователь приложения
-                        && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit()) // Изменилась дата последнего коммита
-                        && !mergeRequest.isConflict() // MR не находится в состоянии конфликта
+                && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit()) // Изменилась дата последнего коммита
+                && !mergeRequest.isConflict() // MR не находится в состоянии конфликта
         ) {
 
             long allTask = 0;
@@ -304,8 +302,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         final Long gitlabUserId = personInformation.getId();
         if (
                 !oldMergeRequest.isConflict() // У старого MR не было конфликта
-                        && mergeRequest.isConflict() // А у нового есть
-                        && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
+                && mergeRequest.isConflict() // А у нового есть
+                && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
         ) {
             notifyService.send(
                     ConflictPrNotify.builder()
@@ -324,7 +322,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         final Long gitlabUserId = personInformation.getId();
         if (
                 !oldStatus.equals(newStatus) // статус изменился
-                        && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // создатель MR является пользователем бота
+                && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // создатель MR является пользователем бота
         ) {
             notifyService.send(
                     StatusPrNotify.builder()
