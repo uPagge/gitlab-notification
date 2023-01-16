@@ -11,10 +11,11 @@ import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictPrNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewPrNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusPrNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.UpdatePrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictMrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForAssignee;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForReview;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusMrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.UpdateMrNotify;
 import dev.struchkov.bot.gitlab.context.repository.MergeRequestRepository;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
@@ -67,7 +68,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         if (botUserReviewer || botUserAssignee) {
             if (!mergeRequest.isConflict()) {
                 final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
-                if (botUserReviewer) sendNotifyAboutNewMr(savedMergeRequest, projectName);
+                if (botUserReviewer) sendNotifyNewMrReview(savedMergeRequest, projectName);
                 if (botUserAssignee) sendNotifyAboutAssignee(mergeRequest, projectName);
             }
         }
@@ -111,9 +112,9 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return false;
     }
 
-    private void sendNotifyAboutNewMr(MergeRequest mergeRequest, String projectName) {
+    private void sendNotifyNewMrReview(MergeRequest mergeRequest, String projectName) {
         notifyService.send(
-                NewPrNotify.builder()
+                NewMrForReview.builder()
                         .projectName(projectName)
                         .labels(mergeRequest.getLabels())
                         .author(mergeRequest.getAuthor().getName())
@@ -128,7 +129,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     private void sendNotifyAboutAssignee(MergeRequest mergeRequest, String projectName) {
         notifyService.send(
-                NewPrNotify.builder()
+                NewMrForAssignee.builder()
                         .projectName(projectName)
                         .labels(mergeRequest.getLabels())
                         .author(mergeRequest.getAuthor().getName())
@@ -185,15 +186,14 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление
     private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest mergeRequest, Project project) {
         switch (assigneeChanged) {
-            case BECOME -> sendNotifyAboutNewMr(mergeRequest, project.getName());
+            case BECOME -> sendNotifyAboutAssignee(mergeRequest, project.getName());
         }
     }
 
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление ревьювера
-    //TODO [05.12.2022|uPagge]: Заменить тип уведомления на самостоятельный
     private void notifyReviewer(ReviewerChanged reviewerChanged, MergeRequest mergeRequest, Project project) {
         switch (reviewerChanged) {
-            case BECOME -> sendNotifyAboutNewMr(mergeRequest, project.getName());
+            case BECOME -> sendNotifyNewMrReview(mergeRequest, project.getName());
         }
     }
 
@@ -284,7 +284,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                 }
             }
             notifyService.send(
-                    UpdatePrNotify.builder()
+                    UpdateMrNotify.builder()
                             .author(oldMergeRequest.getAuthor().getName())
                             .name(oldMergeRequest.getTitle())
                             .projectKey(project.getName())
@@ -306,7 +306,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                 && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
         ) {
             notifyService.send(
-                    ConflictPrNotify.builder()
+                    ConflictMrNotify.builder()
                             .sourceBranch(oldMergeRequest.getSourceBranch())
                             .name(mergeRequest.getTitle())
                             .url(mergeRequest.getWebUrl())
@@ -325,7 +325,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                 && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // создатель MR является пользователем бота
         ) {
             notifyService.send(
-                    StatusPrNotify.builder()
+                    StatusMrNotify.builder()
                             .name(newMergeRequest.getTitle())
                             .url(oldMergeRequest.getWebUrl())
                             .projectName(project.getName())

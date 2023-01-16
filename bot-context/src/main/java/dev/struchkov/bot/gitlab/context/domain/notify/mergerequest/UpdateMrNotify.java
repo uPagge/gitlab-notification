@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UpdatePrNotify extends PrNotify {
+public class UpdateMrNotify extends MrNotify {
 
     public static final String TYPE = "UpdatePrNotify";
 
@@ -15,7 +15,7 @@ public class UpdatePrNotify extends PrNotify {
     private final Long personResolvedTasks;
 
     @Builder
-    private UpdatePrNotify(
+    private UpdateMrNotify(
             String name,
             String url,
             String author,

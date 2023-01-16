@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewPrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForReview;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,10 @@ import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Component
-public class NewPrNotifyGenerator implements NotifyBoxAnswerGenerator<NewPrNotify> {
+public class NewMrForReviewNotifyGenerator implements NotifyBoxAnswerGenerator<NewMrForReview> {
 
     @Override
-    public BoxAnswer generate(NewPrNotify notify) {
+    public BoxAnswer generate(NewMrForReview notify) {
         final String labelText = notify.getLabels().stream()
                 .map(label -> "#" + label)
                 .collect(Collectors.joining(" "));
@@ -39,7 +39,7 @@ public class NewPrNotifyGenerator implements NotifyBoxAnswerGenerator<NewPrNotif
 
     @Override
     public String getNotifyType() {
-        return NewPrNotify.TYPE;
+        return NewMrForReview.TYPE;
     }
 
 }

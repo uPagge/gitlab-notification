@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.UpdatePrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.UpdateMrNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
@@ -11,10 +11,10 @@ import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Component
-public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdatePrNotify> {
+public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateMrNotify> {
 
     @Override
-    public BoxAnswer generate(UpdatePrNotify notify) {
+    public BoxAnswer generate(UpdateMrNotify notify) {
 
         final StringBuilder builder = new StringBuilder(Icons.UPDATE).append(" *MergeRequest update | ").append(escapeMarkdown(notify.getProjectName())).append("*")
                 .append(Smile.HR.getValue())
@@ -38,7 +38,7 @@ public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateP
 
     @Override
     public String getNotifyType() {
-        return UpdatePrNotify.TYPE;
+        return UpdateMrNotify.TYPE;
     }
 
 }

@@ -4,14 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ConflictPrNotify extends PrNotify {
+public class ConflictMrNotify extends MrNotify {
 
     public static final String TYPE = "ConflictPrNotify";
 
     private final String sourceBranch;
 
     @Builder
-    private ConflictPrNotify(
+    private ConflictMrNotify(
             String name,
             String url,
             String projectKey,

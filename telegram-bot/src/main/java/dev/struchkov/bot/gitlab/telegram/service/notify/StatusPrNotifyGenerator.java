@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusPrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusMrNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
@@ -9,10 +9,10 @@ import static dev.struchkov.bot.gitlab.context.utils.Icons.link;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 
 @Component
-public class StatusPrNotifyGenerator implements NotifyBoxAnswerGenerator<StatusPrNotify> {
+public class StatusPrNotifyGenerator implements NotifyBoxAnswerGenerator<StatusMrNotify> {
 
     @Override
-    public BoxAnswer generate(StatusPrNotify notify) {
+    public BoxAnswer generate(StatusMrNotify notify) {
 
         final StringBuilder builder = new StringBuilder(Icons.PEN).append(" *MergeRequest status changed | ").append(notify.getProjectName()).append("*")
                 .append(Icons.HR)
@@ -27,7 +27,7 @@ public class StatusPrNotifyGenerator implements NotifyBoxAnswerGenerator<StatusP
 
     @Override
     public String getNotifyType() {
-        return StatusPrNotify.TYPE;
+        return StatusMrNotify.TYPE;
     }
 
 }

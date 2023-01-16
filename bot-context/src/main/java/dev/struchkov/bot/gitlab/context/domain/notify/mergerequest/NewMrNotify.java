@@ -1,23 +1,19 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Set;
 
 @Getter
-public class NewPrNotify extends PrNotify {
+public abstract class NewMrNotify extends MrNotify {
 
-    public static final String TYPE = "NewPrNotify";
+    protected final String description;
+    protected final String author;
+    protected final String targetBranch;
+    protected final String sourceBranch;
+    protected final Set<String> labels;
 
-    private final String description;
-    private final String author;
-    private final String targetBranch;
-    private final String sourceBranch;
-    private final Set<String> labels;
-
-    @Builder
-    private NewPrNotify(
+    protected NewMrNotify(
             String title,
             String url,
             String description,
@@ -33,11 +29,6 @@ public class NewPrNotify extends PrNotify {
         this.targetBranch = targetBranch;
         this.sourceBranch = sourceBranch;
         this.labels = labels;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
 }

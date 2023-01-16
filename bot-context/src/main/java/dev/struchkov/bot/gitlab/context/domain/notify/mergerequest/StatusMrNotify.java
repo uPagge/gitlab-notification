@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class StatusPrNotify extends PrNotify {
+public class StatusMrNotify extends MrNotify {
 
     public static final String TYPE = "StatusPrNotify";
 
@@ -13,7 +13,7 @@ public class StatusPrNotify extends PrNotify {
     private final MergeRequestState newStatus;
 
     @Builder
-    private StatusPrNotify(
+    private StatusMrNotify(
             String name,
             String url,
             String projectName,
