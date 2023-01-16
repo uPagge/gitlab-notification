@@ -329,7 +329,7 @@ public class InitSettingFlow {
                 .answer(
                         mail -> {
                             context.save(mail.getPersonId(), Keys.INIT_SETTING_FINISH, Boolean.TRUE);
-                            settingService.isEnableAllNotify();
+                            settingService.turnOnAllNotify();
                             settingService.disableFirstStart();
                             return boxAnswer("""
                                             Configuration completed successfully

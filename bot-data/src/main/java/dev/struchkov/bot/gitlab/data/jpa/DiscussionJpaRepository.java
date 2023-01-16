@@ -2,7 +2,9 @@ package dev.struchkov.bot.gitlab.data.jpa;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.Discussion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Set;
@@ -21,5 +23,9 @@ public interface DiscussionJpaRepository extends JpaRepository<Discussion, Strin
     Set<String> findAllIds();
 
     void removeAllByMergeRequestIsNull();
+
+    @Modifying
+    @Query("DELETE FROM Discussion d WHERE d.id = :id")
+    void deleteById(@Param("id") String id);
 
 }

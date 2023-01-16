@@ -111,9 +111,9 @@ public class DiscussionServiceImpl implements DiscussionService {
         final Note firstNote = discussion.getFirstNote();
         final Long gitlabUserId = personInformation.getId();
         return firstNote.isResolvable() // Тип комментария требует решения (Задачи)
-                && gitlabUserId.equals(discussion.getResponsible().getId()) // Ответственный за дискуссию пользователь
-                && !gitlabUserId.equals(firstNote.getAuthor().getId()) // Создатель комментария не пользователь системы
-                && FALSE.equals(firstNote.getResolved()); // Комментарий не отмечен как решенный
+               && gitlabUserId.equals(discussion.getResponsible().getId()) // Ответственный за дискуссию пользователь
+               && !gitlabUserId.equals(firstNote.getAuthor().getId()) // Создатель комментария не пользователь системы
+               && FALSE.equals(firstNote.getResolved()); // Комментарий не отмечен как решенный
     }
 
     @Override
@@ -238,9 +238,9 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     private boolean isResolved(Note note, Note oldNote) {
         return oldNote.getResolvedBy() == null
-                && note.getResolvedBy() != null
-                && personInformation.getId().equals(oldNote.getAuthor().getId())
-                && !note.getResolvedBy().getId().equals(oldNote.getAuthor().getId());
+               && note.getResolvedBy() != null
+               && personInformation.getId().equals(oldNote.getAuthor().getId())
+               && !note.getResolvedBy().getId().equals(oldNote.getAuthor().getId());
     }
 
 
@@ -306,11 +306,13 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
+    @Transactional
     public void deleteById(@NonNull String discussionId) {
         repository.deleteById(discussionId);
     }
 
     @Override
+    @Transactional
     public void cleanOld() {
         log.debug("Старт очистки старых дискуссий");
         repository.cleanOld();
