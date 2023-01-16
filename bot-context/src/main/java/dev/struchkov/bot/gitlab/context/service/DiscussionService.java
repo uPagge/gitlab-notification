@@ -39,4 +39,8 @@ public interface DiscussionService {
 
     Set<String> getAllIds();
 
+    void deleteById(@NonNull String discussionId);
+
+    void cleanOld();
+
 }

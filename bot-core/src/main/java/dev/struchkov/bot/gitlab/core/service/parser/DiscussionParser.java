@@ -170,12 +170,16 @@ public class DiscussionParser {
 
         final List<Discussion> newDiscussions = new ArrayList<>();
         for (Discussion discussion : discussions) {
-            getOldDiscussionJson(discussion)
-                    .map(json -> {
-                        final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
-                        newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
-                        return newDiscussion;
-                    }).ifPresent(newDiscussions::add);
+            if (checkNotNull(discussion.getMergeRequest())) {
+                getOldDiscussionJson(discussion)
+                        .map(json -> {
+                            final Discussion newDiscussion = conversionService.convert(json, Discussion.class);
+                            newDiscussion.getNotes().forEach(createNoteLink(discussion.getMergeRequest()));
+                            return newDiscussion;
+                        }).ifPresent(newDiscussions::add);
+            } else {
+                discussionService.deleteById(discussion.getId());
+            }
         }
 
         if (checkNotEmpty(newDiscussions)) {

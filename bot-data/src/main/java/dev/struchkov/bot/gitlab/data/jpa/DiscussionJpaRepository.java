@@ -20,4 +20,6 @@ public interface DiscussionJpaRepository extends JpaRepository<Discussion, Strin
     @Query("SELECT d.id FROM Discussion d")
     Set<String> findAllIds();
 
+    void removeAllByMergeRequestIsNull();
+
 }

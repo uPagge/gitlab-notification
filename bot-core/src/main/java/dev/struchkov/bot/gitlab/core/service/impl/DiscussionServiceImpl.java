@@ -305,6 +305,18 @@ public class DiscussionServiceImpl implements DiscussionService {
         return repository.findAllIds();
     }
 
+    @Override
+    public void deleteById(@NonNull String discussionId) {
+        repository.deleteById(discussionId);
+    }
+
+    @Override
+    public void cleanOld() {
+        log.debug("Старт очистки старых дискуссий");
+        repository.cleanOld();
+        log.debug("Конец очистки старых дискуссий");
+    }
+
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */

@@ -26,4 +26,8 @@ public interface DiscussionRepository {
 
     Set<String> findAllIds();
 
+    void deleteById(String id);
+
+    void cleanOld();
+
 }

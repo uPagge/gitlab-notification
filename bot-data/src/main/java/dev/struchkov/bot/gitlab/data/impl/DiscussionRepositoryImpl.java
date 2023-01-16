@@ -52,4 +52,14 @@ public class DiscussionRepositoryImpl implements DiscussionRepository {
         return jpaRepository.findAllIds();
     }
 
+    @Override
+    public void deleteById(String id) {
+        jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public void cleanOld() {
+        jpaRepository.removeAllByMergeRequestIsNull();
+    }
+
 }
