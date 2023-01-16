@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.14</version>
+        <version>3.0.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -46,7 +46,7 @@
 
         <godfather.telegram.core.version>0.0.48-SNAPSHOT</godfather.telegram.core.version>
 
-        <javax.persistance.version>2.2</javax.persistance.version>
+        <jakarta.persistance.version>3.1.0</jakarta.persistance.version>
 
         <google.guava.version>31.1-jre</google.guava.version>
         <jackson.databind.version>2.14.1</jackson.databind.version>
@@ -117,12 +117,6 @@
             </dependency>
 
             <dependency>
-                <groupId>dev.struchkov.haiti.utils</groupId>
-                <artifactId>haiti-utils-network</artifactId>
-                <version>0.0.5</version>
-            </dependency>
-
-            <dependency>
                 <groupId>dev.struchkov.haiti.filter</groupId>
                 <artifactId>haiti-filter-criteria</artifactId>
                 <version>0.0.5</version>
@@ -156,9 +150,9 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>javax.persistence-api</artifactId>
-                <version>${javax.persistance.version}</version>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistance.version}</version>
             </dependency>
 
             <!-- /БД -->
@@ -181,12 +175,6 @@
 
             <!-- /spring -->
             <!-- http -->
-
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp</artifactId>
-                <version>${okhttp3.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -284,17 +272,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>struchkov-nexus-release</id>
-            <url>https://nexus.struchkov.dev/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>struchkov-nexus-snapshot</id>
-            <url>https://nexus.struchkov.dev/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <developers>
         <developer>

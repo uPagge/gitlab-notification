@@ -3,8 +3,8 @@ package dev.struchkov.bot.gitlab.config;
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -14,8 +14,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Arrays;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
  * Общий файл настройки всего приложения.

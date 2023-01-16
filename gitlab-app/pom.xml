@@ -37,11 +37,6 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.struchkov.haiti.utils</groupId>
-            <artifactId>haiti-utils-network</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>

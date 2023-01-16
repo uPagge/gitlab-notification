@@ -1,7 +1,7 @@
 package dev.struchkov.bot.gitlab.core.service.parser.forktask;
 
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.sdk.domain.DiscussionJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -10,9 +10,9 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.bot.gitlab.core.utils.StringUtils.H_PRIVATE_TOKEN;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class GetAllDiscussionForMergeRequestTask extends RecursiveTask<List<Disc
     @Override
     @SneakyThrows
     protected List<DiscussionJson> compute() {
-        Thread.sleep(200);
+        Thread.sleep(100);
         final List<DiscussionJson> jsons = getDiscussionJson();
         if (checkNotEmpty(jsons) && jsons.size() == PAGE_COUNT) {
             final var newTask = new GetAllDiscussionForMergeRequestTask(discussionsUrl, projectId, mergeRequestTwoId, personalGitlabToken, page + 1);

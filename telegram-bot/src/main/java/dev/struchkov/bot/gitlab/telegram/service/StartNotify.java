@@ -5,10 +5,9 @@ import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author upagge 19.01.2021

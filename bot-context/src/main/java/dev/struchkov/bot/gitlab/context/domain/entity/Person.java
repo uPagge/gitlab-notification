@@ -2,14 +2,13 @@ package dev.struchkov.bot.gitlab.context.domain.entity;
 
 import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import dev.struchkov.haiti.utils.fieldconstants.domain.Mode;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * @author upagge 14.01.2021

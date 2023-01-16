@@ -7,10 +7,10 @@ import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.PersonJson;
 import dev.struchkov.bot.gitlab.sdk.domain.ProjectJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
  * Парсер проектов.

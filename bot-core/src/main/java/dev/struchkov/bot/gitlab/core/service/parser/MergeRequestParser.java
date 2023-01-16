@@ -11,10 +11,10 @@ import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetAllMergeRequestForProjectTask;
 import dev.struchkov.bot.gitlab.core.service.parser.forktask.GetSingleMergeRequestTask;
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.CommitJson;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -31,11 +31,11 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResult;
 import static dev.struchkov.haiti.utils.concurrent.ForkJoinUtils.pullTaskResults;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
 @Service

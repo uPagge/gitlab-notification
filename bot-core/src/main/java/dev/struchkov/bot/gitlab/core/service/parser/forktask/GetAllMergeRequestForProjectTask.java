@@ -1,8 +1,8 @@
 package dev.struchkov.bot.gitlab.core.service.parser.forktask;
 
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.MergeRequestJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,8 +12,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 @Slf4j
 @AllArgsConstructor
@@ -30,7 +30,7 @@ public class GetAllMergeRequestForProjectTask extends RecursiveTask<List<MergeRe
     @Override
     @SneakyThrows
     protected List<MergeRequestJson> compute() {
-        Thread.sleep(200);
+        Thread.sleep(100);
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequestJsons();
         if (checkNotEmpty(mergeRequestJsons) && mergeRequestJsons.size() == PAGE_COUNT) {
             final GetAllMergeRequestForProjectTask newTask = new GetAllMergeRequestForProjectTask(projectId, pageNumber + 1, urlMrOpen, gitlabToken);

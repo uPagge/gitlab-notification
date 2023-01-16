@@ -32,7 +32,7 @@ public class SchedulerService {
 
     @Scheduled(cron = "0 */1 * * * *")
     public void newMergeRequest() {
-        log.debug("Запуск процесса обновления данных");
+        log.info("Запуск процесса обновления данных c GitLab");
         if (!settingService.isFirstStart()) {
             mergeRequestParser.parsingOldMergeRequest();
             mergeRequestParser.parsingNewMergeRequest();
@@ -46,7 +46,7 @@ public class SchedulerService {
         } else {
             log.warn("Процесс обновления данных не был выполнен, так как пользователь не выполнил первичную настройку.");
         }
-        log.debug("Конец процесса обновления данных");
+        log.info("Конец процесса обновления данных c GitLab");
     }
 
 }

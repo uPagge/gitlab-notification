@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.context.repository.AppSettingRepository;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.haiti.context.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundEx
  *
  * @author upagge 16.01.2021
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppSettingServiceImpl implements AppSettingService {
@@ -36,6 +38,7 @@ public class AppSettingServiceImpl implements AppSettingService {
     public void disableFirstStart() {
         final AppSetting appSetting = getAppSetting();
         appSetting.setFirstStart(false);
+        log.info("Первичная настройка закончена");
     }
 
     @Override
@@ -49,6 +52,7 @@ public class AppSettingServiceImpl implements AppSettingService {
     public void turnOnAllNotify() {
         final AppSetting appSetting = getAppSetting();
         appSetting.setEnableNotify(true);
+        log.info("Получение всех уведомлений активировано");
     }
 
     private AppSetting getAppSetting() {

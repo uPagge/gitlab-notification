@@ -9,8 +9,8 @@ import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import dev.struchkov.bot.gitlab.sdk.domain.DiscussionJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.ConversionService;
@@ -28,11 +28,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.bot.gitlab.core.utils.StringUtils.H_PRIVATE_TOKEN;
 import static dev.struchkov.haiti.utils.Checker.checkFalse;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
 
 /**
  * Парсер обсуждений.
