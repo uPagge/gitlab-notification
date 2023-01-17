@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static dev.struchkov.bot.gitlab.context.utils.Icons.link;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
@@ -28,7 +27,7 @@ public class NewMrForReviewNotifyGenerator implements NotifyBoxAnswerGenerator<N
 
         final StringBuilder builder = new StringBuilder(Icons.FUN).append(" *New merge request for review*")
                 .append(Icons.HR)
-                .append(link(notify.getType(), notify.getUrl()));
+                .append(notify.getTitle());
 
         if (!labelText.isEmpty()) {
             builder.append("\n\n").append(labelText);

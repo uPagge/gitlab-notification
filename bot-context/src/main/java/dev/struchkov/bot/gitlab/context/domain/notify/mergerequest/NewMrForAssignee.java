@@ -13,6 +13,8 @@ public class NewMrForAssignee extends NewMrNotify {
     public static final String TYPE = "NewMrForAssignee";
 
     private final List<String> reviewers;
+    private final String oldAssigneeName;
+    private final String newAssigneeName;
 
     @Builder
     private NewMrForAssignee(
@@ -24,7 +26,9 @@ public class NewMrForAssignee extends NewMrNotify {
             String targetBranch,
             String sourceBranch,
             Set<String> labels,
-            @Singular List<String> reviewers
+            @Singular List<String> reviewers,
+            String oldAssigneeName,
+            String newAssigneeName
     ) {
         super(
                 title,
@@ -37,6 +41,8 @@ public class NewMrForAssignee extends NewMrNotify {
                 labels
         );
         this.reviewers = reviewers;
+        this.oldAssigneeName = oldAssigneeName;
+        this.newAssigneeName = newAssigneeName;
     }
 
     @Override

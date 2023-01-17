@@ -6,8 +6,12 @@ import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
 
-import static dev.struchkov.bot.gitlab.context.utils.Icons.link;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
+import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
+import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.urlButton;
+import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Component
@@ -16,9 +20,9 @@ public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateM
     @Override
     public BoxAnswer generate(UpdateMrNotify notify) {
 
-        final StringBuilder builder = new StringBuilder(Icons.UPDATE).append(" *MergeRequest update | ").append(escapeMarkdown(notify.getProjectName())).append("*")
+        final StringBuilder builder = new StringBuilder(Icons.UPDATE).append(" *MergeRequest update*")
                 .append(Smile.HR.getValue())
-                .append(link(notify.getTitle(), notify.getUrl()));
+                .append(notify.getTitle());
 
         if (notify.getAllTasks() > 0) {
             builder.append(Smile.HR.getValue())
@@ -29,11 +33,25 @@ public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateM
             }
         }
 
-        builder.append(Icons.HR)
+        builder.append(Icons.HR);
+
+        if (checkNotNull(notify.getProjectName())) {
+            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName())).append("\n");
+        }
+
+        builder
                 .append(Icons.AUTHOR).append(": ").append(notify.getAuthor());
 
         final String notifyMessage = builder.toString();
-        return boxAnswer(notifyMessage);
+        return boxAnswer(
+                notifyMessage,
+                inlineKeyBoard(
+                        simpleLine(
+                                simpleButton(Icons.VIEW, "DELETE_MESSAGE"),
+                                urlButton(Icons.LINK, notify.getUrl())
+                        )
+                )
+        );
     }
 
     @Override

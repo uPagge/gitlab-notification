@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.struchkov.bot.gitlab.context.utils.Icons.link;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
@@ -27,10 +26,9 @@ public class NewMrForAssigneeNotifyGenerator implements NotifyBoxAnswerGenerator
                 .map(label -> "#" + label)
                 .collect(Collectors.joining(" "));
 
-
         final StringBuilder builder = new StringBuilder(Icons.ASSIGNEE).append(" *You have become responsible*")
                 .append(Icons.HR)
-                .append(link(notify.getType(), notify.getUrl()));
+                .append(notify.getTitle());
 
         if (!labelText.isEmpty()) {
             builder.append("\n\n").append(labelText);
@@ -39,16 +37,20 @@ public class NewMrForAssigneeNotifyGenerator implements NotifyBoxAnswerGenerator
         builder.append(Icons.HR);
 
         if (checkNotNull(notify.getProjectName())) {
-            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName()));
+            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName())).append("\n");
         }
 
         builder
                 .append(Icons.TREE).append(": ").append(notify.getSourceBranch()).append(Icons.ARROW).append(notify.getTargetBranch()).append("\n")
-                .append(Icons.AUTHOR).append(": ").append(notify.getAuthor());
+                .append(Icons.AUTHOR).append(": ").append(notify.getAuthor()).append("\n");
 
         final List<String> reviewers = notify.getReviewers();
         if (checkNotEmpty(reviewers)) {
-            builder.append(Icons.REVIEWER).append(": ").append(String.join(", ", reviewers));
+            builder.append(Icons.REVIEWER).append(": ").append(String.join(", ", reviewers)).append("\n");
+        }
+
+        if (checkNotNull(notify.getOldAssigneeName()) && checkNotNull(notify.getNewAssigneeName())) {
+            builder.append(Icons.ASSIGNEE).append(": ").append(notify.getOldAssigneeName()).append(Icons.ARROW).append(notify.getNewAssigneeName()).append("\n");
         }
 
         final String notifyMessage = builder.toString();

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
             if (!mergeRequest.isConflict()) {
                 final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
                 if (botUserReviewer) sendNotifyNewMrReview(savedMergeRequest, projectName);
-                if (botUserAssignee) sendNotifyNewAssignee(mergeRequest, projectName);
+                if (botUserAssignee) sendNotifyNewAssignee(mergeRequest, projectName, null);
             }
         }
 
@@ -128,20 +129,27 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         );
     }
 
-    private void sendNotifyNewAssignee(MergeRequest mergeRequest, String projectName) {
-        notifyService.send(
-                NewMrForAssignee.builder()
-                        .projectName(projectName)
-                        .labels(mergeRequest.getLabels())
-                        .author(mergeRequest.getAuthor().getName())
-                        .description(mergeRequest.getDescription())
-                        .title(mergeRequest.getTitle())
-                        .url(mergeRequest.getWebUrl())
-                        .targetBranch(mergeRequest.getTargetBranch())
-                        .sourceBranch(mergeRequest.getSourceBranch())
-                        .reviewers(mergeRequest.getReviewers().stream().map(Person::getName).collect(Collectors.toList()))
-                        .build()
-        );
+    private void sendNotifyNewAssignee(MergeRequest mergeRequest, String projectName, String oldAssigneeName) {
+        final NewMrForAssignee.NewMrForAssigneeBuilder builder = NewMrForAssignee.builder()
+                .projectName(projectName)
+                .labels(mergeRequest.getLabels())
+                .author(mergeRequest.getAuthor().getName())
+                .description(mergeRequest.getDescription())
+                .title(mergeRequest.getTitle())
+                .url(mergeRequest.getWebUrl())
+                .targetBranch(mergeRequest.getTargetBranch())
+                .sourceBranch(mergeRequest.getSourceBranch())
+                .reviewers(mergeRequest.getReviewers().stream().map(Person::getName).toList());
+
+        if (checkNotNull(oldAssigneeName)) {
+            builder.oldAssigneeName(oldAssigneeName);
+
+            if (checkNotNull(mergeRequest.getAssignee())) {
+                builder.newAssigneeName(mergeRequest.getAssignee().getName());
+            }
+        }
+
+        notifyService.send(builder.build());
     }
 
     @Override
@@ -175,7 +183,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
                 if (isChangedLinkedEntity) {
                     notifyReviewer(reviewerChanged, mergeRequest, project);
-                    notifyAssignee(assigneeChanged, mergeRequest, project);
+                    notifyAssignee(assigneeChanged, oldMergeRequest, mergeRequest, project);
                 }
             }
             return repository.save(mergeRequest);
@@ -184,11 +192,11 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return oldMergeRequest;
     }
 
-
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление
-    private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest mergeRequest, Project project) {
+    private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         switch (assigneeChanged) {
-            case BECOME -> sendNotifyNewAssignee(mergeRequest, project.getName());
+            case BECOME ->
+                    sendNotifyNewAssignee(mergeRequest, project.getName(), Optional.ofNullable(oldMergeRequest.getAssignee()).map(Person::getName).orElse(null));
         }
     }
 
