@@ -24,7 +24,7 @@ public class PipelineNotifyGenerator implements NotifyBoxAnswerGenerator<Pipelin
 
     @Override
     public BoxAnswer generate(PipelineNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.BUILD).append(" *New pipeline |").append(notify.getPipelineId()).append("*");
+        final StringBuilder builder = new StringBuilder(Icons.BUILD).append(" *New pipeline | ").append(notify.getPipelineId()).append("*");
 
         builder
                 .append(Icons.HR)
