@@ -123,6 +123,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                         .url(mergeRequest.getWebUrl())
                         .targetBranch(mergeRequest.getTargetBranch())
                         .sourceBranch(mergeRequest.getSourceBranch())
+                        .assignee(mergeRequest.getAssignee().getName())
                         .build()
         );
     }

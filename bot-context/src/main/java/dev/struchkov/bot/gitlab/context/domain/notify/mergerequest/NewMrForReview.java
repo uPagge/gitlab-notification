@@ -10,6 +10,8 @@ public class NewMrForReview extends NewMrNotify {
 
     public static final String TYPE = "NewMrForReview";
 
+    private final String assignee;
+
     @Builder
     private NewMrForReview(
             String title,
@@ -19,7 +21,8 @@ public class NewMrForReview extends NewMrNotify {
             String projectName,
             String targetBranch,
             String sourceBranch,
-            Set<String> labels
+            Set<String> labels,
+            String assignee
     ) {
         super(
                 title,
@@ -31,6 +34,7 @@ public class NewMrForReview extends NewMrNotify {
                 sourceBranch,
                 labels
         );
+        this.assignee = assignee;
     }
 
     @Override
