@@ -69,7 +69,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
             if (!mergeRequest.isConflict()) {
                 final String projectName = projectService.getByIdOrThrow(savedMergeRequest.getProjectId()).getName();
                 if (botUserReviewer) sendNotifyNewMrReview(savedMergeRequest, projectName);
-                if (botUserAssignee) sendNotifyAboutAssignee(mergeRequest, projectName);
+                if (botUserAssignee) sendNotifyNewAssignee(mergeRequest, projectName);
             }
         }
 
@@ -127,7 +127,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         );
     }
 
-    private void sendNotifyAboutAssignee(MergeRequest mergeRequest, String projectName) {
+    private void sendNotifyNewAssignee(MergeRequest mergeRequest, String projectName) {
         notifyService.send(
                 NewMrForAssignee.builder()
                         .projectName(projectName)
@@ -138,6 +138,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                         .url(mergeRequest.getWebUrl())
                         .targetBranch(mergeRequest.getTargetBranch())
                         .sourceBranch(mergeRequest.getSourceBranch())
+                        .reviewers(mergeRequest.getReviewers().stream().map(Person::getName).collect(Collectors.toList()))
                         .build()
         );
     }
@@ -186,7 +187,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление
     private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest mergeRequest, Project project) {
         switch (assigneeChanged) {
-            case BECOME -> sendNotifyAboutAssignee(mergeRequest, project.getName());
+            case BECOME -> sendNotifyNewAssignee(mergeRequest, project.getName());
         }
     }
 

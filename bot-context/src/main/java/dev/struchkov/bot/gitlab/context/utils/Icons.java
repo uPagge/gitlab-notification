@@ -20,6 +20,7 @@ public class Icons {
     public static final String ASSIGNEE = "\uD83C\uDF96";
     public static final String BUILD = "\uD83D\uDEE0";
     public static final String LINK = "\uD83D\uDD17";
+    public static final String REVIEWER = "\uD83D\uDD0E";
 
     private Icons() {
         utilityClass();

@@ -2,13 +2,17 @@ package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
 public class NewMrForAssignee extends NewMrNotify {
 
     public static final String TYPE = "NewMrForAssignee";
+
+    private final List<String> reviewers;
 
     @Builder
     private NewMrForAssignee(
@@ -19,7 +23,8 @@ public class NewMrForAssignee extends NewMrNotify {
             String projectName,
             String targetBranch,
             String sourceBranch,
-            Set<String> labels
+            Set<String> labels,
+            @Singular List<String> reviewers
     ) {
         super(
                 title,
@@ -31,6 +36,7 @@ public class NewMrForAssignee extends NewMrNotify {
                 sourceBranch,
                 labels
         );
+        this.reviewers = reviewers;
     }
 
     @Override
