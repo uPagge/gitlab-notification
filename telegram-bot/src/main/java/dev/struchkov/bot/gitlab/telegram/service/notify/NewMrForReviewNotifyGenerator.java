@@ -37,7 +37,7 @@ public class NewMrForReviewNotifyGenerator implements NotifyBoxAnswerGenerator<N
         builder.append(Icons.HR);
 
         if (checkNotNull(notify.getProjectName())) {
-            builder.append("Project").append(": ").append(escapeMarkdown(notify.getProjectName()));
+            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName()));
         }
 
         builder

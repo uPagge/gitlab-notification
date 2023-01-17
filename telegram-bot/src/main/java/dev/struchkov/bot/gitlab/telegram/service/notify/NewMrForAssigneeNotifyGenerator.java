@@ -39,7 +39,7 @@ public class NewMrForAssigneeNotifyGenerator implements NotifyBoxAnswerGenerator
         builder.append(Icons.HR);
 
         if (checkNotNull(notify.getProjectName())) {
-            builder.append("Project").append(": ").append(escapeMarkdown(notify.getProjectName()));
+            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName()));
         }
 
         builder
