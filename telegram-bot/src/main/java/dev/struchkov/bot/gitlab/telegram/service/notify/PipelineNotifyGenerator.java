@@ -24,25 +24,25 @@ public class PipelineNotifyGenerator implements NotifyBoxAnswerGenerator<Pipelin
 
     @Override
     public BoxAnswer generate(PipelineNotify notify) {
-        final Optional<String> optProjectName = projectService.getProjectNameById(notify.getProjectId())
-                .map(Strings::escapeMarkdown);
+        final StringBuilder builder = new StringBuilder(Icons.BUILD).append(" *New pipeline |").append(notify.getPipelineId()).append("*");
 
-        final StringBuilder builder = new StringBuilder(Icons.BUILD).append(" *Pipeline ").append(notify.getPipelineId()).append("*");
-
-        if (optProjectName.isPresent()) {
-            final String projectName = optProjectName.get();
-            builder.append(" | ").append(projectName);
-        }
-
-        final String notifyMessage = builder
-                .append(Icons.HR)
-                .append(Icons.TREE).append(": ").append(notify.getRefName())
+        builder
                 .append(Icons.HR)
                 .append(notify.getOldStatus().getIcon()).append(" ").append(notify.getOldStatus()).append(Icons.ARROW).append(notify.getNewStatus().getIcon()).append(" ").append(notify.getNewStatus())
-                .toString();
+                .append(Icons.HR);
+
+        final Optional<String> optProjectName = projectService.getProjectNameById(notify.getProjectId())
+                .map(Strings::escapeMarkdown);
+        if (optProjectName.isPresent()) {
+            final String projectName = optProjectName.get();
+            builder.append(Icons.PROJECT).append(": ").append(projectName).append("\n");
+        }
+
+        builder
+                .append(Icons.TREE).append(": ").append(notify.getRefName());
 
         return boxAnswer(
-                notifyMessage,
+                builder.toString(),
                 inlineKeyBoard(
                         simpleLine(
                                 simpleButton(Icons.VIEW, "DELETE_MESSAGE"),
