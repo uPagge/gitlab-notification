@@ -38,4 +38,6 @@ public interface MergeRequestsService {
 
     Set<Long> getAllIds();
 
+    void disableNotify(@NonNull Long mrId);
+
 }

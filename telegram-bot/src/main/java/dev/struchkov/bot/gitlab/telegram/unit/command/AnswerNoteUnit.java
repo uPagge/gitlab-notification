@@ -1,4 +1,4 @@
-package dev.struchkov.bot.gitlab.telegram.unit;
+package dev.struchkov.bot.gitlab.telegram.unit.command;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
@@ -10,18 +10,15 @@ import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Attachment;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
-import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.attachment.TelegramAttachmentType;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
-import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +27,7 @@ import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 
 @Component
 @RequiredArgsConstructor
-public class CommandUnit {
+public class AnswerNoteUnit {
 
     private static final Pattern NOTE_LINK = Pattern.compile("#note_\\d+$");
 
@@ -38,7 +35,6 @@ public class CommandUnit {
     private final AppSettingService settingService;
     private final NoteService noteService;
     private final DiscussionService discussionService;
-    private final TelegramSending telegramSending;
 
     @Unit(value = ANSWER_NOTE, main = true)
     public AnswerText<Mail> answerNote() {
@@ -79,31 +75,6 @@ public class CommandUnit {
                             return boxAnswer("Error");
                         }
                 )
-                .build();
-    }
-
-    @Unit(value = "DELETE_MESSAGE", main = true)
-    public AnswerText<Mail> deleteMessage() {
-        return AnswerText.<Mail>builder()
-                .triggerCheck(mail -> {
-                    final boolean isAccess = personInformation.getTelegramId().equals(mail.getPersonId());
-                    if (isAccess) {
-                        final boolean isFirstStart = settingService.isFirstStart();
-                        if (!isFirstStart) {
-                            final Optional<ButtonClickAttachment> optButtonClick = Attachments.findFirstButtonClick(mail.getAttachments());
-                            if (optButtonClick.isPresent()) {
-                                final ButtonClickAttachment buttonClick = optButtonClick.get();
-                                final String rawData = buttonClick.getRawCallBackData();
-                                return rawData.equals("DELETE_MESSAGE");
-                            }
-                        }
-                    }
-                    return false;
-                })
-                .answer(mail -> {
-                    final ButtonClickAttachment clickButton = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
-                    telegramSending.deleteMessage(mail.getPersonId(), clickButton.getMessageId());
-                })
                 .build();
     }
 

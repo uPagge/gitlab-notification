@@ -12,12 +12,13 @@ public class ConflictMrNotify extends MrNotify {
 
     @Builder
     private ConflictMrNotify(
+            Long mrId,
             String name,
             String url,
             String projectKey,
             String sourceBranch
     ) {
-        super(projectKey, name, url);
+        super(mrId, projectKey, name, url);
         this.sourceBranch = sourceBranch;
     }
 

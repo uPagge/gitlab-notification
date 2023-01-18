@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
@@ -45,7 +46,7 @@ public class PipelineNotifyGenerator implements NotifyBoxAnswerGenerator<Pipelin
                 builder.toString(),
                 inlineKeyBoard(
                         simpleLine(
-                                simpleButton(Icons.VIEW, "DELETE_MESSAGE"),
+                                simpleButton(Icons.VIEW, DELETE_MESSAGE),
                                 urlButton(Icons.LINK, notify.getWebUrl())
                         )
                 )

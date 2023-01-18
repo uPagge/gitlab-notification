@@ -70,4 +70,9 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
         return jpaRepository.findAllIds();
     }
 
+    @Override
+    public void disableNotify(Long mrId) {
+        jpaRepository.disableNotify(mrId);
+    }
+
 }

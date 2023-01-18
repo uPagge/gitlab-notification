@@ -14,6 +14,7 @@ public abstract class NewMrNotify extends MrNotify {
     protected final Set<String> labels;
 
     protected NewMrNotify(
+            Long mrId,
             String title,
             String url,
             String description,
@@ -23,7 +24,7 @@ public abstract class NewMrNotify extends MrNotify {
             String sourceBranch,
             Set<String> labels
     ) {
-        super(projectName, title, url);
+        super(mrId, projectName, title, url);
         this.description = description;
         this.author = author;
         this.targetBranch = targetBranch;

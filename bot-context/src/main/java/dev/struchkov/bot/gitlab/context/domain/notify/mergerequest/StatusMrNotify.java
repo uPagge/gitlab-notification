@@ -14,13 +14,14 @@ public class StatusMrNotify extends MrNotify {
 
     @Builder
     private StatusMrNotify(
+            Long mrId,
             String name,
             String url,
             String projectName,
             MergeRequestState oldStatus,
             MergeRequestState newStatus
     ) {
-        super(projectName, name, url);
+        super(mrId, projectName, name, url);
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
     }

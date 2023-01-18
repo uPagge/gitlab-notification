@@ -16,6 +16,7 @@ public class UpdateMrNotify extends MrNotify {
 
     @Builder
     private UpdateMrNotify(
+            Long mrId,
             String name,
             String url,
             String author,
@@ -25,7 +26,7 @@ public class UpdateMrNotify extends MrNotify {
             Long personTasks,
             Long personResolvedTasks
     ) {
-        super(projectKey, name, url);
+        super(mrId, projectKey, name, url);
         this.author = author;
         this.allTasks = allTasks;
         this.allResolvedTasks = allResolvedTasks;

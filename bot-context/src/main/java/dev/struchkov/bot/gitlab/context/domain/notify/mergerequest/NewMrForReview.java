@@ -14,6 +14,7 @@ public class NewMrForReview extends NewMrNotify {
 
     @Builder
     private NewMrForReview(
+            Long mrId,
             String title,
             String url,
             String description,
@@ -25,6 +26,7 @@ public class NewMrForReview extends NewMrNotify {
             String assignee
     ) {
         super(
+                mrId,
                 title,
                 url,
                 description,

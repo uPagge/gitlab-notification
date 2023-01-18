@@ -116,6 +116,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     private void sendNotifyNewMrReview(MergeRequest mergeRequest, String projectName) {
         notifyService.send(
                 NewMrForReview.builder()
+                        .mrId(mergeRequest.getId())
                         .projectName(projectName)
                         .labels(mergeRequest.getLabels())
                         .author(mergeRequest.getAuthor().getName())
@@ -131,6 +132,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     private void sendNotifyNewAssignee(MergeRequest mergeRequest, String projectName, String oldAssigneeName) {
         final NewMrForAssignee.NewMrForAssigneeBuilder builder = NewMrForAssignee.builder()
+                .mrId(mergeRequest.getId())
                 .projectName(projectName)
                 .labels(mergeRequest.getLabels())
                 .author(mergeRequest.getAuthor().getName())
@@ -264,6 +266,12 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         return repository.findAllIds();
     }
 
+    @Override
+    @Transactional
+    public void disableNotify(@NonNull Long mrId) {
+        repository.disableNotify(mrId);
+    }
+
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         final Long botUserGitlabId = personInformation.getId();
 
@@ -295,6 +303,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
             }
             notifyService.send(
                     UpdateMrNotify.builder()
+                            .mrId(oldMergeRequest.getId())
                             .author(oldMergeRequest.getAuthor().getName())
                             .name(oldMergeRequest.getTitle())
                             .projectKey(project.getName())
@@ -317,6 +326,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         ) {
             notifyService.send(
                     ConflictMrNotify.builder()
+                            .mrId(oldMergeRequest.getId())
                             .sourceBranch(oldMergeRequest.getSourceBranch())
                             .name(mergeRequest.getTitle())
                             .url(mergeRequest.getWebUrl())
@@ -336,6 +346,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         ) {
             notifyService.send(
                     StatusMrNotify.builder()
+                            .mrId(oldMergeRequest.getId())
                             .name(newMergeRequest.getTitle())
                             .url(oldMergeRequest.getWebUrl())
                             .projectName(project.getName())

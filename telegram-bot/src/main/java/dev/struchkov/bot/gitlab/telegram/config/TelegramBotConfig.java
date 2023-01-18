@@ -1,13 +1,17 @@
 package dev.struchkov.bot.gitlab.telegram.config;
 
 import dev.struchkov.bot.gitlab.telegram.service.ReplaceUrlLocalhost;
-import dev.struchkov.bot.gitlab.telegram.unit.CommandUnit;
 import dev.struchkov.bot.gitlab.telegram.unit.MenuConfig;
+import dev.struchkov.bot.gitlab.telegram.unit.command.AnswerNoteUnit;
+import dev.struchkov.bot.gitlab.telegram.unit.command.DeleteMessageUnit;
+import dev.struchkov.bot.gitlab.telegram.unit.command.DisableNotifyMrUnit;
 import dev.struchkov.bot.gitlab.telegram.unit.flow.InitSettingFlow;
+import dev.struchkov.godfather.main.core.unit.TypeUnit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.context.service.EventHandler;
 import dev.struchkov.godfather.simple.context.service.PersonSettingService;
 import dev.struchkov.godfather.simple.context.service.UnitPointerService;
+import dev.struchkov.godfather.simple.core.action.cmd.RollBackCmdAction;
 import dev.struchkov.godfather.simple.core.provider.StoryLineHandler;
 import dev.struchkov.godfather.simple.core.service.PersonSettingServiceImpl;
 import dev.struchkov.godfather.simple.core.service.StorylineContextMapImpl;
@@ -72,9 +76,11 @@ public class TelegramBotConfig {
 
             MenuConfig menuConfig,
             InitSettingFlow unitConfig,
-            CommandUnit commandUnit
+            AnswerNoteUnit commandUnit,
+            DeleteMessageUnit deleteMessageUnit,
+            DisableNotifyMrUnit disableNotifyMrUnit
     ) {
-        final List<Object> config = List.of(menuConfig, unitConfig, commandUnit);
+        final List<Object> config = List.of(menuConfig, unitConfig, commandUnit, deleteMessageUnit, disableNotifyMrUnit);
 
         return new StorylineMailService(
                 unitPointerService,
@@ -89,11 +95,12 @@ public class TelegramBotConfig {
             TelegramSending sending,
             PersonSettingService personSettingService,
 
-            StorylineService<Mail> mailStorylineService
+            StorylineService<Mail> storylineService
     ) {
         final MailAutoresponderTelegram autoresponder = new MailAutoresponderTelegram(
-                sending, personSettingService, mailStorylineService
+                sending, personSettingService, storylineService
         );
+        autoresponder.initActionUnit(TypeUnit.BACK_CMD, new RollBackCmdAction<>(storylineService));
         autoresponder.setExecutorService(executorService);
         return autoresponder;
     }

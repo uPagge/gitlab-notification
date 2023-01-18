@@ -20,7 +20,10 @@ public final class UnitName {
     public static final String ACCESS_ERROR = "ACCESS_ERROR";
     public static final String CHECK_PARSER_PRIVATE_PROJECT_NO = "CHECK_PARSER_PRIVATE_PROJECT_NO";
     public static final String CHECK_PARSE_OWNER_PROJECT_NO = "CHECK_PARSE_OWNER_PROJECT_NO";
-    public static final String REPLACE_GENERAL_MENU = "REPLACE_GENERAL_MENU";
+
+    // команды
+    public static final String DELETE_MESSAGE = "DELETE_MESSAGE";
+    public static final String DISABLE_NOTIFY_MR = "DISABLE_NOTIFY_MR";
 
     private UnitName() {
         utilityClass();

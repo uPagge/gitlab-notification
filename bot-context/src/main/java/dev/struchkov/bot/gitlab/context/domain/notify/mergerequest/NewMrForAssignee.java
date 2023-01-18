@@ -18,6 +18,7 @@ public class NewMrForAssignee extends NewMrNotify {
 
     @Builder
     private NewMrForAssignee(
+            Long mrId,
             String title,
             String url,
             String description,
@@ -31,6 +32,7 @@ public class NewMrForAssignee extends NewMrNotify {
             String newAssigneeName
     ) {
         super(
+                mrId,
                 title,
                 url,
                 description,

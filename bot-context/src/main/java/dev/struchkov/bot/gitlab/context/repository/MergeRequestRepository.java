@@ -28,4 +28,6 @@ public interface MergeRequestRepository {
 
     Set<Long> findAllIds();
 
+    void disableNotify(Long mrId);
+
 }

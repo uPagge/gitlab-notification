@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.data.jpa;
 import dev.struchkov.bot.gitlab.context.domain.IdAndStatusPr;
 import dev.struchkov.bot.gitlab.context.domain.MergeRequestState;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.query.Param;
@@ -26,5 +27,9 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
 
     @Query("SELECT mr.id FROM MergeRequest mr")
     Set<Long> findAllIds();
+
+    @Modifying
+    @Query("UPDATE MergeRequest mr SET mr.notification = false WHERE mr.id = :mrId")
+    void disableNotify(@Param("mrId") Long mrId);
 
 }

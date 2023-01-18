@@ -6,6 +6,10 @@ import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_CONFIRMATION;
+import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_DISABLE_NOTIFY_MR_ID;
+import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_VALUE_FALSE;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
@@ -47,8 +51,9 @@ public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateM
                 notifyMessage,
                 inlineKeyBoard(
                         simpleLine(
-                                simpleButton(Icons.VIEW, "DELETE_MESSAGE"),
-                                urlButton(Icons.LINK, notify.getUrl())
+                                simpleButton(Icons.VIEW, DELETE_MESSAGE),
+                                urlButton(Icons.LINK, notify.getUrl()),
+                                simpleButton(Icons.DISABLE_NOTIFY, "[" + BUTTON_ARG_DISABLE_NOTIFY_MR_ID + ":" + notify.getMrId() + ";" + BUTTON_ARG_CONFIRMATION + ":" + BUTTON_VALUE_FALSE + "]")
                         )
                 )
         );
