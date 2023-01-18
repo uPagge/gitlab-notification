@@ -36,12 +36,12 @@ public class NewMrForReviewNotifyGenerator implements NotifyBoxAnswerGenerator<N
         builder.append(Icons.HR);
 
         if (checkNotNull(notify.getProjectName())) {
-            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName()));
+            builder.append(Icons.PROJECT).append(": ").append(escapeMarkdown(notify.getProjectName())).append("\n");
         }
 
         builder
                 .append(Icons.TREE).append(": ").append(notify.getSourceBranch()).append(Icons.ARROW).append(notify.getTargetBranch()).append("\n")
-                .append(Icons.AUTHOR).append(": ").append(notify.getAuthor());
+                .append(Icons.AUTHOR).append(": ").append(notify.getAuthor()).append("\n");
 
         if (checkNotNull(notify.getAssignee())) {
             builder.append(Icons.ASSIGNEE).append(": ").append(notify.getAssignee());
