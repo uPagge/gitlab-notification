@@ -34,7 +34,7 @@ public class Issue {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "iid")
+    @Column(name = "two_id")
     private Long twoId;
 
     @Column(name = "project_id")
@@ -64,7 +64,7 @@ public class Issue {
     private Person closedBy;
 
     @ElementCollection
-    @CollectionTable(name = "issue_label", joinColumns = @JoinColumn(name = "label_id"))
+    @CollectionTable(name = "issue_labels", joinColumns = @JoinColumn(name = "label_id"))
     @Column(name = "labels")
     private Set<String> labels = new HashSet<>();
 
@@ -93,36 +93,35 @@ public class Issue {
     private IssueType type;   // ОБразец приходящего значения "INCIDENT"
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "assignee")
+    @JoinColumn(name = "assignee_id")
     private Person assignee;
 
-    @Column(name = "user_notes_count") //Количество комментов пользователя
+    @Column(name = "user_notes_count")
     private Integer userNotesCount;
 
     @Column(name = "merge_requests_count")
     private Integer mergeRequestsCount;
 
-    @Column(name = "upvotes")  // Количество лайков
+    @Column(name = "up_votes")
     private Integer upVotes;
 
-    @Column(name = "downvotes")  // Количество дизлайков
+    @Column(name = "down_votes")
     private Integer downVotes;
 
     @Column(name = "due_date")
     private LocalDateTime dueDate;
 
-    @Column(name = "confidential")  // Конфиденцальное или нет
+    @Column(name = "confidential")
     private Boolean confidential;
 
     @Column(name = "discussion_locked")
-    private Integer discussionLocked; //TODO выяснить тип поляя.
+    private Integer discussionLocked;
 
     @Column(name = "issue_type")
     private String issueType; //TODO выяснить зачем дублирует поле type Образец приходящего значения "incident"
 
     @Column(name = "web_url")
     private String webUrl;
-
 
     @Embedded
     @AttributeOverrides({
@@ -135,8 +134,8 @@ public class Issue {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "count", column = @Column(name = "count")),
-            @AttributeOverride(name = "completedCount", column = @Column(name = "completed_count"))
+            @AttributeOverride(name = "count", column = @Column(name = "task_count")),
+            @AttributeOverride(name = "completedCount", column = @Column(name = "task_completed_count"))
     })
     private TaskCompletionStatus taskCompletionStatus;
 
@@ -148,11 +147,11 @@ public class Issue {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "self", column = @Column(name = "self")),
-            @AttributeOverride(name = "notes", column = @Column(name = "notes")),
-            @AttributeOverride(name = "awardEmoji", column = @Column(name = "award_emoji")),
-            @AttributeOverride(name = "project", column = @Column(name = "project")),
-            @AttributeOverride(name = "closedAsDuplicateOf", column = @Column(name = "closed_as_duplicate_of"))
+            @AttributeOverride(name = "self", column = @Column(name = "link_to_self")),
+            @AttributeOverride(name = "notes", column = @Column(name = "link_to_notes")),
+            @AttributeOverride(name = "awardEmoji", column = @Column(name = "link_to_award_emoji")),
+            @AttributeOverride(name = "project", column = @Column(name = "link_to_project")),
+            @AttributeOverride(name = "closedAsDuplicateOf", column = @Column(name = "link_to_closed_as_duplicate_of"))
     })
     private Links links;
 
@@ -164,8 +163,9 @@ public class Issue {
     })
     private References references;
 
-    /*Возможно надо заменить на енум "UNKNOWN",  Critical - S1, High - S2, Medium - S3, Low - S4.
-    Но это поле доступно только для премиум акаунтов
+    /**
+    Возможно надо заменить на енум: "UNKNOWN",  "Critical - S1", "High - S2", "Medium - S3", "Low - S4".
+    Но выбор любых значений кроме "UNKNOWN" доступен только для премиум акаунтов и я не могу получить точные значения котоые оно принимает.
     */
     @Column(name = "severity")
     private String severity;
@@ -174,7 +174,7 @@ public class Issue {
     private Long movedToId;
 
     @Column(name = "service_desk_reply_to")
-    private String serviceDescReplyTo; //TODO не понятен тип поля
+    private String serviceDescReplyTo;
 
     @Column(name = "epic_issue_id")
     private Long epicId; // "epic_issue_id" Поле доснтупное только для премиум акаунтов

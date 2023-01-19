@@ -9,5 +9,6 @@
 
     <include file="2022-12-03-create-tables.xml" relativeToChangelogFile="true"/>
     <include file="2022-12-03-insert.xml" relativeToChangelogFile="true"/>
+    <include file="2023-01-19-create-tables-for-issue.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

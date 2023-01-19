@@ -28,7 +28,7 @@ public class Milestone {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "iid")
+    @Column(name = "two_id")
     private Long twoId;
 
     @Column(name = "project_id")

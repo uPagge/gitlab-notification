@@ -1,0 +1,206 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="2023-01-19-create-table-milestone" author="Dmitry Sheyko">
+        <createTable tableName="milestone">
+            <column name="id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="two_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="state" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="start_date" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="due_date" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="expired" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="web_url" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-issue" author="Dmitry Sheyko">
+        <createTable tableName="issue">
+            <column name="id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="two_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="state" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="closed_at" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="closed_by_id" type="int">
+                <constraints nullable="true" foreignKeyName="fk_issue_closed_by_id_person_id" references="person(id)"/>
+            </column>
+            <column name="milestone_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_issie_milestone_id_milestone_id" references="milestone(id)"/>
+            </column>
+            <column name="author_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_issue_author_id_person_id" references="person(id)"/>
+            </column>
+            <column name="type" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assignee_id" type="int">
+                <constraints nullable="true" foreignKeyName="fk_issue_assignee_id_person_id" references="person(id)"/>
+            </column>
+            <column name="user_notes_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="merge_requests_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="up_votes" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="down_votes" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="datetime">
+                <constraints nullable="true"/>
+            </column>
+            <column name="confidential" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discussion_locked" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="issue_type" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="web_url" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_estimate" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_time_spent" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="human_time_estimate" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="human_total_time_spent" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="task_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_completed_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocking_issues_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_tasks" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_to_self" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_to_notes" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_to_award_emoji" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_to_project" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="link_to_closed_as_duplicate_of" type="varchar(300)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="short_reference" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="relative_reference" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_reference" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="severity" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="moved_to_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="service_desk_reply_to" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="epic_issue_id" type="int">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-issue_labels" author="Dmitry Sheyko">
+        <createTable tableName="issue_labels">
+            <column name="issue_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_issue_labels_issue_id"
+                             references="issue(id)" deleteCascade="true"/>
+            </column>
+            <column name="labels" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-issue_assignees" author="Dmitry Sheyko">
+        <createTable tableName="issue_assignees">
+            <column name="issue_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_issue_assignees_issue_id" references="issue(id)"/>
+            </column>
+            <column name="person_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_issue_assignees_person_id" references="person(id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="issue_assignees" columnNames="issue_id, person_id"/>
+    </changeSet>
+
+</databaseChangeLog>
