@@ -71,7 +71,7 @@ public class IssueJson {
     private Boolean confidential;
 
     @JsonProperty("discussion_locked")
-    private Integer discussionLocked; //TODO выяснить тип поля
+    private Integer discussionLocked;
 
     @JsonProperty("issue_type")
     private String issueType; //TODO выяснить зачем дублирует поле type
@@ -95,13 +95,13 @@ public class IssueJson {
     private LinksJson links;
 
     private ReferencesJson references;
-    private String severity; //TODO заменить на енум "UNKNOWN",  Critical - S1, High - S2, Medium - S3, Low - S4,
+    private String severity;
 
     @JsonProperty("moved_to_id")
     private Long movedToId;
 
     @JsonProperty("service_desk_reply_to")
-    private Long serviceDescReplyTo; //TODO не понятен тип поля
+    private Long serviceDescReplyTo;
 
     @JsonProperty("epic_issue_id")
     private Long epicId; // "epic_issue_id" Поле доступное только для премиум акаунтов
