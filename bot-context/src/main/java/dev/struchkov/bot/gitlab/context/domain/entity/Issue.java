@@ -28,14 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * Сущность Issue.
  *
  * @author Dmitry Sheyko [17.01.2023]
  */
-
-// При запросе issue учесть что пагинация по умолчанию - 20 объектов
 @Getter
 @Setter
 @Entity
