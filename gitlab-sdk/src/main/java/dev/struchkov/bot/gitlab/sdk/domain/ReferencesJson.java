@@ -6,9 +6,9 @@ import lombok.Data;
 /**
  * @author Dmitry Sheyko [17.01.2023]
  */
-
 @Data
 public class ReferencesJson {
+
     @JsonProperty("short")
     private String shortReference;
 
@@ -17,4 +17,5 @@ public class ReferencesJson {
 
     @JsonProperty("full")
     private String fullReference;
+
 }

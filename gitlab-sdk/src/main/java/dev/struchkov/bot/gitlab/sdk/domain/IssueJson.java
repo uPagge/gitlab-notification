@@ -13,9 +13,9 @@ import java.util.Set;
 /**
  * @author Dmitry Sheyko [17.01.2023]
  */
-
 @Data
 public class IssueJson {
+
     private Long id;
 
     @JsonProperty("iid")
@@ -74,7 +74,7 @@ public class IssueJson {
     private Integer discussionLocked;
 
     @JsonProperty("issue_type")
-    private String issueType; //TODO выяснить зачем дублирует поле type
+    private String issueType;
 
     @JsonProperty("web_url")
     private String webUrl;
@@ -104,5 +104,6 @@ public class IssueJson {
     private Long serviceDescReplyTo;
 
     @JsonProperty("epic_issue_id")
-    private Long epicId; // "epic_issue_id" Поле доступное только для премиум акаунтов
+    private Long epicId;
+
 }

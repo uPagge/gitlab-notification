@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 /**
  * @author Dmitry Sheyko [17.01.2023]
  */
-
 @Data
 public class MilestoneJson {
+
     private Long id;
 
     @JsonProperty("iid")
@@ -49,4 +49,5 @@ public class MilestoneJson {
 
     @JsonProperty("web_url")
     private String webUrl;
+
 }
