@@ -14,10 +14,10 @@
             <column name="enable_notify" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="project_private_scan" type="boolean" defaultValue="false">
+            <column name="project_owner_scan" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="project_public_scan" type="boolean" defaultValue="false">
+            <column name="project_private_scan" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>

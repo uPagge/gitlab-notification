@@ -27,10 +27,10 @@ public interface AppSettingService {
 
     void privateProjectScan(boolean enable);
 
-    void publicProjectScan(boolean enable);
+    void ownerProjectScan(boolean enable);
+
+    boolean isOwnerProjectScan();
 
     boolean isPrivateProjectScan();
-
-    boolean isPublicProjectScan();
 
 }

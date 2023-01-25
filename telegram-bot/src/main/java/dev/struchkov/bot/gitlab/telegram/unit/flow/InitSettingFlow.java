@@ -25,18 +25,18 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.AUTO_PARSE_OWNER_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.AUTO_PARSE_PRIVATE_PROJECT;
-import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.AUTO_PARSE_PUBLIC_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSER_PRIVATE_PROJECT_NO;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSER_PRIVATE_PROJECT_YES;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSE_OWNER_PROJECT_NO;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSE_OWNER_PROJECT_YES;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.END_SETTING;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.FIRST_START;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_AUTO_PARSE_OWNER_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_AUTO_PARSE_PRIVATE_PROJECT;
-import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_AUTO_PARSE_PUBLIC_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_OWNER_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_PRIVATE_PROJECT;
-import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSE_OWNER_PROJECT;
 import static dev.struchkov.godfather.main.core.unit.UnitActiveType.AFTER;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
@@ -77,7 +77,8 @@ public class InitSettingFlow {
 
     @Unit(value = FIRST_START, main = true)
     public AnswerText<Mail> firstStart(
-            @Unit(value = TEXT_PARSER_PRIVATE_PROJECT) MainUnit<Mail> textParserPrivateProject
+            @Unit(value = TEXT_PARSER_OWNER_PROJECT) MainUnit<Mail> textParserOwnerProject
+//            @Unit(GUIDE_START) MainUnit<Mail> guideStart
     ) {
         return AnswerText.<Mail>builder()
                 .triggerCheck(mail -> {
@@ -95,12 +96,180 @@ public class InitSettingFlow {
                                                                                 
                                         Press start to start initial setup 👇
                                         """,
-                                inlineKeyBoard(simpleButton("start", TEXT_PARSER_PRIVATE_PROJECT))
+                                inlineKeyBoard(
+                                        simpleButton("start setting", TEXT_PARSER_PRIVATE_PROJECT)
+//                                        simpleButton("see guide", GUIDE_START)
+                                )
                         )
                 )
+                .next(textParserOwnerProject)
+//                .next(guideStart)
+                .build();
+    }
+
+    @Unit(value = TEXT_PARSER_OWNER_PROJECT)
+    public AnswerText<Mail> textParserOwnerProject(
+            @Unit(CHECK_PARSE_OWNER_PROJECT_YES) MainUnit<Mail> checkParseOwnerProjectYes,
+            @Unit(CHECK_PARSE_OWNER_PROJECT_NO) MainUnit<Mail> checkParseOwnerProjectNo
+    ) {
+        return AnswerText.<Mail>builder()
+                .answer(() -> replaceBoxAnswer(
+                                """
+                                        First of all, I suggest tracking changes in all repositories in which you are the creator.
+                                                                                
+                                        Find such repositories and set up notifications for them?
+                                        """,
+                                inlineKeyBoard(
+                                        simpleLine(
+                                                simpleButton("Yes", "YES"),
+                                                simpleButton("No", "NO")
+                                        )
+                                )
+                        )
+                )
+                .next(checkParseOwnerProjectYes)
+                .next(checkParseOwnerProjectNo)
+                .build();
+    }
+
+    @Unit(CHECK_PARSE_OWNER_PROJECT_NO)
+    public AnswerText<Mail> checkParseOwnerProjectNo(
+            @Unit(TEXT_AUTO_PARSE_OWNER_PROJECT) MainUnit<Mail> textAutoParsePublicProject
+    ) {
+        return AnswerText.<Mail>builder()
+                .triggerCheck(clickButtonRaw("NO"))
+                .answer(replaceBoxAnswer("Okay, I won't scan public projects."))
+                .<Integer>callBack(
+                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
+                )
+                .next(textAutoParsePublicProject)
+                .build();
+    }
+
+    @Unit(CHECK_PARSE_OWNER_PROJECT_YES)
+    public AnswerText<Mail> checkParseOwnerProjectYes(
+            @Unit(TEXT_AUTO_PARSE_OWNER_PROJECT) MainUnit<Mail> textAutoParseOwnerProject
+    ) {
+        final String step1 = """
+                🔘 Started searching for your repositories.
+                ⌛ Wait...
+                """;
+
+        final String step2 = """
+                🟢 {0} projects found.
+                🔘 Scanning merge requests in found projects.
+                ⌛ Wait...
+                """;
+        final String step3 = """
+                🟢 {0} projects found.
+                🟢 {1} merge requests found.
+                🔘 Scanning pipelines in found merge requests.
+                ⌛ Wait...
+                """;
+
+        final String step4 = """
+                🟢 {0} projects found.
+                🟢 {1} merge requests found.
+                🟢 {2} pipelines found.
+                🔘 Scanning threads in merge requests.
+                ⌛ Wait...
+                """;
+
+        final String finalAnswer = """
+                🟢 {0} projects found.
+                🟢 {1} merge requests found.
+                🟢 {2} pipelines found.
+                🟢 {3} threads found.
+                """;
+
+        return AnswerText.<Mail>builder()
+                .triggerCheck(clickButtonRaw("YES"))
+                .answer(mail -> {
+                    final String personId = mail.getPersonId();
+                    final String messageId = Attachments.findFirstButtonClick(mail.getAttachments())
+                            .map(ButtonClickAttachment::getMessageId)
+                            .orElseThrow();
+                    sending.replaceMessage(personId, messageId, boxAnswer(step1));
+
+                    final int oldCountProjects = projectService.getAllIds().size();
+
+                    projectParser.parseAllProjectOwner();
+                    final Set<Long> projectIds = projectService.getAllIds();
+
+                    projectService.notification(true, projectIds);
+                    projectService.processing(true, projectIds);
+
+                    final int projectCount = projectIds.size() - oldCountProjects;
+                    sending.replaceMessage(personId, messageId, boxAnswer(format(step2, projectCount)));
+
+                    final int oldCountMr = mergeRequestsService.getAllIds().size();
+                    mergeRequestParser.parsingNewMergeRequest();
+                    final int mrCount = mergeRequestsService.getAllIds().size() - oldCountMr;
+                    sending.replaceMessage(personId, messageId, boxAnswer(format(step3, projectCount, mrCount)));
+
+                    final int oldCountPipelines = pipelineService.getAllIds().size();
+
+                    pipelineParser.scanNewPipeline();
+                    final int pipelineCount = pipelineService.getAllIds().size() - oldCountPipelines;
+                    sending.replaceMessage(personId, messageId, boxAnswer(format(step4, projectCount, mrCount, pipelineCount)));
+
+                    final int oldCountThreads = discussionService.getAllIds().size();
+                    discussionParser.scanNewDiscussion();
+                    final int discussionCount = discussionService.getAllIds().size() - oldCountThreads;
+
+                    return replaceBoxAnswer(format(finalAnswer, pipelineCount, mrCount, pipelineCount, discussionCount));
+                })
+                .<Integer>callBack(
+                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
+                )
+                .next(textAutoParseOwnerProject)
+                .build();
+    }
+
+    @Unit(TEXT_AUTO_PARSE_OWNER_PROJECT)
+    public AnswerText<Mail> textAutoParsePublicProject(
+            @Unit(AUTO_PARSE_OWNER_PROJECT) MainUnit<Mail> autoParseOwnerProject
+    ) {
+        return AnswerText.<Mail>builder()
+                .activeType(AFTER)
+                .answer(
+                        boxAnswer(
+                                """
+                                        By default, I do not notify about events in repositories that are not tracked. But you can turn on notifications for new repositories in which you are the creator.
+                                                                                
+                                        To do this?
+                                        """,
+                                inlineKeyBoard(
+                                        simpleLine(
+                                                simpleButton("Yes", "YES"),
+                                                simpleButton("No", "NO")
+                                        )
+                                )
+                        )
+                )
+                .next(autoParseOwnerProject)
+                .build();
+    }
+
+    @Unit(AUTO_PARSE_OWNER_PROJECT)
+    public AnswerText<Mail> autoParseOwnerProject(
+            @Unit(TEXT_PARSER_PRIVATE_PROJECT) MainUnit<Mail> textParserPrivateProject
+    ) {
+        return AnswerText.<Mail>builder()
+                .triggerCheck(isClickButton())
+                .answer(mail -> {
+                    final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
+                    if ("YES".equals(buttonClick.getRawCallBackData())) {
+                        projectParser.parseAllProjectOwner();
+                        settingService.ownerProjectScan(true);
+                    } else {
+                        settingService.ownerProjectScan(false);
+                    }
+                })
                 .next(textParserPrivateProject)
                 .build();
     }
+
 
     @Unit(value = TEXT_PARSER_PRIVATE_PROJECT)
     public AnswerText<Mail> textParserPrivateProject(
@@ -108,6 +277,7 @@ public class InitSettingFlow {
             @Unit(CHECK_PARSER_PRIVATE_PROJECT_NO) MainUnit<Mail> checkParserPrivateProjectNo
     ) {
         return AnswerText.<Mail>builder()
+                .activeType(AFTER)
                 .answer(() -> replaceBoxAnswer(
                                 """
                                         I can scan all your private projects and put them on tracking. This will notify you of new merge requests and other events. Or you can add only the projects you want later manually one by one.
@@ -126,6 +296,7 @@ public class InitSettingFlow {
                 .next(checkParserPrivateProjectNo)
                 .build();
     }
+
 
     @Unit(CHECK_PARSER_PRIVATE_PROJECT_YES)
     public AnswerText<Mail> checkParserPrivateProjectYes(
@@ -238,166 +409,6 @@ public class InitSettingFlow {
 
     @Unit(AUTO_PARSE_PRIVATE_PROJECT)
     public AnswerText<Mail> autoParsePrivateProject(
-            @Unit(TEXT_PARSE_OWNER_PROJECT) MainUnit<Mail> textParseOwnerProject
-    ) {
-        return AnswerText.<Mail>builder()
-                .triggerCheck(isClickButton())
-                .answer(mail -> {
-                    final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
-                    if ("YES".equals(buttonClick.getRawCallBackData())) {
-                        settingService.privateProjectScan(true);
-                    } else {
-                        settingService.privateProjectScan(false);
-                    }
-                })
-                .next(textParseOwnerProject)
-                .build();
-    }
-
-    @Unit(TEXT_PARSE_OWNER_PROJECT)
-    public AnswerText<Mail> textParseOwnerProject(
-            @Unit(CHECK_PARSE_OWNER_PROJECT_YES) MainUnit<Mail> checkParseOwnerProjectYes,
-            @Unit(CHECK_PARSE_OWNER_PROJECT_NO) MainUnit<Mail> checkParseOwnerProjectNo
-    ) {
-        return AnswerText.<Mail>builder()
-                .activeType(AFTER)
-                .answer(
-                        replaceBoxAnswer(
-                                """
-                                        Now do you want to track all available public projects *where you are the creator*?
-                                                                              
-                                        (The process is similar to private projects)
-                                        """,
-                                inlineKeyBoard(
-                                        simpleLine(
-                                                simpleButton("Yes", "YES"),
-                                                simpleButton("No", "NO")
-                                        )
-                                )
-                        )
-                )
-                .next(checkParseOwnerProjectYes)
-                .next(checkParseOwnerProjectNo)
-                .build();
-    }
-
-    @Unit(CHECK_PARSE_OWNER_PROJECT_YES)
-    public AnswerText<Mail> checkParseOwnerProjectYes(
-            @Unit(TEXT_AUTO_PARSE_PUBLIC_PROJECT) MainUnit<Mail> textAutoParsePublicProject
-    ) {
-        final String step1 = """
-                🔘 Scanning of public projects has begun.
-                ⌛ Wait...
-                """;
-
-        final String step2 = """
-                🟢 {0} public projects found.
-                🔘 Scanning merge requests in found projects.
-                ⌛ Wait...
-                """;
-        final String step3 = """
-                🟢 {0} public projects found.
-                🟢 {1} merge requests found.
-                🔘 Scanning pipelines in found merge requests.
-                ⌛ Wait...
-                """;
-
-        final String step4 = """
-                🟢 {0} public projects found.
-                🟢 {1} merge requests found.
-                🟢 {2} pipelines found.
-                🔘 Scanning threads in merge requests.
-                ⌛ Wait...
-                """;
-
-        final String finalAnswer = """
-                🟢 {0} public projects found.
-                🟢 {1} merge requests found.
-                🟢 {2} pipelines found.
-                🟢 {3} threads found.
-                """;
-
-        return AnswerText.<Mail>builder()
-                .triggerCheck(clickButtonRaw("YES"))
-                .answer(mail -> {
-                    final String personId = mail.getPersonId();
-                    final String messageId = Attachments.findFirstButtonClick(mail.getAttachments())
-                            .map(ButtonClickAttachment::getMessageId)
-                            .orElseThrow();
-                    sending.replaceMessage(personId, messageId, boxAnswer(step1));
-
-                    final int oldCountProjects = projectService.getAllIds().size();
-
-                    projectParser.parseAllProjectOwner();
-                    final Set<Long> projectIds = projectService.getAllIds();
-
-                    projectService.notification(true, projectIds);
-                    projectService.processing(true, projectIds);
-
-                    final int projectCount = projectIds.size() - oldCountProjects;
-                    sending.replaceMessage(personId, messageId, boxAnswer(format(step2, projectCount)));
-
-                    final int oldCountMr = mergeRequestsService.getAllIds().size();
-                    mergeRequestParser.parsingNewMergeRequest();
-                    final int mrCount = mergeRequestsService.getAllIds().size() - oldCountMr;
-                    sending.replaceMessage(personId, messageId, boxAnswer(format(step3, projectCount, mrCount)));
-
-                    final int oldCountPipelines = pipelineService.getAllIds().size();
-
-                    pipelineParser.scanNewPipeline();
-                    final int pipelineCount = pipelineService.getAllIds().size() - oldCountPipelines;
-                    sending.replaceMessage(personId, messageId, boxAnswer(format(step4, projectCount, mrCount, pipelineCount)));
-
-                    final int oldCountThreads = discussionService.getAllIds().size();
-                    discussionParser.scanNewDiscussion();
-                    final int discussionCount = discussionService.getAllIds().size() - oldCountThreads;
-
-                    return replaceBoxAnswer(format(finalAnswer, pipelineCount, mrCount, pipelineCount, discussionCount));
-                })
-                .<Integer>callBack(
-                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
-                )
-                .next(textAutoParsePublicProject)
-                .build();
-    }
-
-    @Unit(CHECK_PARSE_OWNER_PROJECT_NO)
-    public AnswerText<Mail> checkParseOwnerProjectNo(
-            @Unit(TEXT_AUTO_PARSE_PUBLIC_PROJECT) MainUnit<Mail> textAutoParsePublicProject
-    ) {
-        return AnswerText.<Mail>builder()
-                .triggerCheck(clickButtonRaw("NO"))
-                .answer(replaceBoxAnswer("Okay, I won't scan public projects."))
-                .<Integer>callBack(
-                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
-                )
-                .next(textAutoParsePublicProject)
-                .build();
-    }
-
-    @Unit(TEXT_AUTO_PARSE_PUBLIC_PROJECT)
-    public AnswerText<Mail> textAutoParsePublicProject(
-            @Unit(AUTO_PARSE_PUBLIC_PROJECT) MainUnit<Mail> autoParsePublicProject
-    ) {
-        return AnswerText.<Mail>builder()
-                .activeType(AFTER)
-                .answer(
-                        boxAnswer(
-                                "Do you want to enable automatic notification of new public projects available to you?",
-                                inlineKeyBoard(
-                                        simpleLine(
-                                                simpleButton("Yes", "YES"),
-                                                simpleButton("No", "NO")
-                                        )
-                                )
-                        )
-                )
-                .next(autoParsePublicProject)
-                .build();
-    }
-
-    @Unit(AUTO_PARSE_PUBLIC_PROJECT)
-    public AnswerText<Mail> autoParsePublicProject(
             @Unit(END_SETTING) MainUnit<Mail> endSetting
     ) {
         return AnswerText.<Mail>builder()
@@ -405,9 +416,10 @@ public class InitSettingFlow {
                 .answer(mail -> {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     if ("YES".equals(buttonClick.getRawCallBackData())) {
-                        settingService.publicProjectScan(true);
+                        projectParser.parseAllPrivateProject();
+                        settingService.privateProjectScan(true);
                     } else {
-                        settingService.publicProjectScan(false);
+                        settingService.privateProjectScan(false);
                     }
                 })
                 .next(endSetting)

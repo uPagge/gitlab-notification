@@ -36,8 +36,9 @@ import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 @RequiredArgsConstructor
 public class ProjectParser {
 
+    public static final String OWNER = "&owned=true";
     public static final String PRIVATE = "&visibility=private";
-    public static final String OWNER = "&visibility=public&owned=true";
+    public static final String PUBLIC_OWNER = "&visibility=public&owned=true";
 
     private final ProjectService projectService;
     private final PersonService personService;
@@ -47,16 +48,16 @@ public class ProjectParser {
     private final GitlabProperty gitlabProperty;
     private final PersonProperty personProperty;
 
+    public void parseAllProjectOwner() {
+        log.debug("Старт обработки всех проектов, где пользователь владелец");
+        parseProjects(OWNER);
+        log.debug("Конец обработки всех проектов, где пользователь владелец");
+    }
+
     public void parseAllPrivateProject() {
         log.debug("Старт обработки приватных проектов");
         parseProjects(PRIVATE);
         log.debug("Конец обработки приватных проектов");
-    }
-
-    public void parseAllProjectOwner() {
-        log.debug("Старт обработки публичных проектов, в которых пользователь хозяин");
-        parseProjects(OWNER);
-        log.debug("Конец обработки публичных проектов, в которых пользователь хозяин");
     }
 
     private void parseProjects(String param) {

@@ -22,8 +22,10 @@ public final class UnitName {
     public static final String CHECK_PARSE_OWNER_PROJECT_NO = "CHECK_PARSE_OWNER_PROJECT_NO";
     public static final String TEXT_AUTO_PARSE_PRIVATE_PROJECT = "TEXT_AUTO_PARSE_PRIVATE_PROJECT";
     public static final String AUTO_PARSE_PRIVATE_PROJECT = "AUTO_PARSE_PRIVATE_PROJECT";
-    public static final String AUTO_PARSE_PUBLIC_PROJECT = "AUTO_PARSE_PUBLIC_PROJECT";
-    public static final String TEXT_AUTO_PARSE_PUBLIC_PROJECT = "TEXT_AUTO_PARSE_PUBLIC_PROJECT";
+    public static final String AUTO_PARSE_OWNER_PROJECT = "AUTO_PARSE_PUBLIC_PROJECT";
+    public static final String TEXT_AUTO_PARSE_OWNER_PROJECT = "TEXT_AUTO_PARSE_OWNER_PROJECT";
+    public static final String GUIDE_START = "GUIDE_START";
+    public static final String TEXT_PARSER_OWNER_PROJECT = "TEXT_PARSER_OWNER_PROJECT";
 
     // команды
     public static final String DELETE_MESSAGE = "DELETE_MESSAGE";

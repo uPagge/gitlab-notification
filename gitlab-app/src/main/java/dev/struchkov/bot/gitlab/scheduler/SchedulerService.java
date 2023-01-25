@@ -36,11 +36,11 @@ public class SchedulerService {
     public void newMergeRequest() {
         log.info("Запуск процесса обновления данных c GitLab");
         if (!settingService.isFirstStart()) {
+            if (settingService.isOwnerProjectScan()) {
+                projectParser.parseAllProjectOwner();
+            }
             if (settingService.isPrivateProjectScan()) {
                 projectParser.parseAllPrivateProject();
-            }
-            if (settingService.isPublicProjectScan()) {
-                projectParser.parseAllProjectOwner();
             }
             mergeRequestParser.parsingOldMergeRequest();
             mergeRequestParser.parsingNewMergeRequest();

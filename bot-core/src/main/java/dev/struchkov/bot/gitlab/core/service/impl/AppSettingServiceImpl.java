@@ -64,19 +64,19 @@ public class AppSettingServiceImpl implements AppSettingService {
 
     @Override
     @Transactional
-    public void publicProjectScan(boolean enable) {
+    public void ownerProjectScan(boolean enable) {
         final AppSetting appSetting = getAppSetting();
-        appSetting.setProjectPublicScan(enable);
+        appSetting.setProjectOwnerScan(enable);
+    }
+
+    @Override
+    public boolean isOwnerProjectScan() {
+        return getAppSetting().isProjectOwnerScan();
     }
 
     @Override
     public boolean isPrivateProjectScan() {
         return getAppSetting().isProjectPrivateScan();
-    }
-
-    @Override
-    public boolean isPublicProjectScan() {
-        return getAppSetting().isProjectPublicScan();
     }
 
     private AppSetting getAppSetting() {
