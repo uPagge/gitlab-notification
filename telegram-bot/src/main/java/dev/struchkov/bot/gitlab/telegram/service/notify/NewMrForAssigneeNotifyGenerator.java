@@ -45,7 +45,7 @@ public class NewMrForAssigneeNotifyGenerator implements NotifyBoxAnswerGenerator
         }
 
         builder
-                .append(Icons.TREE).append(": ").append(notify.getSourceBranch()).append(Icons.ARROW).append(notify.getTargetBranch()).append("\n")
+                .append(Icons.TREE).append(": ").append(escapeMarkdown(notify.getSourceBranch())).append(Icons.ARROW).append(escapeMarkdown(notify.getTargetBranch())).append("\n")
                 .append(Icons.AUTHOR).append(": ").append(notify.getAuthor()).append("\n");
 
         final List<String> reviewers = notify.getReviewers();

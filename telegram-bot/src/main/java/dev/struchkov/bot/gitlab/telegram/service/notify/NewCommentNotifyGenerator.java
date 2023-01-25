@@ -1,7 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
+import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
 
     @Override
     public BoxAnswer generate(NewCommentNotify notify) {
-        final StringBuilder builder = new StringBuilder(Smile.COMMENT.getValue()).append(" [New answer in discussion](").append(notify.getUrl()).append(")");
+        final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" [New answer in discussion](").append(notify.getUrl()).append(")");
 
         if (checkNotNull(notify.getDiscussionMessage())) {
             builder.append("\n-- -- discussion first message -- --\n")

@@ -28,4 +28,10 @@ public class AppSetting {
     @Column(name = "enable_notify")
     private boolean enableNotify;
 
+    @Column(name = "project_private_scan")
+    private boolean projectPrivateScan;
+
+    @Column(name = "project_public_scan")
+    private boolean projectPublicScan;
+
 }

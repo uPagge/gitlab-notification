@@ -5,10 +5,9 @@ import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
+import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
-import dev.struchkov.bot.gitlab.telegram.utils.Keys;
 import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
@@ -34,7 +33,6 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.GET_TASKS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.SETTINGS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_ADD_NEW_PROJECT;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
@@ -65,7 +63,7 @@ public class MenuConfig {
                 .triggerCheck(mail -> !personInformation.getTelegramId().equals(mail.getPersonId()))
                 .answer(message -> {
                     final String messageText = new StringBuilder("\uD83D\uDEA8 *Попытка несанкционированного доступа к боту*")
-                            .append(Smile.HR.getValue())
+                            .append(Icons.HR)
                             .append("\uD83E\uDDB9\u200D♂️: ").append(message.getPersonId()).append("\n")
                             .append("\uD83D\uDCAC: ").append(message.getText())
                             .toString();
@@ -101,13 +99,6 @@ public class MenuConfig {
                                     ),
                                     simpleLine(simpleButton("Settings", SETTINGS))
                             );
-                            final String personId = mail.getPersonId();
-                            final var initSettingFinish = context.removeKey(personId, Keys.INIT_SETTING_FINISH);
-                            if (initSettingFinish.isPresent()) {
-                                context.removeKey(personId, Keys.INIT_SETTING_PRIVATE_PROJECT_MESSAGE_ID).ifPresent(messageId -> sending.deleteMessage(personId, messageId));
-                                context.removeKey(personId, Keys.INIT_SETTING_PUBLIC_PROJECT_MESSAGE_ID).ifPresent(messageId -> sending.deleteMessage(personId, messageId));
-                                return replaceBoxAnswer(messageText, generalMenuKeyBoard);
-                            }
                             return boxAnswer(messageText, generalMenuKeyBoard);
                         }
                 )

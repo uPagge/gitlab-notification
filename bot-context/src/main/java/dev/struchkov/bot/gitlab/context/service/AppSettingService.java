@@ -25,4 +25,12 @@ public interface AppSettingService {
 
     void turnOnAllNotify();
 
+    void privateProjectScan(boolean enable);
+
+    void publicProjectScan(boolean enable);
+
+    boolean isPrivateProjectScan();
+
+    boolean isPublicProjectScan();
+
 }

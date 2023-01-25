@@ -44,7 +44,7 @@ public class NewMrForReviewNotifyGenerator implements NotifyBoxAnswerGenerator<N
         }
 
         builder
-                .append(Icons.TREE).append(": ").append(notify.getSourceBranch()).append(Icons.ARROW).append(notify.getTargetBranch()).append("\n")
+                .append(Icons.TREE).append(": ").append(escapeMarkdown(notify.getSourceBranch())).append(Icons.ARROW).append(escapeMarkdown(notify.getTargetBranch())).append("\n")
                 .append(Icons.AUTHOR).append(": ").append(notify.getAuthor()).append("\n");
 
         if (checkNotNull(notify.getAssignee())) {

@@ -47,13 +47,28 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     }
 
     @Override
-    public Set<Long> findAllIds() {
-        return jpaRepository.findAllIds();
+    public Set<Long> findAllIdByProcessingEnable() {
+        return jpaRepository.findAllIdByProcessingEnableTrue();
     }
 
     @Override
     public Optional<String> findProjectNameById(Long projectId) {
         return jpaRepository.findProjectNameById(projectId);
+    }
+
+    @Override
+    public Set<Long> findAllIds() {
+        return jpaRepository.findAllIds();
+    }
+
+    @Override
+    public void notification(boolean enable, Set<Long> projectIds) {
+        jpaRepository.notification(enable, projectIds);
+    }
+
+    @Override
+    public void processing(boolean enable, Set<Long> projectIds) {
+        jpaRepository.processing(enable, projectIds);
     }
 
 }

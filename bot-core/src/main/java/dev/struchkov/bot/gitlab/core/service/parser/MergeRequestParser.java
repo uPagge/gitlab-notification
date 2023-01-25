@@ -107,7 +107,7 @@ public class MergeRequestParser {
 
     public void parsingNewMergeRequest() {
         log.debug("Старт обработки новых MR");
-        final Set<Long> projectIds = projectService.getAllIds();
+        final Set<Long> projectIds = projectService.getAllIdByProcessingEnable();
 
         final List<MergeRequestJson> mergeRequestJsons = getMergeRequests(projectIds);
 

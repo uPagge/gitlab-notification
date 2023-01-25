@@ -2,7 +2,6 @@ package dev.struchkov.bot.gitlab.telegram.service.notify;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.UpdateMrNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
-import dev.struchkov.bot.gitlab.context.utils.Smile;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +24,11 @@ public class UpdatePrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateM
     public BoxAnswer generate(UpdateMrNotify notify) {
 
         final StringBuilder builder = new StringBuilder(Icons.UPDATE).append(" *MergeRequest update*")
-                .append(Smile.HR.getValue())
+                .append(Icons.HR)
                 .append(notify.getTitle());
 
         if (notify.getAllTasks() > 0) {
-            builder.append(Smile.HR.getValue())
+            builder.append(Icons.HR)
                     .append("All tasks: ").append(notify.getAllResolvedTasks()).append("/").append(notify.getAllTasks());
 
             if (notify.getPersonTasks() > 0) {

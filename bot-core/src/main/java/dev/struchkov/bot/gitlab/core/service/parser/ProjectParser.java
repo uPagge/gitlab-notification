@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 
 /**
  * Парсер проектов.
@@ -36,7 +37,7 @@ import static dev.struchkov.haiti.context.exception.ConvertException.convertExce
 public class ProjectParser {
 
     public static final String PRIVATE = "&visibility=private";
-    public static final String OWNER = "&owned=true";
+    public static final String OWNER = "&visibility=public&owned=true";
 
     private final ProjectService projectService;
     private final PersonService personService;
@@ -47,18 +48,22 @@ public class ProjectParser {
     private final PersonProperty personProperty;
 
     public void parseAllPrivateProject() {
+        log.debug("Старт обработки приватных проектов");
         parseProjects(PRIVATE);
+        log.debug("Конец обработки приватных проектов");
     }
 
     public void parseAllProjectOwner() {
+        log.debug("Старт обработки публичных проектов, в которых пользователь хозяин");
         parseProjects(OWNER);
+        log.debug("Конец обработки публичных проектов, в которых пользователь хозяин");
     }
 
     private void parseProjects(String param) {
         int page = 1;
         List<ProjectJson> projectJsons = getProjectJsons(page, param);
 
-        while (!projectJsons.isEmpty()) {
+        while (checkNotEmpty(projectJsons)) {
 
             final Set<Long> projectIds = projectJsons.stream()
                     .map(ProjectJson::getId)
@@ -72,7 +77,7 @@ public class ProjectParser {
                     .map(json -> conversionService.convert(json, Project.class))
                     .toList();
 
-            if (!newProjects.isEmpty()) {
+            if (checkNotEmpty(newProjects)) {
                 projectService.createAll(newProjects);
             }
 

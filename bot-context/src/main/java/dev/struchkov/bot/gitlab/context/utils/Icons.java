@@ -25,6 +25,9 @@ public class Icons {
     public static final String DISABLE_NOTIFY = "\uD83D\uDD15";
     public static final String YES = "✅";
     public static final String NO = "❌";
+    public static final String NOTIFY = "\uD83D\uDD14";
+    public static final String NO_PROCESSING = "\uD83D\uDDD1";
+    public static final String GOOD = "\uD83D\uDC4D";
 
     private Icons() {
         utilityClass();

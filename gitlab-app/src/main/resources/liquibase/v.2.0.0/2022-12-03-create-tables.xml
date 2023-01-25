@@ -14,6 +14,12 @@
             <column name="enable_notify" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="project_private_scan" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_public_scan" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -34,6 +40,12 @@
             </column>
             <column name="web_url" type="varchar(300)">
                 <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="notification" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processing" type="boolean">
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

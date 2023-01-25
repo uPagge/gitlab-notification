@@ -20,10 +20,15 @@ public final class UnitName {
     public static final String ACCESS_ERROR = "ACCESS_ERROR";
     public static final String CHECK_PARSER_PRIVATE_PROJECT_NO = "CHECK_PARSER_PRIVATE_PROJECT_NO";
     public static final String CHECK_PARSE_OWNER_PROJECT_NO = "CHECK_PARSE_OWNER_PROJECT_NO";
+    public static final String TEXT_AUTO_PARSE_PRIVATE_PROJECT = "TEXT_AUTO_PARSE_PRIVATE_PROJECT";
+    public static final String AUTO_PARSE_PRIVATE_PROJECT = "AUTO_PARSE_PRIVATE_PROJECT";
+    public static final String AUTO_PARSE_PUBLIC_PROJECT = "AUTO_PARSE_PUBLIC_PROJECT";
+    public static final String TEXT_AUTO_PARSE_PUBLIC_PROJECT = "TEXT_AUTO_PARSE_PUBLIC_PROJECT";
 
     // команды
     public static final String DELETE_MESSAGE = "DELETE_MESSAGE";
     public static final String DISABLE_NOTIFY_MR = "DISABLE_NOTIFY_MR";
+    public static final String ENABLE_NOTIFY_PROJECT = "ENABLE_NOTIFY_PROJECT";
 
     private UnitName() {
         utilityClass();

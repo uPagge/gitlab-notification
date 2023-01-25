@@ -23,8 +23,14 @@ public interface ProjectRepository {
 
     Page<Project> findAllById(Pageable pagination);
 
-    Set<Long> findAllIds();
+    Set<Long> findAllIdByProcessingEnable();
 
     Optional<String> findProjectNameById(Long projectId);
+
+    Set<Long> findAllIds();
+
+    void notification(boolean enable, Set<Long> projectIds);
+
+    void processing(boolean enable, Set<Long> projectIds);
 
 }

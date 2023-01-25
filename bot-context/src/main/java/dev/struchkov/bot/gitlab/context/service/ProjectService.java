@@ -25,8 +25,14 @@ public interface ProjectService {
 
     ExistContainer<Project, Long> existsById(Set<Long> projectIds);
 
-    Set<Long> getAllIds();
+    Set<Long> getAllIdByProcessingEnable();
 
     Optional<String> getProjectNameById(Long projectId);
+
+    Set<Long> getAllIds();
+
+    void notification(boolean enable, Set<Long> projectIds);
+
+    void processing(boolean enable, Set<Long> projectIds);
 
 }

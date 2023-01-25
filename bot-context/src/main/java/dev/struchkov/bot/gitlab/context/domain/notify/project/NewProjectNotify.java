@@ -1,5 +1,6 @@
-package dev.struchkov.bot.gitlab.context.domain.notify;
+package dev.struchkov.bot.gitlab.context.domain.notify.project;
 
+import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public final class NewProjectNotify implements Notify {
 
     public static final String TYPE = "NewProjectNotify";
 
+    private final Long projectId;
     private final String projectName;
     private final String projectUrl;
     private final String projectDescription;
@@ -18,11 +20,13 @@ public final class NewProjectNotify implements Notify {
 
     @Builder
     public NewProjectNotify(
+            Long projectId,
             String projectName,
             String projectUrl,
             String projectDescription,
             String authorName
     ) {
+        this.projectId = projectId;
         this.projectName = projectName;
         this.projectUrl = projectUrl;
         this.projectDescription = projectDescription;

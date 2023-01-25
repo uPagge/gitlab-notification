@@ -55,6 +55,30 @@ public class AppSettingServiceImpl implements AppSettingService {
         log.info("Получение всех уведомлений активировано");
     }
 
+    @Override
+    @Transactional
+    public void privateProjectScan(boolean enable) {
+        final AppSetting appSetting = getAppSetting();
+        appSetting.setProjectPrivateScan(enable);
+    }
+
+    @Override
+    @Transactional
+    public void publicProjectScan(boolean enable) {
+        final AppSetting appSetting = getAppSetting();
+        appSetting.setProjectPublicScan(enable);
+    }
+
+    @Override
+    public boolean isPrivateProjectScan() {
+        return getAppSetting().isProjectPrivateScan();
+    }
+
+    @Override
+    public boolean isPublicProjectScan() {
+        return getAppSetting().isProjectPublicScan();
+    }
+
     private AppSetting getAppSetting() {
         return appSettingRepository.findById(KEY)
                 .orElseThrow(NOT_FOUND_SETTINGS);

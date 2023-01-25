@@ -76,7 +76,7 @@ public class PipelineParser {
 
     public void scanNewPipeline() {
         log.debug("Старт обработки новых пайплайнов");
-        final Set<Long> projectIds = projectService.getAllIds();
+        final Set<Long> projectIds = projectService.getAllIdByProcessingEnable();
 
         final Map<Long, Long> pipelineProjectMap = getPipelineShortJsons(projectIds).stream()
                 .collect(Collectors.toMap(PipelineShortJson::getId, PipelineShortJson::getProjectId));

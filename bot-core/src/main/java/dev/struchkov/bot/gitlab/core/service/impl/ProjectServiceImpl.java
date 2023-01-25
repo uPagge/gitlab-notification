@@ -1,9 +1,8 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
-import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
-import dev.struchkov.bot.gitlab.context.domain.notify.NewProjectNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.project.NewProjectNotify;
 import dev.struchkov.bot.gitlab.context.repository.ProjectRepository;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
@@ -31,19 +30,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final NotifyService notifyService;
     private final PersonService personService;
-    private final PersonInformation personInformation;
 
     @Override
     @Transactional
     public Project create(@NonNull Project project) {
         final Project newProject = repository.save(project);
 
-        final Long gitlabUserId = personInformation.getId();
-
-        if (!gitlabUserId.equals(newProject.getCreatorId())) {
-            final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
-            notifyAboutNewProject(newProject, authorName);
-        }
+        final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
+        notifyAboutNewProject(newProject, authorName);
 
         return newProject;
     }
@@ -89,8 +83,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Long> getAllIds() {
-        return repository.findAllIds();
+    public Set<Long> getAllIdByProcessingEnable() {
+        return repository.findAllIdByProcessingEnable();
     }
 
     @Override
@@ -98,9 +92,27 @@ public class ProjectServiceImpl implements ProjectService {
         return repository.findProjectNameById(projectId);
     }
 
+    @Override
+    public Set<Long> getAllIds() {
+        return repository.findAllIds();
+    }
+
+    @Override
+    @Transactional
+    public void notification(boolean enable, @NonNull Set<Long> projectIds) {
+        repository.notification(enable, projectIds);
+    }
+
+    @Override
+    @Transactional
+    public void processing(boolean enable, @NonNull Set<Long> projectIds) {
+        repository.processing(enable, projectIds);
+    }
+
     private void notifyAboutNewProject(Project newProject, String authorName) {
         notifyService.send(
                 NewProjectNotify.builder()
+                        .projectId(newProject.getId())
                         .projectDescription(newProject.getDescription())
                         .projectName(newProject.getName())
                         .projectUrl(newProject.getWebUrl())

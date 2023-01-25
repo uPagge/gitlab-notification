@@ -39,4 +39,10 @@ public class Project {
     @Column(name = "web_url")
     private String webUrl;
 
+    @Column(name = "notification")
+    private boolean notification;
+
+    @Column(name = "processing")
+    private boolean processing;
+
 }

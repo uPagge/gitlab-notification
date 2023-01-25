@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.telegram.unit.MenuConfig;
 import dev.struchkov.bot.gitlab.telegram.unit.command.AnswerNoteUnit;
 import dev.struchkov.bot.gitlab.telegram.unit.command.DeleteMessageUnit;
 import dev.struchkov.bot.gitlab.telegram.unit.command.DisableNotifyMrUnit;
+import dev.struchkov.bot.gitlab.telegram.unit.command.EnableProjectNotify;
 import dev.struchkov.bot.gitlab.telegram.unit.flow.InitSettingFlow;
 import dev.struchkov.godfather.main.core.unit.TypeUnit;
 import dev.struchkov.godfather.main.domain.content.Mail;
@@ -78,9 +79,10 @@ public class TelegramBotConfig {
             InitSettingFlow unitConfig,
             AnswerNoteUnit commandUnit,
             DeleteMessageUnit deleteMessageUnit,
-            DisableNotifyMrUnit disableNotifyMrUnit
+            DisableNotifyMrUnit disableNotifyMrUnit,
+            EnableProjectNotify enableProjectNotify
     ) {
-        final List<Object> config = List.of(menuConfig, unitConfig, commandUnit, deleteMessageUnit, disableNotifyMrUnit);
+        final List<Object> config = List.of(menuConfig, unitConfig, commandUnit, deleteMessageUnit, disableNotifyMrUnit, enableProjectNotify);
 
         return new StorylineMailService(
                 unitPointerService,
