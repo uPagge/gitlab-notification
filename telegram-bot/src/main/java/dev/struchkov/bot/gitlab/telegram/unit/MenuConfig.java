@@ -14,8 +14,9 @@ import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.simple.core.unit.MainUnit;
-import dev.struchkov.godfather.simple.data.StorylineContext;
+import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard;
+import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ACCESS_ERROR;
@@ -33,10 +35,12 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.GET_TASKS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.SETTINGS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_ADD_NEW_PROJECT;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.clickButtonRaw;
+import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.isLinks;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -47,15 +51,15 @@ import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.cl
 @RequiredArgsConstructor
 public class MenuConfig {
 
-    private final StorylineContext context;
     private final TelegramSending sending;
-
     private final ProjectParser projectParser;
     private final GitlabProperty gitlabProperty;
     private final PersonInformation personInformation;
     private final NoteService noteService;
     private final MergeRequestsService mergeRequestsService;
     private final AppSettingService settingService;
+
+    private final ScheduledExecutorService scheduledExecutorService;
 
     @Unit(value = ACCESS_ERROR, main = true)
     public AnswerText<Mail> accessError() {
@@ -115,7 +119,7 @@ public class MenuConfig {
     ) {
         return AnswerText.<Mail>builder()
                 .triggerCheck(clickButtonRaw(TEXT_ADD_NEW_PROJECT))
-                .answer(boxAnswer("Copy the url of the project and send it to me"))
+                .answer(replaceBoxAnswer("Send me links to repositories you want to track"))
                 .next(addNewProject)
                 .build();
     }
@@ -123,13 +127,16 @@ public class MenuConfig {
     @Unit(ADD_NEW_PROJECT)
     public AnswerText<Mail> addNewProject() {
         return AnswerText.<Mail>builder()
+                .triggerCheck(isLinks())
                 .answer(mail -> {
-                    final String mailText = mail.getText();
-                    final String projectUrl = gitlabProperty.getProjectAddUrl() + mailText.replace(gitlabProperty.getBaseUrl(), "")
-                            .substring(1)
-                            .replace("/", "%2F");
-                    projectParser.parseByUrl(projectUrl);
-                    return boxAnswer("Project added successfully");
+                    final List<LinkAttachment> links = Attachments.findAllLinks(mail.getAttachments());
+                    for (LinkAttachment link : links) {
+                        final String projectUrl = gitlabProperty.getProjectAddUrl() + link.getUrl().replace(gitlabProperty.getBaseUrl(), "")
+                                .substring(1)
+                                .replace("/", "%2F");
+                        projectParser.parseByUrl(projectUrl);
+                    }
+                    return boxAnswer("\uD83D\uDC4D Projects added successfully!");
                 })
                 .build();
     }
