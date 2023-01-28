@@ -2,7 +2,7 @@
 
 Этот проект позволяет оперативно получать и настраивать персональные уведомления о событиях из GitLab.
 
-> Статья о проекте: https://struchkov.dev/blog/gitlab-telegram-bot/
+> Статья о проекте: https://struchkov.dev/blog/gitlab-telegram-bot/  
 > Канал в Telegram, в который публикуется информация о разработке: https://t.me/gitlab_notification
 >
 > ⚠️На данный момент вся разработка ведется в моем Gitea: https://git.struchkov.dev/Telegram-Bots/gitlab-notification
