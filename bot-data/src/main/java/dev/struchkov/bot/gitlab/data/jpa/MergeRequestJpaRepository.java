@@ -29,7 +29,11 @@ public interface MergeRequestJpaRepository extends JpaRepositoryImplementation<M
     Set<Long> findAllIds();
 
     @Modifying
-    @Query("UPDATE MergeRequest mr SET mr.notification = false WHERE mr.id = :mrId")
-    void disableNotify(@Param("mrId") Long mrId);
+    @Query("UPDATE MergeRequest mr SET mr.notification = :enable WHERE mr.id = :mrId")
+    void disableNotify(@Param("enable") boolean enable, @Param("mrId") Long mrId);
+
+    @Modifying
+    @Query("UPDATE MergeRequest mr SET mr.notification = :enable WHERE mr.projectId in :projectIds")
+    void notificationByProjectId(@Param("enable") boolean enable, @Param("projectIds") Set<Long> projectIds);
 
 }

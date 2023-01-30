@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.core.service.parser;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
+import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -39,8 +40,8 @@ public class ProjectParser {
 
     public static final String OWNER = "&owned=true";
     public static final String PRIVATE = "&visibility=private";
-    public static final String PUBLIC_OWNER = "&visibility=public&owned=true";
 
+    private final MergeRequestsService mergeRequestsService;
     private final ProjectService projectService;
     private final PersonService personService;
 
@@ -99,8 +100,10 @@ public class ProjectParser {
             final Project newProject = conversionService.convert(projectJson, Project.class);
             projectService.create(newProject);
         } else {
-            projectService.notification(true, singleton(projectJson.getId()));
-            projectService.processing(true, singleton(projectJson.getId()));
+            final Set<Long> projectId = singleton(projectJson.getId());
+            projectService.notification(true, projectId);
+            projectService.processing(true, projectId);
+            mergeRequestsService.notificationByProjectId(true, projectId);
         }
     }
 

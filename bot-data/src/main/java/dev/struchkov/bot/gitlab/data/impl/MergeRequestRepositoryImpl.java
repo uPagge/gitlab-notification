@@ -71,8 +71,13 @@ public class MergeRequestRepositoryImpl implements MergeRequestRepository {
     }
 
     @Override
-    public void disableNotify(Long mrId) {
-        jpaRepository.disableNotify(mrId);
+    public void notification(boolean enable, Long mrId) {
+        jpaRepository.disableNotify(enable, mrId);
+    }
+
+    @Override
+    public void notificationByProjectId(boolean enable, Set<Long> projectIds) {
+        jpaRepository.notificationByProjectId(enable, projectIds);
     }
 
 }

@@ -79,7 +79,7 @@ public class DisableNotifyMrUnit {
                             .orElseThrow();
 
                     if (confirmation) {
-                        mergeRequestsService.disableNotify(mrId);
+                        mergeRequestsService.notification(false, mrId);
                         scheduledExecutorService.schedule(() -> telegramSending.deleteMessage(mail.getPersonId(), clickButton.getMessageId()), 5, TimeUnit.SECONDS);
                         return replaceBoxAnswer(SUCCESSFULLY_DISABLED);
                     } else {
