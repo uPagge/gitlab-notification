@@ -12,18 +12,21 @@ public class NotifyServiceImpl implements NotifyService {
 
     private final MessageSendService messageSendService;
     private final AppSettingService settingService;
+    private final DelayedNotifyServiceImpl delayedNotifyService;
 
     public NotifyServiceImpl(
             @Lazy MessageSendService messageSendService,
-            AppSettingService settingService
-    ) {
+            AppSettingService settingService,
+            DelayedNotifyServiceImpl delayedNotifyService) {
         this.messageSendService = messageSendService;
         this.settingService = settingService;
+        this.delayedNotifyService = delayedNotifyService;
     }
 
     @Override
     public <T extends Notify> void send(T notify) {
         if (settingService.isEnableAllNotify()) {
+            delayedNotifyService.save(notify);
             messageSendService.send(notify);
         }
     }
