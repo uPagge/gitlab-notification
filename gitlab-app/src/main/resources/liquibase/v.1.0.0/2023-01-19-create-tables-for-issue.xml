@@ -77,6 +77,12 @@
             <column name="has_tasks" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="notification" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_assignee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

@@ -1,10 +1,12 @@
 package dev.struchkov.bot.gitlab.scheduler;
 
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+import dev.struchkov.bot.gitlab.context.service.IssueService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.core.service.parser.DiscussionParser;
+import dev.struchkov.bot.gitlab.core.service.parser.IssueParser;
 import dev.struchkov.bot.gitlab.core.service.parser.MergeRequestParser;
 import dev.struchkov.bot.gitlab.core.service.parser.PipelineParser;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
@@ -32,6 +34,9 @@ public class SchedulerService {
     private final MergeRequestsService mergeRequestsService;
     private final DiscussionService discussionService;
 
+    private final IssueParser issueParser;
+    private final IssueService issueService;
+
     @Scheduled(cron = "${gitlab-bot.cron.scan.new-project}")
     public void newProjects() {
         log.info("Запуск процесса получение новых репозиториев c GitLab");
@@ -46,6 +51,9 @@ public class SchedulerService {
         log.info("Конец процесса получение новых репозиториев c GitLab");
     }
 
+
+
+    @Scheduled(cron = "0 */1 * * * *")
     @Scheduled(cron = "${gitlab-bot.cron.scan.new-merge-request}")
     public void newMergeRequests() {
         log.info("Запуск процесса получение новых MR c GitLab");
@@ -67,6 +75,9 @@ public class SchedulerService {
             mergeRequestsService.cleanOld();
             discussionService.cleanOld();
             pipelineService.cleanOld();
+            issueParser.parsingNewIssue();
+            issueParser.parsingOldIssue();
+            issueService.cleanOld();
         } else {
             log.warn("Процесс обновления данных не был выполнен, так как пользователь не выполнил первичную настройку.");
         }

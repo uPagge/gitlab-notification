@@ -22,6 +22,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -76,11 +77,10 @@ public class Issue {
     private Person closedBy;
 
     @ElementCollection
-    @CollectionTable(name = "issue_labels", joinColumns = @JoinColumn(name = "label_id"))
-    @Column(name = "labels")
+    @CollectionTable(name = "issue_label", joinColumns = @JoinColumn(name = "issue_id"))
+    @Column(name = "label")
     private Set<String> labels = new HashSet<>();
 
-    @Column(name = "assignees")
     @OneToMany(
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE}
@@ -113,7 +113,7 @@ public class Issue {
     private Integer downVotes;
 
     @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "confidential")
     private Boolean confidential;
@@ -135,5 +135,11 @@ public class Issue {
 
     @Column(name = "has_tasks")
     private Boolean hasTasks;
+
+    @Column(name = "notification")
+    private boolean notification;
+
+    @Column(name = "is_assignee")
+    private boolean userAssignee;
 
 }

@@ -68,4 +68,11 @@ public class GitlabProperty {
     private String discussionUrl;
 
 
+    /**
+     * Адрес, по которому можно получить ISSUE
+     */
+    private String issueUrl;
+
+    private String openIssueUrl;
+
 }

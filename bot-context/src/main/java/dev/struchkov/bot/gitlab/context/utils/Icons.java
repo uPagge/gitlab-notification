@@ -28,6 +28,7 @@ public class Icons {
     public static final String NO = "❌";
     public static final String NOTIFY = "\uD83D\uDD14";
     public static final String GOOD = "\uD83D\uDC4D";
+    public static final String BELL ="\uD83D\uDD14";
 
     private Icons() {
         utilityClass();

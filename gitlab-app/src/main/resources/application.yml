@@ -28,6 +28,12 @@ telegram:
     autoresponder:
       threads: ${AUTORESPONDER_THREADS:8}
   proxy:
+        event:
+          merge.entity_copy_observer: allow
+telegram-config:
+  bot-username: ${TELEGRAM_BOT_USERNAME}
+  bot-token: ${TELEGRAM_BOT_TOKEN}
+  proxy-config:
     enable: ${PROXY_ENABLE:false}
     host: ${PROXY_HOST:}
     port: ${PROXY_PORT:}
@@ -77,3 +83,5 @@ gitlab-bot:
       general: "0 */1 * * * *"
       new-project: "0 */1 * * * *"
       new-merge-request: "0 */1 * * * *"
+    issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues/{1,number,#}"
+    open-issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues?state=opened&page={1, number, integer}&per_page={2, number, integer}"
