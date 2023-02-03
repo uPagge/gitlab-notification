@@ -19,6 +19,7 @@ public class Icons {
     public static final String PEN = "✏️";
     public static final String BUILD = "\uD83D\uDEE0";
     public static final String LINK = "\uD83D\uDD17";
+    public static final String BELL ="\uD83D\uDD14";
 
     private Icons() {
         utilityClass();

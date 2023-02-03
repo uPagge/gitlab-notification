@@ -16,6 +16,8 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+        event:
+          merge.entity_copy_observer: allow
 telegram-config:
   bot-username: ${TELEGRAM_BOT_USERNAME}
   bot-token: ${TELEGRAM_BOT_TOKEN}
@@ -51,3 +53,5 @@ gitlab-bot:
     new-note-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
     discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page={3,number,#}"
     discussion-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
+    issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues/{1,number,#}"
+    open-issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues?state=opened&page={1, number, integer}&per_page={2, number, integer}"

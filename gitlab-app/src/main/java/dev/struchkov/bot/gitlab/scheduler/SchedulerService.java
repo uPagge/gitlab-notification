@@ -1,9 +1,11 @@
 package dev.struchkov.bot.gitlab.scheduler;
 
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+import dev.struchkov.bot.gitlab.context.service.IssueService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PipelineService;
 import dev.struchkov.bot.gitlab.core.service.parser.DiscussionParser;
+import dev.struchkov.bot.gitlab.core.service.parser.IssueParser;
 import dev.struchkov.bot.gitlab.core.service.parser.MergeRequestParser;
 import dev.struchkov.bot.gitlab.core.service.parser.PipelineParser;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,9 @@ public class SchedulerService {
     private final PipelineService pipelineService;
     private final MergeRequestsService mergeRequestsService;
 
+    private final IssueParser issueParser;
+    private final IssueService issueService;
+
     @Scheduled(cron = "0 */1 * * * *")
     public void newMergeRequest() {
         log.debug("Запуск процесса обновления данных");
@@ -40,6 +45,9 @@ public class SchedulerService {
             discussionParser.scanNewDiscussion();
             mergeRequestsService.cleanOld();
             pipelineService.cleanOld();
+            issueParser.parsingNewIssue();
+            issueParser.parsingOldIssue();
+            issueService.cleanOld();
         } else {
             log.warn("Процесс обновления данных не был выполнен, так как пользователь не выполнил первичную настройку.");
         }

@@ -3,11 +3,15 @@ package dev.struchkov.bot.gitlab.sdk.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,7 +51,7 @@ public class IssueJson {
 
     private Set<String> labels;
     private MilestoneJson milestone;
-    private Set<PersonJson> assignees;
+    private List<PersonJson> assignees;
     private PersonJson author;
     private IssueTypeJson type;
     private PersonJson assignee;
@@ -64,10 +68,10 @@ public class IssueJson {
     @JsonProperty("downvotes")
     private Integer downVotes;
 
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonProperty("due_date")
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
     private Boolean confidential;
 
     @JsonProperty("discussion_locked")
