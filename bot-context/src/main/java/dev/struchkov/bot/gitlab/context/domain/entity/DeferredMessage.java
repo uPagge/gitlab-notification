@@ -23,4 +23,6 @@ public class DeferredMessage {
     private String message;
     @Column (name = "time")
     private LocalDateTime time;
+    @Column (name = "type")
+    private String type;
 }

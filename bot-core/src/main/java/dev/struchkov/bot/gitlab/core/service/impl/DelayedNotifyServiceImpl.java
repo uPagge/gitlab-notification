@@ -12,8 +12,10 @@ import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
 import dev.struchkov.bot.gitlab.data.jpa.DelayedNotifyJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,51 +23,45 @@ public class DelayedNotifyServiceImpl {
 
     private final DelayedNotifyJpaRepository delayedNotifyJpaRepository;
 
+    @Transactional
     public <T extends Notify> void save(T notify) {
 
         Gson gson = new Gson();
         DeferredMessage deferredMessage = new DeferredMessage();
         String notifyForSave = gson.toJson(notify);
         deferredMessage.setMessage(notifyForSave);
-        deferredMessage.setTime(LocalDateTime.now().plusNanos(0));
+        deferredMessage.setTime(LocalDateTime.now().withNano(0));
+        deferredMessage.setType(notify.getType());
         delayedNotifyJpaRepository.save(deferredMessage);
     }
 
-    public <T extends Notify> void getNotifyFromDb(T notify){
-        Class<? extends Notify> newNotify;
+    public List<Object> getAllNotify(){
 
-        switch (notify.getType()) {
-            case ConflictMrNotify.TYPE:
-                newNotify = ConflictMrNotify.class;
-                break;
-            case DiscussionNewNotify.TYPE:
-                newNotify = DiscussionNewNotify.class;
-                break;
-            case NewCommentNotify.TYPE:
-                newNotify = NewCommentNotify.class;
-                break;
-            case NewMrForAssignee.TYPE:
-                newNotify = NewMrForAssignee.class;
-                break;
-            case NewMrForReview.TYPE:
-                newNotify = NewMrForReview.class;
-                break;
-            case NewProjectNotify.TYPE:
-                newNotify = NewProjectNotify.class;
-                break;
-            case PipelineNotify.TYPE:
-                newNotify = PipelineNotify.class;
-                break;
-            case StatusMrNotify.TYPE:
-                newNotify = StatusMrNotify.class;
-                break;
-            case TaskCloseNotify.TYPE:
-                newNotify = TaskCloseNotify.class;
-                break;
-            case UpdateMrNotify.TYPE:
-                newNotify = UpdateMrNotify.class;
-                break;
-        }
+        List<DeferredMessage> allDeferredMessageFromDb = delayedNotifyJpaRepository.findAll();
+
+        return allDeferredMessageFromDb.stream()
+                .map(DelayedNotifyServiceImpl::convertToNotifyClass).toList();
     }
+
+    public static <T extends Notify> T convertToNotifyClass(DeferredMessage deferredMessage) {
+        Gson gson = new Gson();
+        Class<? extends Notify> newNotifyClass = switch (deferredMessage.getType()) {
+            case ConflictMrNotify.TYPE -> ConflictMrNotify.class;
+            case DiscussionNewNotify.TYPE -> DiscussionNewNotify.class;
+            case NewCommentNotify.TYPE -> NewCommentNotify.class;
+            case NewMrForAssignee.TYPE -> NewMrForAssignee.class;
+            case NewMrForReview.TYPE -> NewMrForReview.class;
+            case NewProjectNotify.TYPE -> NewProjectNotify.class;
+            case PipelineNotify.TYPE -> PipelineNotify.class;
+            case StatusMrNotify.TYPE -> StatusMrNotify.class;
+            case TaskCloseNotify.TYPE -> TaskCloseNotify.class;
+            case UpdateMrNotify.TYPE -> UpdateMrNotify.class;
+            default -> throw new RuntimeException("the " + deferredMessage.getType() + " type class is not found");
+        };
+
+        Object notify = gson.fromJson(deferredMessage.getMessage(), newNotifyClass);
+        return (T) notify;
+    }
+
 
 }
