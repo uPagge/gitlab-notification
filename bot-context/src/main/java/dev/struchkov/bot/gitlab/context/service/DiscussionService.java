@@ -43,4 +43,6 @@ public interface DiscussionService {
 
     void cleanOld();
 
+    void notification(boolean enable, String discussionId);
+
 }

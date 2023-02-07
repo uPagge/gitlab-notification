@@ -28,4 +28,8 @@ public interface DiscussionJpaRepository extends JpaRepository<Discussion, Strin
     @Query("DELETE FROM Discussion d WHERE d.id = :id")
     void deleteById(@Param("id") String id);
 
+    @Modifying
+    @Query("UPDATE Discussion d SET d.notification = :enable WHERE d.id = :discussionId")
+    void notification(@Param("enable") boolean enable, @Param("discussionId") String discussionId);
+
 }

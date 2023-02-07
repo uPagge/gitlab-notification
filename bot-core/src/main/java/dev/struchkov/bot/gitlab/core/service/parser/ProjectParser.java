@@ -96,7 +96,7 @@ public class ProjectParser {
         if (!projectService.existsById(projectJson.getId())) {
             createNewPersons(List.of(projectJson));
             final Project newProject = conversionService.convert(projectJson, Project.class);
-            return projectService.create(newProject);
+            return projectService.create(newProject, false);
         } else {
             return projectService.getByIdOrThrow(projectJson.getId());
         }

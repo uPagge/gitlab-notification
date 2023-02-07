@@ -75,7 +75,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         final DiscussionLevel levelDiscussionNotify = settingService.getLevelDiscussionNotify();
         if (!WITHOUT_NOTIFY.equals(levelDiscussionNotify)) {
-            discussion.setNotification(false);
+            discussion.setNotification(true);
 
             if (isNeedNotifyNewNote(discussion)) {
                 notifyNewDiscussion(discussion);
@@ -83,7 +83,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                 notes.forEach(note -> notificationPersonal(discussion, note));
             }
         } else {
-            discussion.setNotification(true);
+            discussion.setNotification(false);
         }
 
         final boolean resolved = discussion.getNotes().stream()
@@ -140,6 +140,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
         final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
+                .threadId(discussion.getId())
                 .mrName(mergeRequest.getTitle())
                 .authorName(firstNote.getAuthor().getName())
                 .discussionMessage(firstNote.getBody())
@@ -308,6 +309,12 @@ public class DiscussionServiceImpl implements DiscussionService {
         log.debug("Конец очистки старых дискуссий");
     }
 
+    @Override
+    @Transactional
+    public void notification(boolean enable, String discussionId) {
+        repository.notification(enable, discussionId);
+    }
+
     private void notifyNewAnswer(Discussion discussion, Note note) {
         final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
 
@@ -316,6 +323,7 @@ public class DiscussionServiceImpl implements DiscussionService {
             final Note firstNote = discussion.getFirstNote();
 
             final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                    .threadId(discussion.getId())
                     .url(note.getWebUrl())
                     .mergeRequestName(discussion.getMergeRequest().getTitle());
 
@@ -354,6 +362,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
             if (recipientsLogins.contains(personInformation.getUsername())) {
                 final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                        .threadId(discussion.getId())
                         .mergeRequestName(discussion.getMergeRequest().getTitle())
                         .url(note.getWebUrl());
 

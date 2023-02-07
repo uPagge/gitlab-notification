@@ -30,4 +30,6 @@ public interface DiscussionRepository {
 
     void cleanOld();
 
+    void notification(boolean enable, String discussionId);
+
 }

@@ -9,6 +9,7 @@ public final class NewCommentNotify implements Notify {
 
     public static final String TYPE = "NewCommentNotify";
 
+    private final String threadId;
     private final String mergeRequestName;
     private final String url;
     private final String discussionMessage;
@@ -21,6 +22,7 @@ public final class NewCommentNotify implements Notify {
 
     @Builder
     public NewCommentNotify(
+            String threadId,
             String mergeRequestName,
             String url,
             String discussionMessage,
@@ -31,6 +33,7 @@ public final class NewCommentNotify implements Notify {
             String message,
             int numberNotes
     ) {
+        this.threadId = threadId;
         this.mergeRequestName = mergeRequestName;
         this.url = url;
         this.discussionMessage = discussionMessage;

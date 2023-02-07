@@ -33,11 +33,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Project create(@NonNull Project project) {
+    public Project create(@NonNull Project project, boolean sendNotify) {
         final Project newProject = repository.save(project);
 
-        final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
-        notifyAboutNewProject(newProject, authorName);
+        if (sendNotify) {
+            final String authorName = personService.getByIdOrThrown(newProject.getCreatorId()).getName();
+            notifyAboutNewProject(newProject, authorName);
+        }
 
         return newProject;
     }
@@ -57,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public List<Project> createAll(List<Project> newProjects) {
         return newProjects.stream()
-                .map(this::create)
+                .map(newProject -> create(newProject, true))
                 .toList();
     }
 

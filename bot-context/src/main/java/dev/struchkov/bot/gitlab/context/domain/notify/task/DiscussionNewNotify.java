@@ -15,11 +15,13 @@ public class DiscussionNewNotify extends TaskNotify {
 
     public static final String TYPE = "DiscussionNewNotify";
 
+    private final String threadId;
     private final String mrName;
     private final List<Pair<String, String>> notes;
 
     @Builder
     public DiscussionNewNotify(
+            String threadId,
             String mrName,
             String authorName,
             String url,
@@ -27,6 +29,7 @@ public class DiscussionNewNotify extends TaskNotify {
             @Singular List<Pair<String, String>> notes
     ) {
         super(authorName, url, discussionMessage);
+        this.threadId = threadId;
         this.mrName = mrName;
         this.notes = notes;
     }

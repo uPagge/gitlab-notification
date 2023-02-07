@@ -9,6 +9,7 @@ public class Const {
     public static final String BUTTON_VALUE_TRUE = "t";
 
     public static final String BUTTON_ARG_DISABLE_NOTIFY_MR_ID = "dis_mr_id";
+    public static final String BUTTON_ARG_DISABLE_NOTIFY_THREAD_ID = "dis_th_id";
     public static final String BUTTON_ARG_ENABLE_NOTIFY_PROJECT_ID = "ena_p_id";
 
     public static final String BUTTON_ARG_CONFIRMATION = "conf";
