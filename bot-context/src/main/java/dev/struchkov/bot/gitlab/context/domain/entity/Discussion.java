@@ -40,6 +40,9 @@ public class Discussion {
     @Column(name = "resolved")
     private Boolean resolved;
 
+    @Column(name = "notification")
+    private boolean notification;
+
     @ManyToOne(optional = false, cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "discussion_merge_request",

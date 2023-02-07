@@ -7,9 +7,11 @@ import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Note;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
 import dev.struchkov.bot.gitlab.context.repository.DiscussionRepository;
+import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -38,6 +40,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel.NOTIFY_WITH_CONTEXT;
+import static dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel.WITHOUT_NOTIFY;
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static java.lang.Boolean.FALSE;
@@ -53,24 +57,33 @@ import static java.lang.Boolean.FALSE;
 public class DiscussionServiceImpl implements DiscussionService {
 
     protected static final Pattern PATTERN = Pattern.compile("@[\\w]+");
+    private final OkHttpClient client = new OkHttpClient();
 
     private final DiscussionRepository repository;
-    private final PersonInformation personInformation;
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final NotifyService notifyService;
+    private final AppSettingService settingService;
+
+    private final PersonInformation personInformation;
     private final GitlabProperty gitlabProperty;
     private final PersonProperty personProperty;
-    private final NotifyService notifyService;
 
     @Override
     @Transactional
     public Discussion create(@NonNull Discussion discussion) {
         final List<Note> notes = discussion.getNotes();
 
-        if (isNeedNotifyNewNote(discussion)) {
-            notifyNewDiscussion(discussion);
+        final DiscussionLevel levelDiscussionNotify = settingService.getLevelDiscussionNotify();
+        if (!WITHOUT_NOTIFY.equals(levelDiscussionNotify)) {
+            discussion.setNotification(false);
+
+            if (isNeedNotifyNewNote(discussion)) {
+                notifyNewDiscussion(discussion);
+            } else {
+                notes.forEach(note -> notificationPersonal(discussion, note));
+            }
         } else {
-            notes.forEach(note -> notificationPersonal(discussion, note));
+            discussion.setNotification(true);
         }
 
         final boolean resolved = discussion.getNotes().stream()
@@ -89,6 +102,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         discussion.setResponsible(oldDiscussion.getResponsible());
         discussion.setMergeRequest(oldDiscussion.getMergeRequest());
+        discussion.setNotification(oldDiscussion.isNotification());
 
         final Person responsiblePerson = discussion.getResponsible();
         if (checkNotNull(responsiblePerson)) {
@@ -104,7 +118,10 @@ public class DiscussionServiceImpl implements DiscussionService {
                 }
             }
         }
-        notifyUpdateNote(oldDiscussion, discussion);
+
+        if (oldDiscussion.isNotification()) {
+            notifyUpdateNote(oldDiscussion, discussion);
+        }
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
@@ -292,28 +309,32 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     private void notifyNewAnswer(Discussion discussion, Note note) {
-        if (!personInformation.getId().equals(note.getAuthor().getId())) {
+        final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
+
+        if (!WITHOUT_NOTIFY.equals(discussionLevel)
+            && !personInformation.getId().equals(note.getAuthor().getId())) {
             final Note firstNote = discussion.getFirstNote();
-            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
 
             final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                    .url(note.getWebUrl())
                     .mergeRequestName(discussion.getMergeRequest().getTitle());
 
-            if (prevLastNote.isPresent()) {
-                final Note prevNote = prevLastNote.get();
-                notifyBuilder.previousMessage(prevNote.getBody());
-                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            if (NOTIFY_WITH_CONTEXT.equals(discussionLevel)) {
+                final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+                if (prevLastNote.isPresent()) {
+                    final Note prevNote = prevLastNote.get();
+                    notifyBuilder.previousMessage(prevNote.getBody());
+                    notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+                }
+
+                notifyBuilder
+                        .discussionMessage(firstNote.getBody())
+                        .discussionAuthor(firstNote.getAuthor().getName())
+                        .message(note.getBody())
+                        .authorName(note.getAuthor().getName());
             }
 
-            notifyService.send(
-                    notifyBuilder
-                            .url(note.getWebUrl())
-                            .discussionMessage(firstNote.getBody())
-                            .discussionAuthor(firstNote.getAuthor().getName())
-                            .message(note.getBody())
-                            .authorName(note.getAuthor().getName())
-                            .build()
-            );
+            notifyService.send(notifyBuilder.build());
         }
     }
 
@@ -321,32 +342,42 @@ public class DiscussionServiceImpl implements DiscussionService {
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */
     protected void notificationPersonal(Discussion discussion, Note note) {
-        final Matcher matcher = PATTERN.matcher(note.getBody());
-        final Set<String> recipientsLogins = new HashSet<>();
-        while (matcher.find()) {
-            final String login = matcher.group(0).replace("@", "");
-            recipientsLogins.add(login);
-        }
-        if (recipientsLogins.contains(personInformation.getUsername())) {
-            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
-            final Note firstNote = discussion.getFirstNote();
+        final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
+        if (!WITHOUT_NOTIFY.equals(discussionLevel)) {
+            final Matcher matcher = PATTERN.matcher(note.getBody());
+            final Set<String> recipientsLogins = new HashSet<>();
 
-            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
-                    .mergeRequestName(discussion.getMergeRequest().getTitle())
-                    .url(note.getWebUrl())
-                    .discussionMessage(firstNote.getBody())
-                    .discussionAuthor(firstNote.getAuthor().getName());
-            if (!firstNote.equals(note)) {
-                notifyBuilder.message(note.getBody())
-                        .authorName(note.getAuthor().getName());
-            }
-            if (prevLastNote.isPresent()) {
-                final Note prevNote = prevLastNote.get();
-                notifyBuilder.previousMessage(prevNote.getBody());
-                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            while (matcher.find()) {
+                final String login = matcher.group(0).replace("@", "");
+                recipientsLogins.add(login);
             }
 
-            notifyService.send(notifyBuilder.build());
+            if (recipientsLogins.contains(personInformation.getUsername())) {
+                final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                        .mergeRequestName(discussion.getMergeRequest().getTitle())
+                        .url(note.getWebUrl());
+
+                if (NOTIFY_WITH_CONTEXT.equals(discussionLevel)) {
+                    final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+                    final Note firstNote = discussion.getFirstNote();
+
+                    if (!firstNote.equals(note)) {
+                        notifyBuilder.message(note.getBody())
+                                .authorName(note.getAuthor().getName());
+                    }
+                    if (prevLastNote.isPresent()) {
+                        final Note prevNote = prevLastNote.get();
+                        notifyBuilder.previousMessage(prevNote.getBody());
+                        notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+                    }
+
+                    notifyBuilder
+                            .discussionMessage(firstNote.getBody())
+                            .discussionAuthor(firstNote.getAuthor().getName());
+                }
+
+                notifyService.send(notifyBuilder.build());
+            }
         }
     }
 

@@ -163,6 +163,9 @@
                              references="person(id)"/>
             </column>
             <column name="resolved" type="boolean"/>
+            <column name="notification" type="boolean">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createIndex tableName="discussion" indexName="i_discussion_responsible_id">

@@ -1,6 +1,7 @@
 package dev.struchkov.bot.gitlab.core.service.impl;
 
 import dev.struchkov.bot.gitlab.context.domain.entity.AppSetting;
+import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 import dev.struchkov.bot.gitlab.context.repository.AppSettingRepository;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.haiti.context.exception.NotFoundException;
@@ -77,6 +78,11 @@ public class AppSettingServiceImpl implements AppSettingService {
     @Override
     public boolean isPrivateProjectScan() {
         return getAppSetting().isProjectPrivateScan();
+    }
+
+    @Override
+    public DiscussionLevel getLevelDiscussionNotify() {
+        return getAppSetting().getDiscussionNotifyLevel();
     }
 
     private AppSetting getAppSetting() {

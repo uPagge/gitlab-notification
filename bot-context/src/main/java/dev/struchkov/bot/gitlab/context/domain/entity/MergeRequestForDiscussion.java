@@ -45,4 +45,7 @@ public class MergeRequestForDiscussion {
     @Column(name = "web_url")
     private String webUrl;
 
+    @Column(name = "notification")
+    private boolean notification;
+
 }
