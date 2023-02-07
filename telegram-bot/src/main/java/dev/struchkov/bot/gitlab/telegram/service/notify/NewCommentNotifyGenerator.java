@@ -14,10 +14,12 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
 
     @Override
     public BoxAnswer generate(NewCommentNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" [New answer in discussion](").append(notify.getUrl()).append(")");
+        final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" *New answer in Thread*")
+                .append(Icons.HR)
+                .append(escapeMarkdown(notify.getMergeRequestName()));
 
         if (checkNotNull(notify.getDiscussionMessage())) {
-            builder.append("\n-- -- discussion first message -- --\n")
+            builder.append("\n-- -- thread first message -- --\n")
                     .append("*").append(notify.getDiscussionAuthor()).append("*: ").append(escapeMarkdown(notify.getDiscussionMessage()));
         }
 
@@ -26,8 +28,10 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
                     .append("*").append(notify.getPreviousAuthor()).append("*: ").append(escapeMarkdown(notify.getPreviousMessage()));
         }
 
-        builder.append("\n-- -- -- --- new answer --- -- -- --\n")
-                .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessage()));
+        if (checkNotNull(notify.getMessage())) {
+            builder.append("\n-- -- -- --- new answer --- -- -- --\n")
+                    .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessage()));
+        }
 
         final String messageNotify = builder.toString();
         return boxAnswer(messageNotify);

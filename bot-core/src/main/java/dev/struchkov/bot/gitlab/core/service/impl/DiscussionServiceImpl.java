@@ -70,8 +70,41 @@ public class DiscussionServiceImpl implements DiscussionService {
         if (isNeedNotifyNewNote(discussion)) {
             notifyNewDiscussion(discussion);
         } else {
-            notes.forEach(this::notificationPersonal);
+            notes.forEach(note -> notificationPersonal(discussion, note));
         }
+
+        final boolean resolved = discussion.getNotes().stream()
+                .allMatch(note -> note.isResolvable() && note.getResolved());
+
+        discussion.setResolved(resolved);
+
+        return repository.save(discussion);
+    }
+
+    @Override
+    @Transactional
+    public Discussion update(@NonNull Discussion discussion) {
+        final Discussion oldDiscussion = repository.findById(discussion.getId())
+                .orElseThrow(notFoundException("Дискуссия не найдена"));
+
+        discussion.setResponsible(oldDiscussion.getResponsible());
+        discussion.setMergeRequest(oldDiscussion.getMergeRequest());
+
+        final Person responsiblePerson = discussion.getResponsible();
+        if (checkNotNull(responsiblePerson)) {
+            for (Note note : discussion.getNotes()) {
+                if (responsiblePerson.getId().equals(note.getAuthor().getId())) {
+                    note.setAuthor(responsiblePerson);
+                }
+                final Person resolvedBy = note.getResolvedBy();
+                if (checkNotNull(resolvedBy)) {
+                    if (responsiblePerson.getId().equals(resolvedBy.getId())) {
+                        note.setResolvedBy(responsiblePerson);
+                    }
+                }
+            }
+        }
+        notifyUpdateNote(oldDiscussion, discussion);
 
         final boolean resolved = discussion.getNotes().stream()
                 .allMatch(note -> note.isResolvable() && note.getResolved());
@@ -117,39 +150,6 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
-    @Transactional
-    public Discussion update(@NonNull Discussion discussion) {
-        final Discussion oldDiscussion = repository.findById(discussion.getId())
-                .orElseThrow(notFoundException("Дискуссия не найдена"));
-
-        discussion.setResponsible(oldDiscussion.getResponsible());
-        discussion.setMergeRequest(oldDiscussion.getMergeRequest());
-
-        final Person responsiblePerson = discussion.getResponsible();
-        if (checkNotNull(responsiblePerson)) {
-            for (Note note : discussion.getNotes()) {
-                if (responsiblePerson.getId().equals(note.getAuthor().getId())) {
-                    note.setAuthor(responsiblePerson);
-                }
-                final Person resolvedBy = note.getResolvedBy();
-                if (checkNotNull(resolvedBy)) {
-                    if (responsiblePerson.getId().equals(resolvedBy.getId())) {
-                        note.setResolvedBy(responsiblePerson);
-                    }
-                }
-            }
-        }
-        notifyUpdateNote(oldDiscussion, discussion);
-
-        final boolean resolved = discussion.getNotes().stream()
-                .allMatch(note -> note.isResolvable() && note.getResolved());
-
-        discussion.setResolved(resolved);
-
-        return repository.save(discussion);
-    }
-
-    @Override
     public List<Discussion> updateAll(@NonNull List<Discussion> discussions) {
         return discussions.stream()
                 .map(this::update)
@@ -178,37 +178,11 @@ public class DiscussionServiceImpl implements DiscussionService {
                 if (userParticipatedInDiscussion) {
                     notifyNewAnswer(discussion, newNote);
                 } else {
-                    notificationPersonal(newNote);
+                    notificationPersonal(discussion, newNote);
                 }
             }
         }
 
-    }
-
-    private void notifyNewAnswer(Discussion discussion, Note note) {
-        if (!personInformation.getId().equals(note.getAuthor().getId())) {
-            final Note firstNote = discussion.getFirstNote();
-            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
-
-
-            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder();
-
-            if (prevLastNote.isPresent()) {
-                final Note prevNote = prevLastNote.get();
-                notifyBuilder.previousMessage(prevNote.getBody());
-                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
-            }
-
-            notifyService.send(
-                    notifyBuilder
-                            .url(note.getWebUrl())
-                            .discussionMessage(firstNote.getBody())
-                            .discussionAuthor(firstNote.getAuthor().getName())
-                            .message(note.getBody())
-                            .authorName(note.getAuthor().getName())
-                            .build()
-            );
-        }
     }
 
     private void updateTask(Note note, Note oldNote) {
@@ -253,20 +227,18 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         final String requestUrl = MessageFormat.format(gitlabProperty.getNewNoteUrl(), projectId, mergeRequest.getTwoId(), discussion.getId(), text);
 
-        RequestBody formBody = new FormBody.Builder().build();
+        final RequestBody formBody = new FormBody.Builder().build();
 
-        Request request = new Request.Builder()
+        final Request request = new Request.Builder()
                 .post(formBody)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .url(requestUrl)
                 .build();
-
         try {
             client.newCall(request).execute();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-
     }
 
     @Override
@@ -319,10 +291,36 @@ public class DiscussionServiceImpl implements DiscussionService {
         log.debug("Конец очистки старых дискуссий");
     }
 
+    private void notifyNewAnswer(Discussion discussion, Note note) {
+        if (!personInformation.getId().equals(note.getAuthor().getId())) {
+            final Note firstNote = discussion.getFirstNote();
+            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+
+            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                    .mergeRequestName(discussion.getMergeRequest().getTitle());
+
+            if (prevLastNote.isPresent()) {
+                final Note prevNote = prevLastNote.get();
+                notifyBuilder.previousMessage(prevNote.getBody());
+                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            }
+
+            notifyService.send(
+                    notifyBuilder
+                            .url(note.getWebUrl())
+                            .discussionMessage(firstNote.getBody())
+                            .discussionAuthor(firstNote.getAuthor().getName())
+                            .message(note.getBody())
+                            .authorName(note.getAuthor().getName())
+                            .build()
+            );
+        }
+    }
+
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */
-    protected void notificationPersonal(@NonNull Note note) {
+    protected void notificationPersonal(Discussion discussion, Note note) {
         final Matcher matcher = PATTERN.matcher(note.getBody());
         final Set<String> recipientsLogins = new HashSet<>();
         while (matcher.find()) {
@@ -330,13 +328,25 @@ public class DiscussionServiceImpl implements DiscussionService {
             recipientsLogins.add(login);
         }
         if (recipientsLogins.contains(personInformation.getUsername())) {
-            notifyService.send(
-                    NewCommentNotify.builder()
-                            .authorName(note.getAuthor().getName())
-                            .message(note.getBody())
-                            .url(note.getWebUrl())
-                            .build()
-            );
+            final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+            final Note firstNote = discussion.getFirstNote();
+
+            final NewCommentNotify.NewCommentNotifyBuilder notifyBuilder = NewCommentNotify.builder()
+                    .mergeRequestName(discussion.getMergeRequest().getTitle())
+                    .url(note.getWebUrl())
+                    .discussionMessage(firstNote.getBody())
+                    .discussionAuthor(firstNote.getAuthor().getName());
+            if (!firstNote.equals(note)) {
+                notifyBuilder.message(note.getBody())
+                        .authorName(note.getAuthor().getName());
+            }
+            if (prevLastNote.isPresent()) {
+                final Note prevNote = prevLastNote.get();
+                notifyBuilder.previousMessage(prevNote.getBody());
+                notifyBuilder.previousAuthor(prevNote.getAuthor().getName());
+            }
+
+            notifyService.send(notifyBuilder.build());
         }
     }
 

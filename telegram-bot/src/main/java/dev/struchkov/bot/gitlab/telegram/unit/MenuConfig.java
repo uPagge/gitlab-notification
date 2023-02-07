@@ -2,9 +2,11 @@ package dev.struchkov.bot.gitlab.telegram.unit;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequest;
+import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
+import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
@@ -17,14 +19,13 @@ import dev.struchkov.godfather.simple.core.unit.MainUnit;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
-import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ACCESS_ERROR;
@@ -41,6 +42,7 @@ import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoard
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.clickButtonRaw;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.isLinks;
+import static java.util.Collections.singleton;
 
 /**
  * // TODO: 16.01.2021 Добавить описание.
@@ -51,15 +53,16 @@ import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.is
 @RequiredArgsConstructor
 public class MenuConfig {
 
-    private final TelegramSending sending;
-    private final ProjectParser projectParser;
     private final GitlabProperty gitlabProperty;
     private final PersonInformation personInformation;
+
+    private final ProjectParser projectParser;
+
+    private final ProjectService projectService;
     private final NoteService noteService;
     private final MergeRequestsService mergeRequestsService;
     private final AppSettingService settingService;
 
-    private final ScheduledExecutorService scheduledExecutorService;
 
     @Unit(value = ACCESS_ERROR, main = true)
     public AnswerText<Mail> accessError() {
@@ -134,7 +137,11 @@ public class MenuConfig {
                         final String projectUrl = gitlabProperty.getProjectAddUrl() + link.getUrl().replace(gitlabProperty.getBaseUrl(), "")
                                 .substring(1)
                                 .replace("/", "%2F");
-                        projectParser.parseByUrl(projectUrl);
+                        final Project project = projectParser.parseByUrl(projectUrl);
+                        final Set<Long> projectId = singleton(project.getId());
+                        projectService.notification(true, projectId);
+                        projectService.processing(true, projectId);
+                        mergeRequestsService.notificationByProjectId(true, projectId);
                     }
                     return boxAnswer("\uD83D\uDC4D Projects added successfully!");
                 })

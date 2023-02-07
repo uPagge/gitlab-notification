@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 import static dev.struchkov.haiti.context.exception.ConvertException.convertException;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
-import static java.util.Collections.singleton;
 
 /**
  * Парсер проектов.
@@ -88,7 +87,7 @@ public class ProjectParser {
         }
     }
 
-    public void parseByUrl(String projectUrl) {
+    public Project parseByUrl(String projectUrl) {
         final ProjectJson projectJson = HttpParse.request(projectUrl)
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
@@ -96,14 +95,10 @@ public class ProjectParser {
                 .orElseThrow(convertException("Ошибка получения репозитория."));
         if (!projectService.existsById(projectJson.getId())) {
             createNewPersons(List.of(projectJson));
-
             final Project newProject = conversionService.convert(projectJson, Project.class);
-            projectService.create(newProject);
+            return projectService.create(newProject);
         } else {
-            final Set<Long> projectId = singleton(projectJson.getId());
-            projectService.notification(true, projectId);
-            projectService.processing(true, projectId);
-            mergeRequestsService.notificationByProjectId(true, projectId);
+            return projectService.getByIdOrThrow(projectJson.getId());
         }
     }
 

@@ -9,8 +9,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
-import static dev.struchkov.haiti.utils.Checker.checkNotNull;
+import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
+import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.urlButton;
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Component
@@ -18,20 +22,26 @@ public class DiscussionNewNotifyGenerator implements NotifyBoxAnswerGenerator<Di
 
     @Override
     public BoxAnswer generate(DiscussionNewNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.TASK).append(" [New discussion](").append(notify.getUrl()).append(")")
+        final StringBuilder builder = new StringBuilder(Icons.TASK).append(" *New Thread in your MR*")
                 .append(Icons.HR)
-                .append(escapeMarkdown(notify.getMrName()))
+                .append(Icons.link(escapeMarkdown(notify.getMrName()), notify.getUrl()))
                 .append(Icons.HR)
                 .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessageTask()));
 
         final List<Pair<String, String>> notes = notify.getNotes();
-        if (checkNotNull(notes)) {
+        if (checkNotEmpty(notes)) {
             builder.append("\n-- -- -- -- comments -- -- -- --\n")
                     .append(convertNotes(notes));
         }
 
         final String notifyMessage = builder.toString();
-        return boxAnswer(notifyMessage);
+        return boxAnswer(
+                notifyMessage,
+                inlineKeyBoard(
+                        simpleButton(Icons.VIEW, DELETE_MESSAGE),
+                        urlButton(Icons.LINK, notify.getUrl())
+                )
+        );
     }
 
     private String convertNotes(List<Pair<String, String>> notes) {
