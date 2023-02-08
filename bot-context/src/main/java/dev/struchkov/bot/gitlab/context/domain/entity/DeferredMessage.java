@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class DeferredMessage {
     @Id
-    @Column(name = "id")
+    @Column(name = "deferred_messages_id")
     private int id;
     @Column(name = "message")
     private String message;

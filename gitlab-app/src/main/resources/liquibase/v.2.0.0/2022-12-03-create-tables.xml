@@ -274,4 +274,15 @@
         <addPrimaryKey tableName="merge_request_reviewer" columnNames="merge_request_id, person_id"/>
     </changeSet>
 
+    <changeSet id="2023-02-08-create-table-messages" author="uPagge">
+        <createTable tableName="deferred_messages">
+            <column name="deferred_messages_id" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="message" type="varchar"/>
+            <column name="time" type="timestamp"/>
+            <column name="type" type="varchar"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
