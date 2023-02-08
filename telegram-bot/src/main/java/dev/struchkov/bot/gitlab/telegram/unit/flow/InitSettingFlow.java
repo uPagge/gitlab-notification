@@ -215,7 +215,7 @@ public class InitSettingFlow {
                     discussionParser.scanNewDiscussion();
                     final int discussionCount = discussionService.getAllIds().size() - oldCountThreads;
 
-                    return replaceBoxAnswer(format(finalAnswer, pipelineCount, mrCount, pipelineCount, discussionCount));
+                    return replaceBoxAnswer(format(finalAnswer, projectCount, mrCount, pipelineCount, discussionCount));
                 })
                 .<Integer>callBack(
                         sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
