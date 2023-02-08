@@ -99,12 +99,12 @@ public class MenuConfig {
                 .answer(mail -> {
                             final String messageText = "This is the bot menu, select a new item";
                             final InlineKeyBoard generalMenuKeyBoard = inlineKeyBoard(
-                                    simpleLine(simpleButton("Add project", TEXT_ADD_NEW_PROJECT)),
-                                    simpleLine(
-                                            simpleButton("My tasks", GET_TASKS),
-                                            simpleButton("Merge Request", GET_ASSIGNEE_MERGE_REQUEST)
-                                    ),
-                                    simpleLine(simpleButton("Settings", SETTINGS))
+                                    simpleLine(simpleButton("Add project", TEXT_ADD_NEW_PROJECT))
+//                                    simpleLine(
+//                                            simpleButton("My tasks", GET_TASKS),
+//                                            simpleButton("Merge Request", GET_ASSIGNEE_MERGE_REQUEST)
+//                                    );
+//                                    simpleLine(simpleButton("Settings", SETTINGS))
                             );
                             return boxAnswer(messageText, generalMenuKeyBoard);
                         }
