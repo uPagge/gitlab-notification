@@ -1,5 +1,7 @@
 package dev.struchkov.bot.gitlab.context.service;
 
+import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
+
 /**
  * Сервис отвечает за пользовательские настройки приложения.
  *
@@ -32,5 +34,7 @@ public interface AppSettingService {
     boolean isOwnerProjectScan();
 
     boolean isPrivateProjectScan();
+
+    DiscussionLevel getLevelDiscussionNotify();
 
 }

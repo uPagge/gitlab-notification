@@ -30,6 +30,7 @@ public final class UnitName {
     // команды
     public static final String DELETE_MESSAGE = "DELETE_MESSAGE";
     public static final String DISABLE_NOTIFY_MR = "DISABLE_NOTIFY_MR";
+    public static final String DISABLE_NOTIFY_THREAD = "DISABLE_NOTIFY_THREAD";
     public static final String ENABLE_NOTIFY_PROJECT = "ENABLE_NOTIFY_PROJECT";
 
     private UnitName() {

@@ -14,7 +14,6 @@ import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.simple.core.unit.MainUnit;
-import dev.struchkov.godfather.simple.data.StorylineContext;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
@@ -57,7 +56,6 @@ import static java.text.MessageFormat.format;
 public class InitSettingFlow {
 
     private final TelegramSending sending;
-    private final StorylineContext context;
 
     private final PersonInformation personInformation;
 
@@ -138,7 +136,7 @@ public class InitSettingFlow {
     ) {
         return AnswerText.<Mail>builder()
                 .triggerCheck(clickButtonRaw("NO"))
-                .answer(replaceBoxAnswer("Okay, I won't scan public projects."))
+                .answer(replaceBoxAnswer("\uD83D\uDC4C I won't scan public projects."))
                 .<Integer>callBack(
                         sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
                 )
@@ -217,7 +215,7 @@ public class InitSettingFlow {
                     discussionParser.scanNewDiscussion();
                     final int discussionCount = discussionService.getAllIds().size() - oldCountThreads;
 
-                    return replaceBoxAnswer(format(finalAnswer, pipelineCount, mrCount, pipelineCount, discussionCount));
+                    return replaceBoxAnswer(format(finalAnswer, projectCount, mrCount, pipelineCount, discussionCount));
                 })
                 .<Integer>callBack(
                         sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
@@ -260,6 +258,7 @@ public class InitSettingFlow {
                 .answer(mail -> {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     if ("YES".equals(buttonClick.getRawCallBackData())) {
+                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("⌛I write down the available projects. This may take a long time."));
                         projectParser.parseAllProjectOwner();
                         settingService.ownerProjectScan(true);
                     } else {
@@ -378,7 +377,7 @@ public class InitSettingFlow {
     ) {
         return AnswerText.<Mail>builder()
                 .triggerPhrase("NO")
-                .answer(replaceBoxAnswer("Okay, I won't scan private projects."))
+                .answer(replaceBoxAnswer("\uD83D\uDC4C I won't scan private projects."))
                 .<Integer>callBack(
                         sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 10, TimeUnit.SECONDS)
                 )
@@ -394,7 +393,11 @@ public class InitSettingFlow {
                 .activeType(AFTER)
                 .answer(
                         boxAnswer(
-                                "Do you want to enable automatic notification of new private projects available to you?",
+                                """
+                                        Do you want to enable automatic notification of new private projects available to you?
+                                        -- -- -- -- --
+                                        I will be forced to scan all available private projects for this. I will not scan other entities in projects and send any notifications for these projects.
+                                        """,
                                 inlineKeyBoard(
                                         simpleLine(
                                                 simpleButton("Yes", "YES"),
@@ -416,6 +419,7 @@ public class InitSettingFlow {
                 .answer(mail -> {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     if ("YES".equals(buttonClick.getRawCallBackData())) {
+                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("⌛I write down the available private projects. This may take a long time."));
                         projectParser.parseAllPrivateProject();
                         settingService.privateProjectScan(true);
                     } else {

@@ -16,6 +16,7 @@ public class Icons {
     public static final String TASK = "\uD83D\uDCBC";
     public static final String ARROW = " ➜ ";
     public static final String DANGEROUS = "⚠️";
+    public static final String GREEN_CIRCLE = "\uD83D\uDFE2";
     public static final String PEN = "✏️";
     public static final String ASSIGNEE = "\uD83C\uDFA9";
     public static final String BUILD = "⚙️";

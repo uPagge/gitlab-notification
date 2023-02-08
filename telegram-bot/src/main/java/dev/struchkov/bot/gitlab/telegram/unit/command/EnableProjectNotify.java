@@ -2,6 +2,7 @@ package dev.struchkov.bot.gitlab.telegram.unit.command;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
@@ -28,6 +29,7 @@ import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 public class EnableProjectNotify {
 
     private final ProjectService projectService;
+    private final MergeRequestsService mergeRequestsService;
 
     private final AppSettingService settingService;
     private final PersonInformation personInformation;
@@ -59,6 +61,7 @@ public class EnableProjectNotify {
                             final Set<Long> setProjectId = Set.of(projectId);
                             projectService.processing(true, setProjectId);
                             projectService.notification(true, setProjectId);
+                            mergeRequestsService.notificationByProjectId(true, setProjectId);
                             return replaceBoxAnswer(mail.getId(), Icons.GOOD + " you will now receive notifications!");
                         }
                 )

@@ -2,7 +2,7 @@ package dev.struchkov.bot.gitlab.telegram.unit.command;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
-import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
+import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
@@ -18,10 +18,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_CONFIRMATION;
-import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_DISABLE_NOTIFY_MR_ID;
+import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_DISABLE_NOTIFY_THREAD_ID;
 import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_VALUE_TRUE;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
-import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DISABLE_NOTIFY_MR;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DISABLE_NOTIFY_THREAD;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
@@ -29,32 +29,28 @@ import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.in
 
 @Component
 @RequiredArgsConstructor
-public class DisableNotifyMrUnit {
+public class DisableNotifyThreadUnit {
 
     public static final String WARNING_ABOUT_DISABLE_NOTIFY = Icons.DISABLE_NOTIFY + """
              *Disabling notifications*
                                             
-            Are you sure you want to stop receiving notifications?
-            -- -- -- -- --
-            There will be no more notifications for this merge request about: status change, conflict, addition/removal from reviewers/responsible.
-                                            
-            Thread notifications will continue to come.
+            Are you sure you want to stop receiving notifications of new replies to this thread?
             """;
-    public static final String SUCCESSFULLY_DISABLED = "Notifications successfully disabled for the given merge request";
+    public static final String SUCCESSFULLY_DISABLED = "Notifications successfully disabled for this thread";
 
-    private final MergeRequestsService mergeRequestsService;
+    private final DiscussionService discussionService;
     private final PersonInformation personInformation;
     private final AppSettingService settingService;
     private final TelegramSending telegramSending;
 
     private final ScheduledExecutorService scheduledExecutorService;
 
-    @Unit(value = DISABLE_NOTIFY_MR, global = true)
-    public AnswerText<Mail> disableNotifyMr() {
+    @Unit(value = DISABLE_NOTIFY_THREAD, global = true)
+    public AnswerText<Mail> disableNotifyThread() {
         return AnswerText.<Mail>builder()
                 .triggerCheck(mail -> {
                     final boolean isDisableButtonClick = Attachments.findFirstButtonClick(mail.getAttachments())
-                            .flatMap(buttonClick -> buttonClick.getArgByType(BUTTON_ARG_DISABLE_NOTIFY_MR_ID))
+                            .flatMap(buttonClick -> buttonClick.getArgByType(BUTTON_ARG_DISABLE_NOTIFY_THREAD_ID))
                             .isPresent();
                     if (isDisableButtonClick) {
                         final boolean isAccess = personInformation.getTelegramId().equals(mail.getPersonId());
@@ -69,13 +65,13 @@ public class DisableNotifyMrUnit {
                             .map(Arg::getValue)
                             .map(BUTTON_VALUE_TRUE::equals)
                             .orElseThrow();
-                    final Long mrId = clickButton.getArgByType(BUTTON_ARG_DISABLE_NOTIFY_MR_ID)
+                    final String discussionId = clickButton.getArgByType(BUTTON_ARG_DISABLE_NOTIFY_THREAD_ID)
                             .map(Arg::getValue)
-                            .map(Long::parseLong)
+                            .map(String::valueOf)
                             .orElseThrow();
 
                     if (confirmation) {
-                        mergeRequestsService.notification(false, mrId);
+                        discussionService.notification(false, discussionId);
                         scheduledExecutorService.schedule(() -> telegramSending.deleteMessage(mail.getPersonId(), clickButton.getMessageId()), 5, TimeUnit.SECONDS);
                         return replaceBoxAnswer(SUCCESSFULLY_DISABLED);
                     } else {
@@ -83,7 +79,7 @@ public class DisableNotifyMrUnit {
                                 WARNING_ABOUT_DISABLE_NOTIFY,
                                 inlineKeyBoard(
                                         simpleLine(
-                                                simpleButton(Icons.YES, "[" + BUTTON_ARG_DISABLE_NOTIFY_MR_ID + ":" + mrId + ";" + BUTTON_ARG_CONFIRMATION + ":" + BUTTON_VALUE_TRUE + "]"),
+                                                simpleButton(Icons.YES, "[" + BUTTON_ARG_DISABLE_NOTIFY_THREAD_ID + ":" + discussionId + ";" + BUTTON_ARG_CONFIRMATION + ":" + BUTTON_VALUE_TRUE + "]"),
                                                 simpleButton(Icons.NO, DELETE_MESSAGE)
                                         )
                                 )

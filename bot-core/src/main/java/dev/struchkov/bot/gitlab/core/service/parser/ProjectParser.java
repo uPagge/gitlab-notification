@@ -3,6 +3,7 @@ package dev.struchkov.bot.gitlab.core.service.parser;
 import dev.struchkov.bot.gitlab.context.domain.ExistContainer;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
+import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
 import dev.struchkov.bot.gitlab.context.service.PersonService;
 import dev.struchkov.bot.gitlab.context.service.ProjectService;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
@@ -38,8 +39,8 @@ public class ProjectParser {
 
     public static final String OWNER = "&owned=true";
     public static final String PRIVATE = "&visibility=private";
-    public static final String PUBLIC_OWNER = "&visibility=public&owned=true";
 
+    private final MergeRequestsService mergeRequestsService;
     private final ProjectService projectService;
     private final PersonService personService;
 
@@ -86,17 +87,18 @@ public class ProjectParser {
         }
     }
 
-    public void parseByUrl(String projectUrl) {
+    public Project parseByUrl(String projectUrl) {
         final ProjectJson projectJson = HttpParse.request(projectUrl)
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .execute(ProjectJson.class)
-                .orElseThrow(convertException("Ошибка получения проекта"));
+                .orElseThrow(convertException("Ошибка получения репозитория."));
         if (!projectService.existsById(projectJson.getId())) {
             createNewPersons(List.of(projectJson));
-
             final Project newProject = conversionService.convert(projectJson, Project.class);
-            projectService.create(newProject);
+            return projectService.create(newProject, false);
+        } else {
+            return projectService.getByIdOrThrow(projectJson.getId());
         }
     }
 

@@ -9,6 +9,8 @@ public final class NewCommentNotify implements Notify {
 
     public static final String TYPE = "NewCommentNotify";
 
+    private final String threadId;
+    private final String mergeRequestName;
     private final String url;
     private final String discussionMessage;
     private final String discussionAuthor;
@@ -16,17 +18,23 @@ public final class NewCommentNotify implements Notify {
     private final String previousAuthor;
     private final String authorName;
     private final String message;
+    private final int numberNotes;
 
     @Builder
     public NewCommentNotify(
+            String threadId,
+            String mergeRequestName,
             String url,
             String discussionMessage,
             String discussionAuthor,
             String previousMessage,
             String previousAuthor,
             String authorName,
-            String message
+            String message,
+            int numberNotes
     ) {
+        this.threadId = threadId;
+        this.mergeRequestName = mergeRequestName;
         this.url = url;
         this.discussionMessage = discussionMessage;
         this.discussionAuthor = discussionAuthor;
@@ -34,8 +42,8 @@ public final class NewCommentNotify implements Notify {
         this.previousAuthor = previousAuthor;
         this.authorName = authorName;
         this.message = message;
+        this.numberNotes = numberNotes;
     }
-
 
     @Override
     public String getType() {

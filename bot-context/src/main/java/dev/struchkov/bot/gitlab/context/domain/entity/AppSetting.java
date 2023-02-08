@@ -1,7 +1,10 @@
 package dev.struchkov.bot.gitlab.context.domain.entity;
 
+import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -33,5 +36,9 @@ public class AppSetting {
 
     @Column(name = "project_private_scan")
     private boolean projectPrivateScan;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discussion_notify_level")
+    private DiscussionLevel discussionNotifyLevel;
 
 }

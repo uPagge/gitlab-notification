@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
-import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictMrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictResolveMrNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
@@ -17,12 +17,12 @@ import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
 @Component
-public class ConflictPrNotifyGenerator implements NotifyBoxAnswerGenerator<ConflictMrNotify> {
+public class ConflictResolvePrNotifyGenerator implements NotifyBoxAnswerGenerator<ConflictResolveMrNotify> {
 
     @Override
-    public BoxAnswer generate(ConflictMrNotify notify) {
+    public BoxAnswer generate(ConflictResolveMrNotify notify) {
 
-        final StringBuilder builder = new StringBuilder(Icons.DANGEROUS).append(" *Attention. MergeRequest conflict!*")
+        final StringBuilder builder = new StringBuilder(Icons.GREEN_CIRCLE).append(" *Merge request conflict resolved!*")
                 .append(Icons.HR)
                 .append(escapeMarkdown(notify.getTitle()))
                 .append(Icons.HR)
@@ -44,7 +44,7 @@ public class ConflictPrNotifyGenerator implements NotifyBoxAnswerGenerator<Confl
 
     @Override
     public String getNotifyType() {
-        return ConflictMrNotify.TYPE;
+        return ConflictResolveMrNotify.TYPE;
     }
 
 }

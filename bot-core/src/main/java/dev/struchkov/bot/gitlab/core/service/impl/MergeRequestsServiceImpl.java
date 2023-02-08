@@ -12,6 +12,7 @@ import dev.struchkov.bot.gitlab.context.domain.entity.MergeRequestForDiscussion;
 import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.entity.Project;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictMrNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictResolveMrNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForAssignee;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForReview;
 import dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.StatusMrNotify;
@@ -179,7 +180,8 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
                 if (isChangedMr) {
                     notifyAboutStatus(oldMergeRequest, mergeRequest, project);
-                    notifyAboutConflict(oldMergeRequest, mergeRequest, project);
+                    notifyAboutNewConflict(oldMergeRequest, mergeRequest, project);
+                    notifyAboutResolveConflict(oldMergeRequest, mergeRequest, project);
                     notifyAboutUpdate(oldMergeRequest, mergeRequest, project);
                 }
 
@@ -195,14 +197,15 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     }
 
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление
+
     private void notifyAssignee(AssigneeChanged assigneeChanged, MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         switch (assigneeChanged) {
             case BECOME ->
                     sendNotifyNewAssignee(mergeRequest, project.getName(), Optional.ofNullable(oldMergeRequest.getAssignee()).map(Person::getName).orElse(null));
         }
     }
-
     //TODO [05.12.2022|uPagge]: Добавить уведомление, если происходит удаление ревьювера
+
     private void notifyReviewer(ReviewerChanged reviewerChanged, MergeRequest mergeRequest, Project project) {
         switch (reviewerChanged) {
             case BECOME -> sendNotifyNewMrReview(mergeRequest, project.getName());
@@ -268,8 +271,14 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     @Override
     @Transactional
-    public void disableNotify(@NonNull Long mrId) {
-        repository.disableNotify(mrId);
+    public void notification(boolean enable, @NonNull Long mrId) {
+        repository.notification(enable, mrId);
+    }
+
+    @Override
+    @Transactional
+    public void notificationByProjectId(boolean enable, @NonNull Set<Long> projectIds) {
+        repository.notificationByProjectId(enable, projectIds);
     }
 
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
@@ -317,7 +326,7 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         }
     }
 
-    protected void notifyAboutConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+    protected void notifyAboutNewConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         final Long gitlabUserId = personInformation.getId();
         if (
                 !oldMergeRequest.isConflict() // У старого MR не было конфликта
@@ -326,6 +335,25 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
         ) {
             notifyService.send(
                     ConflictMrNotify.builder()
+                            .mrId(oldMergeRequest.getId())
+                            .sourceBranch(oldMergeRequest.getSourceBranch())
+                            .name(mergeRequest.getTitle())
+                            .url(mergeRequest.getWebUrl())
+                            .projectKey(project.getName())
+                            .build()
+            );
+        }
+    }
+
+    private void notifyAboutResolveConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
+        final Long gitlabUserId = personInformation.getId();
+        if (
+                oldMergeRequest.isConflict() // У старого MR был конфликт
+                && !mergeRequest.isConflict() // А у нового нет
+                && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
+        ) {
+            notifyService.send(
+                    ConflictResolveMrNotify.builder()
                             .mrId(oldMergeRequest.getId())
                             .sourceBranch(oldMergeRequest.getSourceBranch())
                             .name(mergeRequest.getTitle())

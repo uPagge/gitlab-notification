@@ -38,6 +38,8 @@ public interface MergeRequestsService {
 
     Set<Long> getAllIds();
 
-    void disableNotify(@NonNull Long mrId);
+    void notification(boolean enable, @NonNull Long mrId);
+
+    void notificationByProjectId(boolean enable, @NonNull Set<Long> projectIds);
 
 }

@@ -62,4 +62,9 @@ public class DiscussionRepositoryImpl implements DiscussionRepository {
         jpaRepository.removeAllByMergeRequestIsNull();
     }
 
+    @Override
+    public void notification(boolean enable, String discussionId) {
+        jpaRepository.notification(enable, discussionId);
+    }
+
 }

@@ -17,6 +17,8 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Optional;
 
+import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
+
 /**
  * @author upagge 11.02.2021
  */
@@ -37,6 +39,9 @@ public class Discussion {
 
     @Column(name = "resolved")
     private Boolean resolved;
+
+    @Column(name = "notification")
+    private boolean notification;
 
     @ManyToOne(optional = false, cascade = CascadeType.REMOVE)
     @JoinTable(
@@ -60,6 +65,20 @@ public class Discussion {
     public void setNotes(List<Note> notes) {
         notes.forEach(note -> note.setDiscussion(this));
         this.notes = notes;
+    }
+
+    public int getNoteSize() {
+        if (checkNotEmpty(notes)) {
+            return notes.size();
+        }
+        return 0;
+    }
+
+    public Optional<Note> getNoteByNumber(int number) {
+        if (checkNotEmpty(notes) && number < notes.size()) {
+            return Optional.of(notes.get(number));
+        }
+        return Optional.empty();
     }
 
     public Note getFirstNote() {

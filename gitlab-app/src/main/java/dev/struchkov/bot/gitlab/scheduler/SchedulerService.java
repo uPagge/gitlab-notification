@@ -32,7 +32,7 @@ public class SchedulerService {
     private final MergeRequestsService mergeRequestsService;
     private final DiscussionService discussionService;
 
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     public void newMergeRequest() {
         log.info("Запуск процесса обновления данных c GitLab");
         if (!settingService.isFirstStart()) {

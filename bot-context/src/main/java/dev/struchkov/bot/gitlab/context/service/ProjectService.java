@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public interface ProjectService {
 
-    Project create(@NonNull Project project);
+    Project create(@NonNull Project project, boolean sendNotify);
 
     Project update(@NonNull Project project);
 

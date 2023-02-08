@@ -20,6 +20,9 @@
             <column name="project_private_scan" type="boolean" defaultValue="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="discussion_notify_level" type="varchar(64)" defaultValue="NOTIFY_WITH_CONTEXT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -160,6 +163,9 @@
                              references="person(id)"/>
             </column>
             <column name="resolved" type="boolean"/>
+            <column name="notification" type="boolean">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createIndex tableName="discussion" indexName="i_discussion_responsible_id">
