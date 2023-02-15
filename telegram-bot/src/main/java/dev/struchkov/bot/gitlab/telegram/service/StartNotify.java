@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,14 @@ public class StartNotify {
             final BoxAnswer boxAnswer = BoxAnswer.builder()
                     .recipientPersonId(personProperty.getTelegramId())
                     .message(
-                            "Hello. I wish you a productive work day \uD83C\uDF40" +
+                            "Hello \uD83D\uDC4B\nI wish you a productive day \uD83C\uDF40" +
                             "\n-- -- -- -- --\n" +
-                            "Version " + appProperty.getVersion() +
-                            "\nDeveloper: [uPagge](https://mark.struchkov.dev)"
-                    ).build();
+                            "\uD83E\uDD16 Bot Version " + appProperty.getVersion() +
+                            "\n\uD83D\uDC68\u200D\uD83D\uDCBB️ Developer: [uPagge](https://mark.struchkov.dev)" +
+                            "\n\uD83D\uDC1B Issue: [GitHub Issue](https://github.com/uPagge/gitlab-notification/issues)"
+                    )
+                    .payload(BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW, true)
+                    .build();
 
             sending.send(boxAnswer);
         }
