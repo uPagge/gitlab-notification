@@ -27,7 +27,7 @@ public class NewProjectNotifyGenerator implements NotifyBoxAnswerGenerator<NewPr
                 .filter(Checker::checkNotBlank)
                 .map(Strings::escapeMarkdown);
 
-        final StringBuilder builder = new StringBuilder(Icons.FUN).append("* New project*")
+        final StringBuilder builder = new StringBuilder(Icons.FUN).append(" *New project*")
                 .append(Icons.HR)
                 .append(escapeMarkdown(notify.getProjectName()))
                 .append(Icons.HR);

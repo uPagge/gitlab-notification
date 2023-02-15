@@ -18,6 +18,7 @@ import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.simple.core.unit.MainUnit;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard;
+import dev.struchkov.godfather.telegram.main.context.MailPayload;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +70,13 @@ public class MenuConfig {
         return AnswerText.<Mail>builder()
                 .triggerCheck(mail -> !personInformation.getTelegramId().equals(mail.getPersonId()))
                 .answer(message -> {
-                    final String messageText = new StringBuilder("\uD83D\uDEA8 *Попытка несанкционированного доступа к боту*")
+                    final String messageText = new StringBuilder("\uD83D\uDEA8 *Attempted unauthorized access to the bot*")
                             .append(Icons.HR)
-                            .append("\uD83E\uDDB9\u200D♂️: ").append(message.getPersonId()).append("\n")
+                            .append("\uD83E\uDDB9\u200D♂️: ").append(
+                                    message.getPayLoad(MailPayload.USERNAME)
+                                            .map(username -> "@" + username)
+                                            .orElseThrow()
+                            ).append("\n")
                             .append("\uD83D\uDCAC: ").append(message.getText())
                             .toString();
                     return BoxAnswer.builder().recipientPersonId(personInformation.getTelegramId()).message(messageText).build();
