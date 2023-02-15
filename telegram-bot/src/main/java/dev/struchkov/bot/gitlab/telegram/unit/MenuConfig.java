@@ -84,7 +84,7 @@ public class MenuConfig {
                 .build();
     }
 
-    @Unit(value = GENERAL_MENU, main = true)
+    @Unit(value = GENERAL_MENU, main = true, global = true)
     public AnswerText<Mail> menu(
             @Unit(SETTINGS) MainUnit<Mail> settings,
             @Unit(TEXT_ADD_NEW_PROJECT) MainUnit<Mail> textAddNewProject,
@@ -102,9 +102,13 @@ public class MenuConfig {
                     return false;
                 })
                 .answer(mail -> {
-                            final String messageText = "This is the bot menu, select a new item";
+                            final String messageText = """
+                                    This is the bot menu, select a item.
+                                    -- -- -- -- --
+                                    At the moment, you can only add new repositories. But in future versions, the possibilities will expand.
+                                    """;
                             final InlineKeyBoard generalMenuKeyBoard = inlineKeyBoard(
-                                    simpleLine(simpleButton("Add project", TEXT_ADD_NEW_PROJECT))
+                                    simpleLine(simpleButton("Add repository", TEXT_ADD_NEW_PROJECT))
 //                                    simpleLine(
 //                                            simpleButton("My tasks", GET_TASKS),
 //                                            simpleButton("Merge Request", GET_ASSIGNEE_MERGE_REQUEST)

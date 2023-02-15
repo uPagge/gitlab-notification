@@ -10,6 +10,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
+import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+
 /**
  * @author upagge 19.01.2021
  */
@@ -33,6 +36,11 @@ public class StartNotify {
                             "\uD83E\uDD16 Bot Version " + appProperty.getVersion() +
                             "\n\uD83D\uDC68\u200D\uD83D\uDCBB️ Developer: [uPagge](https://mark.struchkov.dev)" +
                             "\n\uD83D\uDC1B Issue: [GitHub Issue](https://github.com/uPagge/gitlab-notification/issues)"
+                    )
+                    .keyBoard(
+                            inlineKeyBoard(
+                                    simpleButton("Open General Menu", "/start")
+                            )
                     )
                     .payload(BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW, true)
                     .build();

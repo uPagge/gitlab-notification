@@ -92,7 +92,7 @@ public class ProjectParser {
                 .header(ACCEPT)
                 .header(StringUtils.H_PRIVATE_TOKEN, personProperty.getToken())
                 .execute(ProjectJson.class)
-                .orElseThrow(convertException("Ошибка получения репозитория."));
+                .orElseThrow(convertException("Error adding a repository"));
         if (!projectService.existsById(projectJson.getId())) {
             createNewPersons(List.of(projectJson));
             final Project newProject = conversionService.convert(projectJson, Project.class);
