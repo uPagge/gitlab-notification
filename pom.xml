@@ -98,7 +98,7 @@
             <dependency>
                 <groupId>dev.struchkov.haiti.utils</groupId>
                 <artifactId>haiti-utils-field-constants</artifactId>
-                <version>0.0.6</version>
+                <version>0.0.9</version>
             </dependency>
 
             <dependency>
