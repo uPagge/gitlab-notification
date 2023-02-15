@@ -10,6 +10,7 @@ import dev.struchkov.bot.gitlab.telegram.unit.command.EnableProjectNotify;
 import dev.struchkov.bot.gitlab.telegram.unit.flow.InitSettingFlow;
 import dev.struchkov.godfather.main.core.unit.TypeUnit;
 import dev.struchkov.godfather.main.domain.content.Mail;
+import dev.struchkov.godfather.simple.context.service.ErrorHandler;
 import dev.struchkov.godfather.simple.context.service.EventHandler;
 import dev.struchkov.godfather.simple.context.service.PersonSettingService;
 import dev.struchkov.godfather.simple.context.service.UnitPointerService;
@@ -99,6 +100,7 @@ public class TelegramBotConfig {
             @Qualifier("messageExecutorService") ExecutorService executorService,
             TelegramSending sending,
             PersonSettingService personSettingService,
+            ErrorHandler errorHandler,
 
             StorylineService<Mail> storylineService
     ) {
@@ -107,6 +109,7 @@ public class TelegramBotConfig {
         );
         autoresponder.initActionUnit(TypeUnit.BACK_CMD, new RollBackCmdAction<>(storylineService));
         autoresponder.setExecutorService(executorService);
+        autoresponder.setErrorHandler(errorHandler);
         return autoresponder;
     }
 
