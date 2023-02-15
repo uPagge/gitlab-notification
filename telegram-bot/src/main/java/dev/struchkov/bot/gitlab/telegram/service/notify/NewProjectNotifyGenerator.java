@@ -4,6 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.notify.project.NewProjectNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.telegram.utils.Const;
 import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.haiti.utils.Checker;
 import dev.struchkov.haiti.utils.Strings;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class NewProjectNotifyGenerator implements NotifyBoxAnswerGenerator<NewPr
     @Override
     public BoxAnswer generate(NewProjectNotify notify) {
         final Optional<String> optDescription = Optional.ofNullable(notify.getProjectDescription())
-                .filter(Strings.EMPTY::equals)
+                .filter(Checker::checkNotBlank)
                 .map(Strings::escapeMarkdown);
 
         final StringBuilder builder = new StringBuilder(Icons.FUN).append("* New project*")

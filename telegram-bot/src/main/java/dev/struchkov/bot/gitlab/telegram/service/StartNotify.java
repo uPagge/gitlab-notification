@@ -27,11 +27,10 @@ public class StartNotify {
             final BoxAnswer boxAnswer = BoxAnswer.builder()
                     .recipientPersonId(personProperty.getTelegramId())
                     .message(
-                            new StringBuilder()
-                                    .append("Hello. I wish you a productive day :)")
-                                    .append("\n-- -- -- -- --\n")
-                                    .append("Version ").append(appProperty.getVersion()).append(" | Developer: [uPagge](https://mark.struchkov.dev)")
-                                    .toString()
+                            "Hello. I wish you a productive work day \uD83C\uDF40" +
+                            "\n-- -- -- -- --\n" +
+                            "Version " + appProperty.getVersion() +
+                            "\nDeveloper: [uPagge](https://mark.struchkov.dev)"
                     ).build();
 
             sending.send(boxAnswer);
