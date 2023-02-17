@@ -33,9 +33,9 @@ public class StartNotify {
                     .message(
                             "Hello \uD83D\uDC4B\nI wish you a productive day \uD83C\uDF40" +
                             "\n-- -- -- -- --\n" +
-                            "\uD83E\uDD16 Bot Version " + appProperty.getVersion() +
-                            "\n\uD83D\uDC68\u200D\uD83D\uDCBB️ Developer: [uPagge](https://mark.struchkov.dev)" +
-                            "\uD83C\uDFE0 [Home Page](https://git.struchkov.dev/Telegram-Bots/gitlab-notification) • \uD83D\uDC1B [Issues](https://github.com/uPagge/gitlab-notification/issues) • \uD83D\uDEE3 [Road Map](https://git.struchkov.dev/Telegram-Bots/gitlab-notification/issues)"
+                            "\uD83E\uDD16 Bot Version: " + appProperty.getVersion() +
+                            "\n\uD83D\uDC68\u200D\uD83D\uDCBB️ Developer: [uPagge](https://mark.struchkov.dev)\n" +
+                            "\uD83C\uDFE0 [HomePage](https://git.struchkov.dev/Telegram-Bots/gitlab-notification) • \uD83D\uDC1B [Issues](https://github.com/uPagge/gitlab-notification/issues) • \uD83D\uDEE3 [RoadMap](https://git.struchkov.dev/Telegram-Bots/gitlab-notification/issues)"
                     )
                     .keyBoard(
                             inlineKeyBoard(
