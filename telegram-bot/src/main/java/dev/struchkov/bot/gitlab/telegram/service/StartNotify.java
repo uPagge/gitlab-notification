@@ -35,7 +35,7 @@ public class StartNotify {
                             "\n-- -- -- -- --\n" +
                             "\uD83E\uDD16 Bot Version " + appProperty.getVersion() +
                             "\n\uD83D\uDC68\u200D\uD83D\uDCBB️ Developer: [uPagge](https://mark.struchkov.dev)" +
-                            "\n\uD83D\uDC1B Issue: [GitHub Issue](https://github.com/uPagge/gitlab-notification/issues)"
+                            "\uD83C\uDFE0 [Home Page](https://git.struchkov.dev/Telegram-Bots/gitlab-notification) • \uD83D\uDC1B [Issues](https://github.com/uPagge/gitlab-notification/issues) • \uD83D\uDEE3 [Road Map](https://git.struchkov.dev/Telegram-Bots/gitlab-notification/issues)"
                     )
                     .keyBoard(
                             inlineKeyBoard(

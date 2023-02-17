@@ -37,4 +37,6 @@ public interface AppSettingService {
 
     DiscussionLevel getLevelDiscussionNotify();
 
+    void setDiscussionLevel(DiscussionLevel level);
+
 }

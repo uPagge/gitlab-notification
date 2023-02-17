@@ -1,6 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.unit.flow;
 
 import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
+import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.MergeRequestsService;
@@ -10,6 +11,7 @@ import dev.struchkov.bot.gitlab.core.service.parser.DiscussionParser;
 import dev.struchkov.bot.gitlab.core.service.parser.MergeRequestParser;
 import dev.struchkov.bot.gitlab.core.service.parser.PipelineParser;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
+import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
@@ -32,16 +34,21 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSE_OWNER
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.CHECK_PARSE_OWNER_PROJECT_YES;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.END_SETTING;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.FIRST_START;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.PRIVACY_SETTING_THREAD_LEVEL;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_AUTO_PARSE_OWNER_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_AUTO_PARSE_PRIVATE_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_OWNER_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_PRIVATE_PROJECT;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PRIVACY_SETTING;
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PRIVACY_SETTING_THREAD_LEVEL;
 import static dev.struchkov.godfather.main.core.unit.UnitActiveType.AFTER;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+import static dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW;
+import static dev.struchkov.godfather.telegram.main.core.util.InlineKeyBoards.verticalMenuButton;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.clickButtonRaw;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.isClickButton;
 import static java.text.MessageFormat.format;
@@ -86,19 +93,33 @@ public class InitSettingFlow {
                     }
                     return false;
                 })
+
                 .answer(
-                        boxAnswer(
-                                """
-                                        Hello!
-                                        This bot will help you keep your finger on the pulse of all your GitLab projects.
-                                                                                
-                                        Press start to start initial setup 👇
-                                        """,
-                                inlineKeyBoard(
-                                        simpleButton("start setting", TEXT_PARSER_PRIVATE_PROJECT)
-//                                        simpleButton("see guide", GUIDE_START)
+                        BoxAnswer.builder().message(
+                                        """
+                                                Hello 👋
+                                                
+                                                This bot will help you keep your finger on the pulse of all your GitLab projects.
+                                                                                        
+                                                ❓*How it works*
+                                                Every few minutes I poll the Gitlab API using your token. I get information about repositories, merge requests in them, trades, pipelines, and other stuff. Some of the information I save to my database. This allows me to track changes and create notifications about them. All of the data is stored with you and is not shared anywhere. I also try to remove data that is not needed for work, such as closed merge requests.
+                                                                                        
+                                                🥷*Privacy*
+                                                Some data may be very sensitive to send to the Telegram servers. For example, discussions in the Merge Requests threads. During setup, you will be able to select the privacy level of different types of notifications. The higher the level, the less sensitive data will be in the notification.
+                                                -- -- -- -- --
+                                                🏠 [Home Page](https://git.struchkov.dev/Telegram-Bots/gitlab-notification) • 🐛 [Issues](https://github.com/uPagge/gitlab-notification/issues) • 🛣 [Road Map](https://git.struchkov.dev/Telegram-Bots/gitlab-notification/issues)
+                                                -- -- -- -- --
+                                                👇Press start to start initial setup 👇
+                                                """
                                 )
-                        )
+                                .payload(DISABLE_WEB_PAGE_PREVIEW, true)
+                                .keyBoard(
+                                        inlineKeyBoard(
+                                                simpleButton("\uD83D\uDE80 Start setting", TEXT_PARSER_PRIVATE_PROJECT)
+//                                        simpleButton("see guide", GUIDE_START)
+                                        )
+                                )
+                                .build()
                 )
                 .next(textParserOwnerProject)
 //                .next(guideStart)
@@ -113,9 +134,11 @@ public class InitSettingFlow {
         return AnswerText.<Mail>builder()
                 .answer(() -> replaceBoxAnswer(
                                 """
-                                        First of all, I suggest tracking changes in all repositories in which you are the creator.
-                                                                                
-                                        Find such repositories and set up notifications for them?
+                                        Would you like me to notify you of any events in the repositories where you are the creator?
+                                        
+                                        You can add projects later, but it will be less convenient.
+                                        -- -- -- -- --
+                                        We'll set privacy levels later, don't worry 😌
                                         """,
                                 inlineKeyBoard(
                                         simpleLine(
@@ -233,9 +256,13 @@ public class InitSettingFlow {
                 .answer(
                         boxAnswer(
                                 """
-                                        By default, I do not notify about events in repositories that are not tracked. But you can turn on notifications for new repositories in which you are the creator.
-                                                                                
-                                        To do this?
+                                        I only send notifications for repositories that have been put on track. However, I can notify you when new repositories are available. This will allow you to track new repositories you are interested in quickly.
+                                        
+                                        Start keeping track of new repositories where you are the creator?
+                                        -- -- -- -- --
+                                        If you answer yes, then I will be forced to add all available repositories that you own to the database, even if you answered no in the last paragraph. This is the only way I will be able to notify you of new repositories.
+                                        
+                                        Don't worry, I will not scan these repositories and notify you about them in the future.
                                         """,
                                 inlineKeyBoard(
                                         simpleLine(
@@ -258,13 +285,14 @@ public class InitSettingFlow {
                 .answer(mail -> {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     if ("YES".equals(buttonClick.getRawCallBackData())) {
-                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("⌛I write down the available projects. This may take a long time."));
+                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("I write down the available projects.\nThis may take a long time ⌛"));
                         projectParser.parseAllProjectOwner();
                         settingService.ownerProjectScan(true);
                     } else {
                         settingService.ownerProjectScan(false);
                     }
                 })
+                .callBack(sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 6, TimeUnit.SECONDS))
                 .next(textParserPrivateProject)
                 .build();
     }
@@ -279,9 +307,9 @@ public class InitSettingFlow {
                 .activeType(AFTER)
                 .answer(() -> replaceBoxAnswer(
                                 """
-                                        I can scan all your private projects and put them on tracking. This will notify you of new merge requests and other events. Or you can add only the projects you want later manually one by one.
-                                                                        
-                                        Add all available private projects?
+                                        Do you want me to find all the private repositories available to you and put them on track?
+                                        -- -- -- -- --
+                                        ⚠️ If there are a lot of repositories, this might not be a good idea. Only track repositories in which you actively participate. This will reduce the number of requests to the GitLab API.
                                         """,
                                 inlineKeyBoard(
                                         simpleLine(
@@ -395,8 +423,6 @@ public class InitSettingFlow {
                         boxAnswer(
                                 """
                                         Do you want to enable automatic notification of new private projects available to you?
-                                        -- -- -- -- --
-                                        I will be forced to scan all available private projects for this. I will not scan other entities in projects and send any notifications for these projects.
                                         """,
                                 inlineKeyBoard(
                                         simpleLine(
@@ -412,20 +438,90 @@ public class InitSettingFlow {
 
     @Unit(AUTO_PARSE_PRIVATE_PROJECT)
     public AnswerText<Mail> autoParsePrivateProject(
-            @Unit(END_SETTING) MainUnit<Mail> endSetting
+            @Unit(TEXT_PRIVACY_SETTING) MainUnit<Mail> textPrivacySetting
     ) {
         return AnswerText.<Mail>builder()
                 .triggerCheck(isClickButton())
                 .answer(mail -> {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     if ("YES".equals(buttonClick.getRawCallBackData())) {
-                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("⌛I write down the available private projects. This may take a long time."));
+                        sending.replaceMessage(mail.getPersonId(), mail.getId(), boxAnswer("I write down the available private projects.\nThis may take a long time ⌛"));
                         projectParser.parseAllPrivateProject();
                         settingService.privateProjectScan(true);
                     } else {
                         settingService.privateProjectScan(false);
                     }
                 })
+                .callBack(sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 6, TimeUnit.SECONDS))
+                .next(textPrivacySetting)
+                .build();
+    }
+
+    @Unit(TEXT_PRIVACY_SETTING)
+    public AnswerText<Mail> textSetLevelThread(
+            @Unit(TEXT_PRIVACY_SETTING_THREAD_LEVEL) MainUnit<Mail> textPrivacySettingThreadLevel
+    ) {
+        return AnswerText.<Mail>builder()
+                .activeType(AFTER)
+                .answer(
+                        replaceBoxAnswer("""
+                                        Each company and/or team has its own level of confidentiality. You probably don't want to trust any information to Telegram, because all messages will go through its servers. Also, your telegame account can be hacked.
+                                                                
+                                        So now we will set up the privacy of the notifications you receive.
+                                        """,
+                                inlineKeyBoard(
+                                        simpleLine(
+                                                simpleButton("\uD83E\uDD77 start setting up \uD83E\uDD77", "start setting up")
+                                        )
+                                )
+                        )
+                )
+                .next(textPrivacySettingThreadLevel)
+                .build();
+    }
+
+    @Unit(TEXT_PRIVACY_SETTING_THREAD_LEVEL)
+    public AnswerText<Mail> textPrivacySettingThreadLevel(
+            @Unit(PRIVACY_SETTING_THREAD_LEVEL) MainUnit<Mail> privacySettingThreadLevel
+    ) {
+        return AnswerText.<Mail>builder()
+                .answer(
+                        replaceBoxAnswer("""
+                                        A lot of confidential information can be contained in notifications of posts in a thread.
+                                                                                
+                                        Choose a privacy level:
+                                        
+                                        WITHOUT NOTIFY - turn off notifications for threads
+                                        
+                                        NOTIFY WITHOUT CONTEXT - notifications about the presence of a new comment with a link, without the comment text itself
+                                        
+                                        NOTIFY WITH CONTEXT - notification of new comments along with comment text
+                                        """,
+                                verticalMenuButton(
+                                        simpleButton("WITHOUT NOTIFY", "WITHOUT_NOTIFY"),
+                                        simpleButton("NOTIFY WITHOUT CONTEXT", "NOTIFY_WITHOUT_CONTEXT"),
+                                        simpleButton("NOTIFY WITH CONTEXT", "NOTIFY_WITH_CONTEXT")
+                                )
+                        )
+                )
+                .next(privacySettingThreadLevel)
+                .build();
+    }
+
+    @Unit(PRIVACY_SETTING_THREAD_LEVEL)
+    public AnswerText<Mail> privacySettingThreadLevel(
+            @Unit(END_SETTING) MainUnit<Mail> endSetting
+    ) {
+        return AnswerText.<Mail>builder()
+                .answer(mail -> {
+                    final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
+                    final DiscussionLevel level = DiscussionLevel.valueOf(buttonClick.getRawCallBackData().toUpperCase());
+                    settingService.setDiscussionLevel(level);
+                    replaceBoxAnswer("\uD83D\uDC4D you have successfully set the privacy level for threads");
+                })
+                .callBack(
+                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 6, TimeUnit.SECONDS)
+                )
                 .next(endSetting)
                 .build();
     }
@@ -442,7 +538,7 @@ public class InitSettingFlow {
                                             Configuration completed successfully
                                             Developer: [uPagge](https://mark.struchkov.dev)
                                             """,
-                                    inlineKeyBoard(simpleButton("open menu", "INIT_SETTING_OPEN_MENU"))
+                                    inlineKeyBoard(simpleButton("Open General Menu", "/start"))
                             );
                         }
                 )

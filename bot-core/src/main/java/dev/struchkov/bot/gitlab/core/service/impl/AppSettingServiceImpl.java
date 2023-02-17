@@ -85,6 +85,13 @@ public class AppSettingServiceImpl implements AppSettingService {
         return getAppSetting().getDiscussionNotifyLevel();
     }
 
+    @Override
+    @Transactional
+    public void setDiscussionLevel(DiscussionLevel level) {
+        final AppSetting appSetting = getAppSetting();
+        appSetting.setDiscussionNotifyLevel(level);
+    }
+
     private AppSetting getAppSetting() {
         return appSettingRepository.findById(KEY)
                 .orElseThrow(NOT_FOUND_SETTINGS);

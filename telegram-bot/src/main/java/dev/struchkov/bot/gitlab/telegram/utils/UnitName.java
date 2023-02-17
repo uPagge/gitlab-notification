@@ -32,6 +32,9 @@ public final class UnitName {
     public static final String DISABLE_NOTIFY_MR = "DISABLE_NOTIFY_MR";
     public static final String DISABLE_NOTIFY_THREAD = "DISABLE_NOTIFY_THREAD";
     public static final String ENABLE_NOTIFY_PROJECT = "ENABLE_NOTIFY_PROJECT";
+    public static final String TEXT_PRIVACY_SETTING = "TEXT_PRIVACY_SETTING";
+    public static final String TEXT_PRIVACY_SETTING_THREAD_LEVEL = "TEXT_PRIVACY_SETTING_THREAD_LEVEL";
+    public static final String PRIVACY_SETTING_THREAD_LEVEL = "PRIVACY_SETTING_THREAD_LEVEL";
 
     private UnitName() {
         utilityClass();
