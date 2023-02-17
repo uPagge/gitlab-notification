@@ -13,7 +13,9 @@ import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.context.service.ErrorHandler;
 import dev.struchkov.godfather.simple.context.service.EventHandler;
 import dev.struchkov.godfather.simple.context.service.PersonSettingService;
+import dev.struchkov.godfather.simple.context.service.Sending;
 import dev.struchkov.godfather.simple.context.service.UnitPointerService;
+import dev.struchkov.godfather.simple.core.action.AnswerTextAction;
 import dev.struchkov.godfather.simple.core.action.cmd.RollBackCmdAction;
 import dev.struchkov.godfather.simple.core.provider.StoryLineHandler;
 import dev.struchkov.godfather.simple.core.service.PersonSettingServiceImpl;
@@ -37,6 +39,7 @@ import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
 import dev.struchkov.godfather.telegram.simple.core.service.SenderMapRepository;
 import dev.struchkov.godfather.telegram.simple.core.service.TelegramServiceImpl;
 import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -51,6 +54,7 @@ import java.util.concurrent.Executors;
 /**
  * @author upagge [30.01.2020]
  */
+@Slf4j
 @Configuration
 @EnableScheduling
 public class TelegramBotConfig {
@@ -63,6 +67,11 @@ public class TelegramBotConfig {
     @Bean
     public TelegramService telegramService(TelegramConnect telegramConnect) {
         return new TelegramServiceImpl(telegramConnect);
+    }
+
+    @Bean
+    public AnswerTextAction answerTextAction(Sending sending) {
+        return new AnswerTextAction(sending);
     }
 
     @Bean
@@ -108,6 +117,7 @@ public class TelegramBotConfig {
             TelegramSending sending,
             PersonSettingService personSettingService,
             ErrorHandler errorHandler,
+            AnswerTextAction answerTextAction,
 
             StorylineService<Mail> storylineService
     ) {
@@ -117,6 +127,7 @@ public class TelegramBotConfig {
         autoresponder.initActionUnit(TypeUnit.BACK_CMD, new RollBackCmdAction<>(storylineService));
         autoresponder.setExecutorService(executorService);
         autoresponder.setErrorHandler(errorHandler);
+        autoresponder.initTextAnswerActionUnit(answerTextAction);
         return autoresponder;
     }
 
