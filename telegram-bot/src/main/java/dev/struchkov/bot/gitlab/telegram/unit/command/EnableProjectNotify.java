@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_ENABLE_NOTIFY_PROJECT_ID;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.replaceBoxAnswer;
 
 @Component
 @RequiredArgsConstructor
@@ -65,7 +65,7 @@ public class EnableProjectNotify {
                             return replaceBoxAnswer(mail.getId(), Icons.GOOD + " you will now receive notifications!");
                         }
                 )
-                .<Integer>callBack(
+                .callBack(
                         sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 5, TimeUnit.SECONDS)
                 )
                 .build();

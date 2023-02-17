@@ -22,9 +22,9 @@ import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_ARG_DISABLE_N
 import static dev.struchkov.bot.gitlab.telegram.utils.Const.BUTTON_VALUE_TRUE;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DISABLE_NOTIFY_MR;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 
 @Component

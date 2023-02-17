@@ -1,6 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.service.notify;
 
-import dev.struchkov.godfather.main.domain.BoxAnswer;
+
+import dev.struchkov.godfather.simple.domain.BoxAnswer;
 
 import java.util.List;
 import java.util.stream.Collectors;

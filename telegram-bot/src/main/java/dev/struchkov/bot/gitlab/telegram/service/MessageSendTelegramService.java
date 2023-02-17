@@ -4,7 +4,7 @@ import dev.struchkov.bot.gitlab.context.domain.PersonInformation;
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
 import dev.struchkov.bot.gitlab.context.service.MessageSendService;
 import dev.struchkov.bot.gitlab.telegram.service.notify.NotifyBoxAnswerGenerator;
-import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.domain.BoxAnswer;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;

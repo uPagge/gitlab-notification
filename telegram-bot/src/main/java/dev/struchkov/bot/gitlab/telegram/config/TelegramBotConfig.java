@@ -31,9 +31,11 @@ import dev.struchkov.godfather.telegram.main.context.TelegramConnect;
 import dev.struchkov.godfather.telegram.simple.consumer.EventDistributorService;
 import dev.struchkov.godfather.telegram.simple.context.service.EventDistributor;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import dev.struchkov.godfather.telegram.simple.context.service.TelegramService;
 import dev.struchkov.godfather.telegram.simple.core.MailAutoresponderTelegram;
 import dev.struchkov.godfather.telegram.simple.core.TelegramConnectBot;
 import dev.struchkov.godfather.telegram.simple.core.service.SenderMapRepository;
+import dev.struchkov.godfather.telegram.simple.core.service.TelegramServiceImpl;
 import dev.struchkov.godfather.telegram.simple.sender.TelegramSender;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -56,6 +58,11 @@ public class TelegramBotConfig {
     @Bean("messageExecutorService")
     public ExecutorService executorService() {
         return Executors.newFixedThreadPool(3);
+    }
+
+    @Bean
+    public TelegramService telegramService(TelegramConnect telegramConnect) {
+        return new TelegramServiceImpl(telegramConnect);
     }
 
     @Bean

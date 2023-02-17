@@ -11,15 +11,16 @@ import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.GitlabProperty;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
-import dev.struchkov.godfather.main.domain.BoxAnswer;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.simple.core.unit.MainUnit;
+import dev.struchkov.godfather.simple.domain.BoxAnswer;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard;
 import dev.struchkov.godfather.telegram.main.context.MailPayload;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
+import dev.struchkov.godfather.telegram.simple.context.service.TelegramService;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -36,10 +37,10 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.GET_ASSIGNEE_MERG
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.GET_TASKS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.SETTINGS;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_ADD_NEW_PROJECT;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.clickButtonRaw;
 import static dev.struchkov.godfather.telegram.simple.core.util.TriggerChecks.isLinks;
@@ -59,6 +60,7 @@ public class MenuConfig {
 
     private final ProjectParser projectParser;
 
+    private final TelegramService telegramService;
     private final ProjectService projectService;
     private final NoteService noteService;
     private final MergeRequestsService mergeRequestsService;
@@ -79,7 +81,10 @@ public class MenuConfig {
                             ).append("\n")
                             .append("\uD83D\uDCAC: ").append(message.getText())
                             .toString();
-                    return BoxAnswer.builder().recipientPersonId(personInformation.getTelegramId()).message(messageText).build();
+                    return BoxAnswer.builder()
+                            .recipientPersonId(personInformation.getTelegramId())
+                            .message(messageText)
+                            .build();
                 })
                 .build();
     }

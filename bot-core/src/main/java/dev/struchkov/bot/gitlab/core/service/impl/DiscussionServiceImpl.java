@@ -78,7 +78,7 @@ public class DiscussionServiceImpl implements DiscussionService {
             discussion.setNotification(true);
 
             if (isNeedNotifyNewNote(discussion)) {
-                notifyNewDiscussion(discussion);
+                notifyNewThread(discussion);
             } else {
                 notes.forEach(note -> notificationPersonal(discussion, note));
             }
@@ -129,33 +129,6 @@ public class DiscussionServiceImpl implements DiscussionService {
         discussion.setResolved(resolved);
 
         return repository.save(discussion);
-    }
-
-    /**
-     * <p>Уведомляет пользователя, если появился новый комментарий</p>
-     */
-    private void notifyNewDiscussion(Discussion discussion) {
-        final Note firstNote = discussion.getFirstNote();
-        final List<Note> notes = discussion.getNotes();
-
-        final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
-        final DiscussionNewNotify.DiscussionNewNotifyBuilder notifyBuilder = DiscussionNewNotify.builder()
-                .threadId(discussion.getId())
-                .mrName(mergeRequest.getTitle())
-                .authorName(firstNote.getAuthor().getName())
-                .discussionMessage(firstNote.getBody())
-                .url(firstNote.getWebUrl());
-
-        if (notes.size() > 1) {
-            for (int i = 1; i < notes.size(); i++) {
-                final Note note = notes.get(i);
-                notifyBuilder.note(
-                        new Pair<>(note.getAuthor().getName(), note.getBody())
-                );
-            }
-        }
-
-        notifyService.send(notifyBuilder.build());
     }
 
     private boolean isNeedNotifyNewNote(Discussion discussion) {
@@ -349,7 +322,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */
-    protected void notificationPersonal(Discussion discussion, Note note) {
+    private void notificationPersonal(Discussion discussion, Note note) {
         final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
         if (!WITHOUT_NOTIFY.equals(discussionLevel)) {
             final Matcher matcher = PATTERN.matcher(note.getBody());
@@ -387,6 +360,41 @@ public class DiscussionServiceImpl implements DiscussionService {
 
                 notifyService.send(notifyBuilder.build());
             }
+        }
+    }
+
+    /**
+     * <p>Уведомляет пользователя, если появился новый комментарий</p>
+     */
+    private void notifyNewThread(Discussion discussion) {
+        final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
+        if (!WITHOUT_NOTIFY.equals(discussionLevel)) {
+            final Note firstNote = discussion.getFirstNote();
+
+            final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
+            DiscussionNewNotify.DiscussionNewNotifyBuilder messageBuilder = DiscussionNewNotify.builder()
+                    .threadId(discussion.getId())
+                    .mrName(mergeRequest.getTitle())
+                    .authorName(firstNote.getAuthor().getName());
+
+            if (NOTIFY_WITH_CONTEXT.equals(discussionLevel)) {
+                final List<Note> notes = discussion.getNotes();
+
+                messageBuilder
+                        .discussionMessage(firstNote.getBody())
+                        .url(firstNote.getWebUrl());
+
+                if (notes.size() > 1) {
+                    for (int i = 1; i < notes.size(); i++) {
+                        final Note note = notes.get(i);
+                        messageBuilder.note(
+                                new Pair<>(note.getAuthor().getName(), note.getBody())
+                        );
+                    }
+                }
+            }
+
+            notifyService.send(messageBuilder.build());
         }
     }
 

@@ -3,7 +3,7 @@ package dev.struchkov.bot.gitlab.telegram.service;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
-import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.domain.BoxAnswer;
 import dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import jakarta.annotation.PostConstruct;
@@ -44,7 +44,6 @@ public class StartNotify {
                     )
                     .payload(BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW, true)
                     .build();
-
             sending.send(boxAnswer);
         }
     }

@@ -10,19 +10,17 @@ import dev.struchkov.godfather.main.domain.content.Mail;
 import dev.struchkov.godfather.simple.core.unit.AnswerText;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
-import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.ANSWER_NOTE;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 
 @Component
 @RequiredArgsConstructor
@@ -34,8 +32,6 @@ public class AnswerNoteUnit {
     private final AppSettingService settingService;
     private final NoteService noteService;
     private final DiscussionService discussionService;
-    private final ScheduledExecutorService scheduledExecutorService;
-    private final TelegramSending telegramSending;
 
     //TODO [07.02.2023|uPagge]: Можно возвращать ссылку на ответ
     @Unit(value = ANSWER_NOTE, global = true)
