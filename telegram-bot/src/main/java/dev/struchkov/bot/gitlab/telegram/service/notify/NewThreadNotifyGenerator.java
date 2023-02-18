@@ -3,7 +3,7 @@ package dev.struchkov.bot.gitlab.telegram.service.notify;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
-import dev.struchkov.haiti.utils.Pair;
+import dev.struchkov.haiti.utils.container.Pair;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

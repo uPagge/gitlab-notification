@@ -1,6 +1,6 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.task;
 
-import dev.struchkov.haiti.utils.Pair;
+import dev.struchkov.haiti.utils.container.Pair;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
