@@ -13,12 +13,13 @@ import dev.struchkov.bot.gitlab.core.service.parser.PipelineParser;
 import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
-import dev.struchkov.godfather.simple.core.unit.AnswerText;
-import dev.struchkov.godfather.simple.core.unit.MainUnit;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.domain.unit.AnswerText;
+import dev.struchkov.godfather.simple.domain.unit.MainUnit;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import dev.struchkov.godfather.telegram.starter.UnitConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -41,9 +42,9 @@ import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_OWNER
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PARSER_PRIVATE_PROJECT;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PRIVACY_SETTING;
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.TEXT_PRIVACY_SETTING_THREAD_LEVEL;
-import static dev.struchkov.godfather.main.core.unit.UnitActiveType.AFTER;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoardLine.simpleLine;
+import static dev.struchkov.godfather.main.domain.unit.UnitActiveType.AFTER;
 import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.simple.domain.BoxAnswer.replaceBoxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
@@ -60,7 +61,7 @@ import static java.text.MessageFormat.format;
  */
 @Component
 @RequiredArgsConstructor
-public class InitSettingFlow {
+public class InitSettingFlow implements UnitConfiguration {
 
     private final TelegramSending sending;
 

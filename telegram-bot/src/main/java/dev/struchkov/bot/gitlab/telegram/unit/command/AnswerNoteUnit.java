@@ -7,9 +7,10 @@ import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.service.NoteService;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
-import dev.struchkov.godfather.simple.core.unit.AnswerText;
+import dev.struchkov.godfather.simple.domain.unit.AnswerText;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
+import dev.struchkov.godfather.telegram.starter.UnitConfiguration;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 
 @Component
 @RequiredArgsConstructor
-public class AnswerNoteUnit {
+public class AnswerNoteUnit implements UnitConfiguration {
 
     private static final Pattern NOTE_LINK = Pattern.compile("#note_\\d+$");
 

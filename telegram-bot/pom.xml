@@ -19,17 +19,7 @@
 
         <dependency>
             <groupId>dev.struchkov.godfather.telegram</groupId>
-            <artifactId>telegram-consumer-simple</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.struchkov.godfather.telegram</groupId>
-            <artifactId>telegram-sender-simple</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.struchkov.godfather.telegram</groupId>
-            <artifactId>telegram-core-simple</artifactId>
+            <artifactId>telegram-bot-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

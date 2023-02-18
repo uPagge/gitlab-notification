@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <godfather.telegram.core.version>0.0.49</godfather.telegram.core.version>
+        <godfather.telegram.version>0.0.50-SNAPSHOT</godfather.telegram.version>
         <haiti.utils.version>2.6.0</haiti.utils.version>
         <haiti.utils.fields.version>0.0.9</haiti.utils.fields.version>
         <haiti.filter.version>0.0.5</haiti.filter.version>
@@ -129,20 +129,8 @@
 
             <dependency>
                 <groupId>dev.struchkov.godfather.telegram</groupId>
-                <artifactId>telegram-consumer-simple</artifactId>
-                <version>${godfather.telegram.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>dev.struchkov.godfather.telegram</groupId>
-                <artifactId>telegram-core-simple</artifactId>
-                <version>${godfather.telegram.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>dev.struchkov.godfather.telegram</groupId>
-                <artifactId>telegram-sender-simple</artifactId>
-                <version>${godfather.telegram.core.version}</version>
+                <artifactId>telegram-bot-spring-boot-starter</artifactId>
+                <version>${godfather.telegram.version}</version>
             </dependency>
 
             <!-- /SADTECH -->

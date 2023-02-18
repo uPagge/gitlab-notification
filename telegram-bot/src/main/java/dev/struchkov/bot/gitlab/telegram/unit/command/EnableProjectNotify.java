@@ -8,11 +8,12 @@ import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
-import dev.struchkov.godfather.simple.core.unit.AnswerText;
+import dev.struchkov.godfather.simple.domain.unit.AnswerText;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment.Arg;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import dev.struchkov.godfather.telegram.starter.UnitConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ import static dev.struchkov.godfather.simple.domain.BoxAnswer.replaceBoxAnswer;
 
 @Component
 @RequiredArgsConstructor
-public class EnableProjectNotify {
+public class EnableProjectNotify implements UnitConfiguration {
 
     private final ProjectService projectService;
     private final MergeRequestsService mergeRequestsService;

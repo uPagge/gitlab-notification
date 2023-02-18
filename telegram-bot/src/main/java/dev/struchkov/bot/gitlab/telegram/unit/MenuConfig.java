@@ -13,14 +13,14 @@ import dev.struchkov.bot.gitlab.core.service.parser.ProjectParser;
 import dev.struchkov.bot.gitlab.telegram.utils.UnitName;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
-import dev.struchkov.godfather.simple.core.unit.AnswerText;
-import dev.struchkov.godfather.simple.core.unit.MainUnit;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.domain.unit.AnswerText;
+import dev.struchkov.godfather.simple.domain.unit.MainUnit;
 import dev.struchkov.godfather.telegram.domain.attachment.LinkAttachment;
 import dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard;
 import dev.struchkov.godfather.telegram.main.context.MailPayload;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
-import dev.struchkov.godfather.telegram.simple.context.service.TelegramService;
+import dev.struchkov.godfather.telegram.starter.UnitConfiguration;
 import dev.struchkov.haiti.utils.Checker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -53,14 +53,13 @@ import static java.util.Collections.singleton;
  */
 @Component
 @RequiredArgsConstructor
-public class MenuConfig {
+public class MenuConfig implements UnitConfiguration {
 
     private final GitlabProperty gitlabProperty;
     private final PersonInformation personInformation;
 
     private final ProjectParser projectParser;
 
-    private final TelegramService telegramService;
     private final ProjectService projectService;
     private final NoteService noteService;
     private final MergeRequestsService mergeRequestsService;

@@ -6,11 +6,12 @@ import dev.struchkov.bot.gitlab.context.service.DiscussionService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.godfather.main.domain.annotation.Unit;
 import dev.struchkov.godfather.main.domain.content.Mail;
-import dev.struchkov.godfather.simple.core.unit.AnswerText;
+import dev.struchkov.godfather.simple.domain.unit.AnswerText;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment;
 import dev.struchkov.godfather.telegram.domain.attachment.ButtonClickAttachment.Arg;
 import dev.struchkov.godfather.telegram.main.core.util.Attachments;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
+import dev.struchkov.godfather.telegram.starter.UnitConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.in
 
 @Component
 @RequiredArgsConstructor
-public class DisableNotifyThreadUnit {
+public class DisableNotifyThreadUnit implements UnitConfiguration {
 
     public static final String WARNING_ABOUT_DISABLE_NOTIFY = Icons.DISABLE_NOTIFY + """
              *Disabling notifications*
