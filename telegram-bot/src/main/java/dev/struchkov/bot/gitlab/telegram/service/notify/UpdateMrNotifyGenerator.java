@@ -14,6 +14,7 @@ import static dev.struchkov.godfather.main.domain.keyboard.simple.SimpleKeyBoard
 import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.urlButton;
+import static dev.struchkov.haiti.utils.Checker.checkNotBlank;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
@@ -27,11 +28,16 @@ public class UpdateMrNotifyGenerator implements NotifyBoxAnswerGenerator<UpdateM
                 .append(Icons.HR)
                 .append(notify.getTitle());
 
-        if (notify.getAllTasks() > 0) {
+        if (checkNotBlank(notify.getComment())) {
+            builder.append(Icons.HR)
+                    .append(notify.getComment());
+        }
+
+        if (checkNotNull(notify.getAllTasks()) && notify.getAllTasks() > 0) {
             builder.append(Icons.HR)
                     .append("All tasks: ").append(notify.getAllResolvedTasks()).append("/").append(notify.getAllTasks());
 
-            if (notify.getPersonTasks() > 0) {
+            if (checkNotNull(notify.getPersonTasks()) && notify.getPersonTasks() > 0) {
                 builder.append("\nYour tasks: ").append(notify.getPersonResolvedTasks()).append("/").append(notify.getPersonTasks());
             }
         }

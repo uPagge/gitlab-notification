@@ -17,6 +17,7 @@ public class UpdateMrNotify extends MrNotify {
     private final Long allResolvedTasks;
     private final Long personTasks;
     private final Long personResolvedTasks;
+    private final String comment;
 
     @Builder
     private UpdateMrNotify(
@@ -24,20 +25,21 @@ public class UpdateMrNotify extends MrNotify {
             String name,
             String url,
             String author,
-            String projectKey,
+            String projectName,
             Long allTasks,
             Long allResolvedTasks,
             Long personTasks,
-            Long personResolvedTasks
+            Long personResolvedTasks,
+            String comment
     ) {
-        super(mrId, projectKey, name, url);
+        super(mrId, projectName, name, url);
         this.author = author;
         this.allTasks = allTasks;
         this.allResolvedTasks = allResolvedTasks;
         this.personTasks = personTasks;
         this.personResolvedTasks = personResolvedTasks;
+        this.comment = comment;
     }
-
 
     @Override
     public String getType() {

@@ -283,17 +283,17 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     private void notifyAboutUpdate(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         final Long botUserGitlabId = personInformation.getId();
-
         if (
                 !botUserGitlabId.equals(mergeRequest.getAuthor().getId()) // Автор MR не пользователь приложения
                 && !oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit()) // Изменилась дата последнего коммита
                 && !mergeRequest.isConflict() // MR не находится в состоянии конфликта
+                && !botUserGitlabId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан НЕ пользователем бота
         ) {
-
             long allTask = 0;
             long resolvedTask = 0;
             long allYouTasks = 0;
             long resolvedYouTask = 0;
+
             final List<Discussion> discussions = discussionService.getAllByMergeRequestId(oldMergeRequest.getId());
             for (Discussion discussion : discussions) {
                 if (checkNotNull(discussion.getResponsible())) {
@@ -310,19 +310,23 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
                     }
                 }
             }
-            notifyService.send(
-                    UpdateMrNotify.builder()
-                            .mrId(oldMergeRequest.getId())
-                            .author(oldMergeRequest.getAuthor().getName())
-                            .name(oldMergeRequest.getTitle())
-                            .projectKey(project.getName())
-                            .url(oldMergeRequest.getWebUrl())
-                            .allTasks(allTask)
-                            .allResolvedTasks(resolvedTask)
-                            .personTasks(allYouTasks)
-                            .personResolvedTasks(resolvedYouTask)
-                            .build()
-            );
+
+            final UpdateMrNotify.UpdateMrNotifyBuilder notifyBuilder = UpdateMrNotify.builder()
+                    .mrId(oldMergeRequest.getId())
+                    .author(oldMergeRequest.getAuthor().getName())
+                    .name(oldMergeRequest.getTitle())
+                    .projectName(project.getName())
+                    .url(oldMergeRequest.getWebUrl())
+                    .allTasks(allTask)
+                    .allResolvedTasks(resolvedTask)
+                    .personTasks(allYouTasks)
+                    .personResolvedTasks(resolvedYouTask);
+
+            if (oldMergeRequest.isConflict() && !mergeRequest.isConflict()) {
+                notifyBuilder.comment("The conflict has been resolved");
+            }
+
+            notifyService.send(notifyBuilder.build());
         }
     }
 
