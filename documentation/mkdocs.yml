@@ -26,8 +26,8 @@ theme:
     repo: fontawesome/brands/github
   palette:
     - scheme: default
-      primary: light blue
-      accent: indigo
+      primary: deep orange
+      accent: orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
