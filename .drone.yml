@@ -98,8 +98,46 @@ steps:
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
       - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" .
+
+---
+kind: pipeline
+type: docker
+name: create-docs-site
+
+trigger:
+  branch:
+    - docs
+    - master
+
+steps:
+  - name: build site
+    image: upagge/mkdocs-material
+    environment:
+      SSH_DEPLOY_KEY:
+        from_secret: SSH_DEPLOY_KEY
+      SSH_DEPLOY_HOST:
+        from_secret: SSH_DEPLOY_HOST
+      SSH_DEPLOY_PORT:
+        from_secret: SSH_DEPLOY_PORT
+      SSH_DEPLOY_PATH:
+        from_secret: SSH_DEPLOY_PATH
+      SSH_DEPLOY_USER:
+        from_secret: SSH_DEPLOY_USER
+    commands:
+      - eval $(ssh-agent -s)
+      - mkdir -p ~/.ssh
+      - echo "$SSH_DEPLOY_KEY" >> ~/.ssh/id_rsa
+      - chmod 700 ~/.ssh
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keyscan -p $SSH_DEPLOY_PORT $SSH_DEPLOY_HOST >> ~/.ssh/known_hosts
+      - chmod 644 ~/.ssh/known_hosts
+      - cd documentation
+      - mkdocs build
+      - mv site gitlab-notification
+      - scp -r -P $SSH_DEPLOY_PORT ./gitlab-notification $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PATH
+
 ---
 kind: signature
-hmac: 35a90784852fd87ed37036310873fb0c02457fb3dafd79cd2c1661b36b56117a
+hmac: 8dbac280687d64b7b49961e75c59ea29ee1dfd395b8284404a1371b30f11dbb3
 
 ...

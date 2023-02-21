@@ -1,0 +1,91 @@
+site_name: GitLab Notification Bot
+site_url: https://docs.struchkov.dev/godfather-telegram/
+
+repo_url: https://github.com/uPagge/gitlab-notification
+repo_name: uPagge/gitlab-notification
+
+#edit_uri: edit/master/documentation/docs
+
+nav:
+  - 'index.md'
+  - 'Быстрый старт':
+      - 'getting-started/installing-dependencies.md'
+      - 'getting-started/configuration.md'
+#  - 'Гайды':
+  - 'Архитектура':
+      - 'architecture/concept.md'
+#  - 'ChangeLog':
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: ru
+#  favicon: assets/favicon.ico
+  icon:
+    logo: simple/gitlab
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: default
+      primary: light blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - navigation.sections
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+    - search
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.code.copy
+    - toc.follow
+  plugins:
+    - social
+    - meta
+    - tags
+    - search:
+        lang: ru
+    - git-revision-date-localized:
+        enable_creation_date: true
+markdown_extensions:
+  - toc:
+      permalink: true
+      toc_depth: 3
+      title: Содержание
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.snippets
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.smartsymbols
+  - pymdownx.betterem
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra:
+  generator: false
+  version:
+    provider: mike
+#  alternate:
+#    - name: Русский
+#      link: /ru/
+#      lang: ru
