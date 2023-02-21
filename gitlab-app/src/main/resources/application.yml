@@ -21,10 +21,13 @@ logging:
   level:
     "dev.struchkov": ${LOG_LEVEL:info}
 
-telegram-bot:
-  bot-username: ${TELEGRAM_BOT_USERNAME}
-  bot-token: ${TELEGRAM_BOT_TOKEN}
-  proxy-config:
+telegram:
+  bot:
+    username: ${TELEGRAM_BOT_USERNAME}
+    token: ${TELEGRAM_BOT_TOKEN}
+    autoresponder:
+      threads: ${AUTORESPONDER_THREADS:8}
+  proxy:
     enable: ${PROXY_ENABLE:false}
     host: ${PROXY_HOST:}
     port: ${PROXY_PORT:}
