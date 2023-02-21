@@ -12,7 +12,7 @@ nav:
       - 'getting-started/configuration.md'
   - 'Архитектура':
       - 'architecture/concept.md'
-  - 'changelog.md':
+  - 'changelog.md'
 
 theme:
   name: material
