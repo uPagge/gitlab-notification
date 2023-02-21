@@ -1,16 +1,20 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.project;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
+
+import static dev.struchkov.bot.gitlab.context.domain.notify.project.NewProjectNotifyFields.CLASS_NAME;
 
 /**
  * @author upagge 15.01.2021
  */
 @Getter
+@FieldNames
 public final class NewProjectNotify implements Notify {
 
-    public static final String TYPE = "NewProjectNotify";
+    public static final String TYPE = CLASS_NAME;
 
     private final Long projectId;
     private final String projectName;

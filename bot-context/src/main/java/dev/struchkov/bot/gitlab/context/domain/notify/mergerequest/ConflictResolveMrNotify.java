@@ -1,12 +1,16 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
 
+import static dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.ConflictResolveMrNotifyFields.CLASS_NAME;
+
 @Getter
+@FieldNames
 public class ConflictResolveMrNotify extends MrNotify {
 
-    public static final String TYPE = "ConflictResolveMrNotify";
+    public static final String TYPE = CLASS_NAME;
 
     private final String sourceBranch;
 

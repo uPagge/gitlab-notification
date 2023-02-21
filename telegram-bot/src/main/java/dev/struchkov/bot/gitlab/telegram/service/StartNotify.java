@@ -1,17 +1,19 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
-import dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
+import static dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW;
 
 /**
  * @author upagge 19.01.2021
@@ -39,10 +41,11 @@ public class StartNotify {
                     )
                     .keyBoard(
                             inlineKeyBoard(
-                                    simpleButton("Open General Menu", "/start")
+                                    simpleButton(Icons.VIEW, DELETE_MESSAGE),
+                                    simpleButton("Open Menu", "/start")
                             )
                     )
-                    .payload(BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW, true)
+                    .payload(DISABLE_WEB_PAGE_PREVIEW, true)
                     .build();
             sending.send(boxAnswer);
         }

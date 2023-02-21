@@ -1,10 +1,12 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.comment;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@FieldNames
 public final class NewCommentNotify implements Notify {
 
     public static final String TYPE = "NewCommentNotify";

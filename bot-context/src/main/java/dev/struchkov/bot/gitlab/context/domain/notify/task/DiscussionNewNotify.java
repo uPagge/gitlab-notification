@@ -1,19 +1,23 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.task;
 
 import dev.struchkov.haiti.utils.container.Pair;
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
 
 import java.util.List;
 
+import static dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotifyFields.CLASS_NAME;
+
 /**
  * @author upagge 10.09.2020
  */
 @Getter
+@FieldNames
 public class DiscussionNewNotify extends TaskNotify {
 
-    public static final String TYPE = "DiscussionNewNotify";
+    public static final String TYPE = CLASS_NAME;
 
     private final String threadId;
     private final String mrName;

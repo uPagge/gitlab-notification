@@ -1,14 +1,18 @@
 package dev.struchkov.bot.gitlab.context.domain.notify.mergerequest;
 
+import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Set;
 
+import static dev.struchkov.bot.gitlab.context.domain.notify.mergerequest.NewMrForReviewFields.CLASS_NAME;
+
 @Getter
+@FieldNames
 public class NewMrForReview extends NewMrNotify {
 
-    public static final String TYPE = "NewMrForReview";
+    public static final String TYPE = CLASS_NAME;
 
     private final String assignee;
 
