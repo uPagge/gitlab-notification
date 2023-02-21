@@ -373,6 +373,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
             final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
             DiscussionNewNotify.DiscussionNewNotifyBuilder messageBuilder = DiscussionNewNotify.builder()
+                    .url(firstNote.getWebUrl())
                     .threadId(discussion.getId())
                     .mrName(mergeRequest.getTitle())
                     .authorName(firstNote.getAuthor().getName());
@@ -381,8 +382,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                 final List<Note> notes = discussion.getNotes();
 
                 messageBuilder
-                        .discussionMessage(firstNote.getBody())
-                        .url(firstNote.getWebUrl());
+                        .discussionMessage(firstNote.getBody());
 
                 if (notes.size() > 1) {
                     for (int i = 1; i < notes.size(); i++) {
