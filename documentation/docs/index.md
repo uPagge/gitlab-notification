@@ -1,8 +1,8 @@
 ---
+title: Быстрый старт
 hide:
-  - navigation
-  - comments
-title: Home
+    - toc
+    - comments
 
 ---
 
