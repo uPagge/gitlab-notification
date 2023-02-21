@@ -9,12 +9,10 @@ repo_name: uPagge/gitlab-notification
 nav:
   - 'index.md'
   - 'Быстрый старт':
-      - 'getting-started/installing-dependencies.md'
       - 'getting-started/configuration.md'
-#  - 'Гайды':
   - 'Архитектура':
       - 'architecture/concept.md'
-#  - 'ChangeLog':
+  - 'changelog.md':
 
 theme:
   name: material

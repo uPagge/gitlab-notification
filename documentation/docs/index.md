@@ -6,4 +6,4 @@ title: Home
 
 ---
 
-# Godfather Telegram – Фреймворк для создания Telegram ботов
+# GitLab Notification – Персональный бот в Telegram для GitLab
