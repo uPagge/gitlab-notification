@@ -1,6 +1,0 @@
----
-hide:
-- comments
-title: ChangeLog
-
----

@@ -42,7 +42,7 @@ theme:
     - navigation.sections
     - navigation.tracking
 #    - navigation.tabs
-    - navigation.tabs.sticky
+#    - navigation.tabs.sticky
     - navigation.footer
     - search
     - search.suggest
@@ -50,6 +50,7 @@ theme:
     - content.action.edit
     - content.code.copy
     - toc.follow
+    - toc.integrate
   plugins:
     - social
     - meta
@@ -83,6 +84,9 @@ markdown_extensions:
 
 extra:
   generator: false
+  analytics:
+    provider: custom
+    property: foobar
   version:
     provider: mike
 #  alternate:
