@@ -107,7 +107,9 @@ name: create-docs-site
 trigger:
   branch:
     - docs
-    - master
+
+clone:
+  depth: 1
 
 steps:
   - name: build site
@@ -115,6 +117,30 @@ steps:
     volumes:
       - name: mkdocs_cache
         path: ${DRONE_WORKSPACE}/documentation/.cache
+    commands:
+      - cd documentation
+      - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases develop
+
+image_pull_secrets:
+  - DOCKER_AUTH
+
+volumes:
+  - name: mkdocs_cache
+    host:
+      path: /drone/volume/mkdocs_cache/gitlab_notification
+
+---
+kind: pipeline
+type: docker
+name: deploy-develop-docs-site
+
+trigger:
+  branch:
+    - docs-deploy
+
+steps:
+  - name: build site
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     environment:
       SSH_DEPLOY_KEY:
         from_secret: SSH_DEPLOY_KEY
@@ -134,20 +160,13 @@ steps:
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -p $SSH_DEPLOY_PORT $SSH_DEPLOY_HOST >> ~/.ssh/known_hosts
       - chmod 644 ~/.ssh/known_hosts
-      - cd documentation
-      - mkdocs build --site-dir gitlab-notification
       - scp -r -P $SSH_DEPLOY_PORT ./gitlab-notification $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PATH
 
 image_pull_secrets:
   - DOCKER_AUTH
 
-volumes:
-  - name: mkdocs_cache
-    host:
-      path: /drone/volume/mkdocs_cache/gitlab_notification
-
 ---
 kind: signature
-hmac: f740dcba9e4e0d38ddd1789bd5eaa75502af9137c6e6c0710be953c61233d90d
+hmac: 3c5571db9fadbd17a08aab8822828acf29f49ea480ccf7e90e0a0e19afe2b1aa
 
 ...
