@@ -1,0 +1,40 @@
+---
+kind: pipeline
+type: docker
+name: deploy-develop-docs-site
+
+trigger:
+  branch:
+    - docs-deploy
+
+steps:
+  - name: build site
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    environment:
+      SSH_DEPLOY_KEY:
+        from_secret: SSH_DEPLOY_KEY
+      SSH_DEPLOY_HOST:
+        from_secret: SSH_DEPLOY_HOST
+      SSH_DEPLOY_PORT:
+        from_secret: SSH_DEPLOY_PORT
+      SSH_DEPLOY_PATH:
+        from_secret: SSH_DEPLOY_PATH
+      SSH_DEPLOY_USER:
+        from_secret: SSH_DEPLOY_USER
+    commands:
+      - eval $(ssh-agent -s)
+      - mkdir -p ~/.ssh
+      - echo "$SSH_DEPLOY_KEY" >> ~/.ssh/id_rsa
+      - chmod 700 ~/.ssh
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keyscan -p $SSH_DEPLOY_PORT $SSH_DEPLOY_HOST >> ~/.ssh/known_hosts
+      - chmod 644 ~/.ssh/known_hosts
+      - scp -r -P $SSH_DEPLOY_PORT ./gitlab-notification $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PATH
+
+image_pull_secrets:
+  - DOCKER_AUTH
+---
+kind: signature
+hmac: e69cfd9c4c2c1a5c23907bc68bbe1cb2663194be5dd054492977f02f58e612d6
+
+...
