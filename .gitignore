@@ -32,3 +32,5 @@ build/
 /.mvn/wrapper/
 /mvnw
 /mvnw.cmd
+/documentation/site/
+/documentation/.cache/
