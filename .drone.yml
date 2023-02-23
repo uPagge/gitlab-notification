@@ -111,7 +111,7 @@ trigger:
 
 steps:
   - name: build site
-    image: upagge/mkdocs-material
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     environment:
       SSH_DEPLOY_KEY:
         from_secret: SSH_DEPLOY_KEY
@@ -136,8 +136,11 @@ steps:
       - mv site gitlab-notification
       - scp -r -P $SSH_DEPLOY_PORT ./gitlab-notification $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PATH
 
+image_pull_secrets:
+  - DOCKER_AUTH
+
 ---
 kind: signature
-hmac: 8dbac280687d64b7b49961e75c59ea29ee1dfd395b8284404a1371b30f11dbb3
+hmac: 3e1e5987a50eddb152d276daa517ab4f1c8eae18691ca77edd26c3dbd2000892
 
 ...
