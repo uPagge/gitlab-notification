@@ -125,6 +125,7 @@ steps:
       - mkdir -p ~/.ssh
       - echo "$GIT_SSH" >> ~/.ssh/id_rsa
       - echo "$SSH_CONFIG" >> ~/.ssh/config
+      - echo "$SSH_CONFIG"
       - chmod 700 ~/.ssh
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -p 222 git.struchkov.dev >> ~/.ssh/known_hosts
