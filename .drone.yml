@@ -134,7 +134,6 @@ steps:
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
       - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
-      - git branch
       - cd documentation
       - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases develop
 
@@ -148,6 +147,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 465d01bb952ab7c2edad46bba56625a162ad3a0f92b66a2061ceaf5568f2497e
+hmac: 7384641fafee0cb550bd211f736fae6193ebb52f2209b834e74d85117439f90d
 
 ...
