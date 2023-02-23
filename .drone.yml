@@ -121,14 +121,15 @@ steps:
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
-      SSH_CONFIG:
-        from_secret: SSH_CONFIG
+#      SSH_CONFIG:
+#        from_secret: SSH_CONFIG
+      GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -p 222"
     commands:
       - eval $(ssh-agent -s)
       - mkdir -p ~/.ssh
-      - echo "$GIT_SSH" >> ~/.ssh/id_rsa
-      - echo "$SSH_CONFIG" >> ~/.ssh/config
       - chmod 700 ~/.ssh
+      - echo "$GIT_SSH" >> ~/.ssh/id_rsa
+#      - echo "$SSH_CONFIG" >> ~/.ssh/config
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -p 222 git.struchkov.dev >> ~/.ssh/known_hosts
       - chmod 644 ~/.ssh/known_hosts
