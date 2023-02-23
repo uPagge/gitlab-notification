@@ -117,6 +117,8 @@ steps:
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
+      SSH_CONFIG:
+        from_secret: SSH_CONFIG
     volumes:
       - name: mkdocs_cache
         path: ${DRONE_WORKSPACE}/documentation/.cache
@@ -124,13 +126,14 @@ steps:
       - eval $(ssh-agent -s)
       - mkdir -p ~/.ssh
       - echo "$GIT_SSH" >> ~/.ssh/id_rsa
+      - echo "$SSH_CONFIG" >> ~/.ssh/config
       - chmod 700 ~/.ssh
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -p 222 git.struchkov.dev >> ~/.ssh/known_hosts
       - chmod 644 ~/.ssh/known_hosts
       - git config --global user.name "${DRONE_COMMIT_AUTHOR_NAME}"
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
-      - git remote add deploy ${DRONE_GIT_SSH_URL}
+      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
       - cd documentation
       - mike deploy --prefix gitlab-notification --branch docs-deploy --remote deploy --push --update-aliases develop
 
@@ -144,6 +147,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 0d7c7b3a7531170530a785de9dac41a33f9c47045486e24fa1947ac04cfdd055
+hmac: 6a9f7ebe49fa8ba283d5ab28291a66de44027380d159142b422999087fa931cc
 
 ...
