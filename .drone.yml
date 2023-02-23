@@ -135,10 +135,11 @@ steps:
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
       - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
       - cd documentation
-      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
-      - git log
-      - git status
       - git branch
+      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
+      - git checkout docs-deploy
+      - git branch
+      - git log
       - git remote -v
       - git push deploy HEAD:docs-deploy
 
