@@ -135,8 +135,7 @@ steps:
       - ssh-keyscan -p $SSH_DEPLOY_PORT $SSH_DEPLOY_HOST >> ~/.ssh/known_hosts
       - chmod 644 ~/.ssh/known_hosts
       - cd documentation
-      - mkdocs build
-      - mv site gitlab-notification
+      - mkdocs build --site-dir gitlab-notification
       - scp -r -P $SSH_DEPLOY_PORT ./gitlab-notification $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PATH
 
 image_pull_secrets:

@@ -3,7 +3,6 @@ site_url: https://docs.struchkov.dev/gitlab-notification/
 
 repo_url: https://github.com/uPagge/gitlab-notification
 repo_name: uPagge/gitlab-notification
-
 #edit_uri: edit/master/documentation/docs
 
 nav:
@@ -35,7 +34,6 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-
   features:
     - navigation.instant
     - navigation.indexes
@@ -49,18 +47,27 @@ theme:
     - content.code.copy
     - toc.follow
     - toc.integrate
-  plugins:
-    - optimize:
-        concurrency: 1
-        optimize_jpg_quality: 90
-    - social
-    - meta
-    - tags
-    - search:
-        lang: ru
-    - git-revision-date-localized:
-        enable_creation_date: true
+plugins:
+  - social
+  - meta
+  - tags
+  - search:
+      lang: ru
+#  - optimize:
+#      concurrency: 1
+#      optimize_jpg_quality: 90
+
 markdown_extensions:
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - admonition
   - attr_list
   - md_in_html
@@ -68,23 +75,6 @@ markdown_extensions:
       permalink: true
       toc_depth: 3
       title: Содержание
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.snippets
-  - pymdownx.inlinehilite
-  - pymdownx.details
-  - pymdownx.smartsymbols
-  - pymdownx.betterem
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 extra:
   generator: false
