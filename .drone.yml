@@ -108,17 +108,16 @@ trigger:
   branch:
     - docs
 
+clone:
+  disable: true
+
 steps:
-  - name: build site
-    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+
+  - name: clone
+    image: maven:3.8.5-openjdk-17
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
-      SSH_CONFIG:
-        from_secret: SSH_CONFIG
-    volumes:
-      - name: mkdocs_cache
-        path: ${DRONE_WORKSPACE}/documentation/.cache
     commands:
       - eval $(ssh-agent -s)
       - mkdir -p ~/.ssh
@@ -130,14 +129,20 @@ steps:
       - chmod 644 ~/.ssh/known_hosts
       - git config --global user.name "${DRONE_COMMIT_AUTHOR_NAME}"
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
-      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
-      - cd documentation
+      - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
+      - git checkout $DRONE_COMMIT
       - git branch
+
+  - name: build site
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    volumes:
+      - name: mkdocs_cache
+        path: ${DRONE_WORKSPACE}/documentation/.cache
+    commands:
+#      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
+      - cd documentation
       - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
       - git checkout docs-deploy
-      - git branch
-      - git log
-      - git remote -v
       - git push deploy HEAD:docs-deploy
 
 image_pull_secrets:
