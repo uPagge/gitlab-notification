@@ -114,7 +114,10 @@ clone:
 steps:
 
   - name: clone
-    image: maven:3.8.5-openjdk-17
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    volumes:
+      - name: mkdocs_cache
+        path: ${DRONE_WORKSPACE}/documentation/.cache
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
@@ -135,18 +138,17 @@ steps:
       - git clone ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
       - git branch
+#      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
+#      - cd documentation
+#      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
+#      - git checkout docs-deploy
+#      - git push deploy HEAD:docs-deploy
 
   - name: build site
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
-    volumes:
-      - name: mkdocs_cache
-        path: ${DRONE_WORKSPACE}/documentation/.cache
+
     commands:
-#      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
-      - cd documentation
-      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
-      - git checkout docs-deploy
-      - git push deploy HEAD:docs-deploy
+#
 
 image_pull_secrets:
   - DOCKER_AUTH
