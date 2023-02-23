@@ -136,6 +136,8 @@ steps:
       - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
       - cd documentation
       - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
+      - git log
+      - git remote -v
       - git push deploy HEAD:docs-deploy
 
 image_pull_secrets:
@@ -148,6 +150,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 3910c70de927dc9da8e879ffb9e3adb9551f99f100f551bf72b5772dc15ff886
+hmac: d1eecf95b6cbdaf4055bbb2228c752cd81a837708979bb02d84a8eb2a2243819
 
 ...
