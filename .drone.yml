@@ -108,9 +108,6 @@ trigger:
   branch:
     - docs
 
-clone:
-  depth: 1
-
 steps:
   - name: build site
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
