@@ -1,4 +1,4 @@
-site_name: GitLab Notification Bot
+site_name: GitLab Notification
 site_url: https://docs.struchkov.dev/gitlab-notification/
 
 repo_url: https://github.com/uPagge/gitlab-notification
@@ -62,14 +62,17 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - attr_list
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - admonition
-  - attr_list
   - md_in_html
   - toc:
       permalink: true
