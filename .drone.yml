@@ -135,7 +135,8 @@ steps:
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
       - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
       - cd documentation
-      - mike deploy --prefix gitlab-notification --branch docs-deploy --remote deploy --push --update-aliases develop
+      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
+      - git push deploy HEAD:docs-deploy
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -147,6 +148,6 @@ volumes:
 
 ---
 kind: signature
-hmac: 6a9f7ebe49fa8ba283d5ab28291a66de44027380d159142b422999087fa931cc
+hmac: 3910c70de927dc9da8e879ffb9e3adb9551f99f100f551bf72b5772dc15ff886
 
 ...
