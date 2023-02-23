@@ -134,7 +134,7 @@ steps:
       - chmod 644 ~/.ssh/known_hosts
       - git config --global user.name "${DRONE_COMMIT_AUTHOR_NAME}"
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
-      - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
+      - git clone ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
       - git branch
 #      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
