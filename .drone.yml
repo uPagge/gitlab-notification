@@ -137,6 +137,8 @@ steps:
       - cd documentation
       - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
       - git log
+      - git status
+      - git branch
       - git remote -v
       - git push deploy HEAD:docs-deploy
 
