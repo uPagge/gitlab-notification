@@ -114,7 +114,7 @@ clone:
 steps:
 
   - name: clone
-    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    image: alpine/git
     volumes:
       - name: mkdocs_cache
         path: ${DRONE_WORKSPACE}/documentation/.cache
@@ -143,12 +143,6 @@ steps:
 #      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
 #      - git checkout docs-deploy
 #      - git push deploy HEAD:docs-deploy
-
-  - name: build site
-    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
-
-    commands:
-#
 
 image_pull_secrets:
   - DOCKER_AUTH
