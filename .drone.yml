@@ -114,22 +114,19 @@ clone:
 steps:
 
   - name: clone
-    image: alpine/git
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     volumes:
       - name: mkdocs_cache
         path: ${DRONE_WORKSPACE}/documentation/.cache
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
-#      SSH_CONFIG:
-#        from_secret: SSH_CONFIG
       GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -p 222"
     commands:
       - eval $(ssh-agent -s)
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
       - echo "$GIT_SSH" >> ~/.ssh/id_rsa
-#      - echo "$SSH_CONFIG" >> ~/.ssh/config
       - chmod 600 ~/.ssh/id_rsa
       - ssh-keyscan -p 222 git.struchkov.dev >> ~/.ssh/known_hosts
       - chmod 644 ~/.ssh/known_hosts
@@ -138,11 +135,8 @@ steps:
       - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
       - git branch
-#      - git remote add deploy ssh://git@git.struchkov.dev/Telegram-Bots/gitlab-notification.git
-#      - cd documentation
-#      - mike deploy --prefix gitlab-notification --branch docs-deploy --update-aliases develop
-#      - git checkout docs-deploy
-#      - git push deploy HEAD:docs-deploy
+      - cd documentation
+      - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases develop
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -154,6 +148,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d1eecf95b6cbdaf4055bbb2228c752cd81a837708979bb02d84a8eb2a2243819
+hmac: 465d01bb952ab7c2edad46bba56625a162ad3a0f92b66a2061ceaf5568f2497e
 
 ...
