@@ -112,6 +112,9 @@ trigger:
 steps:
   - name: build site
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    volumes:
+      - name: mkdocs_cache
+        path: ${DRONE_WORKSPACE}/documentation/.cache
     environment:
       SSH_DEPLOY_KEY:
         from_secret: SSH_DEPLOY_KEY
@@ -139,8 +142,13 @@ steps:
 image_pull_secrets:
   - DOCKER_AUTH
 
+volumes:
+  - name: mkdocs_cache
+    host:
+      path: /drone/volume/mkdocs_cache/gitlab_notification
+
 ---
 kind: signature
-hmac: 3e1e5987a50eddb152d276daa517ab4f1c8eae18691ca77edd26c3dbd2000892
+hmac: 5a4817523170ac82c6061ebe98fae73a28b2d10df2b699329e729814510a8c87
 
 ...

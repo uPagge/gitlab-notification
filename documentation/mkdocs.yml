@@ -41,8 +41,6 @@ theme:
     - navigation.indexes
     - navigation.sections
     - navigation.tracking
-#    - navigation.tabs
-#    - navigation.tabs.sticky
     - navigation.footer
     - search
     - search.suggest
@@ -52,6 +50,9 @@ theme:
     - toc.follow
     - toc.integrate
   plugins:
+    - optimize:
+        concurrency: 1
+        optimize_jpg_quality: 90
     - social
     - meta
     - tags
@@ -60,6 +61,9 @@ theme:
     - git-revision-date-localized:
         enable_creation_date: true
 markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
       toc_depth: 3
