@@ -25,7 +25,7 @@ public class NewThreadNotifyGenerator implements NotifyBoxAnswerGenerator<Discus
 
     @Override
     public BoxAnswer generate(DiscussionNewNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.TASK).append(" *New Thread in your MR*")
+        final StringBuilder builder = new StringBuilder(Icons.THREAD).append(" *New Thread in your MR*")
                 .append(Icons.HR)
                 .append(Icons.link(escapeMarkdown(notify.getMrName()), notify.getUrl()))
                 .append(Icons.HR)

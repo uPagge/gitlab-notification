@@ -15,7 +15,7 @@ public class ThreadCloseNotifyGenerate implements NotifyBoxAnswerGenerator<TaskC
     @Override
     public BoxAnswer generate(TaskCloseNotify notify) {
 
-        final StringBuilder builder = new StringBuilder(Icons.TASK).append(" *Closed ").append(link("task", notify.getUrl()))
+        final StringBuilder builder = new StringBuilder(Icons.THREAD).append(" *Closed ").append(link("task", notify.getUrl()))
                 .append(Icons.HR)
                 .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessageTask()));
 

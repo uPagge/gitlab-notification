@@ -13,7 +13,7 @@ public class Icons {
     public static final String AUTHOR = "\uD83D\uDC68\u200D\uD83D\uDCBB️";
     public static final String UPDATE = "\uD83D\uDD04";
     public static final String COMMENT = "\uD83D\uDCAC";
-    public static final String TASK = "\uD83D\uDCBC";
+    public static final String THREAD = "\uD83E\uDDF5";
     public static final String ARROW = " ➜ ";
     public static final String DANGEROUS = "⚠️";
     public static final String GREEN_CIRCLE = "\uD83D\uDFE2";
@@ -27,7 +27,6 @@ public class Icons {
     public static final String YES = "✅";
     public static final String NO = "❌";
     public static final String NOTIFY = "\uD83D\uDD14";
-    public static final String NO_PROCESSING = "\uD83D\uDDD1";
     public static final String GOOD = "\uD83D\uDC4D";
 
     private Icons() {
