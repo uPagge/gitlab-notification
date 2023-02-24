@@ -26,14 +26,14 @@ public class NewThreadNotifyGenerator implements NotifyBoxAnswerGenerator<Discus
     @Override
     public BoxAnswer generate(DiscussionNewNotify notify) {
         final StringBuilder builder = new StringBuilder(Icons.THREAD).append(" *New Thread in your MR*")
-                .append(Icons.HR)
-                .append(Icons.link(escapeMarkdown(notify.getMrName()), notify.getUrl()))
-                .append(Icons.HR)
+                .append("\n -- -- -- merge request -- -- --\n")
+                .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()))
+                .append("\n\n -- -- -- thread message -- -- --\n")
                 .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessageTask()));
 
         final List<Pair<String, String>> notes = notify.getNotes();
         if (checkNotEmpty(notes)) {
-            builder.append("\n-- -- -- -- comments -- -- -- --\n")
+            builder.append("\n\n-- -- -- -- comments -- -- -- --\n")
                     .append(convertNotes(notes));
         }
 

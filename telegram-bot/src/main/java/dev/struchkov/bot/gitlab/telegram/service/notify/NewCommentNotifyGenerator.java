@@ -24,26 +24,22 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
     @Override
     public BoxAnswer generate(NewCommentNotify notify) {
         final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" *New answer in Thread*")
-                .append(Icons.HR)
-                .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()))
-                .append("\n");
+                .append("\n-- -- -- merge request -- -- --\n")
+                .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()));
 
         if (checkNotNull(notify.getDiscussionMessage())) {
-            builder.append("\n-- --  thread first message  -- --\n")
-                    .append("*").append(notify.getDiscussionAuthor()).append("*: ").append(escapeMarkdown(notify.getDiscussionMessage()))
-                    .append("\n");
+            builder.append("\n\n-- --  thread first message  -- --\n")
+                    .append("*").append(notify.getDiscussionAuthor()).append("*: ").append(escapeMarkdown(notify.getDiscussionMessage()));
         }
 
         if (checkNotNull(notify.getPreviousMessage())) {
-            builder.append("\n-- -- -- previous message -- -- --\n")
-                    .append("*").append(notify.getPreviousAuthor()).append("*: ").append(escapeMarkdown(notify.getPreviousMessage()))
-                    .append("\n");
+            builder.append("\n\n-- -- -- previous message -- -- --\n")
+                    .append("*").append(notify.getPreviousAuthor()).append("*: ").append(escapeMarkdown(notify.getPreviousMessage()));
         }
 
         if (checkNotNull(notify.getMessage())) {
-            builder.append("\n-- -- -- --- new answer --- -- -- --\n")
-                    .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessage()))
-                    .append("\n");
+            builder.append("\n\n-- -- -- --- new answer --- -- -- --\n")
+                    .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessage()));
         }
 
         final String messageNotify = builder.toString();

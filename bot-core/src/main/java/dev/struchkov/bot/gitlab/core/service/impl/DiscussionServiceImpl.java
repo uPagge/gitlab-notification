@@ -9,7 +9,7 @@ import dev.struchkov.bot.gitlab.context.domain.entity.Person;
 import dev.struchkov.bot.gitlab.context.domain.notify.comment.NewCommentNotify;
 import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 import dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewNotify;
-import dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotify;
+import dev.struchkov.bot.gitlab.context.domain.notify.task.ThreadCloseNotify;
 import dev.struchkov.bot.gitlab.context.repository.DiscussionRepository;
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
 import dev.struchkov.bot.gitlab.context.service.DiscussionService;
@@ -44,7 +44,9 @@ import static dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLev
 import static dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel.WITHOUT_NOTIFY;
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
+import static dev.struchkov.haiti.utils.Checker.checkNull;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 /**
  * Сервис для работы с дискуссиями.
@@ -80,7 +82,7 @@ public class DiscussionServiceImpl implements DiscussionService {
             if (isNeedNotifyNewNote(discussion)) {
                 notifyNewThread(discussion);
             } else {
-                notes.forEach(note -> notificationPersonal(discussion, note));
+                notes.forEach(note -> notifyAboutPersonalAnswer(discussion, note));
             }
         } else {
             discussion.setNotification(false);
@@ -119,14 +121,14 @@ public class DiscussionServiceImpl implements DiscussionService {
             }
         }
 
+        final boolean resolved = discussion.getNotes().stream()
+                .allMatch(note -> note.isResolvable() && note.getResolved());
+        discussion.setResolved(resolved);
+
         if (oldDiscussion.isNotification()) {
             notifyUpdateNote(oldDiscussion, discussion);
         }
 
-        final boolean resolved = discussion.getNotes().stream()
-                .allMatch(note -> note.isResolvable() && note.getResolved());
-
-        discussion.setResolved(resolved);
 
         return repository.save(discussion);
     }
@@ -148,7 +150,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     private void notifyUpdateNote(Discussion oldDiscussion, Discussion discussion) {
-        final Map<Long, Note> noteMap = oldDiscussion
+        final Map<Long, Note> oldNoteMap = oldDiscussion
                 .getNotes().stream()
                 .collect(Collectors.toMap(Note::getId, n -> n));
 
@@ -156,56 +158,73 @@ public class DiscussionServiceImpl implements DiscussionService {
         final boolean userParticipatedInDiscussion = oldDiscussion.getNotes().stream()
                 .anyMatch(note -> personInformation.getId().equals(note.getAuthor().getId()));
 
+        final Note threadFirstNote = discussion.getFirstNote();
+        if (TRUE.equals(discussion.getResolved())) {
+            notifyAboutCloseThread(threadFirstNote, oldNoteMap.get(threadFirstNote.getId()), discussion.getLastNote());
+        }
+
         for (Note newNote : discussion.getNotes()) {
             final Long newNoteId = newNote.getId();
-            if (noteMap.containsKey(newNoteId)) {
-                final Note oldNote = noteMap.get(newNoteId);
-
-                if (newNote.isResolvable()) {
-                    updateTask(newNote, oldNote);
-                }
-
-            } else {
+            if (!oldNoteMap.containsKey(newNoteId)) {
                 if (userParticipatedInDiscussion) {
-                    notifyNewAnswer(discussion, newNote);
+                    notifyAboutNewAnswer(discussion, newNote);
                 } else {
-                    notificationPersonal(discussion, newNote);
+                    notifyAboutPersonalAnswer(discussion, newNote);
                 }
             }
         }
 
     }
 
-    private void updateTask(Note note, Note oldNote) {
-        if (isResolved(note, oldNote)) {
-            final MergeRequestForDiscussion mergeRequest = oldNote.getDiscussion().getMergeRequest();
-            final List<Discussion> discussions = getAllByMergeRequestId(mergeRequest.getId())
-                    .stream()
-                    .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
-                    .toList();
-            final long allYouTasks = discussions.stream()
-                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
-                    .count();
-            final long resolvedYouTask = discussions.stream()
-                    .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
-                    .count();
-            notifyService.send(
-                    TaskCloseNotify.builder()
+    private void notifyAboutCloseThread(Note newNote, Note oldNote, Optional<Note> lastNote) {
+        final DiscussionLevel level = settingService.getLevelDiscussionNotify();
+        if (!WITHOUT_NOTIFY.equals(level)) {
+
+            if (isResolved(newNote, oldNote)) {
+                final MergeRequestForDiscussion mergeRequest = oldNote.getDiscussion().getMergeRequest();
+
+                final List<Discussion> discussions = getAllByMergeRequestId(mergeRequest.getId())
+                        .stream()
+                        .filter(discussion -> Objects.nonNull(discussion.getResponsible()))
+                        .toList();
+                final long allYouTasks = discussions.stream()
+                        .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()))
+                        .count();
+                final long resolvedYouTask = discussions.stream()
+                        .filter(discussion -> personInformation.getId().equals(discussion.getFirstNote().getAuthor().getId()) && discussion.getResolved())
+                        .count();
+
+                final ThreadCloseNotify.ThreadCloseNotifyBuilder notifyBuilder = ThreadCloseNotify.builder()
+                        .mergeRequestName(mergeRequest.getTitle())
+                        .url(oldNote.getWebUrl())
+                        .personTasks(allYouTasks)
+                        .personResolvedTasks(resolvedYouTask);
+
+                if (NOTIFY_WITH_CONTEXT.equals(level)) {
+                    notifyBuilder
                             .authorName(oldNote.getAuthor().getName())
-                            .messageTask(oldNote.getBody())
-                            .url(oldNote.getWebUrl())
-                            .personTasks(allYouTasks)
-                            .personResolvedTasks(resolvedYouTask)
-                            .build()
-            );
+                            .messageTask(oldNote.getBody());
+
+
+                    lastNote.ifPresent(
+                            note -> {
+                                notifyBuilder.authorLastNote(note.getAuthor().getName());
+                                notifyBuilder.messageLastNote(note.getBody());
+                            }
+                    );
+                }
+
+                notifyService.send(notifyBuilder.build());
+            }
+
         }
     }
 
     private boolean isResolved(Note note, Note oldNote) {
-        return oldNote.getResolvedBy() == null
-               && note.getResolvedBy() != null
-               && personInformation.getId().equals(oldNote.getAuthor().getId())
-               && !note.getResolvedBy().getId().equals(oldNote.getAuthor().getId());
+        return checkNull(oldNote.getResolvedBy()) // В старом комментарии не было отметки о решении
+               && checkNotNull(note.getResolvedBy()) // А в новом есть отметка
+               && personInformation.getId().equals(oldNote.getAuthor().getId()) // и решающий не является пользователем бота
+               && !note.getResolvedBy().getId().equals(oldNote.getAuthor().getId()); // и решающий не является автором треда
     }
 
 
@@ -288,7 +307,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         repository.notification(enable, discussionId);
     }
 
-    private void notifyNewAnswer(Discussion discussion, Note note) {
+    private void notifyAboutNewAnswer(Discussion discussion, Note note) {
         final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
 
         if (!WITHOUT_NOTIFY.equals(discussionLevel)
@@ -322,7 +341,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     /**
      * Уведомляет пользователя, если его никнейм упоминается в комментарии.
      */
-    private void notificationPersonal(Discussion discussion, Note note) {
+    private void notifyAboutPersonalAnswer(Discussion discussion, Note note) {
         final DiscussionLevel discussionLevel = settingService.getLevelDiscussionNotify();
         if (!WITHOUT_NOTIFY.equals(discussionLevel)) {
             final Matcher matcher = PATTERN.matcher(note.getBody());
@@ -372,10 +391,10 @@ public class DiscussionServiceImpl implements DiscussionService {
             final Note firstNote = discussion.getFirstNote();
 
             final MergeRequestForDiscussion mergeRequest = discussion.getMergeRequest();
-            DiscussionNewNotify.DiscussionNewNotifyBuilder messageBuilder = DiscussionNewNotify.builder()
+            final DiscussionNewNotify.DiscussionNewNotifyBuilder messageBuilder = DiscussionNewNotify.builder()
                     .url(firstNote.getWebUrl())
                     .threadId(discussion.getId())
-                    .mrName(mergeRequest.getTitle())
+                    .mergeRequestName(mergeRequest.getTitle())
                     .authorName(firstNote.getAuthor().getName());
 
             if (NOTIFY_WITH_CONTEXT.equals(discussionLevel)) {

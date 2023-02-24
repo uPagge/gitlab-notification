@@ -15,26 +15,24 @@ import static dev.struchkov.bot.gitlab.context.domain.notify.task.DiscussionNewN
  */
 @Getter
 @FieldNames
-public class DiscussionNewNotify extends TaskNotify {
+public class DiscussionNewNotify extends ThreadNotify {
 
     public static final String TYPE = CLASS_NAME;
 
     private final String threadId;
-    private final String mrName;
     private final List<Pair<String, String>> notes;
 
     @Builder
     public DiscussionNewNotify(
             String threadId,
-            String mrName,
+            String mergeRequestName,
             String authorName,
             String url,
             String discussionMessage,
             @Singular List<Pair<String, String>> notes
     ) {
-        super(authorName, url, discussionMessage);
+        super(mergeRequestName, authorName, url, discussionMessage);
         this.threadId = threadId;
-        this.mrName = mrName;
         this.notes = notes;
     }
 

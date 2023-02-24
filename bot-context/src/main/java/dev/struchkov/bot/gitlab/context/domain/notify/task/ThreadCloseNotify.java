@@ -11,24 +11,31 @@ import static dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotif
  */
 @Getter
 @FieldNames
-public class TaskCloseNotify extends TaskNotify {
+public class ThreadCloseNotify extends ThreadNotify {
 
     public static final String TYPE = CLASS_NAME;
 
     private final Long personTasks;
     private final Long personResolvedTasks;
+    private final String authorLastNote;
+    private final String messageLastNote;
 
     @Builder
-    protected TaskCloseNotify(
+    protected ThreadCloseNotify(
+            String mergeRequestName,
             String authorName,
             String url,
             String messageTask,
             Long personTasks,
-            Long personResolvedTasks
+            Long personResolvedTasks,
+            String authorLastNote,
+            String messageLastNote
     ) {
-        super(authorName, url, messageTask);
+        super(mergeRequestName, authorName, url, messageTask);
         this.personTasks = personTasks;
         this.personResolvedTasks = personResolvedTasks;
+        this.authorLastNote = authorLastNote;
+        this.messageLastNote = messageLastNote;
     }
 
     @Override

@@ -85,6 +85,13 @@ public class Discussion {
         return this.notes.get(0);
     }
 
+    public Optional<Note> getLastNote() {
+        if (this.notes.size() > 1) {
+            return Optional.ofNullable(this.notes.get(this.notes.size() - 1));
+        }
+        return Optional.empty();
+    }
+
     public Optional<Note> getPrevLastNote() {
         final int size = notes.size();
         if (size > 2) {
