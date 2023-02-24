@@ -40,6 +40,8 @@ theme:
     - navigation.sections
     - navigation.tracking
     - navigation.footer
+    - navigation.path
+    - navigation.prune
     - search
     - search.suggest
     - search.highlight

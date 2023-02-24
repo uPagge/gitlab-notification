@@ -102,18 +102,18 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: create-docs-site
+name: create-develop-docs-site
 
 trigger:
   branch:
-    - docs
+    - develop
 
 clone:
   disable: true
 
 steps:
 
-  - name: clone
+  - name: build docs
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     volumes:
       - name: mkdocs_cache
@@ -146,7 +146,52 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 
 ---
+kind: pipeline
+type: docker
+name: create-release-docs-site
+
+trigger:
+  ref:
+    - refs/tags/v.*.*.*
+
+clone:
+  disable: true
+
+steps:
+
+  - name: build docs
+    image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
+    volumes:
+      - name: mkdocs_cache
+        path: ${DRONE_WORKSPACE}/documentation/.cache
+    environment:
+      GIT_SSH:
+        from_secret: GIT_SSH
+      GIT_SSH_COMMAND: "ssh -i ~/.ssh/id_rsa -p 222"
+    commands:
+      - eval $(ssh-agent -s)
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+      - echo "$GIT_SSH" >> ~/.ssh/id_rsa
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keyscan -p 222 git.struchkov.dev >> ~/.ssh/known_hosts
+      - chmod 644 ~/.ssh/known_hosts
+      - git config --global user.name "${DRONE_COMMIT_AUTHOR_NAME}"
+      - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
+      - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
+      - git checkout $DRONE_COMMIT
+      - cd documentation
+      - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases ${DRONE_TAG} latest
+
+image_pull_secrets:
+  - DOCKER_AUTH
+
+volumes:
+  - name: mkdocs_cache
+    host:
+      path: /drone/volume/mkdocs_cache/gitlab_notification
+---
 kind: signature
-hmac: 7384641fafee0cb550bd211f736fae6193ebb52f2209b834e74d85117439f90d
+hmac: 748f6fade3710de9653ee84344c5ce7ce2e9518df419ee4945f004df2ba1242a
 
 ...
