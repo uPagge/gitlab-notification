@@ -36,7 +36,7 @@ telegram:
     password: ${PROXY_PASSWORD:}
 
 gitlab-bot:
-  version: 2.0.0-SNAPSHOT
+  version: 0.0.1-SNAPSHOT
   person:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
