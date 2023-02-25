@@ -92,8 +92,8 @@ extra:
     provider: mike
   alternate:
     - name: Русский
-      link: ru/
+      link: /gitlab-notification/ru/
       lang: ru
     - name: English
-      link: en/
+      link: /gitlab-notification/en/
       lang: en
