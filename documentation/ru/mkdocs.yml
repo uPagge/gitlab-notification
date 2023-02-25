@@ -10,8 +10,8 @@ nav:
   - Возможности: getting-started/features.md
   - Быстрый старт:
       - Запуск: getting-started/configuration.md
-  - Архитектура:
-      - Концепт: architecture/concept.md
+#  - Архитектура:
+#      - Концепт: architecture/concept.md
 #  - Блог:
 #      - blog/index.md
   - "Поддержать разработку":
@@ -55,23 +55,20 @@ theme:
     - toc.integrate
 plugins:
   - social
-#  - blog
+#  - blog:
+#      blog_toc: true
+#      post_date_format: short
+#      post_url_format: "{slug}"
+#      archive_toc: true
+#      categories: false
+#      authors: false
   - optimize:
       cache: false
       optimize_jpg_quality: 90
   - meta
-#  - git-revision-date-localized:
-#      enable_creation_date: true
-#      fallback_to_build_date: true
-#  - git-committers:
-#      repository: uPagge/gitlab-notification
-#      branch: develop
   - tags
   - search:
       lang: ru
-#  - optimize:
-#      concurrency: 1
-#      optimize_jpg_quality: 90
 
 markdown_extensions:
   - pymdownx.details
