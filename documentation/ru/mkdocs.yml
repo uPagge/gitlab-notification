@@ -3,7 +3,7 @@ site_url: https://docs.struchkov.dev/gitlab-notification/
 
 repo_url: https://github.com/uPagge/gitlab-notification
 repo_name: uPagge/gitlab-notification
-#edit_uri: edit/master/documentation/docs
+edit_uri: edit/develop/documentation/ru/docs
 
 nav:
   - О проекте: index.md
@@ -12,6 +12,8 @@ nav:
       - Запуск: getting-started/configuration.md
   - Архитектура:
       - Концепт: architecture/concept.md
+#  - Блог:
+#      - blog/index.md
   - "Поддержать разработку":
       - support-development/index.md
   - ChangeLog:
@@ -53,7 +55,17 @@ theme:
     - toc.integrate
 plugins:
   - social
-#  - meta
+#  - blog
+  - optimize:
+      cache: false
+      optimize_jpg_quality: 90
+  - meta
+#  - git-revision-date-localized:
+#      enable_creation_date: true
+#      fallback_to_build_date: true
+#  - git-committers:
+#      repository: uPagge/gitlab-notification
+#      branch: develop
   - tags
   - search:
       lang: ru
