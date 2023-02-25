@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/en/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/architecture/concept/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/changelog/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/architecture/concept/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/getting-started/configuration/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/changelog/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/getting-started/features/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/getting-started/configuration/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/develop/guides/</loc>
-         <lastmod>2023-02-24</lastmod>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/getting-started/features/</loc>
+         <lastmod>2023-02-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/guides/</loc>
+         <lastmod>2023-02-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/develop/ru/support-development/</loc>
+         <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
