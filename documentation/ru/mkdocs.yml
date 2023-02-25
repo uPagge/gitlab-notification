@@ -5,18 +5,17 @@ repo_url: https://github.com/uPagge/gitlab-notification
 repo_name: uPagge/gitlab-notification
 #edit_uri: edit/master/documentation/docs
 
-
 nav:
-  - О проекте: ru/index.md
-  - Возможности: ru/getting-started/features.md
+  - О проекте: index.md
+  - Возможности: getting-started/features.md
   - Быстрый старт:
-      - Запуск: ru/getting-started/configuration.md
+      - Запуск: getting-started/configuration.md
   - Архитектура:
-      - Концепт: ru/architecture/concept.md
+      - Концепт: architecture/concept.md
   - "Поддержать разработку":
-      - ru/support-development/index.md
+      - support-development/index.md
   - ChangeLog:
-      - ru/changelog/index.md
+      - changelog/index.md
 
 theme:
   name: material

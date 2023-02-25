@@ -34,3 +34,5 @@ build/
 /mvnw.cmd
 /documentation/site/
 /documentation/.cache/
+/documentation/ru/site/
+/documentation/ru/.cache/

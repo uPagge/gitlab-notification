@@ -117,7 +117,7 @@ steps:
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     volumes:
       - name: mkdocs_cache
-        path: ${DRONE_WORKSPACE}/documentation/.cache
+        path: ${DRONE_WORKSPACE}/documentation/ru/.cache
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
@@ -134,8 +134,8 @@ steps:
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
       - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
-      - cd documentation
-      - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases develop
+      - cd documentation/ru
+      - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases develop
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -143,7 +143,7 @@ image_pull_secrets:
 volumes:
   - name: mkdocs_cache
     host:
-      path: /drone/volume/mkdocs_cache/gitlab_notification
+      path: /drone/volume/mkdocs_cache/gitlab_notification/ru
 
 ---
 kind: pipeline
