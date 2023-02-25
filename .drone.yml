@@ -107,6 +107,7 @@ name: create-develop-docs-site
 trigger:
   branch:
     - develop
+    - docs
 
 clone:
   disable: true
@@ -180,8 +181,8 @@ steps:
       - git config --global user.email "${DRONE_COMMIT_AUTHOR_EMAIL}"
       - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
-      - cd documentation
-      - mike deploy --prefix gitlab-notification --branch docs-deploy --push --update-aliases ${DRONE_TAG} latest
+      - cd documentation/ru
+      - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases ${DRONE_TAG} latest
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -192,6 +193,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 147a67e4ba6dbc78ae20eac6c4f4a868bd8f878e6cffb8741fb0d48a2159d451
+hmac: 23d498c2e305f04c5aef8df6c48fa62ab96def09d238c703497a3d2955526b67
 
 ...
