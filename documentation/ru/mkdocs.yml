@@ -88,6 +88,9 @@ markdown_extensions:
   - pymdownx.mark
   - pymdownx.tilde
   - attr_list
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
