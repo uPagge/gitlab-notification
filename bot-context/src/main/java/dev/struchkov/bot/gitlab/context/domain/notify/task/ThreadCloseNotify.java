@@ -4,7 +4,7 @@ import dev.struchkov.haiti.utils.fieldconstants.annotation.FieldNames;
 import lombok.Builder;
 import lombok.Getter;
 
-import static dev.struchkov.bot.gitlab.context.domain.notify.task.TaskCloseNotifyFields.CLASS_NAME;
+import static dev.struchkov.bot.gitlab.context.domain.notify.task.ThreadCloseNotifyFields.CLASS_NAME;
 
 /**
  * @author upagge 10.09.2020
