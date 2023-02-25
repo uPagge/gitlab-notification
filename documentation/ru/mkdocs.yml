@@ -90,10 +90,10 @@ extra:
     property: foobar
   version:
     provider: mike
-  alternate:
-    - name: Русский
-      link: /gitlab-notification/ru/
-      lang: ru
-    - name: English
-      link: /gitlab-notification/en/
-      lang: en
+#  alternate:
+#    - name: Русский
+#      link: /gitlab-notification/ru/
+#      lang: ru
+#    - name: English
+#      link: /gitlab-notification/en/
+#      lang: en
