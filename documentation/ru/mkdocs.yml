@@ -28,16 +28,22 @@ theme:
     logo: simple/gitlab
     repo: fontawesome/brands/github
   palette:
-    - scheme: default
+    - media: "(prefers-color-scheme)"
+      scheme: default
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
       primary: deep orange
       accent: orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - scheme: slate
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       toggle:
         icon: material/brightness-4
-        name: Switch to light mode
+        name: Switch to system preference
   features:
     - navigation.instant
     - navigation.indexes
@@ -51,10 +57,12 @@ theme:
     - search.highlight
     - content.action.edit
     - content.code.copy
+    - content.code.annotate
     - toc.follow
     - toc.integrate
 plugins:
   - social
+  - typeset
 #  - blog:
 #      blog_toc: true
 #      post_date_format: short
@@ -65,7 +73,6 @@ plugins:
   - optimize:
       cache: false
       optimize_jpg_quality: 90
-  - meta
   - tags
   - search:
       lang: ru
@@ -75,6 +82,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
   - attr_list
   - pymdownx.highlight:
       anchor_linenums: true
@@ -87,11 +99,14 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - admonition
   - md_in_html
+  - footnotes
   - toc:
       permalink: true
       toc_depth: 3
       title: Содержание
 
+extra_css:
+  - stylesheets/extra.css
 extra:
   generator: false
   analytics:
@@ -99,6 +114,9 @@ extra:
     property: foobar
   version:
     provider: mike
+#  social:
+#    - icon: fontawesome/brands/telegram
+#      link: https://t.me/dev_java_blog
 #  alternate:
 #    - name: Русский
 #      link: /gitlab-notification/ru/
