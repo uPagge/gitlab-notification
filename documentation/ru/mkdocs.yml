@@ -92,8 +92,8 @@ extra:
     provider: mike
   alternate:
     - name: Русский
-      link: /ru/
+      link: ru/
       lang: ru
     - name: English
-      link: /en/
+      link: en/
       lang: en
