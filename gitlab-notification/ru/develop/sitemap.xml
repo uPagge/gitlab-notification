@@ -16,12 +16,22 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/configuration/</loc>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/features/interaction-gitlab/</loc>
          <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/features/</loc>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/features/notify/</loc>
+         <lastmod>2023-02-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/features/privacy/</loc>
+         <lastmod>2023-02-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/configuration/</loc>
          <lastmod>2023-02-25</lastmod>
          <changefreq>daily</changefreq>
     </url>

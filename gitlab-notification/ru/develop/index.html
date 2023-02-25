@@ -12,7 +12,7 @@
       
       
       
-        <link rel="next" href="getting-started/features/">
+        <link rel="next" href="features/privacy/">
       
       
         
@@ -390,9 +390,29 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="getting-started/features/" class="md-nav__link">
+    
+    
+      
         
+      
+        
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     
@@ -405,7 +425,101 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Возможности
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Приватность
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/notify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Уведомления
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/interaction-gitlab/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Быстрые действия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -663,12 +777,8 @@
 
 
 <h1 id="gitlab-notification-telegram-gitlab">GitLab Notification – Персональный Telegram для GitLab<a class="headerlink" href="#gitlab-notification-telegram-gitlab" title="Permanent link">&para;</a></h1>
-<p>Персональный помощник для взаимодействия с GitLab. Получайте уведомления о событиях в GitLab: новые MR, где вы ревьювер, конфликты в ваших MR, уведомления о новых сообщениях в тредах, где вы являетесь участником, и многое другое.</p>
+<p>Персональный ассистент для взаимодействия с GitLab. Получайте уведомления о событиях в GitLab: новые <abbr title="Merge Request">MR</abbr>, где вы ревьювер, конфликты в ваших <abbr title="Merge Request">MR</abbr>, уведомления о новых сообщениях в тредах, где вы являетесь участником, и многое другое.</p>
 <h2 id="privacy"><img alt="🥷" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f977.svg" title=":ninja:" /> Privacy<a class="headerlink" href="#privacy" title="Permanent link">&para;</a></h2>
-<p>Мое решение сфокусировано на приватности и прозрачности. Код и используемые зависимости полностью открыты и доступны для изучения и самостоятельной сборки.</p>
-<p>Для работы бота токен доступа устанавливается в переменные среды и никуда не передается, кроме запросов в GitLab.</p>
-<p>Некоторые уведомления могут содержать чуствительную информацию. Например, уведомления о новых сообщениях в тредах. Возможно вы не захотите раскрывать столько информации о ваших репозиториях Телеграму, ведь через него идет получение уведомлений. Специально для таких случаев предусмотрены уровни конфиденциальности разных типов уведомлений.</p>
-<p>Возьмем для примера уведомление о новом сообщении в треде. При минимальном уровне конфиденциальности вы получите уведомление с текстом коментария и сможете сразу ответить на него в телеграм, а при максимальном уровне конфиденциальности будет сообщаться только о факте нового комментария, без содержания. Все это настраивается при первом запуске.</p>
 
   
   
@@ -703,13 +813,13 @@
         
         
           
-          <a href="getting-started/features/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Возможности" rel="next">
+          <a href="features/privacy/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Приватность" rel="next">
             <div class="md-footer__title">
               <div class="md-ellipsis">
                 <span class="md-footer__direction">
                   Вперед
                 </span>
-                Возможности
+                Приватность
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -736,7 +846,7 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.indexes", "navigation.sections", "navigation.tracking", "navigation.footer", "navigation.path", "navigation.prune", "search", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.indexes", "navigation.sections", "navigation.tracking", "navigation.footer", "navigation.path", "navigation.prune", "search", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "content.code.annotate", "content.tooltips", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="assets/javascripts/bundle.08d1b7d6.min.js"></script>
