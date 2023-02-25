@@ -29,6 +29,8 @@ theme:
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme)"
+      primary: deep orange
+      accent: orange
       scheme: default
       toggle:
         icon: material/brightness-auto
