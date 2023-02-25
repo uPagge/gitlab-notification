@@ -7,7 +7,10 @@ edit_uri: edit/develop/documentation/ru/docs
 
 nav:
   - О проекте: index.md
-  - Возможности: getting-started/features.md
+  - Возможности:
+    - Приватность: features/privacy.md
+    - Уведомления: features/notify.md
+    - Быстрые действия: features/interaction-gitlab.md
   - Быстрый старт:
       - Запуск: getting-started/configuration.md
 #  - Архитектура:
@@ -60,6 +63,7 @@ theme:
     - content.action.edit
     - content.code.copy
     - content.code.annotate
+    - content.tooltips
     - toc.follow
     - toc.integrate
 plugins:
@@ -83,7 +87,9 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
@@ -103,6 +109,7 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - admonition
+  - abbr
   - md_in_html
   - footnotes
   - toc:
