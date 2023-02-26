@@ -8,6 +8,7 @@
             <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
+            <column name="service_key" type="uuid"/>
             <column name="first_start" type="boolean" defaultValue="true">
                 <constraints nullable="false"/>
             </column>

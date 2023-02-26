@@ -1,6 +1,7 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
+import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
@@ -16,8 +17,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 import static dev.struchkov.bot.gitlab.telegram.utils.UnitName.DELETE_MESSAGE;
 import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.simpleButton;
@@ -37,6 +38,8 @@ public class StartNotify {
 
     private final TelegramSending sending;
     private final TelegramService telegramService;
+
+    private final NotifyService notifyService;
 
     private final AppProperty appProperty;
     private final AppSettingService settingService;
@@ -66,6 +69,23 @@ public class StartNotify {
 
             sendNotice();
         }
+        registrationForStatistic();
+    }
+
+
+    /**
+     * Отправляет service_key для сбора анонимной статистики использования.
+     */
+    private void registrationForStatistic() {
+        final UUID serviceKey = settingService.getServiceKey();
+        final boolean firstStart = settingService.isFirstStart();
+        final String requestUrl = "https://metrika.struchkov.dev/gitlab-notify/registration?key=" + serviceKey + "&initFlow=" + firstStart;
+        final Request request = new Request.Builder().get().url(requestUrl).build();
+        try {
+            client.newCall(request).execute();
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        }
     }
 
     /**
@@ -73,10 +93,7 @@ public class StartNotify {
      */
     private void sendNotice() {
         final String requestUrl = "https://metrika.struchkov.dev/gitlab-notify/start-notice";
-        final Request request = new Request.Builder()
-                .get()
-                .url(requestUrl)
-                .build();
+        final Request request = new Request.Builder().get().url(requestUrl).build();
         try {
             final Response response = client.newCall(request).execute();
             if (response.code() == 200) {
@@ -95,9 +112,22 @@ public class StartNotify {
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
         }
     }
+
+    //    @PostConstruct
+//    public void demo() {
+//        notifyService.send(
+//                DiscussionNewNotify.builder()
+//                        .authorName("Ivan Ivanov")
+//                        .threadId("1")
+//                        .discussionMessage("Кажется здесь можно сделать лучше.")
+//                        .mergeRequestName("Merge Request Name")
+//                        .url("https://ya.ru")
+//                        .build()
+//        );
+//    }
 
 }

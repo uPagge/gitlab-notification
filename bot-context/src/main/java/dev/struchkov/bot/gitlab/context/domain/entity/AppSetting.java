@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 /**
  * Основные настройки приложения.
  *
@@ -24,6 +26,9 @@ public class AppSetting {
     @Id
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "service_key")
+    private UUID serviceKey = UUID.randomUUID();
 
     @Column(name = "first_start")
     private boolean firstStart;

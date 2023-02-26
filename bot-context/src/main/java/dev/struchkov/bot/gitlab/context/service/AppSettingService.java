@@ -2,6 +2,8 @@ package dev.struchkov.bot.gitlab.context.service;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.level.DiscussionLevel;
 
+import java.util.UUID;
+
 /**
  * Сервис отвечает за пользовательские настройки приложения.
  *
@@ -38,5 +40,7 @@ public interface AppSettingService {
     DiscussionLevel getLevelDiscussionNotify();
 
     void setDiscussionLevel(DiscussionLevel level);
+
+    UUID getServiceKey();
 
 }

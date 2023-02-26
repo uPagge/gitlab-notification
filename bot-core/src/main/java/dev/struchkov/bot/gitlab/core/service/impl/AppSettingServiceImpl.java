@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static dev.struchkov.haiti.context.exception.NotFoundException.notFoundException;
@@ -90,6 +91,16 @@ public class AppSettingServiceImpl implements AppSettingService {
     public void setDiscussionLevel(DiscussionLevel level) {
         final AppSetting appSetting = getAppSetting();
         appSetting.setDiscussionNotifyLevel(level);
+    }
+
+    @Override
+    @Transactional
+    public UUID getServiceKey() {
+        final AppSetting appSetting = getAppSetting();
+        if (appSetting.getServiceKey() == null) {
+            appSetting.setServiceKey(UUID.randomUUID());
+        }
+        return appSetting.getServiceKey();
     }
 
     private AppSetting getAppSetting() {
