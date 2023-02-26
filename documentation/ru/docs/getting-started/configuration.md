@@ -1,23 +1,88 @@
-Есть несколько способов запустить бота-помощника. Бот был спроектирован таким образом, чтобы работать локально на вашем ПК, но вы можете запустить его на сервере в режиме 24/4.
+# Первый запуск ассистента
 
-## Создание бота в Telegram
-Перед запуском необходимо создать бота в Telegram. Для этого перейдите в официального бота [@GodFather](https://t.me/BotFather) и выполните команду `/newbot`.
+Есть несколько способов запустить бота-помощника. Бот был спроектирован таким образом, чтобы работать локально на вашем ПК, но вы можете запустить его на сервере в режиме 24/4.
 
 Первым делом вам предложат ввести имя для бота.
 
 ## Конфигурация
-Несмотря на то, какой вариант запуска вы виберете, необходимо будет указать следующие переменные среды:
+Несмотря на то, какой вариант запуска вы вберете, необходимо указать следующие переменные среды:
 
-* `TELEGRAM_BOT_TOKEN` — токен, который вы получили при создании бота.
+* `TELEGRAM_BOT_TOKEN` — токен, который вы получили при [создании бота](creating-telegram-bot.md).
 * `TELEGRAM_BOT_USERNAME` — название, которое вы дали боту. Оканчивается на bot.
-* `GITLAB_PERSONAL_TOKEN` — токен, который вы получили в GitLab
-* `TELEGRAM_PERSON_ID` — ваш id в telegram, можно узнать тут.
-* `GITLAB_URL` — url на gitlab. Локальный или облачный.
-* `DATASOURCE_URL` — ссылка на базу данных Postgres, в следующем формате: jdbc:postgresql://localhost:5432/gitlab_bot
+* `GITLAB_PERSONAL_TOKEN` — токен, который вы [получили в GitLab.](create-gitlab-token.md)
+* `TELEGRAM_PERSON_ID` — ваш идентификатор в telegram, можно узнать в боте [@myidbot](@myidbot).
+* `GITLAB_URL` — url на GitLab. Локальный или облачный.
+* `DATASOURCE_URL` — ссылка на базу данных Postgres, в следующем формате: `jdbc:postgresql://databasehost:5432/gitlab_bot`
 * `DATASOURCE_USERNAME` — пользователь БД
 * `DATASOURCE_PASSWORD` — пароль от БД
 
 ## Запуск Docker Compose
+
+Самый простой способ запустить ассистента, - это docker compose. Создайте файлы `docker-compose.yml` и `.env`. Не забудьте в `.env` указать все необходимые для запуска переменные.
+
+=== ":simple-docker: docker-compose.yml"
+
+    ``` yaml
+    version: '3.8'
+
+    services:
+    
+    gitlab-bot-database:
+        image: postgres:15.1-alpine
+        restart: always
+        hostname: gitlab-bot-database
+        container_name: gitlab-bot-database
+        networks:
+            gitlab-bot:
+        environment:
+            POSTGRES_DB: "gitlab_bot"
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+        volumes:
+            - gitlab-bot-database:/var/lib/postgresql/data/
+    
+    gitlab-bot:
+        image: upagge/gitlab-telegram-notify:latest
+        hostname: gitlab-bot
+        container_name: gitlab-bot
+        networks:
+            gitlab-bot:
+        depends_on:
+            - gitlab-bot-database
+        environment:
+            TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+            TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+            GITLAB_PERSONAL_TOKEN: ${GITLAB_PERSONAL_TOKEN}
+            TELEGRAM_PERSON_ID: ${TELEGRAM_PERSON_ID}
+            GITLAB_URL: ${GITLAB_URL}
+            DATASOURCE_URL: "jdbc:postgresql://gitlab-bot-database:5432/gitlab_bot"
+            DATASOURCE_USERNAME: ${DATASOURCE_USERNAME}
+            DATASOURCE_PASSWORD: ${DATASOURCE_PASSWORD}
+    
+    volumes:
+        gitlab-bot-database:
+    
+    networks:
+        gitlab-bot:
+    ```
+
+=== ":octicons-file-16: .env"
+
+    ``` properties
+    TELEGRAM_BOT_TOKEN=
+    TELEGRAM_BOT_USERNAME=
+    GITLAB_PERSONAL_TOKEN=
+    TELEGRAM_PERSON_ID=
+    GITLAB_URL=
+    DATASOURCE_USERNAME=
+    DATASOURCE_PASSWORD=
+    ```
+
+Теперь запустите композ:
+
+``` shell
+docker compose up -d
+```
 
 ## Запуск Docker
 Команда для запуска выглядит следующим образом:

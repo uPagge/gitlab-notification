@@ -12,9 +12,12 @@ nav:
     - Уведомления: features/notify.md
     - Быстрые действия: features/interaction-gitlab.md
   - Быстрый старт:
-      - Запуск: getting-started/configuration.md
-#  - Архитектура:
-#      - Концепт: architecture/concept.md
+      - getting-started/create-gitlab-token.md
+      - getting-started/creating-telegram-bot.md
+      - getting-started/configuration.md
+      - getting-started/first-start.md
+  - Архитектура:
+      - Общее: architecture/concept.md
 #  - Блог:
 #      - blog/index.md
   - "Поддержать разработку":
@@ -111,9 +114,9 @@ markdown_extensions:
   - md_in_html
   - footnotes
   - toc:
-      permalink: true
       toc_depth: 3
       title: Содержание
+      permalink: ⚓︎
 
 extra_css:
   - stylesheets/extra.css
