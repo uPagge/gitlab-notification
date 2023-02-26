@@ -321,6 +321,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
             if (NOTIFY_WITH_CONTEXT.equals(discussionLevel)) {
                 final Optional<Note> prevLastNote = discussion.getPrevLastNote();
+
                 if (prevLastNote.isPresent()) {
                     final Note prevNote = prevLastNote.get();
                     notifyBuilder.previousMessage(prevNote.getBody());

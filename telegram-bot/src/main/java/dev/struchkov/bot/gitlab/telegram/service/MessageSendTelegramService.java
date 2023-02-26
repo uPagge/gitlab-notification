@@ -5,6 +5,7 @@ import dev.struchkov.bot.gitlab.context.domain.notify.Notify;
 import dev.struchkov.bot.gitlab.context.service.MessageSendService;
 import dev.struchkov.bot.gitlab.telegram.service.notify.NotifyBoxAnswerGenerator;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
+import dev.struchkov.godfather.telegram.main.context.BoxAnswerPayload;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,7 @@ public class MessageSendTelegramService implements MessageSendService {
                 .map(generator -> {
                     final BoxAnswer answer = generator.generate(notify);
                     answer.setRecipientIfNull(personInformation.getTelegramId());
+                    answer.setPayload(BoxAnswerPayload.DISABLE_WEB_PAGE_PREVIEW, true);
                     return answer;
                 })
                 .ifPresent(sending::send);

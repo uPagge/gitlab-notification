@@ -100,5 +100,14 @@ public class Discussion {
         return Optional.empty();
     }
 
+    public Optional<Note> getLastNoteByUserId(Long personId) {
+        for (int i = notes.size() - 1; i >= 0; i--) {
+            final Note note = notes.get(i);
+            if (note.getAuthor().getId().equals(personId)) {
+                return Optional.of(note);
+            }
+        }
+        return Optional.empty();
+    }
 
 }

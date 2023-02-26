@@ -14,6 +14,7 @@ import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.s
 import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.urlButton;
+import static dev.struchkov.haiti.utils.Checker.checkNotBlank;
 import static dev.struchkov.haiti.utils.Checker.checkNotNull;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
@@ -23,8 +24,15 @@ public class NewCommentNotifyGenerator implements NotifyBoxAnswerGenerator<NewCo
 
     @Override
     public BoxAnswer generate(NewCommentNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" *New answer in Thread*")
-                .append("\n-- -- -- merge request -- -- --\n")
+        final StringBuilder builder = new StringBuilder(Icons.COMMENT).append(" *New answer in Thread*");
+
+        if (checkNotBlank(notify.getDiscussionMessage()) || checkNotNull(notify.getPreviousMessage()) || checkNotNull(notify.getMessage())) {
+            builder.append("\n -- -- -- merge request name -- -- --\n");
+        } else {
+            builder.append(Icons.HR);
+        }
+
+        builder
                 .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()));
 
         if (checkNotNull(notify.getDiscussionMessage())) {

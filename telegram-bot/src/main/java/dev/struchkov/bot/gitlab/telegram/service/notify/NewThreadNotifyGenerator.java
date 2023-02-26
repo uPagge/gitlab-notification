@@ -17,6 +17,7 @@ import static dev.struchkov.godfather.main.domain.keyboard.button.SimpleButton.s
 import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 import static dev.struchkov.godfather.telegram.domain.keyboard.InlineKeyBoard.inlineKeyBoard;
 import static dev.struchkov.godfather.telegram.domain.keyboard.button.UrlButton.urlButton;
+import static dev.struchkov.haiti.utils.Checker.checkNotBlank;
 import static dev.struchkov.haiti.utils.Checker.checkNotEmpty;
 import static dev.struchkov.haiti.utils.Strings.escapeMarkdown;
 
@@ -25,11 +26,21 @@ public class NewThreadNotifyGenerator implements NotifyBoxAnswerGenerator<Discus
 
     @Override
     public BoxAnswer generate(DiscussionNewNotify notify) {
-        final StringBuilder builder = new StringBuilder(Icons.THREAD).append(" *New Thread in your MR*")
-                .append("\n -- -- -- merge request -- -- --\n")
-                .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()))
-                .append("\n\n -- -- -- thread message -- -- --\n")
-                .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessageTask()));
+        final StringBuilder builder = new StringBuilder(Icons.THREAD).append(" *New Thread in your MR*");
+
+        if (checkNotBlank(notify.getMessageTask())) {
+            builder.append("\n -- -- -- merge request name -- -- --\n");
+        } else {
+            builder.append(Icons.HR);
+        }
+
+        builder
+                .append(Icons.link(escapeMarkdown(notify.getMergeRequestName()), notify.getUrl()));
+
+        if (checkNotBlank(notify.getMessageTask())) {
+            builder.append("\n\n -- -- -- thread first message -- -- --\n")
+                    .append("*").append(notify.getAuthorName()).append("*: ").append(escapeMarkdown(notify.getMessageTask()));
+        }
 
         final List<Pair<String, String>> notes = notify.getNotes();
         if (checkNotEmpty(notes)) {
