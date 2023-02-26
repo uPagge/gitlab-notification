@@ -36,6 +36,8 @@ steps:
     environment:
       STRUCHKOV_DOCKER_REGISTRY_TOKEN:
         from_secret: STRUCHKOV_DOCKER_REGISTRY_TOKEN
+      STRUCHKOV_DOCKER_IMAGE_NAME:
+        from_secret: STRUCHKOV_DOCKER_IMAGE_NAME
       DOCKER_REGISTRY_TOKEN:
         from_secret: DOCKER_REGISTRY_TOKEN
       DOCKER_IMAGE_NAME:
@@ -88,6 +90,10 @@ steps:
   - name: docker publish release
     image: upagge/docker-buildx:latest
     environment:
+      STRUCHKOV_DOCKER_REGISTRY_TOKEN:
+        from_secret: STRUCHKOV_DOCKER_REGISTRY_TOKEN
+      STRUCHKOV_DOCKER_IMAGE_NAME:
+        from_secret: STRUCHKOV_DOCKER_IMAGE_NAME
       DOCKER_REGISTRY_TOKEN:
         from_secret: DOCKER_REGISTRY_TOKEN
       DOCKER_IMAGE_NAME:
@@ -197,6 +203,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 4a1e9cab7fa41f5ea388b7679b2dfb02f79ffada577ff61f83823165288ef04a
+hmac: 9e69b7ad31ecf7855e6c8509eb81905a134d172451c5214ce46f9678bd16d2ab
 
 ...
