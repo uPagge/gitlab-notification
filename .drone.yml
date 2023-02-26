@@ -45,7 +45,7 @@ steps:
         path: /var/run
     commands:
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
-      - docker login git.struchkov.dev -u $DOCKER_REGISTRY_USER -p $STRUCHKOV_DOCKER_REGISTRY_TOKEN
+      - docker login git.struchkov.dev -u ${DOCKER_REGISTRY_USER} -p ${STRUCHKOV_DOCKER_REGISTRY_TOKEN}
       - docker buildx create --use
       - docker buildx build -f Dockerfile-develop --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" -t "git.struchkov.dev/$DOCKER_IMAGE_NAME:develop" .
 
@@ -194,6 +194,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 30e1f04d02f1b14243114e23d27e7d01bf3c21fbd3bd5ac53b997656daa69bae
+hmac: 78ae4e98f316a8dbbb40ae981238c04e07a6f2351ff7b9b391ddf9aaaaa67d86
 
 ...
