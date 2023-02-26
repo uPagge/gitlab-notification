@@ -174,7 +174,7 @@ steps:
     image: git.struchkov.dev/upagge/mkdocs-material-insiders:latest
     volumes:
       - name: mkdocs_cache
-        path: ${DRONE_WORKSPACE}/documentation/.cache
+        path: ${DRONE_WORKSPACE}/documentation/ru/.cache
     environment:
       GIT_SSH:
         from_secret: GIT_SSH
@@ -203,6 +203,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 9e69b7ad31ecf7855e6c8509eb81905a134d172451c5214ce46f9678bd16d2ab
+hmac: ea18fda1b2bd15fe53018afe23f3b3d1b8bef940c3f4b0b759670e8ee4006a1e
 
 ...
