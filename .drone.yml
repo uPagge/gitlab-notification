@@ -137,6 +137,7 @@ steps:
       - git checkout $DRONE_COMMIT
       - cd documentation/ru
       - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases develop
+      - sh ci-notify.sh
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -193,6 +194,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 23d498c2e305f04c5aef8df6c48fa62ab96def09d238c703497a3d2955526b67
+hmac: 0ec61b15fedee05ddb1c602fae1893c68ab292e2df8424ef36f8e9a94faf707e
 
 ...
