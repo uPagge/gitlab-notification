@@ -36,6 +36,21 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/create-gitlab-token/</loc>
+         <lastmod>2023-02-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/creating-telegram-bot/</loc>
+         <lastmod>2023-02-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/first-start/</loc>
+         <lastmod>2023-02-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/guides/</loc>
          <lastmod>2023-02-26</lastmod>
          <changefreq>daily</changefreq>
