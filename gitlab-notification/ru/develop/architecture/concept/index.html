@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.14+insiders-4.32.1">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15+insiders-4.32.1">
     
     
       
@@ -753,7 +753,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#schema-database" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -779,7 +779,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -966,7 +966,7 @@
 
 <h1 id="_1">Общая архитектура<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h1>
 <p>Поддерживается два режима работы: периодические запуски на ПК и запуск на сервере в режиме 24/7.</p>
-<h2 id="_2">Схема <abbr title="База данных">БД</abbr><a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
+<h2 id="schema-database">Схема <abbr title="База данных">БД</abbr><a class="headerlink" href="#schema-database" title="Permanent link">⚓︎</a></h2>
 <p>Приложение имеет <abbr title="База данных">БД</abbr>, которая используется для сохранения состояния отслеживаемых сущностей GitLab.</p>
 <figure>
 <p><img alt="schema-database.png" loading="lazy" src="../img/schema-database.png" />
@@ -982,7 +982,7 @@
 <p>Не везде имется возможность установить произвольные Webhook. Например, вряд ли кто-то позволит вам установить Webhook из корпоративного GitLab во внешнюю сеть. Переодическое обращение к GitLab API можно выполнять прямо с рабочей машины.</p>
 <p>В будущем планирую добавить поддержку и Webhook.</p>
 </div>
-<h2 id="_3">Отслеживание репозиториев<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h2>
+<h2 id="_2">Отслеживание репозиториев<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
 <p>Ключевым (рутовым) элементом являются репозитории.</p>
 
   

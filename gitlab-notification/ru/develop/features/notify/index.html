@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.14+insiders-4.32.1">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15+insiders-4.32.1">
     
     
       
@@ -469,7 +469,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
+  <a href="#new-repository" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -482,7 +482,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mr" class="md-nav__link">
+  <a href="#new-mr" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -495,7 +495,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mr_1" class="md-nav__link">
+  <a href="#conflict-mr" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -508,7 +508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mr_2" class="md-nav__link">
+  <a href="#update-mr" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -521,7 +521,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mr_3" class="md-nav__link">
+  <a href="#mr" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -534,7 +534,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mr_4" class="md-nav__link">
+  <a href="#mr_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -547,7 +547,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -560,11 +560,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
-          Ответ в дискусии
+          Ответ в треде
         </span>
       
     </span>
@@ -1031,29 +1031,95 @@
 
 <h1 id="_1"><img alt="🔔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f514.svg" title=":bell:" /> Уведомления<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h1>
 <p>Основное предназначение бота - это уведомления от GitLab. Вы будете получать только те уведомления, которые касаются вас непосредственно.</p>
-<h2 id="_2">Новый репозиторий<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
-<h2 id="mr">Новый <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr" title="Permanent link">⚓︎</a></h2>
-<p>Когда кто-то создает <abbr title="Merge Request">MR</abbr> и назначает вас ответственным и/или ревьювером, то вам приходит уведомление. Из этого уведомления можно узнать название, короткое описание, теги, из какой ветки в какую открыт <abbr title="Merge Request">MR</abbr>, кто его автор и кто ответственный.</p>
+<h2 id="new-repository">Новый репозиторий<a class="headerlink" href="#new-repository" title="Permanent link">⚓︎</a></h2>
+<p>Если во время первичной настройки вы указали, что хотите получать уведомления о новых репозиториях, то при появлении нового репозитория получите соответствующее уведомление:</p>
+<figure>
+<p><img alt="notify about new merge request" loading="lazy" src="../img/notify-new-project.png" width="500" /></p>
+</figure>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Project name — название репозитория.</li>
+<li>Project description — описание репозитория. Опционально, может быть пусто.</li>
+<li>Struchkov Mark — имя создателя репозитория в GitLab</li>
+</ul>
+<p>Доступно три быстрых действия:</p>
+<ul>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на новый репозиторий в GitLab.</li>
+<li><img alt="🔔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f514.svg" title=":bell:" /> — поставить на отслеживание. Вы начнете получать уведомления о событиях в <abbr title="Merge Request">MR</abbr>, тредах и сборках.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления. Используется по умолчанию, по факту просто удаляет сообщение уведомления.</li>
+</ul>
+<div class="admonition warning">
+<p>Пока вы явно не нажмете <img alt="🔔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f514.svg" title=":bell:" />, вы не будете получать никаких уведомлений. Более того, приложение даже не будет запрашивать <abbr title="Merge Request">MR</abbr> и прочие сущности репозитория, не будет сохранять их в <abbr title="База данных">БД</abbr>.</p>
+</div>
+<h2 id="new-mr">Новый <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#new-mr" title="Permanent link">⚓︎</a></h2>
+<p>Это уведомление приходит, когда вас назначают ответственным и/или ревьювером.</p>
 <figure>
 <p><img alt="notify about new merge request" loading="lazy" src="../img/notify-new-mr.png" width="500" /></p>
 </figure>
-<h2 id="mr_1">Конфликт в <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_1" title="Permanent link">⚓︎</a></h2>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr>.</li>
+<li>Описание <abbr title="Merge Request">MR</abbr>. Опционально.</li>
+<li>Labels. Метки репозитория.</li>
+<li>Имя проекта.</li>
+<li>Ветки откуда куда мержим.</li>
+<li>Автор <abbr title="Merge Request">MR</abbr>.</li>
+<li>Ответственный/Ревьюверы <abbr title="Merge Request">MR</abbr>. Заполнение зависит от вашей позиции в этом <abbr title="Merge Request">MR</abbr>. Если вы ответственный, то вам покажут ревьюверов. Если вы ревьювер, то ответственного.</li>
+</ul>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на <abbr title="Merge Request">MR</abbr>.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления по <abbr title="Merge Request">MR</abbr>.</li>
+</ul>
+<div class="admonition warning">
+<p>Учтите, что отключение уведомлений отключает только уведомления об изменениях в <abbr title="Merge Request">MR</abbr>. Например, обновление статуса <abbr title="Merge Request">MR</abbr>. Но уведомления по пайплайнам проекта, по тредам <abbr title="Merge Request">MR</abbr> продолжат приходить.</p>
+</div>
+<h2 id="conflict-mr">Конфликт в <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#conflict-mr" title="Permanent link">⚓︎</a></h2>
 <p>Если в вашем <abbr title="Merge Request">MR</abbr> возник конфликт, то вы будете своевременно оповещены. В этом уведомлении указывается название <abbr title="Merge Request">MR</abbr>, проект и ветка.</p>
 <figure>
 <p><img alt="notify about conflict in merge request" loading="lazy" src="../img/notify-conflict-mr.png" width="500" /></p>
 </figure>
-<h2 id="mr_2">Обновление <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_2" title="Permanent link">⚓︎</a></h2>
-<p>Когда кто-то делает коммиты в <abbr title="Merge Request">MR</abbr>, в котором вы ответственный или ревьювер, вам сразу же приходит уведомление. Вы также сразу можете увидеть сколько задач еще не решено, и сколько созданных вами задач не было решено.</p>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на <abbr title="Merge Request">MR</abbr>.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления по этому <abbr title="Merge Request">MR</abbr>.</li>
+</ul>
+<h2 id="update-mr">Обновление <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#update-mr" title="Permanent link">⚓︎</a></h2>
+<p>Если в <abbr title="Merge Request">MR</abbr>, в котором вы являетесь ответственным/ревьювером, добавляются коммиты, вы получаете уведомление.</p>
 <figure>
 <p><img alt="notify about update in merge request" loading="lazy" src="../img/notify-update-mr.png" width="500" /></p>
 </figure>
-<h2 id="mr_3">Изменение статуса <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_3" title="Permanent link">⚓︎</a></h2>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr>.</li>
+<li>Отношение количества закрытых тредов к общему количеству созданных тредов.</li>
+<li>Отношение количества закрытых вами созданных тредов к общему количеству созданных вами тредов.</li>
+<li>Название репозитория.</li>
+<li>Имя создателя <abbr title="Merge Request">MR</abbr>.</li>
+</ul>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на <abbr title="Merge Request">MR</abbr>.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления по этому <abbr title="Merge Request">MR</abbr>.</li>
+</ul>
+<h2 id="mr">Изменение статуса <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr" title="Permanent link">⚓︎</a></h2>
 <p>Когда статус вашего <abbr title="Merge Request">MR</abbr> меняется, вы получаете уведомление.</p>
-<h2 id="mr_4">Новый тред в <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_4" title="Permanent link">⚓︎</a></h2>
-<p>В GitLab можно создавать не просто комментарии, а обсуждения (Discussions). Если кто-то создаст такое обсуждение в вашем <abbr title="Merge Request">MR</abbr>, то вы сразу об этом узнаете.</p>
-<h2 id="_3">Упоминание в треде<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h2>
+<figure>
+<p><img alt="notify about update status in merge request" loading="lazy" src="../img/notify-update-status-mr.png" width="500" /></p>
+</figure>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на <abbr title="Merge Request">MR</abbr>.</li>
+</ul>
+<h2 id="mr_1">Новый тред в <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_1" title="Permanent link">⚓︎</a></h2>
+<p>В GitLab можно создавать не просто комментарии, а треды. Если кто-то создаст такое обсуждение в вашем <abbr title="Merge Request">MR</abbr>, то вы сразу об этом узнаете.</p>
+<h2 id="_2">Упоминание в треде<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
 <p>Допустим, кто-то упомянул вас в <abbr title="Merge Request">MR</abbr>, нужен ваш совет. Автор этого <abbr title="Merge Request">MR</abbr> не вы, ответственным назначали тоже не вас. Даже в этом случае вам придет уведомление, так вы не пропустите сообщения с вашим упоминанием.</p>
-<h2 id="_4">Ответ в дискусии<a class="headerlink" href="#_4" title="Permanent link">⚓︎</a></h2>
+<h2 id="_3">Ответ в треде<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h2>
 <p>Важно оставаться в теме обсуждения, поэтому при появлении новых ответов в дискуссия, в которых вы участвовали, вы получите уведомление.</p>
 <p>Оно будет содержать начальное сообщение обсуждения, ваше последнее сообщение в нем, а также два последних комментария. Таким образом вы будете понимать о чем идет речь.</p>
 

@@ -6,11 +6,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/privacy/</loc>
-         <lastmod>2023-02-26</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/architecture/concept/</loc>
          <lastmod>2023-02-26</lastmod>
          <changefreq>daily</changefreq>
@@ -52,6 +47,11 @@
     </url>
     <url>
          <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/guides/</loc>
+         <lastmod>2023-02-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://docs.struchkov.dev/gitlab-notification/ru/develop/privacy/</loc>
          <lastmod>2023-02-26</lastmod>
          <changefreq>daily</changefreq>
     </url>
