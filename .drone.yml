@@ -49,7 +49,7 @@ steps:
       - echo "$STRUCHKOV_DOCKER_REGISTRY_TOKEN" | docker login git.struchkov.dev --username $DOCKER_REGISTRY_USER --password-stdin
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
-      - docker buildx build -f Dockerfile-develop --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" -t "git.struchkov.dev/$DOCKER_IMAGE_NAME:develop" .
+      - docker buildx build -f Dockerfile-develop --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:develop" -t "git.struchkov.dev/$STRUCHKOV_DOCKER_IMAGE_NAME:develop" .
 
 ---
 
@@ -98,9 +98,10 @@ steps:
       - name: dockersock
         path: /var/run
     commands:
+      - echo "$STRUCHKOV_DOCKER_REGISTRY_TOKEN" | docker login git.struchkov.dev --username $DOCKER_REGISTRY_USER --password-stdin
       - echo "$DOCKER_REGISTRY_TOKEN" | docker login docker.io --username $DOCKER_REGISTRY_USER --password-stdin
       - docker buildx create --use
-      - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" .
+      - docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t "$DOCKER_IMAGE_NAME:latest" -t "$DOCKER_IMAGE_NAME:$DRONE_TAG" -t "git.struchkov.dev/$STRUCHKOV_DOCKER_IMAGE_NAME:latest" -t "git.struchkov.dev/$STRUCHKOV_DOCKER_IMAGE_NAME:$DRONE_TAG" .
 
 ---
 kind: pipeline
@@ -196,6 +197,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: 4286bb97e5335ee85bb20124e909ab82cfc806b227114368b9dee57dd445727d
+hmac: 4a1e9cab7fa41f5ea388b7679b2dfb02f79ffada577ff61f83823165288ef04a
 
 ...
