@@ -99,16 +99,19 @@ public class InitSettingFlow implements UnitConfiguration {
                         BoxAnswer.builder().message(
                                         """
                                                 Hello 👋
-                                                
+                                                                                                
                                                 This bot will help you keep your finger on the pulse of all your GitLab projects.
                                                                                         
                                                 ❓*How it works*
                                                 Every few minutes I poll the Gitlab API using your token. I get information about repositories, merge requests in them, trades, pipelines, and other stuff. Some of the information I save to my database. This allows me to track changes and create notifications about them. All of the data is stored with you and is not shared anywhere. I also try to remove data that is not needed for work, such as closed merge requests.
-                                                                                        
+                                                [read more...](http://0.0.0.0:8000/gitlab-notification/ru/latest/architecture/concept/)
+                                                                                       
                                                 🥷*Privacy*
                                                 Some data may be very sensitive to send to the Telegram servers. For example, discussions in the Merge Requests threads. During setup, you will be able to select the privacy level of different types of notifications. The higher the level, the less sensitive data will be in the notification.
+                                                [read more...](https://docs.struchkov.dev/gitlab-notification/ru/latest/privacy/)
+                                                                                                
                                                 -- -- -- -- --
-                                                🏠 [Home Page](https://git.struchkov.dev/Telegram-Bots/gitlab-notification) • 🐛 [Issues](https://github.com/uPagge/gitlab-notification/issues) • 🛣 [Road Map](https://git.struchkov.dev/Telegram-Bots/gitlab-notification/issues)
+                                                🏠 [Docs](https://docs.struchkov.dev/gitlab-notification/) • 🐛 [Issues](https://github.com/uPagge/gitlab-notification/issues) • 🆘 [Donation](https://docs.struchkov.dev/gitlab-notification/ru/latest/support-development/)
                                                 -- -- -- -- --
                                                 👇Press start to start initial setup 👇
                                                 """
@@ -136,7 +139,7 @@ public class InitSettingFlow implements UnitConfiguration {
                 .answer(() -> replaceBoxAnswer(
                                 """
                                         Would you like me to notify you of any events in the repositories where you are the creator?
-                                        
+                                                                                
                                         You can add projects later, but it will be less convenient.
                                         -- -- -- -- --
                                         We'll set privacy levels later, don't worry 😌
@@ -258,11 +261,11 @@ public class InitSettingFlow implements UnitConfiguration {
                         boxAnswer(
                                 """
                                         I only send notifications for repositories that have been put on track. However, I can notify you when new repositories are available. This will allow you to track new repositories you are interested in quickly.
-                                        
+                                                                                
                                         Start keeping track of new repositories where you are the creator?
                                         -- -- -- -- --
                                         If you answer yes, then I will be forced to add all available repositories that you own to the database, even if you answered no in the last paragraph. This is the only way I will be able to notify you of new repositories.
-                                        
+                                                                                
                                         Don't worry, I will not scan these repositories and notify you about them in the future.
                                         """,
                                 inlineKeyBoard(
@@ -491,11 +494,11 @@ public class InitSettingFlow implements UnitConfiguration {
                                         A lot of confidential information can be contained in notifications of posts in a thread.
                                                                                 
                                         Choose a privacy level:
-                                        
+                                                                                
                                         WITHOUT NOTIFY - turn off notifications for threads
-                                        
+                                                                                
                                         NOTIFY WITHOUT CONTEXT - notifications about the presence of a new comment with a link, without the comment text itself
-                                        
+                                                                                
                                         NOTIFY WITH CONTEXT - notification of new comments along with comment text
                                         """,
                                 verticalMenuButton(
@@ -535,12 +538,15 @@ public class InitSettingFlow implements UnitConfiguration {
                         mail -> {
                             settingService.turnOnAllNotify();
                             settingService.disableFirstStart();
-                            return replaceBoxAnswer("""
-                                            Configuration completed successfully
-                                            Developer: [uPagge](https://mark.struchkov.dev)
-                                            """,
-                                    inlineKeyBoard(simpleButton("Open General Menu", "/start"))
-                            );
+                            return BoxAnswer.builder()
+                                    .message(
+                                            """
+                                                    Configuration completed successfully
+                                                    Developer: [Struchkov.Dev](https://mark.struchkov.dev)
+                                                    """
+                                    ).keyBoard(inlineKeyBoard(simpleButton("Open Menu", "/start")))
+                                    .payload(DISABLE_WEB_PAGE_PREVIEW, true)
+                                    .build();
                         }
                 )
                 .build();
