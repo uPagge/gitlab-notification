@@ -551,7 +551,39 @@
     <span class="md-ellipsis">
       
         <span class="md-typeset">
+          Новое сообщение в треде
+        </span>
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Новое сообщение в треде">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
           Упоминание в треде
+        </span>
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Уведомление о решенном треде
         </span>
       
     </span>
@@ -560,12 +592,23 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
-          Ответ в треде
+          Уведомление о пайплайне
         </span>
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        - Предыдущий статус пайплайна и новый
       
     </span>
   </a>
@@ -1052,7 +1095,7 @@
 <p>Пока вы явно не нажмете <img alt="🔔" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f514.svg" title=":bell:" />, вы не будете получать никаких уведомлений. Более того, приложение даже не будет запрашивать <abbr title="Merge Request">MR</abbr> и прочие сущности репозитория, не будет сохранять их в <abbr title="База данных">БД</abbr>.</p>
 </div>
 <h2 id="new-mr">Новый <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#new-mr" title="Permanent link">⚓︎</a></h2>
-<p>Это уведомление приходит, когда вас назначают ответственным и/или ревьювером.</p>
+<p>Это уведомление приходит, когда вас назначают ответственным и/или ревьювером. При этом не важно когда это произошло: вас указали при создании <abbr title="Merge Request">MR</abbr>, или потом заменили кого-то вами. Вы в любом случае получите уведомление.</p>
 <figure>
 <p><img alt="notify about new merge request" loading="lazy" src="../img/notify-new-mr.png" width="500" /></p>
 </figure>
@@ -1117,11 +1160,103 @@
 </ul>
 <h2 id="mr_1">Новый тред в <abbr title="Merge Request">MR</abbr><a class="headerlink" href="#mr_1" title="Permanent link">⚓︎</a></h2>
 <p>В GitLab можно создавать не просто комментарии, а треды. Если кто-то создаст такое обсуждение в вашем <abbr title="Merge Request">MR</abbr>, то вы сразу об этом узнаете.</p>
-<h2 id="_2">Упоминание в треде<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
-<p>Допустим, кто-то упомянул вас в <abbr title="Merge Request">MR</abbr>, нужен ваш совет. Автор этого <abbr title="Merge Request">MR</abbr> не вы, ответственным назначали тоже не вас. Даже в этом случае вам придет уведомление, так вы не пропустите сообщения с вашим упоминанием.</p>
-<h2 id="_3">Ответ в треде<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h2>
-<p>Важно оставаться в теме обсуждения, поэтому при появлении новых ответов в дискуссия, в которых вы участвовали, вы получите уведомление.</p>
-<p>Оно будет содержать начальное сообщение обсуждения, ваше последнее сообщение в нем, а также два последних комментария. Таким образом вы будете понимать о чем идет речь.</p>
+<p>Это уведомление поддерживает уровни конфиденциальности:</p>
+<ol>
+<li><code>WITHOUT_NOTIFY</code> — уведомления по тредам не отправляются совсем.</li>
+<li><code>NOTIFY_WITHOUT_CONTEXT</code> — вы получаете уведомление о факте нового треда, но без текста сообщений и отправителей.</li>
+<li><code>NOTIFY_WITHOUT_CONTEXT</code> — самое подробное уведомление. Содержит текст сообщений и имена отправителей.</li>
+</ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">NOTIFY_WITH_CONTEXT</label><label for="__tabbed_1_2">NOTIFY_WITHOUT_CONTEXT</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><figure markdown>
+<img alt="notify about new thread in merge request" loading="lazy" src="../img/notify-new-thread.png" width="500" />
+</figure></p>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr></li>
+<li>Первое сообщение треда с автором треда</li>
+<li>Остальные сообщения треда, если таковые имеются.</li>
+</ul>
+</div>
+<div class="tabbed-block">
+<p><figure markdown>
+<img alt="notify about new thread in merge request" loading="lazy" src="../img/notify-new-thread-without-context.png" width="500" />
+</figure></p>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr></li>
+</ul>
+</div>
+</div>
+</div>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li>Ответ в GitLab из Telegram.</li>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на тред.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления по этому треду. Уведомления по другим тредам в это <abbr title="Merge Request">MR</abbr> продолжат поступать.</li>
+</ul>
+<h2 id="_2">Новое сообщение в треде<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
+<p>Важно оставаться в теме обсуждения, поэтому при появлении новых ответов в тредах, в которых вы участвовали, вы получите уведомление.</p>
+<p>Это уведомление поддерживает уровни конфиденциальности:</p>
+<ol>
+<li><code>WITHOUT_NOTIFY</code> — уведомления по тредам не отправляются совсем.</li>
+<li><code>NOTIFY_WITHOUT_CONTEXT</code> — вы получаете уведомление о факте нового треда, но без текста сообщений и отправителей.</li>
+<li><code>NOTIFY_WITHOUT_CONTEXT</code> — самое подробное уведомление. Содержит текст сообщений и имена отправителей.</li>
+</ol>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">NOTIFY_WITH_CONTEXT</label><label for="__tabbed_2_2">NOTIFY_WITHOUT_CONTEXT</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><figure markdown>
+<img alt="notify about new message in thread" loading="lazy" src="../img/notify-new-comment-in-thread.png" width="500" />
+</figure></p>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr></li>
+<li>Первое сообщение треда с автором треда</li>
+<li>Предпоследнее сообщение треда</li>
+<li>Новое сообщение треда</li>
+</ul>
+<div class="admonition tip">
+<p>Такой объем информации должен помочь вам вспомнить/понять контекст обсуждения и ответить прямо из Telegram.</p>
+</div>
+</div>
+<div class="tabbed-block">
+<p><figure markdown>
+<img alt="notify about new comment in thread without context" loading="lazy" src="../img/notify-new-comment-in-thread-without-context.png" width="500" />
+</figure></p>
+<p>Уведомление содержит:</p>
+<ul>
+<li>Название <abbr title="Merge Request">MR</abbr></li>
+</ul>
+</div>
+</div>
+</div>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li>Ответ в GitLab из Telegram.</li>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на тред.</li>
+<li><img alt="🔕" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f515.svg" title=":no_bell:" /> — не получать уведомления по этому треду. Уведомления по другим тредам в это <abbr title="Merge Request">MR</abbr> продолжат поступать.</li>
+</ul>
+<h3 id="_3">Упоминание в треде<a class="headerlink" href="#_3" title="Permanent link">⚓︎</a></h3>
+<p>Допустим, кто-то упомянул вас в <abbr title="Merge Request">MR</abbr> используя тегирование GitLab (@GitlabLogin). Автор этого <abbr title="Merge Request">MR</abbr> не вы, ответственным назначали тоже не вас. </p>
+<p>Если вы отслеживаете репозиторий этого <abbr title="Merge Request">MR</abbr>, но не участвовали в дискуссии, то в этом случае вам придет уведомление. Так вы не пропустите сообщения с вашим упоминанием.</p>
+<p>Формат и быстрые действия такие же, как у уведомления "Новое сообщение в треде".</p>
+<h2 id="_4">Уведомление о решенном треде<a class="headerlink" href="#_4" title="Permanent link">⚓︎</a></h2>
+<h2 id="_5">Уведомление о пайплайне<a class="headerlink" href="#_5" title="Permanent link">⚓︎</a></h2>
+<p>Полезно сразу узнавать, что сборка закончилась успешно или упала.</p>
+<figure>
+<p><img alt="notify about new pipeline" loading="lazy" src="../img/notify-new-pipeline.png" width="500" /></p>
+</figure>
+<p>Уведомление содержит:</p>
+<h2 id="-">- Предыдущий статус пайплайна и новый<a class="headerlink" href="#-" title="Permanent link">⚓︎</a></h2>
+<p>Доступные быстрые действия:</p>
+<ul>
+<li><img alt="👀" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f440.svg" title=":eyes:" /> — прочитано. Удаляет сообщение.</li>
+<li><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" /> — ссылка на результат работы пайплайна.</li>
+</ul>
 
   
   
