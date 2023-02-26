@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <godfather.telegram.version>0.0.50-SNAPSHOT</godfather.telegram.version>
+        <godfather.telegram.version>0.0.50</godfather.telegram.version>
         <haiti.utils.version>2.7.2</haiti.utils.version>
         <haiti.utils.fields.version>0.0.11</haiti.utils.fields.version>
         <haiti.filter.version>0.0.5</haiti.filter.version>
