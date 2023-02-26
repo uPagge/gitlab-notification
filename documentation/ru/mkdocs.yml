@@ -7,8 +7,8 @@ edit_uri: edit/develop/documentation/ru/docs
 
 nav:
   - О проекте: index.md
+  - Конфиденциальность: privacy.md
   - Возможности:
-    - Приватность: features/privacy.md
     - Уведомления: features/notify.md
     - Быстрые действия: features/interaction-gitlab.md
   - Быстрый старт:
@@ -55,7 +55,6 @@ theme:
     - navigation.sections
     - navigation.tracking
     - navigation.footer
-    - navigation.path
     - navigation.prune
     - search
     - search.suggest
@@ -76,9 +75,8 @@ plugins:
 #      archive_toc: true
 #      categories: false
 #      authors: false
-  - optimize:
-      cache: false
-      optimize_jpg_quality: 90
+#  - optimize:
+#      optimize_jpg_quality: 90
   - tags
   - search:
       lang: ru
