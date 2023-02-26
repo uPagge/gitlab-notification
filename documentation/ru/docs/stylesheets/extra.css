@@ -1,11 +1,9 @@
-.md-typeset .admonition,
-.md-typeset details {
-    border-width: 0;
-    border-left-width: 4px;
-}
-
 .md-typeset .admonition, .md-typeset details {
     font-size: 0.75rem;
+}
+
+.md-typeset h1, .md-typeset h2 {
+    font-weight: 500;
 }
 
 @keyframes heart {

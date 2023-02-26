@@ -7,7 +7,7 @@ edit_uri: edit/develop/documentation/ru/docs
 
 nav:
   - О проекте: index.md
-  - Конфиденциальность: privacy.md
+  - Конфиденциальность: privacy/index.md
   - Возможности:
     - Уведомления: features/notify.md
     - Быстрые действия: features/interaction-gitlab.md
