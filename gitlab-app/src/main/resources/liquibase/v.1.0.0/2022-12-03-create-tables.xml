@@ -43,7 +43,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="web_url" type="varchar(300)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="notification" type="boolean">
                 <constraints nullable="false"/>
@@ -51,6 +51,7 @@
             <column name="processing" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="last_scan" type="datetime"/>
         </createTable>
     </changeSet>
 
@@ -64,7 +65,7 @@
             </column>
             <column name="name" type="varchar(100)"/>
             <column name="web_url" type="varchar(300)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
@@ -95,7 +96,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="web_url" type="varchar(300)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="conflict" type="boolean">
                 <constraints nullable="false"/>
