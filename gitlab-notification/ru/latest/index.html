@@ -6,27 +6,33 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-      
-      
-        <link rel="canonical" href="https://docs.struchkov.dev/gitlab-notification/latest/">
+        <meta name="description" content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно.">
       
       
       
-        <link rel="next" href="getting-started/features/">
+        <link rel="canonical" href="https://docs.struchkov.dev/gitlab-notification/ru/latest/">
       
-      <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.13">
-    
-    
       
-        <title>Быстрый старт - GitLab Notification</title>
       
-    
-    
-      <link rel="stylesheet" href="assets/stylesheets/main.ffa9267a.min.css">
+        <link rel="next" href="privacy/">
+      
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.1+insiders-4.32.2">
+    
+    
+      
+        <title>GitLab Notification in Telegram - GitLab Notification</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.24f010b1.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.6932e648.min.css">
       
       
 
@@ -41,6 +47,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -73,11 +81,11 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="Быстрый старт" >
+        <meta  property="og:title"  content="GitLab Notification in Telegram" >
       
-        <meta  property="og:description"  content="None" >
+        <meta  property="og:description"  content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно." >
       
-        <meta  property="og:image"  content="https://docs.struchkov.dev/gitlab-notification/latest/assets/images/social/index.png" >
+        <meta  property="og:image"  content="https://docs.struchkov.dev/gitlab-notification/ru/latest/assets/images/social/index.png" >
       
         <meta  property="og:image:type"  content="image/png" >
       
@@ -85,15 +93,15 @@
       
         <meta  property="og:image:height"  content="630" >
       
-        <meta  property="og:url"  content="https://docs.struchkov.dev/gitlab-notification/latest/" >
+        <meta  property="og:url"  content="https://docs.struchkov.dev/gitlab-notification/ru/latest/" >
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="Быстрый старт" >
+        <meta  name="twitter:title"  content="GitLab Notification in Telegram" >
       
-        <meta  name="twitter:description"  content="None" >
+        <meta  name="twitter:description"  content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно." >
       
-        <meta  name="twitter:image"  content="https://docs.struchkov.dev/gitlab-notification/latest/assets/images/social/index.png" >
+        <meta  name="twitter:image"  content="https://docs.struchkov.dev/gitlab-notification/ru/latest/assets/images/social/index.png" >
       
     
     
@@ -109,9 +117,6 @@
     
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange">
   
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -135,7 +140,9 @@
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
     <a href="." title="GitLab Notification" class="md-header__button md-logo" aria-label="GitLab Notification" data-md-component="logo">
       
@@ -156,7 +163,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Быстрый старт
+              GitLab Notification in Telegram
             
           </span>
         </div>
@@ -166,7 +173,15 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-orange" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
@@ -174,9 +189,9 @@
           
         
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
           
-            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+            <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
             </label>
           
@@ -184,31 +199,8 @@
       </form>
     
     
-      <div class="md-header__option">
-        <div class="md-select">
-          
-          <button class="md-header__button md-icon" aria-label="Выберите язык">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
-          </button>
-          <div class="md-select__inner">
-            <ul class="md-select__list">
-              
-                <li class="md-select__item">
-                  <a href="/gitlab-notification/ru/" hreflang="ru" class="md-select__link">
-                    Русский
-                  </a>
-                </li>
-              
-                <li class="md-select__item">
-                  <a href="/gitlab-notification/en/" hreflang="en" class="md-select__link">
-                    English
-                  </a>
-                </li>
-              
-            </ul>
-          </div>
-        </div>
-      </div>
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
     
     
       <label class="md-header__button md-icon" for="__search">
@@ -283,6 +275,7 @@
                     
 
 
+
   
 
 <nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Навигация" data-md-level="0">
@@ -312,8 +305,6 @@
     
       
       
-      
-
   
   
     
@@ -328,12 +319,36 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          О проекте
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    О проекте
+  
+
+    
+  </span>
+  
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="." class="md-nav__link md-nav__link--active">
-        О проекте
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    О проекте
+  
+
+    
+  </span>
+  
+  
+
       </a>
       
         
@@ -354,8 +369,14 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#privacy" class="md-nav__link">
-    Privacy
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <span class="md-typeset">
+          Основные возможности
+        </span>
+      
+    </span>
   </a>
   
 </li>
@@ -370,14 +391,24 @@
     
       
       
-      
-
   
   
   
     <li class="md-nav__item">
-      <a href="getting-started/features/" class="md-nav__link">
-        Возможности
+      <a href="privacy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Защита данных
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
@@ -385,204 +416,529 @@
     
       
       
+  
+  
+  
+    
+    
       
-
-  
-  
-  
+        
+      
+        
+      
+        
+      
+    
     
       
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-      
-      
         
-          
         
-      
-      
-        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Быстрый старт
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          Быстрый старт
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    Возможности
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Возможности
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/notify/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Уведомления
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/interaction-gitlab/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Взаимодействие с GitLab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="features/interaction-bot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Взаимодействие с ботом
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    Быстрый старт
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Быстрый старт
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/create-gitlab-token/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Создание токена GitLab
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/creating-telegram-bot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Регистрируем бота в Telegram
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
     <li class="md-nav__item">
       <a href="getting-started/configuration/" class="md-nav__link">
-        Запуск
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Первый запуск бота
+    </span>
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started/first-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Первичная настройка
+    </span>
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+    
+    
       
-
-  
-  
-  
+        
+      
+    
     
       
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-      
-      
         
-          
         
-      
-      
-        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-          Архитектура
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Архитектура
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    
+  
+    Архитектура
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Архитектура
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
   
   
   
     <li class="md-nav__item">
       <a href="architecture/concept/" class="md-nav__link">
-        Концепт
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Общее
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+    
+    
       
-
-  
-  
-  
+        
+          
+        
+      
+    
     
       
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-      
-      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="support-development/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    Поддержать разработку
+  
+
+    
+  </span>
+  
+  
+
+            </a>
             
-          
+          </div>
         
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="support-development/">Поддержать разработку</a>
-          
-        </div>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          Поддержать разработку
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
             
-          
-        </ul>
-      </nav>
+  
+    Поддержать разработку
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+    
+    
       
-
-  
-  
-  
+        
+          
+        
+      
+    
     
       
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-      
-      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="changelog/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    ChangeLog
+  
+
+    
+  </span>
+  
+  
+
+            </a>
             
-          
+          </div>
         
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="changelog/">ChangeLog</a>
-          
-        </div>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_6">
-          <span class="md-nav__icon md-icon"></span>
-          ChangeLog
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
             
-          
-        </ul>
-      </nav>
+  
+    ChangeLog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -597,6 +953,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -607,7 +964,7 @@
 
 
   
-    <a href="https://github.com/uPagge/gitlab-notification/edit/master/docs/index.md" title="Редактировать страницу" class="md-content__button md-icon">
+    <a href="https://github.com/uPagge/gitlab-notification/edit/develop/documentation/ru/docs/index.md" title="Редактировать страницу" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -615,13 +972,33 @@
   
 
 
-<h1 id="gitlab-notification-telegram-gitlab">GitLab Notification – Персональный Telegram для GitLab<a class="headerlink" href="#gitlab-notification-telegram-gitlab" title="Permanent link">&para;</a></h1>
-<p>Персональный помощник для взаимодействия с GitLab. Получайте уведомления о событиях в GitLab: новые MR, где вы ревьювер, конфликты в ваших MR, уведомления о новых сообщениях в тредах, где вы являетесь участником, и многое другое.</p>
-<h2 id="privacy"><img alt="🥷" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f977.svg" title=":ninja:" /> Privacy<a class="headerlink" href="#privacy" title="Permanent link">&para;</a></h2>
-<p>Мое решение сфокусировано на приватности и прозрачности. Код и используемые зависимости полностью открыты и доступны для изучения и самостоятельной сборки.</p>
-<p>Для работы бота токен доступа устанавливается в переменные среды и никуда не передается, кроме запросов в GitLab.</p>
-<p>Некоторые уведомления могут содержать чуствительную информацию. Например, уведомления о новых сообщениях в тредах. Возможно вы не захотите раскрывать столько информации о ваших репозиториях Телеграму, ведь через него идет получение уведомлений. Специально для таких случаев предусмотрены уровни конфиденциальности разных типов уведомлений.</p>
-<p>Возьмем для примера уведомление о новом сообщении в треде. При минимальном уровне конфиденциальности вы получите уведомление с текстом коментария и сможете сразу ответить на него в телеграм, а при максимальном уровне конфиденциальности будет сообщаться только о факте нового комментария, без содержания. Все это настраивается при первом запуске.</p>
+<h1 id="gitlab-notification-telegram-gitlab">GitLab Notification – Персональный Telegram бот для GitLab<a class="headerlink" href="#gitlab-notification-telegram-gitlab" title="Permanent link">⚓︎</a></h1>
+<p>Запустите своего личного GitLab бота и получайте персональные уведомления из GitLab прямо на свой аккаунт в Telegram! Это не облачное решение, бот запускается на вашей машине или вашем сервере.</p>
+<p>Вы больше никогда не пропустите важное уведомление. Будь то новый запрос на слияние или возникновение конфликта. Больше не нужно заходить в GitLab, чтобы проверить статус сборки - с нашим приложением вы сможете оставаться в курсе дел, где бы вы ни находились.</p>
+<p>Бота легко <a href="getting-started/configuration/">настроить и использовать</a>, а быстрые действия призваны оптимизировать ваш рабочий процесс. Не ждите больше - запустите своего персонального Telegram бота, и получайте персональные уведомления о событиях в GitLab.</p>
+<figure>
+<p><img alt="notify-about-new-mr" loading="lazy" src="features/img/notify-new-mr.png" width="600" /></p>
+<figcaption>Пример уведомления от бота</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Что-то здесь не чисто</p>
+<p>Я понимаю, что GitLab часто содержит конфиденциальные данные, утечка которых не желательна. Поэтому я оформил <a href="privacy/">отдельную страницу, на которой собрал ответы на вопросы безопасности и конфеденциалоьности.</a></p>
+</div>
+<h2 id="key-features">Основные возможности<a class="headerlink" href="#key-features" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Уведомление о новых <abbr title="Merge Request">MR</abbr>, где вы ревьювер или ответственный.</li>
+<li>Уведомление о результате работы сборки.</li>
+<li>Уведомление о возникновении конфликта в вашем <abbr title="Merge Request">MR</abbr>.</li>
+<li>Уведомление о треде, в которых вас упоминают в формате @nickname.</li>
+<li>Уведомление о смене статуса вашего <abbr title="Merge Request">MR</abbr>.</li>
+<li><a href="features/notify/">И многое многое другое...</a></li>
+</ul>
+<hr />
+<p><a class="md-button md-button--primary" href="getting-started/configuration/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5Z"/></svg></span> Создать персонального ассистента</a></p>
+
+  
+  
+
 
 
   
@@ -637,6 +1014,7 @@
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -651,13 +1029,13 @@
         
         
           
-          <a href="getting-started/features/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Возможности" rel="next">
+          <a href="privacy/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Защита данных" rel="next">
             <div class="md-footer__title">
               <div class="md-ellipsis">
                 <span class="md-footer__direction">
                   Вперед
                 </span>
-                Возможности
+                Защита данных
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -684,10 +1062,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.indexes", "navigation.sections", "navigation.tracking", "navigation.footer", "navigation.path", "navigation.prune", "search", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.indexes", "navigation.sections", "navigation.tracking", "navigation.footer", "navigation.prune", "search", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "content.code.annotate", "content.tooltips", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.2a6f1dda.min.js"></script>
+      <script src="assets/javascripts/bundle.960d13ef.min.js"></script>
       
     
   </body>
