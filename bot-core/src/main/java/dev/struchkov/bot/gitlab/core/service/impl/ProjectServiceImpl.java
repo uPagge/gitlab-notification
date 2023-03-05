@@ -118,6 +118,8 @@ public class ProjectServiceImpl implements ProjectService {
                         .projectDescription(newProject.getDescription())
                         .projectName(newProject.getName())
                         .projectUrl(newProject.getWebUrl())
+                        .sshUrlToRepo(newProject.getSshUrlToRepo())
+                        .httpUrlToRepo(newProject.getHttpUrlToRepo())
                         .authorName(authorName)
                         .build()
         );

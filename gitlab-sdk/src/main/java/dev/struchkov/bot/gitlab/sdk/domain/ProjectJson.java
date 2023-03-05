@@ -27,6 +27,12 @@ public class ProjectJson {
     @JsonProperty("web_url")
     private String webUrl;
 
+    @JsonProperty("ssh_url_to_repo")
+    private String sshUrlToRepo;
+
+    @JsonProperty("http_url_to_repo")
+    private String httpUrlToRepo;
+
     @JsonProperty("creator_id")
     private Long creatorId;
 

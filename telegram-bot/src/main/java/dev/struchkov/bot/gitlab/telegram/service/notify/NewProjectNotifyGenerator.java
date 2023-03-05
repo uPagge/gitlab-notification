@@ -38,6 +38,10 @@ public class NewProjectNotifyGenerator implements NotifyBoxAnswerGenerator<NewPr
                     .append(Icons.HR);
         }
 
+        builder.append("ssh: ").append("`").append(notify.getSshUrlToRepo()).append("`\n\n")
+                .append("http: ").append("`").append(notify.getHttpUrlToRepo()).append("`")
+                .append(Icons.HR);
+
         builder.append(Icons.AUTHOR).append(": ").append(escapeMarkdown(notify.getAuthorName()));
 
         final String notifyMessage = builder.toString();

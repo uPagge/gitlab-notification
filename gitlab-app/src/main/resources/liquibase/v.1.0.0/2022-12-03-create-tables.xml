@@ -45,6 +45,8 @@
             <column name="web_url" type="varchar(300)">
                 <constraints nullable="false"/>
             </column>
+            <column name="ssh_url_to_repo" type="varchar(300)"/>
+            <column name="http_url_to_repo" type="varchar(300)"/>
             <column name="notification" type="boolean">
                 <constraints nullable="false"/>
             </column>

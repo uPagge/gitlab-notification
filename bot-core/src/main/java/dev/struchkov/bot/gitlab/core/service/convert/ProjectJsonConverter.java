@@ -22,6 +22,8 @@ public class ProjectJsonConverter implements Converter<ProjectJson, Project> {
         project.setDescription(source.getDescription());
         project.setName(source.getName());
         project.setWebUrl(source.getWebUrl());
+        project.setHttpUrlToRepo(source.getHttpUrlToRepo());
+        project.setSshUrlToRepo(source.getSshUrlToRepo());
         return project;
     }
 

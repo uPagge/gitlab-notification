@@ -39,6 +39,12 @@ public class Project {
     @Column(name = "web_url")
     private String webUrl;
 
+    @Column(name = "ssh_url_to_repo")
+    private String sshUrlToRepo;
+
+    @Column(name = "http_url_to_repo")
+    private String httpUrlToRepo;
+
     @Column(name = "notification")
     private boolean notification;
 

@@ -21,6 +21,8 @@ public final class NewProjectNotify implements Notify {
     private final String projectUrl;
     private final String projectDescription;
     private final String authorName;
+    private final String sshUrlToRepo;
+    private final String httpUrlToRepo;
 
     @Builder
     public NewProjectNotify(
@@ -28,13 +30,17 @@ public final class NewProjectNotify implements Notify {
             String projectName,
             String projectUrl,
             String projectDescription,
-            String authorName
+            String authorName,
+            String sshUrlToRepo,
+            String httpUrlToRepo
     ) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectUrl = projectUrl;
         this.projectDescription = projectDescription;
         this.authorName = authorName;
+        this.sshUrlToRepo = sshUrlToRepo;
+        this.httpUrlToRepo = httpUrlToRepo;
     }
 
     @Override
