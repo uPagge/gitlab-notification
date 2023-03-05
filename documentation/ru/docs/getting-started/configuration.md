@@ -2,10 +2,13 @@
 
 Есть несколько способов запустить бота-помощника. Бот был спроектирован таким образом, чтобы работать локально на вашем ПК, но вы можете запустить его на сервере в режиме 24/4.
 
-Первым делом вам предложат ввести имя для бота.
+Для начала выполните эти действия:
+
+1. [Создание бота в Telegram](creating-telegram-bot.md)
+2. [Получение персонального токена в GitLab](create-gitlab-token.md)
 
 ## Конфигурация
-Несмотря на то, какой вариант запуска вы вберете, необходимо указать следующие переменные среды:
+Вне зависимости от того, какой способ вы выберете, необходимо будет указать данные переменные среды:
 
 * `TELEGRAM_BOT_TOKEN` — токен, который вы получили при [создании бота](creating-telegram-bot.md).
 * `TELEGRAM_BOT_USERNAME` — название, которое вы дали боту. Оканчивается на bot.
@@ -98,22 +101,4 @@ docker run --name gitlab-notify  \
     --env DATASOURCE_USERNAME=postgres \
     --env DATASOURCE_PASSWORD=value \
     --network="host" upagge/gitlab-telegram-notify:latest
-```
-
-## Запуск в IDEA
-
-## Запуск JAR релиза
-
-Скачать актуальный jar-файл всегда можно на странице релизов GitHub.
-
-``` shell
-java -DTELEGRAM_BOT_USERNAME=value \
-                    -DTELEGRAM_BOT_TOKEN=value \
-                    -DTELEGRAM_PERSON_ID=value \
-                    -DDATASOURCE_URL=value \
-                    -DDATASOURCE_PASSWORD=value \
-                    -DDATASOURCE_USERNAME=value \
-                    -DGITLAB_PERSONAL_TOKEN=value \
-                    -DGITLAB_URL=value \
-                    -jar gitlab-notification.jar    
 ```

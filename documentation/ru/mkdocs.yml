@@ -10,7 +10,8 @@ nav:
   - Конфиденциальность: privacy/index.md
   - Возможности:
     - Уведомления: features/notify.md
-    - Быстрые действия: features/interaction-gitlab.md
+    - Взаимодействие с GitLab: features/interaction-gitlab.md
+    - features/interaction-bot.md
   - Быстрый старт:
       - getting-started/create-gitlab-token.md
       - getting-started/creating-telegram-bot.md
