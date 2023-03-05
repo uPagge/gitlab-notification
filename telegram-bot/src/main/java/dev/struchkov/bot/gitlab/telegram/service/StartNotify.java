@@ -1,12 +1,12 @@
 package dev.struchkov.bot.gitlab.telegram.service;
 
 import dev.struchkov.bot.gitlab.context.service.AppSettingService;
-import dev.struchkov.bot.gitlab.context.service.NotifyService;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
 import dev.struchkov.bot.gitlab.core.config.properties.AppProperty;
 import dev.struchkov.bot.gitlab.core.config.properties.PersonProperty;
 import dev.struchkov.godfather.simple.domain.BoxAnswer;
 import dev.struchkov.godfather.simple.domain.SentBox;
+import dev.struchkov.godfather.telegram.domain.ClientBotCommand;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramSending;
 import dev.struchkov.godfather.telegram.simple.context.service.TelegramService;
 import jakarta.annotation.PostConstruct;
@@ -17,6 +17,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,8 +30,8 @@ import static dev.struchkov.haiti.utils.Checker.checkNotBlank;
 /**
  * @author upagge 19.01.2021
  */
-@Component
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class StartNotify {
 
@@ -38,8 +39,6 @@ public class StartNotify {
 
     private final TelegramSending sending;
     private final TelegramService telegramService;
-
-    private final NotifyService notifyService;
 
     private final AppProperty appProperty;
     private final AppSettingService settingService;
@@ -66,7 +65,6 @@ public class StartNotify {
                     .payload(DISABLE_WEB_PAGE_PREVIEW, true)
                     .build();
             sending.send(boxAnswer);
-
             sendNotice();
         }
         registrationForStatistic();
@@ -102,7 +100,7 @@ public class StartNotify {
                     final BoxAnswer notice = BoxAnswer.builder()
                             .message(noticeMessage)
                             .recipientPersonId(personProperty.getTelegramId())
-//                            .payload(DISABLE_WEB_PAGE_PREVIEW, true)
+                            .payload(DISABLE_WEB_PAGE_PREVIEW, true)
                             .build();
                     final Optional<SentBox> optSentBox = sending.send(notice);
                     if (optSentBox.isPresent()) {
@@ -117,17 +115,12 @@ public class StartNotify {
         }
     }
 
-    //    @PostConstruct
-//    public void demo() {
-//        notifyService.send(
-//                DiscussionNewNotify.builder()
-//                        .authorName("Ivan Ivanov")
-//                        .threadId("1")
-//                        .discussionMessage("Кажется здесь можно сделать лучше.")
-//                        .mergeRequestName("Merge Request Name")
-//                        .url("https://ya.ru")
-//                        .build()
-//        );
-//    }
+    @PostConstruct
+    public void createCommands() {
+        final ClientBotCommand clientBotCommand = new ClientBotCommand();
+        clientBotCommand.setDescription("Open general menu");
+        clientBotCommand.setKey("start");
+        telegramService.addCommand(List.of(clientBotCommand));
+    }
 
 }
