@@ -10,7 +10,7 @@
 
     <groupId>dev.struchkov.bot.gitlab</groupId>
     <artifactId>gitlab-bot</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -251,7 +251,7 @@
         <connection>scm:git:ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git</connection>
         <url>https://git.struchkov.dev/Telegram-Bots/gitlab-notification</url>
         <developerConnection>scm:git:ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git</developerConnection>
-      <tag>v.1.0.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <developers>

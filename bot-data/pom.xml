@@ -4,7 +4,7 @@
     <parent>
         <groupId>dev.struchkov.bot.gitlab</groupId>
         <artifactId>gitlab-bot</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>bot-data</artifactId>
