@@ -352,20 +352,23 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
 
     private void notifyAboutResolveConflict(MergeRequest oldMergeRequest, MergeRequest mergeRequest, Project project) {
         final Long gitlabUserId = personInformation.getId();
-        if (
-                oldMergeRequest.isConflict() // У старого MR был конфликт
-                && !mergeRequest.isConflict() // А у нового нет
-                && gitlabUserId.equals(oldMergeRequest.getAuthor().getId()) // и MR создан пользователем бота
-        ) {
-            notifyService.send(
-                    ConflictResolveMrNotify.builder()
-                            .mrId(oldMergeRequest.getId())
-                            .sourceBranch(oldMergeRequest.getSourceBranch())
-                            .name(mergeRequest.getTitle())
-                            .url(mergeRequest.getWebUrl())
-                            .projectKey(project.getName())
-                            .build()
-            );
+        if (oldMergeRequest.isConflict() && !mergeRequest.isConflict()) {
+            // проверяем даты коммитов, так как при пуше в target ветку MR у которого есть конфликт, конфликт на время пропадает. Судя по всему GitLab после пуша заново проверяет вероятность конфликта. Чаще всего конфликт никуда не девается.
+            if (oldMergeRequest.getDateLastCommit().equals(mergeRequest.getDateLastCommit())) {
+                mergeRequest.setConflict(true);
+            } else {
+                if (gitlabUserId.equals(oldMergeRequest.getAuthor().getId())) {
+                    notifyService.send(
+                            ConflictResolveMrNotify.builder()
+                                    .mrId(oldMergeRequest.getId())
+                                    .sourceBranch(oldMergeRequest.getSourceBranch())
+                                    .name(mergeRequest.getTitle())
+                                    .url(mergeRequest.getWebUrl())
+                                    .projectKey(project.getName())
+                                    .build()
+                    );
+                }
+            }
         }
     }
 
