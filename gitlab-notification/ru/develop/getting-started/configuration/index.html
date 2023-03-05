@@ -361,6 +361,8 @@
       
         
       
+        
+      
     
     
       
@@ -439,7 +441,35 @@
   <span class="md-ellipsis">
     
   
-    Быстрые действия
+    Взаимодействие с GitLab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/interaction-bot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Взаимодействие с ботом
+    </span>
   
 
     
@@ -675,32 +705,6 @@
       
         <span class="md-typeset">
           Запуск Docker
-        </span>
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#idea" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <span class="md-typeset">
-          Запуск в IDEA
-        </span>
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#jar" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <span class="md-typeset">
-          Запуск JAR релиза
         </span>
       
     </span>
@@ -994,9 +998,13 @@
 
 <h1 id="_1">Первый запуск ассистента<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h1>
 <p>Есть несколько способов запустить бота-помощника. Бот был спроектирован таким образом, чтобы работать локально на вашем ПК, но вы можете запустить его на сервере в режиме 24/4.</p>
-<p>Первым делом вам предложат ввести имя для бота.</p>
+<p>Для начала выполните эти действия:</p>
+<ol>
+<li><a href="../creating-telegram-bot/">Создание бота в Telegram</a></li>
+<li><a href="../create-gitlab-token/">Получение персонального токена в GitLab</a></li>
+</ol>
 <h2 id="_2">Конфигурация<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
-<p>Несмотря на то, какой вариант запуска вы вберете, необходимо указать следующие переменные среды:</p>
+<p>Вне зависимости от того, какой способ вы выберете, необходимо будет указать данные переменные среды:</p>
 <ul>
 <li><code>TELEGRAM_BOT_TOKEN</code> — токен, который вы получили при <a href="../creating-telegram-bot/">создании бота</a>.</li>
 <li><code>TELEGRAM_BOT_USERNAME</code> — название, которое вы дали боту. Оканчивается на bot.</li>
@@ -1082,19 +1090,6 @@
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">DATASOURCE_USERNAME</span><span class="o">=</span>postgres<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">DATASOURCE_PASSWORD</span><span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span>--network<span class="o">=</span><span class="s2">&quot;host&quot;</span><span class="w"> </span>upagge/gitlab-telegram-notify:latest
-</span></code></pre></div>
-<h2 id="idea">Запуск в IDEA<a class="headerlink" href="#idea" title="Permanent link">⚓︎</a></h2>
-<h2 id="jar">Запуск JAR релиза<a class="headerlink" href="#jar" title="Permanent link">⚓︎</a></h2>
-<p>Скачать актуальный jar-файл всегда можно на странице релизов GitHub.</p>
-<div class="language-shell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>java<span class="w"> </span>-DTELEGRAM_BOT_USERNAME<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">                    </span>-DTELEGRAM_BOT_TOKEN<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">                    </span>-DTELEGRAM_PERSON_ID<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                    </span>-DDATASOURCE_URL<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">                    </span>-DDATASOURCE_PASSWORD<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">                    </span>-DDATASOURCE_USERNAME<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">                    </span>-DGITLAB_PERSONAL_TOKEN<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">                    </span>-DGITLAB_URL<span class="o">=</span>value<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">                    </span>-jar<span class="w"> </span>gitlab-notification.jar<span class="w">    </span>
 </span></code></pre></div>
 
   

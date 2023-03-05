@@ -361,6 +361,8 @@
       
         
       
+        
+      
     
     
       
@@ -439,7 +441,35 @@
   <span class="md-ellipsis">
     
   
-    Быстрые действия
+    Взаимодействие с GitLab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/interaction-bot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Взаимодействие с ботом
+    </span>
   
 
     
@@ -778,19 +808,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        <span class="md-typeset">
-          Отслеживание репозиториев
-        </span>
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -965,6 +982,10 @@
 
 
 <h1 id="_1">Общая архитектура<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Данный раздел находится в процессе написания</p>
+</div>
 <p>Поддерживается два режима работы: периодические запуски на ПК и запуск на сервере в режиме 24/7.</p>
 <h2 id="schema-database">Схема <abbr title="База данных">БД</abbr><a class="headerlink" href="#schema-database" title="Permanent link">⚓︎</a></h2>
 <p>Приложение имеет <abbr title="База данных">БД</abbr>, которая используется для сохранения состояния отслеживаемых сущностей GitLab.</p>
@@ -982,8 +1003,6 @@
 <p>Не везде имется возможность установить произвольные Webhook. Например, вряд ли кто-то позволит вам установить Webhook из корпоративного GitLab во внешнюю сеть. Переодическое обращение к GitLab API можно выполнять прямо с рабочей машины.</p>
 <p>В будущем планирую добавить поддержку и Webhook.</p>
 </div>
-<h2 id="_2">Отслеживание репозиториев<a class="headerlink" href="#_2" title="Permanent link">⚓︎</a></h2>
-<p>Ключевым (рутовым) элементом являются репозитории.</p>
 
   
   

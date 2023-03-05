@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://docs.struchkov.dev/gitlab-notification/ru/develop/getting-started/create-gitlab-token/">
       
       
-        <link rel="prev" href="../../features/interaction-gitlab/">
+        <link rel="prev" href="../../features/interaction-bot/">
       
       
         <link rel="next" href="../creating-telegram-bot/">
@@ -361,6 +361,8 @@
       
         
       
+        
+      
     
     
       
@@ -439,7 +441,35 @@
   <span class="md-ellipsis">
     
   
-    Быстрые действия
+    Взаимодействие с GitLab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../features/interaction-bot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    <span class="md-typeset">
+      Взаимодействие с ботом
+    </span>
   
 
     
@@ -888,6 +918,24 @@
 
 
 <h1 id="gitlab">Создание токена GitLab<a class="headerlink" href="#gitlab" title="Permanent link">⚓︎</a></h1>
+<p>Для взаимодействия с GitLab необходим персональный токен доступа.</p>
+<p>Чтобы его получить перейдите по адресу: <a href="https://gitlab.com/-/profile/personal_access_tokens">https://gitlab.com/-/profile/personal_access_tokens</a></p>
+<div class="admonition tip">
+<p class="admonition-title">Корпоративный GitLab</p>
+<p>Замените <code>https://gitlab.com/</code> на адрес своего GitLab, если вы используете self-host решение.</p>
+</div>
+<ul>
+<li>Придумайте название токену, например, <code>GitLab Notify</code>. </li>
+<li>Выдайте права на чтение - <code>read_api</code></li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Уровень разрешений</p>
+<p>Выберете уровень разрешения <code>api</code>, если планируете пользоваться такими функциями, как: <a href="../../features/interaction-gitlab/#ответ-в-треде">ответ в треде</a></p>
+</div>
+<ul>
+<li>Нажмите кнопку <code>Create personal access token</code>.</li>
+<li>Сохраните полученный токен.</li>
+</ul>
 
   
   
@@ -931,7 +979,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Нижний колонтитул" >
         
           
-          <a href="../../features/interaction-gitlab/" class="md-footer__link md-footer__link--prev" aria-label="Назад: Быстрые действия" rel="prev">
+          <a href="../../features/interaction-bot/" class="md-footer__link md-footer__link--prev" aria-label="Назад: Взаимодействие с ботом" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -940,7 +988,7 @@
                 <span class="md-footer__direction">
                   Назад
                 </span>
-                Быстрые действия
+                Взаимодействие с ботом
               </div>
             </div>
           </a>
