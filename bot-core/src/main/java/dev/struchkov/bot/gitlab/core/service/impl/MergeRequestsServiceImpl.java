@@ -60,8 +60,9 @@ public class MergeRequestsServiceImpl implements MergeRequestsService {
     public MergeRequest create(@NonNull MergeRequest mergeRequest) {
         final boolean botUserReviewer = isBotUserReviewer(mergeRequest);
         final boolean botUserAssignee = isBotUserAssigneeAndNotAuthor(mergeRequest);
+        final boolean botUserAuthor = personInformation.getId().equals(mergeRequest.getAuthor().getId());
 
-        mergeRequest.setNotification(botUserReviewer || botUserAssignee);
+        mergeRequest.setNotification(botUserReviewer || botUserAssignee || botUserAuthor);
         mergeRequest.setUserAssignee(botUserAssignee);
         mergeRequest.setUserReviewer(botUserReviewer);
 
