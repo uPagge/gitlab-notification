@@ -37,6 +37,11 @@ telegram:
 
 gitlab-bot:
   version: 0.0.1-SNAPSHOT
+  cron:
+    scan:
+      general: "0 */1 * * * *"
+      new-project: "0 0 */1 * * *"
+      new-merge-request: "0 */15 * * * *"
   person:
     telegram-id: ${TELEGRAM_PERSON_ID}
     token: ${GITLAB_PERSONAL_TOKEN}
@@ -59,3 +64,17 @@ gitlab-bot:
     new-note-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
     discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page={3,number,#}"
     discussion-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+gitlab-bot:
+  version: 0.0.1-SNAPSHOT
+  cron:
+    scan:
+      general: "0 */1 * * * *"
+      new-project: "0 */1 * * * *"
+      new-merge-request: "0 */1 * * * *"
