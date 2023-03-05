@@ -32,9 +32,9 @@ public class SchedulerService {
     private final MergeRequestsService mergeRequestsService;
     private final DiscussionService discussionService;
 
-    @Scheduled(cron = "0 */1 * * * *")
-    public void newMergeRequest() {
-        log.info("Запуск процесса обновления данных c GitLab");
+    @Scheduled(cron = "0 0 */1 * * *")
+    public void newProjects() {
+        log.info("Запуск процесса получение новых репозиториев c GitLab");
         if (!settingService.isFirstStart()) {
             if (settingService.isOwnerProjectScan()) {
                 projectParser.parseAllProjectOwner();
@@ -42,8 +42,24 @@ public class SchedulerService {
             if (settingService.isPrivateProjectScan()) {
                 projectParser.parseAllPrivateProject();
             }
-            mergeRequestParser.parsingOldMergeRequest();
+        }
+        log.info("Конец процесса получение новых репозиториев c GitLab");
+    }
+
+    @Scheduled(cron = "0 */15 * * * *")
+    public void newMergeRequests() {
+        log.info("Запуск процесса получение новых MR c GitLab");
+        if (!settingService.isFirstStart()) {
             mergeRequestParser.parsingNewMergeRequest();
+        }
+        log.info("Конец процесса получение новых MR c GitLab");
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    public void newMergeRequest() {
+        log.info("Запуск процесса обновления данных c GitLab");
+        if (!settingService.isFirstStart()) {
+            mergeRequestParser.parsingOldMergeRequest();
             pipelineParser.scanOldPipeline();
             pipelineParser.scanNewPipeline();
             discussionParser.scanOldDiscussions();
