@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно.">
+      
       
       
         <link rel="canonical" href="https://docs.struchkov.dev/gitlab-notification/ru/develop/">
@@ -19,15 +21,15 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.15+insiders-4.32.1">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.1+insiders-4.32.2">
     
     
       
-        <title>Быстрый старт - GitLab Notification</title>
+        <title>GitLab Notification in Telegram - GitLab Notification</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.45be684b.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.24f010b1.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.6932e648.min.css">
@@ -79,9 +81,9 @@
       
         <meta  property="og:type"  content="website" >
       
-        <meta  property="og:title"  content="Быстрый старт" >
+        <meta  property="og:title"  content="GitLab Notification in Telegram" >
       
-        <meta  property="og:description"  content="None" >
+        <meta  property="og:description"  content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно." >
       
         <meta  property="og:image"  content="https://docs.struchkov.dev/gitlab-notification/ru/develop/assets/images/social/index.png" >
       
@@ -95,9 +97,9 @@
       
         <meta  name="twitter:card"  content="summary_large_image" >
       
-        <meta  name="twitter:title"  content="Быстрый старт" >
+        <meta  name="twitter:title"  content="GitLab Notification in Telegram" >
       
-        <meta  name="twitter:description"  content="None" >
+        <meta  name="twitter:description"  content="Персональный бот в Telegram поможет вам оставаться в курсе изменений, которые касаются вас непосредственно." >
       
         <meta  name="twitter:image"  content="https://docs.struchkov.dev/gitlab-notification/ru/develop/assets/images/social/index.png" >
       
@@ -138,7 +140,9 @@
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
     <a href="." title="GitLab Notification" class="md-header__button md-logo" aria-label="GitLab Notification" data-md-component="logo">
       
@@ -159,7 +163,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Быстрый старт
+              GitLab Notification in Telegram
             
           </span>
         </div>
@@ -365,7 +369,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
+  <a href="#key-features" class="md-nav__link">
     <span class="md-ellipsis">
       
         <span class="md-typeset">
@@ -397,7 +401,7 @@
   <span class="md-ellipsis">
     
   
-    Конфиденциальность
+    Защита данных
   
 
     
@@ -676,7 +680,7 @@
     
   
     <span class="md-typeset">
-      Первый запуск ассистента
+      Первый запуск бота
     </span>
   
 
@@ -704,7 +708,7 @@
     
   
     <span class="md-typeset">
-      Инициализация бота
+      Первичная настройка
     </span>
   
 
@@ -969,22 +973,25 @@
 
 
 <h1 id="gitlab-notification-telegram-gitlab">GitLab Notification – Персональный Telegram бот для GitLab<a class="headerlink" href="#gitlab-notification-telegram-gitlab" title="Permanent link">⚓︎</a></h1>
-<p>Персональный ассистент призван упростить работу с GitLab. Получайте персональные уведомления о событиях в GitLab, ничего не пропустите и не забудьте.</p>
-<p>Бота-ассистента можно запустить как для облачного GitLab, так и для Self-host решений.</p>
-<div class="admonition info">
-<p class="admonition-title">GodFather Telegram</p>
-<p>Данный проект использует другой мой проект GodFather Telegram для создания Tlegram ботов различной сложности.</p>
+<p>Запустите своего личного GitLab бота и получайте персональные уведомления из GitLab прямо на свой аккаунт в Telegram! Это не облачное решение, бот запускается на вашей машине или вашем сервере.</p>
+<p>Вы больше никогда не пропустите важное уведомление. Будь то новый запрос на слияние или возникновение конфликта. Больше не нужно заходить в GitLab, чтобы проверить статус сборки - с нашим приложением вы сможете оставаться в курсе дел, где бы вы ни находились.</p>
+<p>Бота легко <a href="getting-started/configuration/">настроить и использовать</a>, а быстрые действия призваны оптимизировать ваш рабочий процесс. Не ждите больше - запустите своего персонального Telegram бота, и получайте персональные уведомления о событиях в GitLab.</p>
+<figure>
+<p><img alt="notify-about-new-mr" loading="lazy" src="features/img/notify-new-mr.png" width="600" /></p>
+<figcaption>Пример уведомления от бота</figcaption>
+</figure>
+<div class="admonition question">
+<p class="admonition-title">Что-то здесь не чисто</p>
+<p>Я понимаю, что GitLab часто содержит конфиденциальные данные, утечка которых не желательна. Поэтому я оформил <a href="privacy/">отдельную страницу, на которой собрал ответы на вопросы безопасности и конфеденциалоьности.</a></p>
 </div>
-<h2 id="_1">Основные возможности<a class="headerlink" href="#_1" title="Permanent link">⚓︎</a></h2>
+<h2 id="key-features">Основные возможности<a class="headerlink" href="#key-features" title="Permanent link">⚓︎</a></h2>
 <ul>
-<li>Уведомление о появлении нового репозитория.</li>
-<li>Уведомление о новых <abbr title="Merge Request">MR</abbr>.</li>
-<li>Уведомление о возникновении конфликта в <abbr title="Merge Request">MR</abbr>.</li>
-<li>Уведомление о смене статуса вашего <abbr title="Merge Request">MR</abbr>.</li>
+<li>Уведомление о новых <abbr title="Merge Request">MR</abbr>, где вы ревьювер или ответственный.</li>
+<li>Уведомление о результате работы сборки.</li>
+<li>Уведомление о возникновении конфликта в вашем <abbr title="Merge Request">MR</abbr>.</li>
 <li>Уведомление о треде, в которых вас упоминают в формате @nickname.</li>
-<li>Уведомит о новом треде в вашем <abbr title="Merge Request">MR</abbr>.</li>
-<li>Уведомит о закрытии вашего треда в чужом <abbr title="Merge Request">MR</abbr>.</li>
-<li>Уведомление о результате сборки.</li>
+<li>Уведомление о смене статуса вашего <abbr title="Merge Request">MR</abbr>.</li>
+<li><a href="features/notify/">И многое многое другое...</a></li>
 </ul>
 <hr />
 <p><a class="md-button md-button--primary" href="getting-started/configuration/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5Z"/></svg></span> Создать персонального ассистента</a></p>
@@ -1022,13 +1029,13 @@
         
         
           
-          <a href="privacy/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Конфиденциальность" rel="next">
+          <a href="privacy/" class="md-footer__link md-footer__link--next" aria-label="Вперед: Защита данных" rel="next">
             <div class="md-footer__title">
               <div class="md-ellipsis">
                 <span class="md-footer__direction">
                   Вперед
                 </span>
-                Конфиденциальность
+                Защита данных
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1058,7 +1065,7 @@
     <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.indexes", "navigation.sections", "navigation.tracking", "navigation.footer", "navigation.prune", "search", "search.suggest", "search.highlight", "content.action.edit", "content.code.copy", "content.code.annotate", "content.tooltips", "toc.follow", "toc.integrate"], "search": "assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.08d1b7d6.min.js"></script>
+      <script src="assets/javascripts/bundle.960d13ef.min.js"></script>
       
     
   </body>
