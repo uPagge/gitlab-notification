@@ -192,7 +192,8 @@ steps:
       - git clone ssh://git@git.struchkov.dev:222/Telegram-Bots/gitlab-notification.git .
       - git checkout $DRONE_COMMIT
       - cd documentation/ru
-      - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases ${DRONE_TAG} latest
+      - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases ${DRONE_TAG}
+      - mike deploy --prefix gitlab-notification/ru --branch docs-deploy --push --update-aliases latest
 
 image_pull_secrets:
   - DOCKER_AUTH
@@ -203,6 +204,6 @@ volumes:
       path: /drone/volume/mkdocs_cache/gitlab_notification
 ---
 kind: signature
-hmac: ea18fda1b2bd15fe53018afe23f3b3d1b8bef940c3f4b0b759670e8ee4006a1e
+hmac: cf1bd0800e8f6bb49dae0a6c5f607676b87d5ee713f4203f4f1ed08a17f71f68
 
 ...
