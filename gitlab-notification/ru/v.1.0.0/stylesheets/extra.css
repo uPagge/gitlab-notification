@@ -1,0 +1,77 @@
+.md-typeset .admonition, .md-typeset details {
+    font-size: 0.75rem;
+}
+
+.md-typeset h1, .md-typeset h2 {
+    font-weight: 500;
+}
+
+.md-typeset h2 {
+    margin-top: 4rem;
+}
+
+.md-typeset h3 {
+    margin-top: 2.2rem;
+}
+
+.md-typeset mark {
+    background-color: #fff3bc;
+    margin: -4px -4px -6px;
+    padding: 4px 4px 6px;
+}
+
+@keyframes heart {
+    0%, 40%, 80%, 100% {
+        transform: scale(1);
+    }
+    20%, 60% {
+        transform: scale(1.15);
+    }
+}
+.heart {
+    animation: heart 1000ms infinite;
+}
+
+@keyframes ninja-disappear {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.ninja-disappear {
+    animation: ninja-disappear 3000ms infinite;
+    animation-delay: 1500ms;
+}
+
+@keyframes jingle-bell-swing {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(10deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.jingle-bell {
+    animation: jingle-bell-swing 2s ease-in-out infinite;
+    transform-origin: center;
+}
+
+
+@media(min-width: 768px) {
+    .frontpage-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 2em;
+        row-gap: 1em;
+    }
+}
