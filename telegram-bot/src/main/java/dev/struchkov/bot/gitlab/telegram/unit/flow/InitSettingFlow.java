@@ -521,11 +521,9 @@ public class InitSettingFlow implements UnitConfiguration {
                     final ButtonClickAttachment buttonClick = Attachments.findFirstButtonClick(mail.getAttachments()).orElseThrow();
                     final DiscussionLevel level = DiscussionLevel.valueOf(buttonClick.getRawCallBackData().toUpperCase());
                     settingService.setDiscussionLevel(level);
-                    replaceBoxAnswer("\uD83D\uDC4D you have successfully set the privacy level for threads");
+                    return replaceBoxAnswer("\uD83D\uDC4D you have successfully set the privacy level for threads");
                 })
-                .callBack(
-                        sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 6, TimeUnit.SECONDS)
-                )
+                .callBack(sentBox -> scheduledExecutorService.schedule(() -> sending.deleteMessage(sentBox.getPersonId(), sentBox.getMessageId()), 6, TimeUnit.SECONDS))
                 .next(endSetting)
                 .build();
     }
@@ -541,8 +539,8 @@ public class InitSettingFlow implements UnitConfiguration {
                             return BoxAnswer.builder()
                                     .message(
                                             """
-                                                    Configuration completed successfully
-                                                    Developer: [Struchkov.Dev](https://mark.struchkov.dev)
+                                                    🎉 Configuration completed successfully
+                                                    🧑‍💻 Developer: [Struchkov.Dev](https://mark.struchkov.dev)
                                                     """
                                     ).keyBoard(inlineKeyBoard(simpleButton("Open Menu", "/start")))
                                     .payload(DISABLE_WEB_PAGE_PREVIEW, true)
