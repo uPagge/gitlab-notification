@@ -14,7 +14,6 @@ public final class UnitName {
     public static final String ANSWER_NOTE = "answerNote";
     public static final String TEXT_PARSER_PRIVATE_PROJECT = "textParserPrivateProject";
     public static final String CHECK_PARSER_PRIVATE_PROJECT_YES = "checkParserPrivateProject";
-    public static final String TEXT_PARSE_OWNER_PROJECT = "textParseOwnerProject";
     public static final String CHECK_PARSE_OWNER_PROJECT_YES = "checkParseOwnerProject";
     public static final String END_SETTING = "endSetting";
     public static final String ACCESS_ERROR = "ACCESS_ERROR";
@@ -24,7 +23,6 @@ public final class UnitName {
     public static final String AUTO_PARSE_PRIVATE_PROJECT = "AUTO_PARSE_PRIVATE_PROJECT";
     public static final String AUTO_PARSE_OWNER_PROJECT = "AUTO_PARSE_PUBLIC_PROJECT";
     public static final String TEXT_AUTO_PARSE_OWNER_PROJECT = "TEXT_AUTO_PARSE_OWNER_PROJECT";
-    public static final String GUIDE_START = "GUIDE_START";
     public static final String TEXT_PARSER_OWNER_PROJECT = "TEXT_PARSER_OWNER_PROJECT";
 
     // команды
