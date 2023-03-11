@@ -16,6 +16,13 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+#  без данной настройк ипостоянно выбрасывается исключение:
+# org.springframework.dao.InvalidDataAccessApiUsageException: Multiple representations of the
+# same entity [dev.struchkov.bot.gitlab.context.domain.entity.Person#13445232] are being merged.
+# Detached: [dev.struchkov.bot.gitlab.context.domain.entity.Person@cd28ab];
+# Detached: [dev.struchkov.bot.gitlab.context.domain.entity.Person@cd28ab]
+        event:
+          merge.entity_copy_observer: allow
 
 logging:
   level:
@@ -70,6 +77,8 @@ gitlab-bot:
     new-note-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}/notes?body={3}"
     discussions-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions?&page={2,number,#}&per_page={3,number,#}"
     discussion-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/merge_requests/{1,number,#}/discussions/{2}"
+    issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues/{1,number,#}"
+    open-issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues?state=opened&page={1, number, integer}&per_page={2, number, integer}"
 
 ---
 spring:
@@ -83,5 +92,3 @@ gitlab-bot:
       general: "0 */1 * * * *"
       new-project: "0 */1 * * * *"
       new-merge-request: "0 */1 * * * *"
-    issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues/{1,number,#}"
-    open-issue-url: "${GITLAB_URL}/api/v4/projects/{0,number,#}/issues?state=opened&page={1, number, integer}&per_page={2, number, integer}"

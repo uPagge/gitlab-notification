@@ -39,7 +39,7 @@ public class SchedulerService {
 
     @Scheduled(cron = "${gitlab-bot.cron.scan.new-project}")
     public void newProjects() {
-        log.info("Запуск процесса получение новых репозиториев c GitLab");
+        log.info("Запуск процесса получения новых репозиториев c GitLab");
         if (!settingService.isFirstStart()) {
             if (settingService.isOwnerProjectScan()) {
                 projectParser.parseAllProjectOwner();
@@ -48,7 +48,7 @@ public class SchedulerService {
                 projectParser.parseAllPrivateProject();
             }
         }
-        log.info("Конец процесса получение новых репозиториев c GitLab");
+        log.info("Конец процесса получения новых репозиториев c GitLab");
     }
 
 
@@ -56,11 +56,21 @@ public class SchedulerService {
     @Scheduled(cron = "0 */1 * * * *")
     @Scheduled(cron = "${gitlab-bot.cron.scan.new-merge-request}")
     public void newMergeRequests() {
-        log.info("Запуск процесса получение новых MR c GitLab");
+        log.info("Запуск процесса получения новых MR c GitLab");
         if (!settingService.isFirstStart()) {
             mergeRequestParser.parsingNewMergeRequest();
         }
-        log.info("Конец процесса получение новых MR c GitLab");
+        log.info("Конец процесса получения новых MR c GitLab");
+    }
+
+    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "${gitlab-bot.cron.scan.new-merge-request}")
+    public void newIssues() {
+        log.info("Запуск процесса получения новых Issues c GitLab");
+        if (!settingService.isFirstStart()) {
+            issueParser.parsingNewIssue();
+        }
+        log.info("Конец процесса получения новых Issues c GitLab");
     }
 
     @Scheduled(cron = "${gitlab-bot.cron.scan.general}")
@@ -75,7 +85,6 @@ public class SchedulerService {
             mergeRequestsService.cleanOld();
             discussionService.cleanOld();
             pipelineService.cleanOld();
-            issueParser.parsingNewIssue();
             issueParser.parsingOldIssue();
             issueService.cleanOld();
         } else {

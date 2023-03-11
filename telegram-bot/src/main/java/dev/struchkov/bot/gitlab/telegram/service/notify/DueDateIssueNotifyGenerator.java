@@ -2,11 +2,11 @@ package dev.struchkov.bot.gitlab.telegram.service.notify;
 
 import dev.struchkov.bot.gitlab.context.domain.notify.issue.DueDateIssueNotify;
 import dev.struchkov.bot.gitlab.context.utils.Icons;
-import dev.struchkov.godfather.main.domain.BoxAnswer;
+import dev.struchkov.godfather.simple.domain.BoxAnswer;
 import org.springframework.stereotype.Component;
 
 import static dev.struchkov.bot.gitlab.context.utils.Icons.link;
-import static dev.struchkov.godfather.main.domain.BoxAnswer.boxAnswer;
+import static dev.struchkov.godfather.simple.domain.BoxAnswer.boxAnswer;
 
 /**
  * @author Dmitry Sheyko 26.01.2021

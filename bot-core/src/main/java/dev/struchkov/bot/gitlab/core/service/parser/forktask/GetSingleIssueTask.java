@@ -2,7 +2,7 @@ package dev.struchkov.bot.gitlab.core.service.parser.forktask;
 
 import dev.struchkov.bot.gitlab.core.utils.StringUtils;
 import dev.struchkov.bot.gitlab.sdk.domain.IssueJson;
-import dev.struchkov.haiti.utils.network.HttpParse;
+import dev.struchkov.bot.gitlab.core.utils.HttpParse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.concurrent.RecursiveTask;
 
-import static dev.struchkov.haiti.utils.network.HttpParse.ACCEPT;
+import static dev.struchkov.bot.gitlab.core.utils.HttpParse.ACCEPT;
 
 @Slf4j
 @RequiredArgsConstructor
