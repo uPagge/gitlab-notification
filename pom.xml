@@ -5,7 +5,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.0.1</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>dev.struchkov.bot.gitlab</groupId>
@@ -45,7 +45,7 @@
 
         <godfather.telegram.version>0.0.51</godfather.telegram.version>
         <haiti.utils.version>2.7.2</haiti.utils.version>
-        <haiti.utils.fields.version>0.0.11</haiti.utils.fields.version>
+        <haiti.utils.fields.version>1.2.0</haiti.utils.fields.version>
         <haiti.filter.version>0.0.5</haiti.filter.version>
 
         <!-- https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api -->
